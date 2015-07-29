@@ -25,12 +25,13 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 ```
 
-```{r}
+```{r, cache=TRUE}
 data <- list(N = 1000, y = rbinom(1000, 1, 0.7))
 sum(data$y) / 1000
 
-bern <- stan("models/bernoulli.stan", data = data)
+bern <- stan("../models/bernoulli.stan", data = data)
 bern
+pairs(bern)
 ```
 
 ```{r, eval=FALSE}

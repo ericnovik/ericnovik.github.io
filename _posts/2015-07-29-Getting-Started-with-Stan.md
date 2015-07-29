@@ -48,29 +48,37 @@ sum(data$y) / 1000
 ```
 
 ```
-## [1] 0.721
+## [1] 0.719
 ```
 
 ```r
-bern <- stan("models/bernoulli.stan", data = data)
-```
-
-```
-## Warning in file(fname, "rt"): cannot open file 'models/bernoulli.stan': No
-## such file or directory
-```
-
-```
-## Error in get_model_strcode(file, model_code): cannot open model file "models/bernoulli.stan"
-```
-
-```r
+bern <- stan("../models/bernoulli.stan", data = data)
 bern
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'bern' not found
+## Inference for Stan model: bernoulli.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##          mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff
+## theta    0.72    0.00 0.01    0.69    0.71    0.72    0.73    0.74  1329
+## lp__  -596.58    0.02 0.69 -598.57 -596.76 -596.32 -596.14 -596.09  1884
+##       Rhat
+## theta    1
+## lp__     1
+## 
+## Samples were drawn using NUTS(diag_e) at Wed Jul 29 19:26:23 2015.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).
 ```
+
+```r
+pairs(bern)
+```
+
+![plot of chunk unnamed-chunk-2]({{ site.url }}/images/getting-started-unnamed-chunk-2-1.png) 
 
 
 ```r
