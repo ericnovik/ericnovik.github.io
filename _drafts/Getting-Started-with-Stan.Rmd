@@ -1,0 +1,62 @@
+---
+title: "Getting Started with Stan"
+layout: post
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='{{ site.url }}/images/getting-started-')
+library(ggplot2)
+```
+
+During the recent Bayesian Inference with Stan class, [Daniel Lee](https://www.linkedin.com/in/syclik), one of the Stan's core developers walked us through a series of exercises to help us get started with Stan. This post is my reproduction of his introduction to Stan.
+
+## Installing Stan
+If you do not have Stan installed and you are an R User, follow the [RStan Getting Started Instruction](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started). You need to make sure you have a working C++ compiler installed; the directions are provided via the above link. For Mac OS X, the recommendation is to use **clang**. [Interfaces](http://mc-stan.org/interfaces/) also exist for Python, Matlab, Julia, and Stata and for those who prefer to work with the Stan compiler directly, there is Command Stan. In this post, I will only be discussing the R interface.
+
+## Running Stan
+Stan program is of course just a text file that you feed to the Stan compiler which translates it into C++ code and compiles it on the native platform. One implication of this is that the compiled Stan object is platform dependent (as opposed to say a Java program that executes on the JVM). 
+
+Once, RStan is installed the package is loaded the usual way:
+```{r}
+library(rstan)
+
+# enable multicore support so chains can be fit in parallel
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+```
+
+```{r}
+data <- list(N = 1000, y = rbinom(1000, 1, 0.7))
+sum(data$y) / 1000
+
+bern <- stan("models/bernoulli.stan", data = data)
+bern
+```
+
+```{r, eval=FALSE}
+data {
+  int<lower = 0> N;
+  int<lower = 0, upper = 1> y[N];
+}
+parameters {
+  real<lower = 0, upper = 1> theta;
+}
+model {
+  theta ~ normal(0.5, 0.2);
+  y ~ bernoulli(theta);  
+}
+```
+
+
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
