@@ -6,7 +6,7 @@ parameters {
   real<lower=0, upper=1> theta; # theta must be between 0 and 1
 }
 model {
-  theta ~ normal(0.5, 0.2); # prior belief about theta: 95% of the mass is between 0.1 and 0.9
+  theta ~ normal(0.5, 0.2); # prior on theta: 95% of the mass is between 0.1 and 0.9
 
   increment_log_prob(0); # this loop builds up the log posterior one observation ata a time.
   for (n in 1:N)
