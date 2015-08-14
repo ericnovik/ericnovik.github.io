@@ -45,7 +45,9 @@ $$ p(\theta,y) = \prod_{n = 1}^{N}\theta^{y_{n}} * (1 - \theta)^{1- y_{n}} = \th
 
 We typically work on a log scale, and so:
 
+<div>
 $$ log (p(\theta,y)) = \sum_{n=1}^{N}y_{n}*log(\theta) + \sum_{n=1}^{N}(1-y_{n})*log(1-\theta) $$
+</div>
 
 We can encode this model in Stan directly as follows:
 
