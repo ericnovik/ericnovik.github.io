@@ -39,7 +39,9 @@ options(mc.cores = parallel::detectCores())
 ## Bernoulli Model
 The simplest model we can try is perhaps a series of independant binary events, each with an unknown probability \\(\\theta\\). The joint model can be written as:
 
+<div>
 $$ p(\theta,y) = \prod_{n = 1}^{N}\theta^{y_{n}} * (1 - \theta)^{1- y_{n}} = \theta^{\sum_{n=1}^{N}y_{n}} * (1 - \theta)^{\sum_{n=1}^{N}(1- y_{n})} $$
+</div>
 
 We typically work on a log scale, and so:
 
