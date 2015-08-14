@@ -61,7 +61,7 @@ parameters {
   real<lower=0, upper=1> theta; # theta must be between 0 and 1
 }
 model {
-  theta ~ normal(0.5, 0.2); # prior belief about theta: 95% of the mass is between 0.1 and 0.9
+  theta ~ normal(0.5, 0.2); # prior on theta: 95% of the mass is between 0.1 and 0.9
 
   increment_log_prob(0); 
   for (n in 1:N)
@@ -71,7 +71,7 @@ model {
   # y ~ bernoulli(theta);  
 }
 ```
-This *increment\_log\_prob()* business may seem a bit strange at first, but comparing it to the second equation, makes it clear that it is simply building up the log likelihood one observation at a time. For well known models Stan implements convenient shortcuts (sometimes called "syntactic sugar") as sampling statements such as *y \~ bernoulli(theta)*. The cool thing is that you can define your own model and use *increment\_log\_prob()* loop to build it directly. This is one of the features that makes Stan a probabalistic programming language in a sense that it provides the primitives for defining your own model and priors and then takes care of computing the posterior.
+This *increment\_log\_prob()* business may seem a bit strange at first, but comparing it to the second equation, makes it clear that it is simply building up the log likelihood one observation at a time. For well known models Stan implements convenient shortcuts (sometimes called "syntactic sugar") as sampling statements such as *y \~ bernoulli(theta)*. The cool thing is that you can define your own model and use *increment\_log\_prob()* loop to build it directly. This is one of the features that makes Stan a probabilistic programming language in a sense that it provides the primitives for defining your own model and priors and then takes care of computing the posterior.
 
 To call the model from R, I will generate some data from the Binomial distribution with a known parameter \\( \theta = 0.7 \\) and ask Stan to recover this parameter. Incidentally this is a good general practice for starting the modeling process: create some fake data with known parameters and try to recover them. 
 
@@ -120,11 +120,11 @@ ggplot2::qplot(theta, geom = "density")
 
 ![plot of chunk unnamed-chunk-4]({{ site.url }}/images/getting-started-unnamed-chunk-4-1.png) 
 
-RStan has a convenient *pairs()* function that can be used to examine the posterior distribution of the parameters and all pairwise scatterplots.
+Even better, RStan has a convenient *pairs()* function that can be used to examine the posterior distribution of the parameters and all the pairwise scatterplots.
 
 
 ```r
-pairs(bern)
+pairs(bern, las = 1)
 ```
 
 ![plot of chunk unnamed-chunk-5]({{ site.url }}/images/getting-started-unnamed-chunk-5-1.png) 
@@ -137,11 +137,11 @@ traceplot(bern)
 
 ![plot of chunk unnamed-chunk-6]({{ site.url }}/images/getting-started-unnamed-chunk-6-1.png) 
 
-Last but not least, Shiny Stan is a Shiny application that contains lots of interesting exploratory features for your Stan objects. Once installed, it can be launched as follows:
+Last but not least, Shiny Stan is a [Shiny](http://shiny.rstudio.com/) application that contains lots of interesting features for exploring your Stan objects. Once installed, it can be launched as follows:
 
 
 ```r
 shinystan::launch_shinystan(bern)
 ```
 
-If would like to play with this particular model you can access it [on shyniapps.io](https://ericnovik.shinyapps.io/Bernoulli_Model).
+If you would like to play with this particular (boring) model you can access it [on shyniapps.io](https://ericnovik.shinyapps.io/Bernoulli_Model).
