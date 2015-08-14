@@ -114,7 +114,7 @@ for (n in 1:N)
       increment_log_prob(log1m(theta));
 ```
 
-This is a nifty feature underscoring Stan's imperative programming nature! You can have conditional statements in the model. I like. OK, onto the rest of Bob's comments.
+This is a nifty feature underscoring Stan's imperative programming nature! You can have conditional statements in the model. I like. OK, onto the rest of Bob's comments. 
 
 But even that's a bad idea (referring to the above code block.)  You want to assign `log(theta)` and `log1m(theta)` to constants so you don't have to recompute them.
 
