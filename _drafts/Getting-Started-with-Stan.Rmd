@@ -65,7 +65,7 @@ model {
   # y ~ bernoulli(theta);  
 }
 ```
-This *increment\_log\_prob()* business may seem a bit strange at first, but comparing it to the second equation, makes it clear that it is simply building up the log likelihood one observation at a time. For well known models Stan implements convenient shortcuts (sometimes called "syntactic sugar") as sampling statements such as *y \~ bernoulli(theta)*. The cool thing is that you can define your own model and use *increment\_log\_prob()* loop to build it directly. This is one of the features that makes Stan a probabilistic programming language in a sense that it provides the primitives for defining your own model and priors and then takes care of computing the posterior.
+This *increment\_log\_prob()* business may seem a bit strange at first, but comparing it to the second equation, makes it clear that it is simply building up the log likelihood one observation at a time. For well known models Stan implements convenient shortcuts (sometimes called "syntactic sugar") as sampling statements such as *y \~ bernoulli(theta)*. The cool thing is that you can define your own model and use *increment\_log\_prob()* loop to build it directly. This is one of the features that makes Stan a probabilistic programming language in a sense that it provides the primitives for specifying custom models and takes care of computing the posterior.
 
 To call the model from R, I will generate some data from the Binomial distribution with a known parameter \\( \theta = 0.7 \\) and ask Stan to recover this parameter. Incidentally this is a good general practice for starting the modeling process: create some fake data with known parameters and try to recover them. 
 
