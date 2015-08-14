@@ -3,7 +3,7 @@ data {
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
 }
 parameters {
-  real<lower=0, upper=1> theta; # theta must be between 0 and 1
+  real theta; 
 }
 model {
   theta ~ normal(0.5, 0.2); # prior on theta: 95% of the mass is between 0.1 and 0.9

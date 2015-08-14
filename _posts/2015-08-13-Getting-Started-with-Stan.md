@@ -58,7 +58,7 @@ data {
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
 }
 parameters {
-  real<lower=0, upper=1> theta; # theta must be between 0 and 1
+  real theta;
 }
 model {
   theta ~ normal(0.5, 0.2); # prior on theta: 95% of the mass is between 0.1 and 0.9
@@ -85,7 +85,7 @@ sum(data$y) / 1000
 ```
 
 ```
-## [1] 0.72
+## [1] 0.7
 ```
 
 ```r
@@ -100,7 +100,7 @@ quantile(theta, probs = c(.025, .25, .50, .75, .975))
 
 ```
 ## 2.5%  25%  50%  75%  98% 
-## 0.69 0.71 0.72 0.73 0.74
+## 0.67 0.69 0.70 0.71 0.73
 ```
 
 ```r
@@ -109,7 +109,7 @@ mean(theta > 0.68 & theta < 0.72)
 ```
 
 ```
-## [1] 0.49
+## [1] 0.84
 ```
 
 We can examine the full posterior density of \\( \theta \\) using ggplot:

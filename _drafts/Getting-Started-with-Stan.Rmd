@@ -52,7 +52,7 @@ data {
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
 }
 parameters {
-  real<lower=0, upper=1> theta; # theta must be between 0 and 1
+  real theta;
 }
 model {
   theta ~ normal(0.5, 0.2); # prior on theta: 95% of the mass is between 0.1 and 0.9
@@ -69,7 +69,7 @@ This *increment\_log\_prob()* business may seem a bit strange at first, but comp
 
 To call the Stan program from R, I will generate some data from the Binomial distribution with a known parameter \\( \theta = 0.7 \\) and ask Stan to recover this parameter. Incidentally this is a good general practice for starting the modeling process: create some fake data with known parameters and try to recover them. 
 
-```{r, cache=TRUE}
+```{r, cache=FALSE}
 # data
 data <- list(N = 1000, y = rbinom(1000, 1, 0.7))
 
