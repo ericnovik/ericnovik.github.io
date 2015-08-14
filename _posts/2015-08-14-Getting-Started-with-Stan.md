@@ -3,13 +3,7 @@ title: "Getting Started with Stan"
 layout: post
 ---
 
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.path = '{{ site.url }}/images/getting-started-',
-                      message = FALSE, warning = FALSE)
-options(digits = 2)
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.012, las = 1)
-library(ggplot2)
-```
+
 
 During a recent Bayesian Inference with Stan class, [Daniel Lee](https://www.linkedin.com/in/syclik), one of the Stan's core developers walked us through a series of exercises to help us get started with Stan. This post is largely based on his introduction to Stan.
 
@@ -21,9 +15,20 @@ If you do not have Stan installed and you are an R User, follow the [RStan Getti
 Stan program is a text file that you feed to the Stan compiler which in turn translates it into C++ code and compiles it on the native platform. One implication of this is that the compiled Stan object is platform dependent (as opposed to say a Java program that executes on the JVM). 
 
 Once, RStan is installed the package is loaded the usual way:
-```{r, message=TRUE}
-library(rstan)
 
+```r
+library(rstan)
+```
+
+```
+## Loading required package: Rcpp
+## rstan (Version 2.7.0-2, packaged: , GitRev: 05c3d0058b6a)
+## For execution on a local, multicore CPU with excess RAM we recommend calling
+## rstan_options(auto_write = TRUE)
+## options(mc.cores = parallel::detectCores())
+```
+
+```r
 # avoids unnesessary model recompilation
 rstan_options(auto_write = TRUE)
 
@@ -46,7 +51,8 @@ $$ \log (p(\theta,y)) = \sum_{n=1}^{N}y_{n}*\log(\theta) + \sum_{n=1}^{N}(1-y_{n
 
 This model can be coded in Stan in several ways. The following is my first, problematic attempt at doing so. (It will run and produce a reasonable answer, but it is neither well coded nor consistent with the math.) So, you have been warned -- do not do it this way!
 
-```{r, eval=FALSE}
+
+```r
 data {
   int<lower=1> N; # check that we have at least one observation
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
@@ -74,7 +80,8 @@ The main criticism of the Stan model is that it does not correspond to the join 
 
 A more traditional prior on a probability parameter would be a `beta` distribution. Stan does not take advantage of conjugacy and for simplicity and consistency, I will leave it as uniform (of course we could say `beta(1, 1)`.) Here is what the second iteration of the program looks like.
 
-```{r, eval=FALSE}
+
+```r
 data {
   int<lower=1> N; # check that we have at least one observation
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
@@ -91,13 +98,15 @@ Once we put in the constraints on \\( \theta \\) Stan will assign a `uniform(0, 
 
 In the following, I will reproduce the rest of Bob's comments verbatim.
 
-```{r, eval=FALSE}
+
+```r
 for (n in 1:N) 
   increment_log_prob(y[n] * log(theta) + (1 - y[n]) * log(1 - theta));
 ```
 is really bad for multiple reasons.  One, never use `log(1 - x)`, always use `log1m(x)` (this has to do with speed and computational stability.)  Second, you don't want to be multiplying by constant zeroes. So if you must use `increment_log_prob`, do it this way:
 
-```{r, eval=FALSE}
+
+```r
 for (n in 1:N)
     if (y[n] == 1)
       increment_log_prob(log(theta));
@@ -110,7 +119,8 @@ This is a nifty feature underscoring Stan's imperative programming nature! You c
 But even that's a bad idea (referring to the above code block.)  You want to assign `log(theta)` and `log1m(theta)` to constants so you don't have to recompute them.
 
 So the program becomes:
-```{r, eval=FALSE}
+
+```r
 data {
   int<lower=1> N; # check that we have at least one observation
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
@@ -133,7 +143,8 @@ model {
 
 Which can be written simply as:
 
-```{r, eval=FALSE}
+
+```r
 data {
   int<lower=1> N; # check that we have at least one observation
   int<lower=0, upper=1> y[N]; # outcome y must be either 0 or 1
@@ -158,7 +169,8 @@ To call the Stan program from R, first create a new file called `bernoulli.stan`
 
 Next, generate some data from the Binomial distribution with a known parameter \\( \theta = 0.6 \\) and ask Stan to recover this parameter. Incidentally, this is a good general practice for starting the modeling process: create some fake data with known parameters and try to recover them. 
 
-```{r, cache=FALSE}
+
+```r
 # data
 set.seed(1)
 N <- 100
@@ -166,7 +178,13 @@ data <- list(N = N, y = rbinom(N, 1, 0.6))
 
 # MLE of theta
 sum(data$y) / N
+```
 
+```
+## [1] 0.57
+```
+
+```r
 # run Stan model for 200 iterations (will need more for real models) and 4 markov chains
 bern <- stan("../models/bernoulli.stan", data = data, iter = 200, chains = 4)
 
@@ -174,34 +192,61 @@ bern <- stan("../models/bernoulli.stan", data = data, iter = 200, chains = 4)
 theta <- extract(bern, pars = 'theta')$theta
 
 quantile(theta, probs = c(.025, .25, .50, .75, .975))
+```
 
+```
+## 2.5%  25%  50%  75%  98% 
+## 0.49 0.55 0.58 0.61 0.65
+```
+
+```r
 # what is the probability that theta is greater than 0.5
 mean(theta > 0.5)
+```
 
+```
+## [1] 0.94
+```
+
+```r
 # what is the probability that theta is between 0.58 and 0.62
 mean(theta > 0.58 & theta < 0.62)
 ```
 
+```
+## [1] 0.34
+```
+
 We can examine the full posterior density of \\( \theta \\) using ggplot:
 
-```{r, fig.align='center'}
+
+```r
 ggplot(as.data.frame(theta), aes(x = theta)) + geom_line(stat = "density")
 ```
 
+<img src="{{ site.url }}/images/getting-started-unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+
 Even better, RStan has a convenient `pairs()` function that can be used to examine the posterior distribution of the parameters and all the pairwise scatterplots.
 
-```{r, fig.align='center'}
+
+```r
 pairs(bern)
 ```
 
+<img src="{{ site.url }}/images/getting-started-unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+
 You can also take a look at the MCMC traceplots, which is helpful for checking convergence.
-```{r, fig.align='center'}
+
+```r
 traceplot(bern)
 ```
 
+<img src="{{ site.url }}/images/getting-started-unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+
 Last but not least, Shiny Stan is a [Shiny](http://shiny.rstudio.com/) application that contains lots of interesting features for exploring your Stan objects. Once installed, it can be launched as follows:
 
-```{r, eval=FALSE}
+
+```r
 shinystan::launch_shinystan(bern)
 ```
 
