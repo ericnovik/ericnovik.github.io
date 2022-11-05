@@ -7,20 +7,10 @@ This website contains teaching materials for Bayesian analysis (APSTA-GE 2123) c
 
 ```{r}
 #| echo: false
-library(plotly)
-
-mu <- c(1, 0.5)
-x <- seq(0, 10, len = 50)
-y <- mu[1] + mu[2] * x + rnorm(50)
-
-alpha <- seq(-2, 4, 0.1)
-beta <- seq(-2.5, 3.5, 0.1)
-sigma <- matrix(c(2,-1,-1, 2), nrow = 2)
-f <- function(x, y) mvtnorm::dmvnorm(cbind(x, y), mu, sigma)
-lik <- outer(alpha, beta, f)
-p <- plot_ly(x = ~alpha, y = ~beta, z = ~lik)
-p <- p %>% add_surface() %>% layout(title = 'Normal Likelihood', 
-                                        plot_bgcolor = "#f0f1eb",
-                                        paper_bgcolor = "#f0f1eb")
-print(p)
+#| message: false
+#| warning: false
+library(leaflet)
+leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
 ```
