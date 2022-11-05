@@ -1,0 +1,132 @@
+---
+title: "Introduction to Bayesian Data Analyis"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author: "Instructor: eric.novik@nyu.edu"
+date: "`r format(Sys.time(), '%d %b %Y')`"
+format:
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    geometry:
+      - top=30mm
+      - left=20mm
+      - heightrounded
+    toc: false
+    number-sections: true
+    colorlinks: true
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Course description
+
+This course will introduce students to Bayesian data analysis and Bayesian workflow, which is a process that we follow to develop statistical models, test their efficacy, and make model improvements. This is a deep subject with a rich history and we can only offer an introductory treatment during a seven-week course. Nonetheless, motiviated students should get enough experience from this course to learn how to think like a Baysian, be able to fit standard models usint Bayesian inference, evalute the quality of the model, and make predictions.
+
+During the course we will make extensive use of simulations, the R language, Stan, and the `rstanarm` package.
+
+## Times, Location, and Office Hours
+
+In-person weekly lectures will be held every Monday from 5 -- 8 PM in Room XYZ beginning on March 21 and ending on May 15. Office hours will be held over Zoom on Tuesdays from 5 -- 6 PM.
+
+## Course prerequisites
+
+Students should be familiar with the R language, as we will not have time to provide the introduction to R. Ideally, students will be comfortable with probability and basic differential and integral calculus and have taken a basic regression course. Students don't have to be familiar with Stan, or `rstanarm`, and no prior knowledge of Bayes is expected.
+
+## Course materials
+
+The core text for the course will be "Bayed Rules!" @johnson2022 which is available for free [online](https://www.bayesrulesbook.com/) and as a paper copy from [CRC Press](https://www.routledge.com/Bayes-Rules-An-Introduction-to-Applied-Bayesian-Modeling/Johnson-Ott-Dogucu/p/book/9780367255398).
+
+Students are expected to have access to R and RStudio or another R programming environment of their choice. Students should follow the setup instructions from the [Getting set up](https://www.bayesrulesbook.com/preface.html#setup) chapter.
+
+For those who are interested in a more in-depth treatment of the subject, you could do worse than the following choices:
+
+-   [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/), @mcelreath2020
+
+-   [A Student's Guide to Bayesian Statistics](https://ben-lambert.com/a-students-guide-to-bayesian-statistics/), @lambert2018
+
+-   [Bayesian Data Analysis](http://stat.columbia.edu/~gelman/book/), @gelman2014
+
+-   [Stan User's Guide](https://mc-stan.org/docs/stan-users-guide/index.html), @standevelopmentteam2022
+
+Aki Vehtari from Aalto Univsity compiled an excellent list of mostly Bayesian texts [here](https://statmodeling.stat.columbia.edu/2018/05/14/aki_books/).
+
+## Course Outline
+
+The following tentative schedule assumes seven 3-hour sessions during which we plan to cover the following material.
+
+-   **(1) Bayesian Workflow**
+
+    We will briefly discuss the history of Bayesian inference and introduce the key components of the Bayesian workflow --- from model development, to model testing and decision-making. We will dig into the key components of the so called Bayes' rule.
+
+    -   Bayes Rules!, Chapters [1](https://www.bayesrulesbook.com/chapter-1.html) and [2](https://www.bayesrulesbook.com/chapter-2.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 1: Introduction
+    -   Optional meta-track: ["Not Only Defended But Also Applied": The Perceived Absurdity of Bayesian Inference](http://www.stat.columbia.edu/~gelman/research/published/feller8.pdf), @gelman2013
+
+-   **(2) Conjugate models: Beta-Binomial**
+
+    In otder to demonstrate the Bayesian machinery, we will go over a few simple models for which analytical solutions are available. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.
+
+    -   Bayes Rules!, Chapters [3](https://www.bayesrulesbook.com/chapter-3.html) and [4](https://www.bayesrulesbook.com/chapter-4.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 2: Before fitting a model
+    -   Optional meta-track: [Statistical Modeling: The Two Cultures](http://www2.math.uu.se/~thulin/mm/breiman.pdf), @breiman2001
+
+-   **(3) Other conjugate models and introduction to posterior sampling**
+
+    -   Bayes Rules!, Chapters [5](https://www.bayesrulesbook.com/chapter-5.html) and [6](https://www.bayesrulesbook.com/chapter-6.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 3: Fitting a model
+    -   Optional meta-track: [Reflections on Breiman's Two Cultures of Statistical Modeling,](http://www.stat.columbia.edu/~gelman/research/published/gelman_breiman.pdf) @gelman2021
+
+-   **(4) MCMC and posterior inference**
+
+    -   Bayes Rules!, Chapters [7](https://www.bayesrulesbook.com/chapter-7.html) and [8](https://www.bayesrulesbook.com/chapter-8.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 4: Using constructed data to find and understand problems
+    -   Optional meta-track: TBD
+
+-   **(5) Baysian linear regression and model evaluation**
+
+    -   Bayes Rules!, Chapters [9](https://www.bayesrulesbook.com/chapter-9.html) and [10](https://www.bayesrulesbook.com/chapter-10.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 6: Evaluating and using a fitted model
+    -   Optional meta-track: TBD
+
+-   **(6) Expanding the linear model and modeling counts**
+
+    -   Bayes Rules!, Chapters [11](https://www.bayesrulesbook.com/chapter-11.html) and [12](https://www.bayesrulesbook.com/chapter-12.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 7: Modifying a model
+    -   Optional meta-track: TBD
+
+-   **(7) Logistic regression and introduction to hierarchical models**
+
+    Hierchical and multi-level models are workhorses of Bayesian analysis.
+
+    -   Bayes Rules!, Chapters [13](https://www.bayesrulesbook.com/chapter-13.html) and [15](https://www.bayesrulesbook.com/chapter-15.html)
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 5: Addressing computational problems
+    -   Optional meta-track: TBD
+
+## Grading
+
+There will be six homework assignments, each worth 10% and an analysis project which can be completed in groups of up to three people. All assignments must be completed in [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html), [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html), or similar systems suitable for scientific publication.
+
+-   Homework: 60%
+-   Analysis project: 30%
+-   Class participation: 10%
+
+## Other Resources
+
+Following resources may be helpful to those who need a refresher in the prerequisites:
+
+-   [R for Data Science](https://r4ds.had.co.nz), @wickham2016
+
+-   [Calculus Made Easy](http://calculusmadeeasy.org/), @thompson1980
+
+-   [Calculus](https://openstax.org/details/books/calculus-volume-1), @herman2016
+
+-   [YouTube: Essence of Calculus](https://bit.ly/calc-3blue1brown), @sanderson2018
+
+-   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), @blitzstein2019
+
+-   [Introduction to Probability Cheatsheet v2](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf), Chen (2015)
+
+## References
