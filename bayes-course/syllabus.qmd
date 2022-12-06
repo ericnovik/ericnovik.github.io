@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Bayesian Data Analyis"
+title: "Introduction to Bayesian Data Analysis"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author: "Instructor: eric.novik@nyu.edu"
 date: "`r format(Sys.time(), '%d %b %Y')`"
@@ -23,23 +23,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Course description
 
-This course will introduce students to Bayesian data analysis and Bayesian workflow, which is a process that we follow to develop statistical models, test their efficacy, and make model improvements. This is a deep subject with a rich history and we can only offer an introductory treatment during a seven-week course. Nonetheless, motiviated students should get enough experience from this course to learn how to think like a Baysian, be able to fit standard models usint Bayesian inference, evalute the quality of the model, and make predictions.
+This course will introduce students to Bayesian data analysis and Bayesian workflow, a process we follow to develop statistical models, test their efficacy, and make model improvements. This is a deep subject with a rich history, and we can only offer an introductory treatment during a seven-week course. Nonetheless, motivated students should get enough experience from this course to learn how to think like a Bayesian, understand the basics of Bayesian machinery, fit simple models using Bayesian inference, evaluate model quality, and make predictions.
 
-During the course we will make extensive use of simulations, the R language, Stan, and the `rstanarm` package.
+During the course, we will use simulations, the R language, Stan, and the `rstanarm` package.
 
 ## Times, Location, and Office Hours
 
-In-person weekly lectures will be held every Monday from 5 -- 8 PM in Room XYZ beginning on March 21 and ending on May 15. Office hours will be held over Zoom on Tuesdays from 5 -- 6 PM.
+In-person weekly lectures will be held every Monday from 5 -- 8 PM in Room XYZ beginning on March 21 and ending on May 15. Office hours will be held before the class or by appointment.
 
 ## Course prerequisites
 
-Students should be familiar with the R language, as we will not have time to provide the introduction to R. Ideally, students will be comfortable with probability and basic differential and integral calculus and have taken a basic regression course. Students don't have to be familiar with Stan, or `rstanarm`, and no prior knowledge of Bayes is expected.
+Students should be familiar with the R language, as we will not have time to provide an introduction to R. Ideally, students will be comfortable with probability and basic differential and integral calculus and have taken a basic regression course. Students don't have to be familiar with Stan or `rstanarm`, and no prior knowledge of Bayes is expected.
 
 ## Course materials
 
-The core text for the course will be "Bayed Rules!" @johnson2022 which is available for free [online](https://www.bayesrulesbook.com/) and as a paper copy from [CRC Press](https://www.routledge.com/Bayes-Rules-An-Introduction-to-Applied-Bayesian-Modeling/Johnson-Ott-Dogucu/p/book/9780367255398).
+The core text for the course will be "Bayes Rules!" @johnson2022 which is available for free [online](https://www.bayesrulesbook.com/) and as a paper copy from [CRC Press](https://www.routledge.com/Bayes-Rules-An-Introduction-to-Applied-Bayesian-Modeling/Johnson-Ott-Dogucu/p/book/9780367255398).
 
-Students are expected to have access to R and RStudio or another R programming environment of their choice. Students should follow the setup instructions from the [Getting set up](https://www.bayesrulesbook.com/preface.html#setup) chapter.
+Students are expected to have access to R and RStudio or another R programming environment. Students should follow the setup instructions from the [Getting set up](https://www.bayesrulesbook.com/preface.html#setup) chapter.
 
 For those who are interested in a more in-depth treatment of the subject, you could do worse than the following choices:
 
@@ -51,7 +51,7 @@ For those who are interested in a more in-depth treatment of the subject, you co
 
 -   [Stan User's Guide](https://mc-stan.org/docs/stan-users-guide/index.html), @standevelopmentteam2022
 
-Aki Vehtari from Aalto Univsity compiled an excellent list of mostly Bayesian texts [here](https://statmodeling.stat.columbia.edu/2018/05/14/aki_books/).
+Aki Vehtari from Aalto University compiled an excellent list of mostly Bayesian texts [here](https://statmodeling.stat.columbia.edu/2018/05/14/aki_books/).
 
 ## Course Outline
 
@@ -59,7 +59,7 @@ The following tentative schedule assumes seven 3-hour sessions during which we p
 
 -   **(1) Bayesian Workflow**
 
-    We will briefly discuss the history of Bayesian inference and introduce the key components of the Bayesian workflow --- from model development, to model testing and decision-making. We will dig into the key components of the so called Bayes' rule.
+    We will briefly discuss the history of Bayesian inference and introduce the key components of the Bayesian workflow --- from model development to model testing and decision-making. We will dig into the key components of Bayes's rule and introduce the Binomial model.
 
     -   Bayes Rules!, Chapters [1](https://www.bayesrulesbook.com/chapter-1.html) and [2](https://www.bayesrulesbook.com/chapter-2.html)
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 1: Introduction
@@ -67,7 +67,7 @@ The following tentative schedule assumes seven 3-hour sessions during which we p
 
 -   **(2) Conjugate models: Beta-Binomial**
 
-    In otder to demonstrate the Bayesian machinery, we will go over a few simple models for which analytical solutions are available. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.
+    To demonstrate the Bayesian machinery, we will go over a few simple models for which analytical solutions are available. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.
 
     -   Bayes Rules!, Chapters [3](https://www.bayesrulesbook.com/chapter-3.html) and [4](https://www.bayesrulesbook.com/chapter-4.html)
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 2: Before fitting a model
@@ -75,17 +75,25 @@ The following tentative schedule assumes seven 3-hour sessions during which we p
 
 -   **(3) Other conjugate models and introduction to posterior sampling**
 
+    To demonstrate the Bayesian machinery, we will go over a few simple models for which analytical solutions are available. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.
+
     -   Bayes Rules!, Chapters [5](https://www.bayesrulesbook.com/chapter-5.html) and [6](https://www.bayesrulesbook.com/chapter-6.html)
+
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 3: Fitting a model
+
     -   Optional meta-track: [Reflections on Breiman's Two Cultures of Statistical Modeling,](http://www.stat.columbia.edu/~gelman/research/published/gelman_breiman.pdf) @gelman2021
 
 -   **(4) MCMC and posterior inference**
+
+    Most interesting models don't have nice analytic posteriors since most integrals do not have closed-form solutions. Fortunately, Markov Chain Monte Carlo (MCMC) algorithms make it possible to sample from target distributions with arbitrary precision (in infinite time). To understand how MCMC works, we will look under the hood of one of the oldest algorithms, the Metropolis-Hastings algorithm (1953, 1970).
 
     -   Bayes Rules!, Chapters [7](https://www.bayesrulesbook.com/chapter-7.html) and [8](https://www.bayesrulesbook.com/chapter-8.html)
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 4: Using constructed data to find and understand problems
     -   Optional meta-track: TBD
 
--   **(5) Baysian linear regression and model evaluation**
+-   **(5) Bayesian linear regression and model evaluation**
+
+    Modern MCMC algorithms, such as Hamiltonian Monte Carlo (@homan2014), allow up to efficiently sample from complicated posteriors. The Stan language implements this method, and we will use it for the remainder of the course to draw samples from posterior distributions. In this lecture, we will introduce a basic model in the San language, and then build a linear regression model in the `rstanarm` package, which exposes many Stan models via a familiar R language formula interface. We will also discuss how to evaluate the quality of the inferences and the quality of the model.
 
     -   Bayes Rules!, Chapters [9](https://www.bayesrulesbook.com/chapter-9.html) and [10](https://www.bayesrulesbook.com/chapter-10.html)
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 6: Evaluating and using a fitted model
@@ -93,13 +101,15 @@ The following tentative schedule assumes seven 3-hour sessions during which we p
 
 -   **(6) Expanding the linear model and modeling counts**
 
+    We will discuss linear model expansion and compare model performance using leave-one-out cross-validation (LOO). We will also introduce models for analyzing count data, such as Poisson and Negative Binomial.
+
     -   Bayes Rules!, Chapters [11](https://www.bayesrulesbook.com/chapter-11.html) and [12](https://www.bayesrulesbook.com/chapter-12.html)
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 7: Modifying a model
     -   Optional meta-track: TBD
 
 -   **(7) Logistic regression and introduction to hierarchical models**
 
-    Hierchical and multi-level models are workhorses of Bayesian analysis.
+    In the final lecture, we will discuss logistic regression and introduce hierarchical models -- the workhorse of Bayesian analysis. We will fit and evaluate hierarchical logistic regression and compare the results to complete pooling and no-pooling estimates.
 
     -   Bayes Rules!, Chapters [13](https://www.bayesrulesbook.com/chapter-13.html) and [15](https://www.bayesrulesbook.com/chapter-15.html)
     -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 5: Addressing computational problems
@@ -107,7 +117,7 @@ The following tentative schedule assumes seven 3-hour sessions during which we p
 
 ## Grading
 
-There will be six homework assignments, each worth 10% and an analysis project which can be completed in groups of up to three people. All assignments must be completed in [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html), [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html), or similar systems suitable for scientific publication.
+There will be six homework assignments, each worth 10%, and an analysis project which can be completed in groups of up to three people. All assignments must be completed in [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html), [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html), or similar systems suitable for scientific publication.
 
 -   Homework: 60%
 -   Analysis project: 30%
@@ -115,7 +125,7 @@ There will be six homework assignments, each worth 10% and an analysis project w
 
 ## Other Resources
 
-Following resources may be helpful to those who need a refresher in the prerequisites:
+The following resources may be helpful to those who need a refresher on the prerequisites.
 
 -   [R for Data Science](https://r4ds.had.co.nz), @wickham2016
 
@@ -130,3 +140,4 @@ Following resources may be helpful to those who need a refresher in the prerequi
 -   [Introduction to Probability Cheatsheet v2](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf), Chen (2015)
 
 ## References
+

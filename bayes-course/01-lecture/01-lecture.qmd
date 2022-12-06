@@ -1,6 +1,6 @@
 ---
-title: "Bayesian Workflow"
-subtitle: "Applied Statistics for Social Science Research"
+title: "Bayesian Data Analysis"
+subtitle: "NYU Applied Statistics for Social Science Research"
 author: "Eric Novik | Spring 2023 | Lecture 1"
 format:
   revealjs: 
@@ -15,24 +15,46 @@ editor: source
 always_allow_html: true
 ---
 
-## Lecture 1
+## Lecture 1: Bayesian Workflow
 
 ::: incremental
+-   Overview of the Course
 -   Statistics vs AI/ML
 -   Brief history of Bayesian inference
+-   Review of basic probability
 -   Introduction to Bayesian workflow
--   Deconstructing the Bayes rule
+-   Bayes's rule for events
+-   Bayes's rule for Random Variables
+-   Binomial model and the Bayesian Crank
 :::
 
 ```{r}
 library(ggplot2)
+library(dplyr)
+library(janitor)
 thm <-
   theme_minimal() + theme(
     panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
     plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
   )
 theme_set(thm)
+
+library(ggplot2)
+library(MASS)
+library(magrittr)
 ```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathcal{L}}
+$$
+
+## Overview of the class
+-   [Syllabus](https://ericnovik.github.io/bayes-course/syllabus.pdf)
+
+![](images/road.jpg){fig-align="center" width="672"}
 
 ## Statistics vs AI/ML {.smaller}
 
@@ -41,16 +63,17 @@ theme_set(thm)
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
--   AI is great for automating tasks that humans find easy
-    -   Driving a car
+-   AI is great for **automating tasks** that humans find *easy*
     -   Recognizing faces, cats, and other objects
     -   Identifying tumors on a radiology scan
+    -   Playing Chess and Go
+    -   Driving a car
 :::
 :::
 
 ::: {.column width="50%"}
 ::: incremental
--   Statistics is great at answering questions that humans find hard
+-   Statistics is great at **answering questions** that humans find hard
     -   How fast does a drug clear from the body?
     -   What is the expected tumor size in 2 months after treatment?
     -   How would patients respond under a different treatment?
@@ -59,11 +82,19 @@ theme_set(thm)
 :::
 :::
 
-## Brief History
+## Brief History {.smaller}
+
+[Summary](https://www.lesswrong.com/posts/RTt59BtFLqQbsSiqd/a-history-of-bayes-theorem) of the book [The Theory That Would Not Die](https://www.amazon.com/Theory-That-Would-Not-Die/dp/0300169698/)
+
 ::: columns
 ::: {.column width="50%"}
-- Thomas Bayes (1702 --- 1761) was an English clergyman
-- Published posthusmosly by Richard Price
+::: incremental
+-   Thomas Bayes (1702(?) --- 1761), an English clergyman, is credited with the invention of the "Bayes's Rule"
+-   His paper was published posthumosly by Richard Price in 1763
+-   Laplace (1749 --- 1827) independanty discovered the rule and published it in 1774
+-   Newton's Pricipia was published in 1687
+-   Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, political forecasting, ...
+:::
 :::
 
 ::: {.column width="50%"}
@@ -71,10 +102,188 @@ theme_set(thm)
 :::
 :::
 
+::: notes
+Stephen Stigler gives 3:1 in favor of Nicholas Saunderson for the discovery of Bayes's \[sic\] rule.
+:::
 
-## Statistical Models and Inferences
+## Laplace's Demon {.smaller}
 
--   A model is our description of the small world that generablly contains:
-    -   A model for the conditional mean like $X\beta$ or a differential equation describing a dynamical system
-    -   A likelihood term that contains the mean, nois
-    -   A prior model for the unkowns
+::: columns
+::: {.column width="50%"}
+> We may regard the present state of the universe as the effect of its past and the cause of its future. An intellect which at any given moment knew all of the forces that animate nature and the mutual positions of the beings that compose it, if this intellect were vast enough to submit the data to analysis, could condense into a single formula the movement of the greatest bodies of the universe and that of the lightest atom; for such an intellect **nothing could be uncertain**, and the future just like the past would be present before its eyes.
+:::
+
+::: {.column width="50%"}
+![](images/laplace.jpeg){fig-align="center"}
+
+Marquis Pierre Simon de Laplace (1729 --- 1827)
+
+"Uncertainty is a function of our ignorance, not a property of the world."
+:::
+:::
+
+## Notation {.smaller}
+
+::: incremental
+-   $\theta$: unknowns or parameters to be estimated, could be multivariate, discrete, and conitnous (your book uses $\pi$)
+-   $y$: observations or measurements to be modelled
+-   $x$: covariates
+-   $\P(A \mid B)$: probability of an event $A$ given an event $B$
+-   $\P(AB) = \P(A \cap B)$: joint probability of $A$ and $B$
+-   $f(y \mid \theta)$: an observational model, PDF, PMF when it is a function of $y$ (in your book: $f(y \mid \pi)$)
+-   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$ (in your book: $\L(\pi \mid y)$)
+-   Some people write $\L(\theta; y)$ to emphasize that $\L$ is not an object of type P[DM]F
+:::
+
+## Review of Probability
+::: incremental
+- $A$ and $B$ are independent if observing $B$ does not give you any more information about $A$: $\P(A \mid B) = \P(A)$
+- This argument is symmetric: $\P(B \mid A) = \P(B)$ 
+- Therefore, $\P(AB) = \P(A \mid B) \P(B) = \P(A) \P(B)$ 
+- For arbitrary $A$ and $B$, if $\P(B) > 0$:
+
+$$
+\P(A \mid B) = \frac{\P(AB)}{\P(B)} = \frac{\P(B \mid A) \P(A)}{\P(B)}
+$$
+:::
+
+## Basic Examples
+
+
+## Law of Total Probability (LOTP)
+
+$$
+\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B | A_i) \P(A_i)
+$$ ![](images/LTP.png){fig-align="center" width="500"}
+
+::: footer
+Image Source: [Introduction to Probability](https://projects.iq.harvard.edu/stat110/home) (2019), Blitzstein et al.
+:::
+
+## Bayes's Rule for Events
+
+## Random Variables 
+
+## Joint, Marginal, and Conditional {.smaller}
+- Titanic carried approximately 2,200 passengers and sunk on 15 April 1912
+- Let $G \in \{m, f\}$ represent Gender and $S \in \{n, y\}$ represent Surival
+
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+#| code-line-numbers: "|1|3"
+#| output-location: column
+
+surv <- apply(Titanic, c(2, 4), sum) %>% 
+  as_tibble()
+surv_prop <- round(surv / sum(surv), 3)
+bind_cols(Sex = c("Male", "Female"), 
+          surv_prop) %>% 
+  adorn_totals(c("row", "col")) %>%
+  knitr::kable(caption = 
+               "Titanic survival proportions")
+
+```
+::: incremental
+- $\P(G = m \cap S = y) =$ `r surv_prop[1, 2]`
+- $\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) =$ ??
+- $\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) = 0.323$ 
+:::
+
+## Joint, Marginal, and Conditional {.smaller}
+
+::: columns
+::: {.column width="60%"}
+
+::: incremental
+- What is $\P(G = m \mid S = y)$, probability of being male given survival?
+- To compute that, we only consider the column where $S = \text{Yes}$
+- $\P(G = m \mid S = y) = \frac{\P(G = m \, \cap \, S = y)}{\P(S = y)} = \frac{0.167}{0.323} \approx 0.52$
+- More likely, you are interested in $\P(S = y \mid G = m)$ and comparing it to $\P(S = y \mid G = f)$
+- $\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \approx 0.21$
+- $\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \approx 0.73$
+- How would you calculate $\P(S = n \mid G = m)$ without computing any fractions?
+- $\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)$
+:::
+
+:::
+
+
+
+::: {.column width="40%"}
+```{r}
+#| fig-align: right
+#| echo: false
+bind_cols(Sex = c("Male", "Female"), surv_prop) %>% 
+  adorn_totals(c("row", "col")) %>%
+  knitr::kable(caption = "Titanic survival proportions")
+```
+
+![](images/titanic.jpeg){fig-align="center"}
+"Untergang der Titanic", as conceived by Willy Stöwer, 1912
+:::
+:::
+
+## Disambiguating $p(y \mid \theta)$ {.smaller}
+
+$$
+\text{Binomial} (y \mid N,\theta) = \binom{N}{y}
+\theta^y (1 - \theta)^{N - y}
+$$ 
+
+::: columns 
+::: {.column width="50%"} 
+
+```{r}
+#| echo: true
+N <- 5; y <- 2; theta <- 1/2
+dbinom(x = y, size = N, prob = theta) %>% 
+  fractions()
+
+y <- 0:5
+dbinom(x = y, size = N, prob = theta) %>% 
+  fractions()
+sum(dbinom(x = y, size = N, prob = theta))
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+integrate(dbinom_theta, 
+          lower = 0, upper = 1, 
+          N = N, y = 2)
+```
+
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-width: 3.5
+#| fig-height: 2.5
+#| fig-align: center
+#| echo: true
+y <- 2
+theta <- seq(0, 1, len = 1e3)
+lik <- dbinom_theta(theta, N, y)
+d <- data.frame(theta, lik)
+p <- ggplot(d, aes(theta, lik))
+p + geom_line(linewidth = 0.1) + 
+  geom_point(x = y/N, 
+             y = dbinom_theta(y/N, N, y), 
+             color = 'red')
+```
+:::
+
+:::
+
+
+
+## Bayesian Workflow: a model driven approach {.smaller}
+
+![](images/workflow.png){fig-align="center" width="672"}
+
+::: footer
+Gelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 \[Stat\]. http://arxiv.org/abs/2011.01808
+:::
