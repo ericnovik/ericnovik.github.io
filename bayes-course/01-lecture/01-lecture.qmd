@@ -1,14 +1,15 @@
 ---
-title: "Bayesian Data Analysis"
+title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author: "Eric Novik | Spring 2023 | Lecture 1"
 format:
   revealjs: 
-    theme: [serif, custom]
+    theme: ../custom.scss
     scrollable: true
     slide-number: true
     chalkboard: 
       buttons: false
+      chalk-width: 3
     preview-links: auto
     footer: <https://ericnovik.github.io/bayes-course>
 editor: source
@@ -49,8 +50,8 @@ $$
 \DeclareMathOperator{\P}{\mathbb{P}}
 \DeclareMathOperator{\V}{\mathbb{V}}
 \DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\I}{\text{I}}
 $$
-
 ## Overview of the class
 -   [Syllabus](https://ericnovik.github.io/bayes-course/syllabus.pdf)
 
@@ -89,10 +90,10 @@ $$
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
--   Thomas Bayes (1702(?) --- 1761), an English clergyman, is credited with the invention of the "Bayes's Rule"
+-   Thomas Bayes (1702(?) --- 1761) is credited with the discovery of the "Bayes's Rule"
 -   His paper was published posthumosly by Richard Price in 1763
 -   Laplace (1749 --- 1827) independanty discovered the rule and published it in 1774
--   Newton's Pricipia was published in 1687
+-   Scientific context: Newton's Principia was published in 1687
 -   Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, political forecasting, ...
 :::
 :::
@@ -122,51 +123,165 @@ Marquis Pierre Simon de Laplace (1729 --- 1827)
 :::
 :::
 
-## Notation {.smaller}
+## Review of Probability 
 
 ::: incremental
--   $\theta$: unknowns or parameters to be estimated, could be multivariate, discrete, and conitnous (your book uses $\pi$)
--   $y$: observations or measurements to be modelled
--   $x$: covariates
--   $\P(A \mid B)$: probability of an event $A$ given an event $B$
--   $\P(AB) = \P(A \cap B)$: joint probability of $A$ and $B$
--   $f(y \mid \theta)$: an observational model, PDF, PMF when it is a function of $y$ (in your book: $f(y \mid \pi)$)
--   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$ (in your book: $\L(\pi \mid y)$)
--   Some people write $\L(\theta; y)$ to emphasize that $\L$ is not an object of type P[DM]F
+- A set of all possible outcomes is called a sample space and denoted by $\Omega$
+- An outcome of an experiment is denoted by $\omega \in \Omega$
+- We typically denote events by capital leters, say $A \subseteq \Omega$
+- Axioms of probability:
+   - $\P(A) \geq 0, \, \text{for all } A$
+   - $\P(\Omega) = 1$
+   - If $A_1, A_2, A_3, \ldots$ are disjoint: $\P(\cup_{i=1}^{\infty} A_i) = \sum_{i=1}^{\infty} \P(A_i)$
+
+:::
+
+## Example
+
+::: panel-tabset
+### Rolling dice
+
+::: incremental
+- You roll a fair six-sided die twice
+- Give an example of an $\omega \in \Omega$
+- How many elements are in $\Omega$? What is $\Omega$?
+- Define an event $A$ as the sum of the two rolls less than 11
+- How many elements are in $A$?
+- What is $\P(A)$?
+:::
+
+### Omega
+
+::: columns
+::: {.column width="47%"}
+
+```{r}
+#| echo: true
+
+outer(1:6, 1:6, FUN = "+")
+```
+
+:::
+
+::: {.column width="53%"}
+
+::: incremental
+- $\Omega$ consits of all pairs $\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}$
+- There are 36 such pairs
+- 33 of those pairs result in the sum less than 11
+- Therefore, $\P(A) = \frac{33}{36} = \frac{11}{12}$
+:::
+
+:::
+:::
+
+
+
+:::
+
+## Example Simulation {.smaller}
+
+- We will use R's `sample()` function to simulate rolls of a die, and `replicate()` function to repeat the rolling process many times
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+
+die <- 1:6
+roll <- function(x, n) {
+  sample(x, size = n, replace = TRUE)
+}
+roll(die, 2) # roll the die twice
+rolls <- replicate(1e4, roll(die, 2))
+rolls[, 1:6]
+roll_sums <- colSums(rolls)
+head(roll_sums)
+mean(roll_sums < 11) 
+```
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+- Given a Random Vairable $Y$, $y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N$ are simulations or draws from $Y$
+- Fundamental bridge (Blitzstein & Hwang p. 164): $\P(A) = \E(\I_A)$
+- Computationally: $\P(Y < 11) \approx \frac{1}{N} \sum^{N}_{n=1} \I(y^n < 11)$
+- In R, `roll_sums < 11` creates an indicator variable
+- And `mean()` does the average
+:::
+
+:::
 :::
 
 ## Review of Probability
 ::: incremental
+- For arbitrary $A$ and $B$, if $\P(B) > 0$:
+    - Conditional probability: $\P(A \mid B) = \frac{\P(AB)}{\P(B)}$
 - $A$ and $B$ are independent if observing $B$ does not give you any more information about $A$: $\P(A \mid B) = \P(A)$
 - This argument is symmetric: $\P(B \mid A) = \P(B)$ 
-- Therefore, $\P(AB) = \P(A \mid B) \P(B) = \P(A) \P(B)$ 
-- For arbitrary $A$ and $B$, if $\P(B) > 0$:
-
-$$
-\P(A \mid B) = \frac{\P(AB)}{\P(B)} = \frac{\P(B \mid A) \P(A)}{\P(B)}
-$$
+- Therefore, $\P(AB) = \P(A \mid B) \; \text{and} \; \P(B) = \P(A) \P(B)$ 
+- Bayes's rule: $\P(A \mid B) = \frac{\P(AB)}{\P(B)} = \frac{\P(B \mid A) \P(A)}{\P(B)}$
 :::
 
-## Basic Examples
 
+## Example {.smaller}
 
-## Law of Total Probability (LOTP)
+- Let $A$ be the probability of at least one Head in four flips. Then $A^c$ is the probability of all Tails. Let $B_i$ be the event of Heads on the $i$th trial.
 
+::: columns
+::: {.column width="50%"}
 $$
-\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B | A_i) \P(A_i)
-$$ ![](images/LTP.png){fig-align="center" width="500"}
+\begin{eqnarray}
+\P(A)  = 1 - \P(A^c) & = & \\
+1 - \P(B_1 \cap B_2 \cap B_3 \cap B_4) & = & \\
+1 - \P(B_1) \P(B_2) \P(B_3) \P(B_4) & = & \\
+1 - \left( \frac{1}{2} \right)^4 =  1 - \frac{1}{16} = 0.9375
+\end{eqnarray}
+$$
+
+- How would you check this result by simulation?
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| cache: true
+#| code-line-numbers: "|2|4|5|7|12"
+one_or_more <- function (n) {
+  n_flips <- sample(c(1, 0), size = n, 
+                  replace = TRUE)
+  if (mean(n_flips) >= 1/n) {
+    return(list(TRUE, n_flips))
+  } else {
+    return(list(FALSE, n_flips))
+  }
+}
+
+# flip a coin 4 times
+one_or_more(n = 4)
+
+# peform 4 flips 10,000 times
+y <- replicate(1e4, one_or_more(n = 4)[[1]])
+mean(y)
+```
+
+:::
+:::
+
 
 ::: footer
 Image Source: [Introduction to Probability](https://projects.iq.harvard.edu/stat110/home) (2019), Blitzstein et al.
 :::
 
-## Bayes's Rule for Events
-
 ## Random Variables 
+
 
 ## Joint, Marginal, and Conditional {.smaller}
 - Titanic carried approximately 2,200 passengers and sunk on 15 April 1912
-- Let $G \in \{m, f\}$ represent Gender and $S \in \{n, y\}$ represent Surival
+- Let $G: \{m, f\}$ represent Gender and $S: \{n, y\}$ represent Surival
 
 ```{r}
 #| fig-width: 4.5
@@ -199,17 +314,16 @@ bind_cols(Sex = c("Male", "Female"),
 
 ::: incremental
 - What is $\P(G = m \mid S = y)$, probability of being male given survival?
-- To compute that, we only consider the column where $S = \text{Yes}$
-- $\P(G = m \mid S = y) = \frac{\P(G = m \, \cap \, S = y)}{\P(S = y)} = \frac{0.167}{0.323} \approx 0.52$
-- More likely, you are interested in $\P(S = y \mid G = m)$ and comparing it to $\P(S = y \mid G = f)$
-- $\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \approx 0.21$
-- $\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \approx 0.73$
-- How would you calculate $\P(S = n \mid G = m)$ without computing any fractions?
+- To compute that, we only consider the column <br /> where S = Yes
+- $\P(G = m \mid S = y) = \frac{\P(G = m \, \cap \, S = y)}{\P(S = y)} = \frac{0.167}{0.323} \\ \approx 0.52$
+- You want $\P(S = y \mid G = m)$, comparing it to $\P(S = y \mid G = f)$
+- $\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \\ \approx 0.21$
+- $\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \\ \approx 0.73$
+- How would you calculate $\P(S = n \mid G = m)$?
 - $\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)$
 :::
 
 :::
-
 
 
 ::: {.column width="40%"}
@@ -221,10 +335,100 @@ bind_cols(Sex = c("Male", "Female"), surv_prop) %>%
   knitr::kable(caption = "Titanic survival proportions")
 ```
 
-![](images/titanic.jpeg){fig-align="center"}
+![](images/titanic.jpeg){fig-align="right"}
 "Untergang der Titanic", as conceived by Willy Stöwer, 1912
 :::
 :::
+
+## Law of Total Probability (LOTP)
+
+$$
+\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)
+$$ 
+
+![](images/LTP.png){fig-align="center" width="500"}
+
+
+## Bayes's Rule for Events {.smaller}
+
+::: incremental
+- We can combine the definition of conditional probability with the LOTP to come up with a Bayes's rule for events, assuming $\P(B) \neq 0$
+
+$$
+\P(A \mid B) = \frac{\P(B \cap A)}{\P(B)} = 
+               \frac{\P(B \mid A) \P(A)}{\sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)}
+$$
+
+- We typically think of $A$ is some uknown we wish to learn (e.g., status of a disease) and $B$ as the data we observe (e.g., result of a diagnostic test)
+
+- We call $\P(A)$ prior probability of A (e.g., how prevalent is the disease in the popultion)
+
+- We call $\P(A \mid B)$, the posterior probability of the unknown $A$ given data $B$
+:::
+
+## Example: Medical Testing {.smaller}
+
+> [The authors calculated](https://www.idsociety.org/covid-19-real-time-learning-network/diagnostics/rapid-testing/#:~:text=The%20authors%20calculated%20the%20sensitivity,negative%20predictive%20value%20was%2097.3%25.) the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.
+
+-   Your child tests positive on this test. What is the probability that she has COVID? That is, we want to know $\P(D^+ \mid T^+)$
+-   $\text{Specificity } := \P(T^- \mid D^-) = 0.998$
+-   False positive rate $\text{FP} := 1 - \text{Specificity } = 1 - \P(T^- \mid D^-) = \P(T^+ \mid D^-) = 0.002$
+-   $\text{Sensitivity } := \P(T^+ \mid D^+) = 0.454$
+-   False negative rate $\text{FP} := 1 - \text{Sensitivity } = 1 - \P(T^+ \mid D^+) = \P(T^- \mid D^+) = 0.546$
+-   Prevalence: $\P(D^+) = 0.001$
+
+$$
+\begin{eqnarray}
+\P(D^+ \mid T^+) = \frac{\P(T^+ \mid D^+) \P(D^+)}{\P(T^+)} & = & \\
+\frac{\P(T^+ \mid D^+) \P(D^+)}{\sum_{i=1}^{n}\P(T^+ \mid D^i) \P(D^i) } & = & \\
+\frac{\P(T^+ \mid D^+) \P(D^+)}{\P(T^+ \mid D^+) \P(D^+) + \P(T^+ \mid D^-) \P(D^-)} & = & \\
+\frac{0.454 \cdot 0.001}{0.454 \cdot 0.001 + 0.002 \cdot 0.999} & \approx & 0.18
+\end{eqnarray}
+$$
+
+## Building a Model {.smaller}
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+- Suppose, we enrolled 10 people in an early cancer clinical trial
+- Each person was given an active treatment
+- At the end of the trial, 3 people responded[^1] to the treatment
+- We interested in estimating the probability that the response rate (proportion of people responding) greater than 50%
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+![](images/recist.jpeg){fig-align="center"}
+Image from Fokko Smits, Martijn Dirksen and Ivo Schoots: [RECIST 1.1 - and more](https://radiologyassistant.nl/more/recist-1-1/recist-1-1)
+:::
+:::
+
+[^1]: Partial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement.
+
+## Notation Confusion {.smaller}
+
+::: incremental
+-   $\theta$: unknowns or parameters to be estimated, could be multivariate, discrete, and continuous (your book uses $\pi$)
+-   $y$: observations or measurements to be modelled
+-   $x$: covariates
+-   $f( \theta )$: a prior model, P[DM]F of $\theta$
+-   $f(y \mid \theta)$: an observational model, P[DM]F when it is a function of $y$ (in your book: $f(y \mid \pi)$). $f(y \mid \theta, x)$ with covariates but we generally drop $x$
+-   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$ (in your book: $\L(\pi \mid y)$)
+-   Some people write $\L(\theta; y)$ to emphasize that $\L$ is not an object of type P[DM]F
+:::
+
+## Bayes's Rule for RVs
+
+## Define an model responders
+
+## Compute the posterior
+
+## Estiamte the event probability
+
 
 ## Disambiguating $p(y \mid \theta)$ {.smaller}
 
