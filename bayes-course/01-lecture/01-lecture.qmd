@@ -9,7 +9,7 @@ format:
     slide-number: true
     chalkboard: 
       buttons: false
-      chalk-width: 3
+      chalk-width: 5
     preview-links: auto
     footer: <https://ericnovik.github.io/bayes-course>
 editor: source
@@ -33,6 +33,10 @@ always_allow_html: true
 library(ggplot2)
 library(dplyr)
 library(janitor)
+library(MASS)
+library(gridExtra)
+library(purrr)
+
 thm <-
   theme_minimal() + theme(
     panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
@@ -40,9 +44,28 @@ thm <-
   )
 theme_set(thm)
 
-library(ggplot2)
-library(MASS)
-library(magrittr)
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), size = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+plot_binom_lik <- function(theta, N, y) {
+  lik <- dbinom_theta(theta, N, y)
+  d <- data.frame(theta, lik)
+  p <- ggplot(d, aes(theta, lik))
+  p + geom_line(linewidth = 0.1) + 
+    geom_point(x = y/N, y = 0, color = 'red', size = 0.5) +
+    geom_point(x = y/N, y = dbinom_theta(y/N, N, y), 
+               color = 'blue', alpha = 0.5, size = 0.5) +
+    geom_vline(xintercept = y/N, linewidth = 0.1, linetype = "dashed")
+}
+
 ```
 
 $$
@@ -175,9 +198,14 @@ outer(1:6, 1:6, FUN = "+")
 :::
 :::
 
-
-
 :::
+
+## Random Variables
+- Random variable is not random -- it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment
+- Include a picture of the mapping
+- PMF, PDF, CDF
+- Expectations
+- Conditional expectations E(X | Y)
 
 ## Example Simulation {.smaller}
 
@@ -216,7 +244,7 @@ mean(roll_sums < 11)
 :::
 :::
 
-## Review of Probability
+## Conditional Probability
 ::: incremental
 - For arbitrary $A$ and $B$, if $\P(B) > 0$:
     - Conditional probability: $\P(A \mid B) = \frac{\P(AB)}{\P(B)}$
@@ -226,57 +254,6 @@ mean(roll_sums < 11)
 - Bayes's rule: $\P(A \mid B) = \frac{\P(AB)}{\P(B)} = \frac{\P(B \mid A) \P(A)}{\P(B)}$
 :::
 
-
-## Example {.smaller}
-
-- Let $A$ be the probability of at least one Head in four flips. Then $A^c$ is the probability of all Tails. Let $B_i$ be the event of Heads on the $i$th trial.
-
-::: columns
-::: {.column width="50%"}
-$$
-\begin{eqnarray}
-\P(A)  = 1 - \P(A^c) & = & \\
-1 - \P(B_1 \cap B_2 \cap B_3 \cap B_4) & = & \\
-1 - \P(B_1) \P(B_2) \P(B_3) \P(B_4) & = & \\
-1 - \left( \frac{1}{2} \right)^4 =  1 - \frac{1}{16} = 0.9375
-\end{eqnarray}
-$$
-
-- How would you check this result by simulation?
-:::
-
-::: {.column width="50%"}
-```{r}
-#| echo: true
-#| cache: true
-#| code-line-numbers: "|2|4|5|7|12"
-one_or_more <- function (n) {
-  n_flips <- sample(c(1, 0), size = n, 
-                  replace = TRUE)
-  if (mean(n_flips) >= 1/n) {
-    return(list(TRUE, n_flips))
-  } else {
-    return(list(FALSE, n_flips))
-  }
-}
-
-# flip a coin 4 times
-one_or_more(n = 4)
-
-# peform 4 flips 10,000 times
-y <- replicate(1e4, one_or_more(n = 4)[[1]])
-mean(y)
-```
-
-:::
-:::
-
-
-::: footer
-Image Source: [Introduction to Probability](https://projects.iq.harvard.edu/stat110/home) (2019), Blitzstein et al.
-:::
-
-## Random Variables 
 
 
 ## Joint, Marginal, and Conditional {.smaller}
@@ -291,12 +268,12 @@ Image Source: [Introduction to Probability](https://projects.iq.harvard.edu/stat
 #| code-line-numbers: "|1|3"
 #| output-location: column
 
-surv <- apply(Titanic, c(2, 4), sum) %>% 
+surv <- apply(Titanic, c(2, 4), sum) |> 
   as_tibble()
 surv_prop <- round(surv / sum(surv), 3)
 bind_cols(Sex = c("Male", "Female"), 
-          surv_prop) %>% 
-  adorn_totals(c("row", "col")) %>%
+          surv_prop) |> 
+  adorn_totals(c("row", "col")) |>
   knitr::kable(caption = 
                "Titanic survival proportions")
 
@@ -330,8 +307,8 @@ bind_cols(Sex = c("Male", "Female"),
 ```{r}
 #| fig-align: right
 #| echo: false
-bind_cols(Sex = c("Male", "Female"), surv_prop) %>% 
-  adorn_totals(c("row", "col")) %>%
+bind_cols(Sex = c("Male", "Female"), surv_prop) |> 
+  adorn_totals(c("row", "col")) |>
   knitr::kable(caption = "Titanic survival proportions")
 ```
 
@@ -348,6 +325,9 @@ $$
 
 ![](images/LTP.png){fig-align="center" width="500"}
 
+::: footer
+Image from Blitzstein and Hwang (2019), Page 55
+:::
 
 ## Bayes's Rule for Events {.smaller}
 
@@ -386,16 +366,16 @@ $$
 \end{eqnarray}
 $$
 
-## Building a Model {.smaller}
+## Bayesian Analysis {.smaller}
 
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
-- Suppose, we enrolled 10 people in an early cancer clinical trial
+- Suppose, we enrolled 5 people in an early cancer clinical trial
 - Each person was given an active treatment
-- At the end of the trial, 3 people responded[^1] to the treatment
-- We interested in estimating the probability that the response rate (proportion of people responding) greater than 50%
-
+- From previous trials we have some idea of historical response rates (proportion of people responding)
+- At the end of the trial, $Y = y \in \{0,1,...,5 \}$ people will have responded[^1] to the treatment
+- We interested in estimating the probability that the response rate greater great or equal to 50%
 :::
 
 :::
@@ -413,78 +393,282 @@ Image from Fokko Smits, Martijn Dirksen and Ivo Schoots: [RECIST 1.1 - and more]
 
 ::: incremental
 -   $\theta$: unknowns or parameters to be estimated, could be multivariate, discrete, and continuous (your book uses $\pi$)
--   $y$: observations or measurements to be modelled
+-   $y$: observations or measurements to be modelled ($y_1, y_2, ...$)
+-   $\tilde{y}$: unobserved but observable quantities (in your book $y'$)
 -   $x$: covariates
 -   $f( \theta )$: a prior model, P[DM]F of $\theta$
--   $f(y \mid \theta)$: an observational model, P[DM]F when it is a function of $y$ (in your book: $f(y \mid \pi)$). $f(y \mid \theta, x)$ with covariates but we generally drop $x$
+-   $f(y \mid \theta, x)$: an observational model, P[DM]F when it is a function of $y$ (in your book: $f(y \mid \pi)$); we typically drop the $x$ to simplify the notation.
 -   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$ (in your book: $\L(\pi \mid y)$)
--   Some people write $\L(\theta; y)$ to emphasize that $\L$ is not an object of type P[DM]F
+-   Some people write $\L(\theta; y)$ or simply $\L(\theta)$
 :::
 
-## Bayes's Rule for RVs
+## General Approach {.smaller}
+::: incremental
+- Before observing the data, we need to speficy a prior model $f(\theta)$ on all uknowns $\theta$[^2] 
+- Pick a data model $f_{Y}(Y \mid \Theta = \theta)$ --- this is typically more important than a prior
+- For more complex models, we construct a prior predictive distribution, $f(y)$
+  - We will define this qauntity later --- it will help us assess if our choice of priors make sense on the observational scale: $f(\theta) \rightarrow f(y)$
+- After we observe data $y$, we treat $f_{\Theta}(Y = y \mid \Theta)$ as the likelihood of observing $y$ under all plausible values of $\theta$
+- Derive a posterior model for $\theta$, $\, f_{\Theta}(\Theta \mid Y = y)$ using Bayes's rule
+- Compute all the quantities of interest from the posterior, such as event probabilities e.g. $\P(\theta > 0.5)$, posterior predictive distribution $f(\tilde{Y} \mid Y = y)$, decision functions, etc.
+:::
 
-## Define an model responders
+[^2]: There is alwyas a prior, even in frequentist inference. 
 
-## Compute the posterior
+## Prior Model {.smaller}
+- We will construct a prior model for our clinical trial
+- Looking at the database of completed trials, we find the following historical response rates:
 
-## Estiamte the event probability
+```{r}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+theta <- c(0, 0.25, 0.50, 0.75, 1)
+prior <- c(0.4, 0.3, 0.15, 0.10, 0.05)
+dot_plot(theta, prior) +
+  ggtitle("Prior probability of response rates")
+```
 
+## Data Model {.smaller}
+- We consider each person's response rate to be independent, given the treatment
+- We have fixed number of people in the trial, $N = 5$, and $0$ to $5$ successes
+- We will therefore consider: $Y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(5,\theta)$
+- $f(y \mid \theta) = \text{Bin} (y \mid 5,\theta) = \binom{5}{y} \theta^y (1 - \theta)^{5 - y}$ for $y \in \{0,1,\ldots,5\}$
+- Is this a valid probability distribution, as a function of $y$?
+```{r}
+#| echo: true
+N = 5; y <- 0:N; theta <- 0.5
+(f_y <- dbinom(x = y, size = N, prob = theta) |>
+    fractions())
+sum(dbinom(x = y, size = N, prob = theta))
+```
 
-## Disambiguating $p(y \mid \theta)$ {.smaller}
+```{r}
+#| fig-width: 16
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+theta <- c(0, 0.25, 0.50, 0.75, 1)
+f_y <- map(theta, ~ dbinom(x = y, size = N, prob = .))
+yl <- expression(paste("f(y | ", theta, ")"))
+p <- list()
+for (i in 1:N) {
+  p[[i]] <- dot_plot(y, f_y[[i]]) + xlab(expression(y)) + ylab(yl) +
+    ggtitle(bquote(theta == .(theta[i])))
+}
+grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
+```
 
+## Likelihood Function {.smaller}
+- We ran the trial and observed 3 out of 5 responders
+- We can now construct a likelihood function for $y = 3$ as a function of $\theta$
+- Let's check if this function is a probability distribition:
 $$
-\text{Binomial} (y \mid N,\theta) = \binom{N}{y}
-\theta^y (1 - \theta)^{N - y}
-$$ 
-
-::: columns 
-::: {.column width="50%"} 
+f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
+$$
 
 ```{r}
 #| echo: true
-N <- 5; y <- 2; theta <- 1/2
-dbinom(x = y, size = N, prob = theta) %>% 
-  fractions()
-
-y <- 0:5
-dbinom(x = y, size = N, prob = theta) %>% 
-  fractions()
-sum(dbinom(x = y, size = N, prob = theta))
-
 dbinom_theta <- function(theta, N, y) {
   choose(N, y) * theta^y * (1 - theta)^(N - y) 
 }
-integrate(dbinom_theta, 
-          lower = 0, upper = 1, 
-          N = N, y = 2)
+integrate(dbinom_theta, lower = 0, upper = 1, 
+          N = 5, y = 3)[[1]] |> fractions()
 ```
 
+- $f(y)$ is called marginal distribution of the data or more aptly prior predictive distribution
+- It tells us that prior to observing $y$, all values of $y$ are equaly likely
+
+## Likelihood Function {.smaller}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+N <- 5; y <- 0:N
+p1 <- list()
+# theta <- seq(0, 1, len = 100)
+# for (i in 1:(N + 1)) {
+#   p1[[i]] <- plot_binom_lik(theta, N, y[i]) + xlab(expression(theta)) + ylab("Lik") +
+#     ggtitle(bquote(y == .(y[i])))
+# }
+lik <- map(y, ~ dbinom(x = ., size = N, prob = theta))
+for (i in 1:(N + 1)) {
+  p1[[i]] <- dot_plot(theta, lik[[i]]) + 
+    xlab(expression(theta)) + ylab("Lik") +
+    ggtitle(bquote(y == .(y[i])))
+}
+grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], p1[[6]], nrow = 2)
+```
+- Compare with the data model
+```{r}
+#| fig-width: 8
+#| fig-height: 1.5
+#| fig-align: center
+#| echo: false
+grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
+```
+
+## Continuous Version of Bayes's Rule {.smaller}
+
+## Compute the Posterior {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- First, we compute the likelihood
+   - $\binom{5}{3} \theta^3 (1 - \theta)^{2}$ for $\theta \in \{0, 0.25, 0.50, 0.75, 1\}$
+- Next, we multiply the likelihood by the prior to get the numerator
+  - $f(y = 3 \mid \theta) f(\theta)$
+- Sum the numerator to get the marginal likelihood
+  - $f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.1$
+- Finally, compute the posterior
+  - $f(\theta \mid y = 3) = \frac{f(y = 3 \mid \theta) f(\theta)}{\sum_{\theta} f(y = 3 | \theta) f(\theta)}$
+:::
 
 :::
 
 ::: {.column width="50%"}
 ```{r}
-#| fig-width: 3.5
-#| fig-height: 2.5
-#| fig-align: center
 #| echo: true
-y <- 2
-theta <- seq(0, 1, len = 1e3)
-lik <- dbinom_theta(theta, N, y)
-d <- data.frame(theta, lik)
-p <- ggplot(d, aes(theta, lik))
-p + geom_line(linewidth = 0.1) + 
-  geom_point(x = y/N, 
-             y = dbinom_theta(y/N, N, y), 
-             color = 'red')
+
+N <- 5; y <- 3
+theta <- c(0, 0.25, 0.50, 0.75, 1)
+prior <- c(0.4, 0.3, 0.15, 0.10, 0.05)
+lik <- dbinom(y, N, theta)
+lik_x_prior <-  lik * prior
+constant <- sum(lik_x_prior)
+post <- lik_x_prior / constant
 ```
-:::
+
+<br />
+
+```{r}
+#| echo: false
+library(kableExtra)
+d <- data.frame(theta, prior, lik, lik_x_prior, post)
+d |>
+  adorn_totals("row") |>
+  kbl(booktabs = T, linesep = "", digits = 2) |>
+  kable_paper(full_width = F) |>
+  column_spec(5, color = "white", 
+              background = spec_color(d$post[1:5], end = .6)) |>
+  column_spec(2, color = "white", 
+              background = spec_color(d$prior[1:5], end = .6)) |>
+  column_spec(3, color = "white", 
+              background = spec_color(d$lik[1:5], end = .6)) |>
+  column_spec(4, color = "white", 
+              background = spec_color(d$lik_x_prior[1:5], end = .6)) |>
+  row_spec(6, color = "black", background = "#f0f1eb")
+#d |> knitr::kable(caption = "Summary of posterior analysis")
+```
+
 
 :::
+:::
+
+## Computing Event Probability {.smaller}
+
+::: columns
+::: {.column width="50%"}
+- To compute event probabilities we integrate (or sum) the relevant regions of the parameter space
+
+$$
+\P(\theta \geq 0.5) = \int_{0.5}^{1} f(\theta) \, d\theta
+$$
+
+- In this case, we only have discrete quantities so sum:
+
+```{r}
+#| echo: true
+probs <- d |>
+  filter(theta >= 0.5) |>
+  dplyr::select(prior, post) |>
+  colSums() |>
+  round(2)
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+d |>
+  adorn_totals("row") |>
+  kbl(booktabs = T, linesep = "", digits = 2) |>
+  kable_paper(full_width = F) |>
+  column_spec(5, color = "white", 
+              background = spec_color(d$post[1:5], end = .6)) |>
+  column_spec(2, color = "white", 
+              background = spec_color(d$prior[1:5], end = .6)) |>
+  column_spec(3, color = "white", 
+              background = spec_color(d$lik[1:5], end = .6)) |>
+  column_spec(4, color = "white", 
+              background = spec_color(d$lik_x_prior[1:5], end = .6)) |>
+  row_spec(6, color = "black", background = "#f0f1eb")
+```
+
+<br />
+
+- $\P(\theta \geq 0.50) =$ `r probs[[1]]` and $\P(\theta | y \geq 0.50) =$ `r probs[[2]]`
+
+:::
+:::
 
 
 
-## Bayesian Workflow: a model driven approach {.smaller}
+## What If We Used a Flat Prior? {.smaller}
+
+- Flat prior means that we consider all values of $\theta$ equality likely
+
+```{r}
+#| echo: true
+
+N <- 5; y <- 3
+theta <- c(0, 0.25, 0.50, 0.75, 1)
+prior <- c(0.2, 0.2, 0.2, 0.2, 0.2)
+lik <- dbinom(y, N, theta)
+lik_x_prior <-  lik * prior
+constant <- sum(lik_x_prior)
+post <- lik_x_prior / constant
+```
+
+
+```{r}
+#| echo: false
+library(kableExtra)
+d <- data.frame(theta, prior, lik, lik_x_prior, post)
+d |>
+  adorn_totals("row") |>
+  kbl(booktabs = T, linesep = "", digits = 2) |>
+  kable_paper(full_width = F) |>
+  column_spec(5, color = "white", 
+              background = spec_color(d$post[1:5], end = .6)) |>
+  column_spec(2, color = "white", 
+              background = spec_color(d$prior[1:5], end = .6)) |>
+  column_spec(3, color = "white", 
+              background = spec_color(d$lik[1:5], end = .6)) |>
+  column_spec(4, color = "white", 
+              background = spec_color(d$lik_x_prior[1:5], end = .6)) |>
+  row_spec(6, color = "black", background = "#f0f1eb")
+```
+
+
+```{r}
+#| echo: false
+probs <- d |>
+  filter(theta >= 0.5) |>
+  dplyr::select(prior, post) |>
+  colSums() |>
+  round(2)
+```
+
+- $\P(\theta \geq 0.50) =$ `r probs[[1]]` and $\P(\theta | y \geq 0.50) =$ `r probs[[2]]`
+
+## Bayesian Workflow{.smaller}
 
 ![](images/workflow.png){fig-align="center" width="672"}
 
