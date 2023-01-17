@@ -60,7 +60,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "title": "Bayesian Inference",
     "section": "Example Simulation",
-    "text": "Example Simulation\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 1 5\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    2    6    4    1    5    6\n[2,]    4    4    5    4    4    6\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  6 10  9  5  9 12\n\nmean(roll_sums < 11) \n\n[1] 0.9125\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
+    "text": "Example Simulation\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 5 2\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    4    2    6    4    1    5\n[2,]    5    2    1    5    4    3\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1] 9 4 7 9 5 8\n\nmean(roll_sums < 11) \n\n[1] 0.9153\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
@@ -277,7 +277,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
     "title": "Bayesian Inference",
     "section": "Obtaining Quantiles by Sampling",
-    "text": "Obtaining Quantiles by Sampling\n\nWe can use R’s rbeta() RNG to generate draws from the posterion\n\n\n\ndraws <- rbeta(n = 1e5, 438, 544)\np <- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectaion of the indicator function as before\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", mean(draws < 0.485) |> round(3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.992"
+    "text": "Obtaining Quantiles by Sampling\n\nWe can use R’s rbeta() RNG to generate draws from the posterion\n\n\n\ndraws <- rbeta(n = 1e5, 438, 544)\np <- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectaion of the indicator function as before\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", mean(draws < 0.485) |> round(3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.993"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#population-priors",
@@ -319,7 +319,7 @@
     "href": "bayes-course.html",
     "title": "Bayesian Data Analysis",
     "section": "",
-    "text": "This is the home for APSTA-GE 2123: Statistical Inference (Bayesian) class at NYU.\n\nThis is the current version of the syllbus: syllabus.pdf\nLecture 01: Introduction and Bayesian Workflow"
+    "text": "This is the home for APSTA-GE 2123: Statistical Inference (Bayesian) class at NYU.\n\nThis is the current version of the syllbus: syllabus.pdf\nLecture 01: Introduction and Bayesian Workflow\nLecture 02: Conjugate models and Beta-Binomial"
   },
   {
     "objectID": "index.html",
