@@ -4,6 +4,10 @@ format: revealjs
 editor: visual
 ---
 
+To push to GitHub, do this from the terminal in /Users/eric/repos/ericnovik.github.io directory:
+
+> quarto publish gh-pages
+
 ```{r}
 #| fig-width: 4.5
 #| fig-height: 4.5
@@ -12,14 +16,16 @@ editor: visual
 
 ```
 
--   Overview of the Course
--   Statistics vs AI/ML
--   Brief history of Bayesian inference
--   Review of basic probability
--   Introduction to Bayesian workflow
--   Bayes's rule for events
--   Bayes's rule for Random Variables
--   Binomial model and the Bayesian Crank
+- Beta distribution
+- Great expectations
+- Tuning the prior model for the clinical trial analysis
+- Binomial likelihood with continous $\theta$
+- Deriving the conjugate posterior
+- Analysis of the sex ratio
+- Compromise between priors and data model
+- Coherence of Bayesian inference
+- Subjectivity debate
+
 
 $$
 y = f(x)
@@ -33,19 +39,22 @@ $$
 $$ 
 ===> 
 
-::: columns
-::: {.column width="50%"}
+::: {.incremental}
+- Eat spaghetti
+- Drink wine
 :::
 
-::: {.column width="50%"}
+:::: {.columns}
+
+::: {.column width="40%"}
+Left column
 :::
+
+::: {.column width="60%"}
+Right column
 :::
 
-term
-
-:   one
-
-:   two
+::::
 
 ::: panel-tabset
 ## code
@@ -63,6 +72,34 @@ term
 RStudio \[cheatsheats\](https://www.rstudio.com/resources/cheatsheets/)
 :::
 
+footnote reference[^1]
+
+[^1]: Partial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement.
+
+
 ![](images/int.jpg){fig-align="center" width="672"}
 
 ------------------------------------------------------------------------
+
+_quarto.yml
+
+project:
+  type: website
+
+website:
+  title: "Eric Novik"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - bayes-course.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
+

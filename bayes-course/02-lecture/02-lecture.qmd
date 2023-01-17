@@ -1,0 +1,555 @@
+---
+title: "Bayesian Inference"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author: "Eric Novik | Spring 2023 | Lecture 2"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+---
+
+
+## Conjugate models and Beta-Binomial
+
+::: incremental
+- Beta distribution
+- Great expectations
+- Tuning the prior model for the clinical trial analysis
+- Binomial likelihood with continous $\theta$
+- Deriving the conjugate posterior
+- Analysis of the sex ratio
+- Compromise between priors and data model
+- Coherence of Bayesian inference
+- Subjectivity debate
+:::
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(MASS)
+library(gridExtra)
+library(purrr)
+library(bayesrules)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+plot_binom_lik <- function(N, y, MLE = TRUE) {
+  theta <- seq(0, 1, len = 100)
+  lik <- dbinom_theta(theta, N, y)
+  d <- data.frame(theta, lik)
+  p <- ggplot(d, aes(theta, lik)) + geom_line(linewidth = 0.1) 
+  if (MLE) {
+    p <- p + 
+      geom_point(x = y/N, y = 0, color = 'red', size = 0.5) +
+      geom_point(x = y/N, y = dbinom_theta(y/N, N, y), 
+                 color = 'blue', alpha = 0.5, size = 0.5) +
+      geom_vline(xintercept = y/N, linewidth = 0.1, linetype = "dashed")
+  }
+  return(p)
+}
+
+plot_beta <- function(a, b, MLE = TRUE) {
+  theta <- seq(0, 1, len = 100)
+  lik <- dbeta(theta, a, b)
+  d <- data.frame(theta, lik)
+  p <- ggplot(d, aes(theta, lik)) + geom_line(linewidth = 0.1) 
+  if (MLE) {
+    mode <- (a - 1) / (a + b - 2)
+    p <- p + 
+      geom_point(x = mode, y = 0, color = 'red', size = 0.5) +
+      geom_point(x = mode, y = dbeta(mode, a, b), 
+                 color = 'blue', alpha = 0.5, size = 0.5) +
+      geom_vline(xintercept = mode, linewidth = 0.1, linetype = "dashed")
+  }
+  return(p)
+}
+
+add_bin_vsegment <- function(p, N, y, theta, ...) {
+  p + geom_segment(x = theta, y = 0, xend = theta, 
+                   yend = dbinom(y, N, theta), 
+                   linewidth = 0.1, ...) +
+    geom_point(x = theta, y = 0, color = 'red', size = 0.5, ...)
+}
+
+post_beta_var <- function(a, b, n, y) {
+  (a + y) * (b + n - y) / ((a + b + n)^2 * (a + b + n + 1))
+}
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+$$
+
+## Introduction {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- Last time we presented the discritized version of the prior
+- In practice, we are typically working in continous space
+- In gerenal, the prior model can be arbitrarily complex
+- There is a family of distributions, called exponential family, for which the prior has the same kernel as the posterior
+- This is called conjugacy
+- In practive, we seldom rely on conjugate relationships
+- Beta distribution is conjugate to Binomial
+:::
+
+:::
+
+::: {.column width="50%"}
+
+![](images/fractal.jpg){fig-align="right" width="672"}
+
+:::
+:::
+
+## Continous Probability Distributions {.smaller}
+
+- Recall that for the for continuos RVs we have, the CDF is defined as
+
+$$
+\begin{eqnarray}
+F(x) & = & \int_{-\infty}^{x} f(t) \, dt, \, \text{and} \\
+f(x) & = & F'(x), \, \text{where } F \text{ is differentiable}
+\end{eqnarray}
+$$
+
+- To compute event probabilities:
+
+$$
+\begin{eqnarray}
+\P(a \le X \leq b) & = & F(b) − F(a) = \int_{a}^{b} f(x) \, dx \\
+\P(X \in A) & = & \int_{A} f(x) \, dx
+\end{eqnarray}
+$$
+
+- As in the case of PMFs:
+
+$$
+\begin{eqnarray}
+f(x) \geq 0 \\ 
+\int_{-\infty}^{\infty} f(x) \, dx = 1
+\end{eqnarray}
+$$
+
+
+## Introducing Beta {.smaller}
+
+:::: {.columns}
+
+::: {.column width="60%"}
+- Beta distribution has the following functional form for $\alpha > 0, \, \beta > 0, \, \theta \in (0, 1)$
+
+$$
+\begin{eqnarray}
+\text{Beta}(\theta \mid \alpha,\beta) & = & 
+\frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta^{\alpha - 1} \, (1 -
+\theta)^{\beta - 1} \\
+\text{B}(a,b) \ & = & \ \int_0^1 u^{a - 1} (1 - u)^{b - 1} \,
+du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
+\Gamma(x) & = &
+\int_0^{\infty} u^{x - 1} \exp(-u) \, du
+\end{eqnarray}
+$$
+:::
+
+::: {.column width="40%"}
+![](images/gamma.png){fig-align="right" width="300"}
+:::
+
+::::
+
+- For positive integrers $n$: $\, \Gamma(n+1) = n!$ and in general $\Gamma(z + 1) = z \Gamma(z)$
+- $\text{Beta}(1, 1)$ is equivalent to $\text{Unif(0, 1)}$
+- The above makes Beta a nantural choice for priors on the probability scale
+
+
+## Visualizing Beta {.smaller}
+
+- The mode of Beta, $\text{Mode}(\theta) = \argmax_\theta \text{Beta}(\theta \mid \alpha, \beta)$ is shown in red and the function maximum in blue
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+N <- 6
+a <- c(1, 2, 3, 10, 20, 100)
+b <- c(1, 2, 10, 3, 20, 100)
+p <- list()
+for (i in 1:N) {
+  titl <- paste("α =", a[i], ", β = ", b[i])
+  p[[i]] <- plot_beta(a[i], b[i]) + xlab(expression(theta)) + 
+    ylab(expression(f(theta))) + ggtitle(titl)
+}
+grid.arrange(p[[1]], p[[2]], p[[3]], 
+             p[[4]], p[[5]], p[[6]],
+             nrow = 2)
+```
+
+
+## Expectations {.smaller}
+- Recall, the definition of expectations for continous random variables
+- We often write $\mu$ or $\mu_X$ for expected value of $X$
+
+$$
+\mu_X = \E(X) = \int x \cdot f(x) \, dx
+$$
+
+- Variance is a type of expectation, which we often denote by $\sigma^2$
+
+$$
+\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx 
+$$
+
+- It often more coninient to write the variance as
+
+$$
+\V(X) = \E(X^2) - \mu^2
+$$
+
+## What to expect from Beta {.smaller}
+
+- Keeping in mind that a Gamma function is a continous analog of the factorial:
+
+$$
+\begin{eqnarray}
+\E(\theta) &=& \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
+&=& \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta \\
+&=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot 
+\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)} \\
+&=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
+\frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
+&=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
+\frac{a \Gamma(\alpha)}{(\alpha + \beta) \Gamma(\alpha + \beta)} \\
+&=& \frac{\alpha}{\alpha + \beta}.
+\end{eqnarray}
+$$
+
+::: footer
+Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta$ using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5Ea+*+%281+-+x%29%5E%28b+-+1%29+dx+from+0+to+1)
+:::
+
+
+## What to expect from Beta {.smaller}
+
+- We can find the the mode of this distribution by taking the log, differentiating with respect to $\theta$ and setting the derivative funtion to zero
+
+$$
+\begin{eqnarray}
+\E(\theta) & = & \frac{\alpha}{\alpha + \beta} \\
+\text{Mode}(\theta) & = & \frac{\alpha - 1}{\alpha + \beta - 2} \;\; \text{ when } \; \alpha, \beta > 1. \\
+\end{eqnarray}
+$$
+
+- The variance of $\theta$ can derived using the definition of the variance operator
+
+$$
+\begin{eqnarray}
+\V(\theta) & = & \frac{\alpha \beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}
+\end{eqnarray}
+$$
+
+
+## Example: Placenta Previa {.smaller}
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+::: {.incremental}
+- We borrow an example from BDA3: probability of a girl birth given placenta previa (PP)
+- Placenta previa is condition when the placenta completely or partially covers the opening of the uterus
+- A PP study in Germany found that out of 980 births, 437 or $\approx 45\%$ were female
+- Sex ratio in the population has been extremenly stable over space and time at 48.5% females with diviations within no more than 1%[^1]
+- Our task is to assess the evidence for $\P(\text{ratio} < .485 \mid \text{PP})$
+:::
+
+:::
+
+::: {.column width="40%"}
+![](images/placenta-previa.jpeg){fig-align="right" width="500"}
+
+
+:::
+
+::::
+
+[^1]: Gelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310
+
+## Biomomial Likelihood {.smaller}
+
+- Recall that Likelihood is the function of the paramter $\theta$, assuming $\theta \in [0,1]$
+
+$$
+\text{Bin}(y \mid \theta) = \binom{N}{y}
+\theta^y (1 - \theta)^{N - y} \propto \theta^y (1 - \theta)^{N - y}
+$$
+
+- Assuming $N = 10$, here is the likelihood for $\theta$, given a few possible values of $y$ successes
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+
+N <- 10; y <- round(seq(1, N, len = 6))
+p1 <- list()
+for (i in 1:(N + 1)) {
+  p1[[i]] <- plot_binom_lik(N, y[i]) + 
+    xlab(expression(theta)) + ylab(expression(f(theta))) + 
+    ggtitle(bquote(y == .(y[i])))
+}
+grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], p1[[6]], nrow = 2)
+```
+
+## Deriving the Posterior Distribution {.smaller}
+
+- The denominator is constant in $\theta$; we will derive the posterior up to a proportion
+
+$$
+\begin{eqnarray}
+f(y \mid \theta) & \propto & \theta^y (1 - \theta)^{N - y} \\
+f(\theta) & \propto & \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \\
+f(\theta \mid y) & \propto & f(y \mid \theta) f(\theta) \\
+& = & \theta^y (1 - \theta)^{N - y} \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \\
+& = & \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \\
+f(\theta \mid y) & = & \text{Beta}(\alpha + y, \,\beta + N - y) 
+\end{eqnarray}
+$$
+
+- The last equality comes from matching the kernel $\theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1}$ to the normalized Beta PDF which has a normalizing constant $\frac{\Gamma (\alpha +\beta + N)}{\Gamma (\alpha + y) \Gamma (\beta + N - y)}$
+
+- Since the posterior is in the same family as the prior, we say that Beta is a conjugate to Binomial
+
+::: footer
+Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta$  using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5E%28y+%2B+a+-+1%29+*+%281+-+x%29%5E%28n+%2B+b+-+y+-+1%29+dx+from+0+to+1+)
+:::
+
+## Posterior Expectations {.smaller}
+
+$$
+\begin{eqnarray}
+\E(\theta \mid Y=y)  & = & \frac{\alpha + y}{\alpha + \beta + n} \\
+\V(\theta \mid Y=y)  & = & \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
+\text{Mode}(\theta \mid Y=y) & = & \frac{\alpha + y - 1}{\alpha + \beta + n - 2} 
+\end{eqnarray}
+$$
+
+::: {.incremental}
+- Note tha the posterior expectation is between $y/n$ and $\frac{\alpha}{\alpha + \beta}$
+- Also note that as sample becomes very large $\E(\theta \mid Y=y) \rightarrow \frac{y}{n}$ and $\V(\theta \mid Y=y) \rightarrow 0$
+- As before, $\text{Mode}(\theta \mid Y=y) = \E(\theta \mid Y=y)$, when $\alpha = \beta$
+:::
+
+## Example: Placenta Previa {.smaller}
+::: {.incremental}
+
+- Let's derive the analytical posterior and compare it with the samples from the posterior distribution
+
+- First, we will consider the uniform $\text{Beta}(1, 1)$ prior
+
+- We are told that data are $N = 980$ and $y = 437$ female births
+
+- The posterior is $\text{Beta}(1 + 437, 1 + 980 - 437) = \text{Beta}(438, 544)$
+
+- $\E(\theta \mid Y=437) = \frac{\alpha + 437}{\alpha + \beta + 980} = \frac{438}{982} \approx 0.446$
+
+- $\sqrt{\V(\theta \mid Y=y)} \approx$ `r round(sqrt(post_beta_var(1, 1, 980, 437)), 3)`
+
+```{r}
+#| echo: true
+int <- 0.95; l <- (1 - int)/2; u <- 1 - l
+upper <- qbeta(u, 438, 544) |> round(3)
+lower <- qbeta(l, 438, 544) |> round(3)
+cat("95% posterior interval is [", lower, ", ", upper, "]", sep = "")
+
+event_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 438, shape2 = 544)[[1]]
+cat("Probability that the ratio < 0.485 under uniform prior =", round(event_prob, 3))
+```
+
+:::
+
+## Obtaining Quantiles by Sampling {.smaller}
+
+- We can use R's `rbeta()` RNG to generate draws from the posterion
+
+```{r}
+#| echo: true
+#| fig-width: 3.5
+#| fig-height: 2.2
+#| fig-align: center
+#| output-location: column
+
+draws <- rbeta(n = 1e5, 438, 544)
+p <- ggplot(aes(draws), data = data.frame(draws))
+p + geom_histogram(bins = 30) + ylab("") +
+  geom_vline(xintercept = 0.485, 
+             colour = "red", size = 0.3) +
+  ggtitle("Draws from Beta(438, 544)") + 
+  theme(axis.text.y = element_blank()) + 
+  xlab(expression(theta))
+```
+- We can use the `quantile()` function to get the posterior interval and compute the event probability by evaluating the expectaion of the indicator function as before
+
+```{r}
+#| echo: true
+quantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)
+cat("Probability that the ratio < 0.485 under uniform prior =", mean(draws < 0.485) |> round(3))
+```
+
+## Population Priors {.smaller}
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {.incremental}
+- What priors should we use if we think the sample that is draws from the sex ratio "hyperpopulation"?
+
+- We know that the population mean is 0.485 and the standard deviation is about 0.01
+
+- Back out the parameters of the population Beta distribution
+:::
+
+$$
+\begin{eqnarray}
+\begin{cases}
+\frac{\alpha}{\alpha + \beta} & = & 0.485 \\
+\sqrt{\frac{\alpha \beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}} & = & 0.01 
+\end{cases}
+\end{eqnarray}
+$$
+
+::: {.incremental}
+- $\alpha \approx 1211$ and $\beta \approx 1286$
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.incremental}
+- Check the result with the simulation
+:::
+
+```{r}
+#| echo: true
+x <- rbeta(1e4, 1211, 1286)
+mean(x) |> round(3)
+sd(x) |> round(3)
+```
+
+::: {.incremental}
+- We can let Mathematica do the algebra
+:::
+
+![](images/beta-system.png){fig-align="center" width="500"}
+
+:::
+
+::::
+
+
+## Posterior with Population Priors {.smaller}
+
+::: {.incremental}
+- $f(\theta | y) = \text{Beta}(1211 + 437, 1286 + 543) = \text{Beta}(1648,1829)$
+
+- We can compare the prior and posterior using `summarize_beta_binomial()` in the `bayesrules` package
+
+```{r}
+#| echo: true
+library(bayesrules)
+summarize_beta_binomial(alpha = 1211, beta = 1286, y = 437, n = 980)
+```
+
+```{r}
+#| echo: true
+int <- 0.95; l <- (1 - int)/2; u <- 1 - l
+upper <- qbeta(u, 1648, 1829) |> round(3)
+lower <- qbeta(l, 1648, 1829) |> round(3)
+cat("95% posterior interval is [", lower, ", ", upper, "]", sep = "")
+
+event_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 1648, shape2 = 1829)[[1]]
+cat("Probability that the ratio < 0.485 under population prior =", round(event_prob, 3))
+```
+
+- Under uniform prior 95% posterior interval was [0.415, 0.477]
+- And probability that the ratio < 0.485 under uniform prior = 0.993
+
+:::
+
+## Visualizing Bayesian Rebalancing {.smaller}
+
+- The following uses $\text{Beta}(5, 5)$ prior and N = 10. 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
+
+N <- 10; y <- round(seq(0, 10, len = 9))
+p1 <- list()
+for (i in 1:(N + 1)) {
+  p1[[i]] <- plot_beta_binomial(alpha = 5, beta = 5, y = y[i], n = N) +
+    xlab(expression(theta)) + ylab("") + 
+    ggtitle(bquote(y == .(y[i]))) + guides(fill="none") +
+    theme(axis.text.y = element_blank()) 
+}
+grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], 
+             p1[[6]], p1[[7]], p1[[8]], p1[[9]], 
+             nrow = 3)
+
+```
+
+
+## Example: Same-sex marriage {.smaller}
+- This is Exercise 3.12, p 71 in your book
+
+A 2017 Pew Research survey found that 10.2% of LGBT adults in the U.S. were married to a same-sex spouse. Now it’s the 2020s, and Bayard guesses that $\pi$, the percent of LGBT adults in the U.S. who are married to a same-sex spouse, has most likely increased to about 15% but could reasonably range from 10% to 25%.
+
+- Identify and plot a Beta model that reflects Bayard’s prior ideas about $\pi$
+- Bayard wants to update his prior, so he randomly selects 90 US LGBT adults and 30 of them are married to a same-sex partner. What is the posterior model for $\pi$
+- Calculate the posterior mean, mode, and standard deviation of $\pi$
+- Does the posterior model more closely reflect the prior information or the data? Explain your reasoning.
+
+
+## Bayesian Coherance
+- A few examples of sequential updating
+
+

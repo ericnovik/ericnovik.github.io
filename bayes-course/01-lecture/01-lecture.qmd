@@ -4,14 +4,14 @@ subtitle: "NYU Applied Statistics for Social Science Research"
 author: "Eric Novik | Spring 2023 | Lecture 1"
 format:
   revealjs: 
-    theme: ../custom.scss
+    theme: ../../custom.scss
     scrollable: true
     slide-number: true
     chalkboard: 
       buttons: false
       chalk-width: 5
     preview-links: auto
-    footer: <https://ericnovik.github.io/bayes-course>
+    footer: <https://ericnovik.github.io/bayes-course.html>
 editor: source
 always_allow_html: true
 ---
@@ -25,7 +25,6 @@ always_allow_html: true
 -   Review of basic probability
 -   Introduction to Bayesian workflow
 -   Bayes's rule for events
--   Bayes's rule for Random Variables
 -   Binomial model and the Bayesian Crank
 :::
 
@@ -40,7 +39,8 @@ library(purrr)
 thm <-
   theme_minimal() + theme(
     panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
-    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
   )
 theme_set(thm)
 
@@ -51,19 +51,8 @@ dbinom_theta <- function(theta, N, y) {
 dot_plot <- function(x, y) {
   p <- ggplot(data.frame(x, y), aes(x, y))
   p + geom_point(aes(x = x, y = y), size = 0.5) +
-    geom_segment(aes(x = x, y = 0, xend = x, yend = y), size = 0.2) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
     xlab(expression(theta)) + ylab(expression(f(theta)))
-}
-
-plot_binom_lik <- function(theta, N, y) {
-  lik <- dbinom_theta(theta, N, y)
-  d <- data.frame(theta, lik)
-  p <- ggplot(d, aes(theta, lik))
-  p + geom_line(linewidth = 0.1) + 
-    geom_point(x = y/N, y = 0, color = 'red', size = 0.5) +
-    geom_point(x = y/N, y = dbinom_theta(y/N, N, y), 
-               color = 'blue', alpha = 0.5, size = 0.5) +
-    geom_vline(xintercept = y/N, linewidth = 0.1, linetype = "dashed")
 }
 
 ```
@@ -80,9 +69,9 @@ $$
 
 ![](images/road.jpg){fig-align="center" width="672"}
 
-## Statistics vs AI/ML {.smaller}
+## Statistics vs. AI/ML {.smaller}
 
-⚠️What follows is an oversimplified opinion.
+⚠️ What follows is an oversimplified opinion.
 
 ::: columns
 ::: {.column width="50%"}
@@ -99,7 +88,7 @@ $$
 ::: incremental
 -   Statistics is great at **answering questions** that humans find hard
     -   How fast does a drug clear from the body?
-    -   What is the expected tumor size in 2 months after treatment?
+    -   What is the expected tumor size 2 months after treatment?
     -   How would patients respond under a different treatment?
     -   Should I take this drug?
 :::
@@ -114,8 +103,8 @@ $$
 ::: {.column width="50%"}
 ::: incremental
 -   Thomas Bayes (1702(?) --- 1761) is credited with the discovery of the "Bayes's Rule"
--   His paper was published posthumosly by Richard Price in 1763
--   Laplace (1749 --- 1827) independanty discovered the rule and published it in 1774
+-   His paper was published posthumously by Richard Price in 1763
+-   Laplace (1749 --- 1827) independently discovered the rule and published it in 1774
 -   Scientific context: Newton's Principia was published in 1687
 -   Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, political forecasting, ...
 :::
@@ -151,7 +140,7 @@ Marquis Pierre Simon de Laplace (1729 --- 1827)
 ::: incremental
 - A set of all possible outcomes is called a sample space and denoted by $\Omega$
 - An outcome of an experiment is denoted by $\omega \in \Omega$
-- We typically denote events by capital leters, say $A \subseteq \Omega$
+- We typically denote events by capital letters, say $A \subseteq \Omega$
 - Axioms of probability:
    - $\P(A) \geq 0, \, \text{for all } A$
    - $\P(\Omega) = 1$
@@ -189,9 +178,9 @@ outer(1:6, 1:6, FUN = "+")
 ::: {.column width="53%"}
 
 ::: incremental
-- $\Omega$ consits of all pairs $\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}$
+- $\Omega$ consists of all pairs $\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}$
 - There are 36 such pairs
-- 33 of those pairs result in the sum less than 11
+- 33 of those pairs result in a sum of less than 11
 - Therefore, $\P(A) = \frac{33}{36} = \frac{11}{12}$
 :::
 
@@ -209,7 +198,7 @@ outer(1:6, 1:6, FUN = "+")
 
 ## Example Simulation {.smaller}
 
-- We will use R's `sample()` function to simulate rolls of a die, and `replicate()` function to repeat the rolling process many times
+- We will use R's `sample()` function to simulate rolls of a die and `replicate()` function to repeat the rolling process many times
 
 ::: columns
 ::: {.column width="50%"}
@@ -234,7 +223,7 @@ mean(roll_sums < 11)
 ::: {.column width="50%"}
 
 ::: incremental
-- Given a Random Vairable $Y$, $y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N$ are simulations or draws from $Y$
+- Given a Random Variable $Y$, $y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N$ are simulations or draws from $Y$
 - Fundamental bridge (Blitzstein & Hwang p. 164): $\P(A) = \E(\I_A)$
 - Computationally: $\P(Y < 11) \approx \frac{1}{N} \sum^{N}_{n=1} \I(y^n < 11)$
 - In R, `roll_sums < 11` creates an indicator variable
@@ -257,8 +246,8 @@ mean(roll_sums < 11)
 
 
 ## Joint, Marginal, and Conditional {.smaller}
-- Titanic carried approximately 2,200 passengers and sunk on 15 April 1912
-- Let $G: \{m, f\}$ represent Gender and $S: \{n, y\}$ represent Surival
+- Titanic carried approximately 2,200 passengers and sank on 15 April 1912
+- Let $G: \{m, f\}$ represent Gender and $S: \{n, y\}$ represent Survival
 
 ```{r}
 #| fig-width: 4.5
@@ -339,9 +328,9 @@ $$
                \frac{\P(B \mid A) \P(A)}{\sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)}
 $$
 
-- We typically think of $A$ is some uknown we wish to learn (e.g., status of a disease) and $B$ as the data we observe (e.g., result of a diagnostic test)
+- We typically think of $A$ is some unknown we wish to learn (e.g., the status of a disease) and $B$ as the data we observe (e.g., the result of a diagnostic test)
 
-- We call $\P(A)$ prior probability of A (e.g., how prevalent is the disease in the popultion)
+- We call $\P(A)$ prior probability of A (e.g., how prevalent is the disease in the population)
 
 - We call $\P(A \mid B)$, the posterior probability of the unknown $A$ given data $B$
 :::
@@ -373,9 +362,9 @@ $$
 ::: incremental
 - Suppose, we enrolled 5 people in an early cancer clinical trial
 - Each person was given an active treatment
-- From previous trials we have some idea of historical response rates (proportion of people responding)
+- From previous trials, we have some idea of historical response rates (proportion of people responding)
 - At the end of the trial, $Y = y \in \{0,1,...,5 \}$ people will have responded[^1] to the treatment
-- We interested in estimating the probability that the response rate greater great or equal to 50%
+- We are interested in estimating the probability that the response rate is greater great or equal to 50%
 :::
 
 :::
@@ -383,7 +372,7 @@ $$
 ::: {.column width="50%"}
 
 ![](images/recist.jpeg){fig-align="center"}
-Image from Fokko Smits, Martijn Dirksen and Ivo Schoots: [RECIST 1.1 - and more](https://radiologyassistant.nl/more/recist-1-1/recist-1-1)
+Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: [RECIST 1.1 - and more](https://radiologyassistant.nl/more/recist-1-1/recist-1-1)
 :::
 :::
 
@@ -392,7 +381,7 @@ Image from Fokko Smits, Martijn Dirksen and Ivo Schoots: [RECIST 1.1 - and more]
 ## Notation Confusion {.smaller}
 
 ::: incremental
--   $\theta$: unknowns or parameters to be estimated, could be multivariate, discrete, and continuous (your book uses $\pi$)
+-   $\theta$: unknowns or parameters to be estimated could be multivariate, discrete, and continuous (your book uses $\pi$)
 -   $y$: observations or measurements to be modelled ($y_1, y_2, ...$)
 -   $\tilde{y}$: unobserved but observable quantities (in your book $y'$)
 -   $x$: covariates
@@ -404,38 +393,42 @@ Image from Fokko Smits, Martijn Dirksen and Ivo Schoots: [RECIST 1.1 - and more]
 
 ## General Approach {.smaller}
 ::: incremental
-- Before observing the data, we need to speficy a prior model $f(\theta)$ on all uknowns $\theta$[^2] 
+- Before observing the data, we need to specify a prior model $f(\theta)$ on all unknowns $\theta$[^2] 
 - Pick a data model $f_{Y}(Y \mid \Theta = \theta)$ --- this is typically more important than a prior
 - For more complex models, we construct a prior predictive distribution, $f(y)$
-  - We will define this qauntity later --- it will help us assess if our choice of priors make sense on the observational scale: $f(\theta) \rightarrow f(y)$
+  - We will define this quantity later --- it will help us assess if our choice of priors makes sense on the observational scale: $f(\theta) \rightarrow f(y)$
 - After we observe data $y$, we treat $f_{\Theta}(Y = y \mid \Theta)$ as the likelihood of observing $y$ under all plausible values of $\theta$
 - Derive a posterior model for $\theta$, $\, f_{\Theta}(\Theta \mid Y = y)$ using Bayes's rule
-- Compute all the quantities of interest from the posterior, such as event probabilities e.g. $\P(\theta > 0.5)$, posterior predictive distribution $f(\tilde{Y} \mid Y = y)$, decision functions, etc.
+- Compute all the quantities of interest from the posterior, such as event probabilities, e.g., $\P(\theta > 0.5)$, posterior predictive distribution $f(\tilde{Y} \mid Y = y)$, decision functions, etc.
 :::
 
-[^2]: There is alwyas a prior, even in frequentist inference. 
+[^2]: There is always a prior, even in frequentist inference. 
 
 ## Prior Model {.smaller}
 - We will construct a prior model for our clinical trial
-- Looking at the database of completed trials, we find the following historical response rates:
+- From previous trials, we construct a discretized version of the prior distribution of the resposne rate
+- The most likely value for response rate is 30%
 
 ```{r}
 #| fig-width: 5
 #| fig-height: 4.5
 #| fig-align: center
 #| echo: true
-theta <- c(0, 0.25, 0.50, 0.75, 1)
-prior <- c(0.4, 0.3, 0.15, 0.10, 0.05)
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+prior <- c(0.05, 0.45, 0.30, 0.15, 0.05)
 dot_plot(theta, prior) +
   ggtitle("Prior probability of response rates")
 ```
 
+- Even though $\theta$ is a continuous parameter, we can still specify a discrete prior
+- The posterior will also be discrete and of the same cardinality
+
 ## Data Model {.smaller}
 - We consider each person's response rate to be independent, given the treatment
-- We have fixed number of people in the trial, $N = 5$, and $0$ to $5$ successes
+- We have a fixed number of people in the trial, $N = 5$, and $0$ to $5$ successes
 - We will therefore consider: $Y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(5,\theta)$
 - $f(y \mid \theta) = \text{Bin} (y \mid 5,\theta) = \binom{5}{y} \theta^y (1 - \theta)^{5 - y}$ for $y \in \{0,1,\ldots,5\}$
-- Is this a valid probability distribution, as a function of $y$?
+- Is this a valid probability distribution as a function of $y$?
 ```{r}
 #| echo: true
 N = 5; y <- 0:N; theta <- 0.5
@@ -449,7 +442,7 @@ sum(dbinom(x = y, size = N, prob = theta))
 #| fig-height: 3
 #| fig-align: center
 #| echo: false
-theta <- c(0, 0.25, 0.50, 0.75, 1)
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
 f_y <- map(theta, ~ dbinom(x = y, size = N, prob = .))
 yl <- expression(paste("f(y | ", theta, ")"))
 p <- list()
@@ -463,7 +456,7 @@ grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
 ## Likelihood Function {.smaller}
 - We ran the trial and observed 3 out of 5 responders
 - We can now construct a likelihood function for $y = 3$ as a function of $\theta$
-- Let's check if this function is a probability distribition:
+- Let's check if this function is a probability distribution:
 $$
 f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
 $$
@@ -477,8 +470,8 @@ integrate(dbinom_theta, lower = 0, upper = 1,
           N = 5, y = 3)[[1]] |> fractions()
 ```
 
-- $f(y)$ is called marginal distribution of the data or more aptly prior predictive distribution
-- It tells us that prior to observing $y$, all values of $y$ are equaly likely
+- $f(y)$ is called marginal distribution of the data or, more aptly, prior predictive distribution
+- It tells us that prior to observing $y$, all values of $y$ are equally likely
 
 ## Likelihood Function {.smaller}
 
@@ -489,11 +482,6 @@ integrate(dbinom_theta, lower = 0, upper = 1,
 #| echo: false
 N <- 5; y <- 0:N
 p1 <- list()
-# theta <- seq(0, 1, len = 100)
-# for (i in 1:(N + 1)) {
-#   p1[[i]] <- plot_binom_lik(theta, N, y[i]) + xlab(expression(theta)) + ylab("Lik") +
-#     ggtitle(bquote(y == .(y[i])))
-# }
 lik <- map(y, ~ dbinom(x = ., size = N, prob = theta))
 for (i in 1:(N + 1)) {
   p1[[i]] <- dot_plot(theta, lik[[i]]) + 
@@ -511,8 +499,6 @@ grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], p1[[6]], nrow = 2)
 grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
 ```
 
-## Continuous Version of Bayes's Rule {.smaller}
-
 ## Compute the Posterior {.smaller}
 
 ::: columns
@@ -520,11 +506,11 @@ grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
 
 ::: incremental
 - First, we compute the likelihood
-   - $\binom{5}{3} \theta^3 (1 - \theta)^{2}$ for $\theta \in \{0, 0.25, 0.50, 0.75, 1\}$
-- Next, we multiply the likelihood by the prior to get the numerator
+   - $\binom{5}{3} \theta^3 (1 - \theta)^{2}$ for $\theta \in \{0.10, 0.30, 0.50, 0.70, 0.90\}$
+- Next, we multiply the likelihood by the prior, to get the numerator
   - $f(y = 3 \mid \theta) f(\theta)$
 - Sum the numerator to get the marginal likelihood
-  - $f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.1$
+  - $f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2$
 - Finally, compute the posterior
   - $f(\theta \mid y = 3) = \frac{f(y = 3 \mid \theta) f(\theta)}{\sum_{\theta} f(y = 3 | \theta) f(\theta)}$
 :::
@@ -536,8 +522,8 @@ grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
 #| echo: true
 
 N <- 5; y <- 3
-theta <- c(0, 0.25, 0.50, 0.75, 1)
-prior <- c(0.4, 0.3, 0.15, 0.10, 0.05)
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+prior <- c(0.05, 0.45, 0.30, 0.15, 0.05)
 lik <- dbinom(y, N, theta)
 lik_x_prior <-  lik * prior
 constant <- sum(lik_x_prior)
@@ -574,18 +560,18 @@ d |>
 
 ::: columns
 ::: {.column width="50%"}
-- To compute event probabilities we integrate (or sum) the relevant regions of the parameter space
+- To compute event probabilities, we integrate (or sum) the relevant regions of the parameter space
 
 $$
 \P(\theta \geq 0.5) = \int_{0.5}^{1} f(\theta) \, d\theta
 $$
 
-- In this case, we only have discrete quantities so sum:
+- In this case, we only have discrete quantities, so we sum:
 
 ```{r}
 #| echo: true
 probs <- d |>
-  filter(theta >= 0.5) |>
+  filter(theta >= 0.50) |>
   dplyr::select(prior, post) |>
   colSums() |>
   round(2)
@@ -622,14 +608,14 @@ d |>
 
 ## What If We Used a Flat Prior? {.smaller}
 
-- Flat prior means that we consider all values of $\theta$ equality likely
+- Flat or uniform prior means that we consider all values of $\theta$ equality likely
 
 ```{r}
 #| echo: true
 
 N <- 5; y <- 3
-theta <- c(0, 0.25, 0.50, 0.75, 1)
-prior <- c(0.2, 0.2, 0.2, 0.2, 0.2)
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+prior <- c(0.20, 0.20, 0.20, 0.20, 0.20)
 lik <- dbinom(y, N, theta)
 lik_x_prior <-  lik * prior
 constant <- sum(lik_x_prior)
@@ -675,3 +661,6 @@ probs <- d |>
 ::: footer
 Gelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 \[Stat\]. http://arxiv.org/abs/2011.01808
 :::
+
+
+
