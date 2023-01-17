@@ -416,7 +416,6 @@ Eric Novik | Spring 2023 | Lecture 1
 <li class="fragment">Review of basic probability</li>
 <li class="fragment">Introduction to Bayesian workflow</li>
 <li class="fragment">Bayes’s rule for events</li>
-<li class="fragment">Bayes’s rule for Random Variables</li>
 <li class="fragment">Binomial model and the Bayesian Crank</li>
 </ul>
 </div>
@@ -429,15 +428,21 @@ Eric Novik | Spring 2023 | Lecture 1
 \DeclareMathOperator{\V}{\mathbb{V}}
 \DeclareMathOperator{\L}{\mathcal{L}}
 \DeclareMathOperator{\I}{\text{I}}
-\]</span> ## Overview of the class - <a href="https://ericnovik.github.io/bayes-course/syllabus.pdf">Syllabus</a></p>
+\]</span></p>
+</section>
+<section id="overview-of-the-class" class="slide level2">
+<h2>Overview of the class</h2>
+<ul>
+<li><a href="https://ericnovik.github.io/bayes-course/syllabus.pdf">Syllabus</a></li>
+</ul>
 
 <img data-src="images/road.jpg" width="672" class="r-stretch quarto-figure-center"></section>
-<section id="statistics-vs-aiml" class="slide level2 smaller">
-<h2>Statistics vs AI/ML</h2>
-<p>⚠️What follows is an oversimplified opinion.</p>
+<section id="statistics-vs.-aiml" class="slide level2 smaller">
+<h2>Statistics vs.&nbsp;AI/ML</h2>
+<p>⚠️ What follows is an oversimplified opinion.</p>
+<div>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">AI is great for <strong>automating tasks</strong> that humans find <em>easy</em>
 <ul>
@@ -447,20 +452,21 @@ Eric Novik | Spring 2023 | Lecture 1
 <li class="fragment">Driving a car</li>
 </ul></li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Statistics is great at <strong>answering questions</strong> that humans find hard
 <ul>
 <li class="fragment">How fast does a drug clear from the body?</li>
-<li class="fragment">What is the expected tumor size in 2 months after treatment?</li>
+<li class="fragment">What is the expected tumor size 2 months after treatment?</li>
 <li class="fragment">How would patients respond under a different treatment?</li>
 <li class="fragment">Should I take this drug?</li>
 </ul></li>
 </ul>
 </div>
 </div>
+<ul>
+<li class="fragment">“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman</li>
+</ul>
 </div>
 </section>
 <section id="brief-history" class="slide level2 smaller">
@@ -471,8 +477,8 @@ Eric Novik | Spring 2023 | Lecture 1
 <div>
 <ul>
 <li class="fragment">Thomas Bayes (1702(?) — 1761) is credited with the discovery of the “Bayes’s Rule”</li>
-<li class="fragment">His paper was published posthumosly by Richard Price in 1763</li>
-<li class="fragment">Laplace (1749 — 1827) independanty discovered the rule and published it in 1774</li>
+<li class="fragment">His paper was published posthumously by Richard Price in 1763</li>
+<li class="fragment">Laplace (1749 — 1827) independently discovered the rule and published it in 1774</li>
 <li class="fragment">Scientific context: Newton’s Principia was published in 1687</li>
 <li class="fragment">Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, political forecasting, …</li>
 </ul>
@@ -523,7 +529,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <ul>
 <li class="fragment">A set of all possible outcomes is called a sample space and denoted by <span class="math inline">\(\Omega\)</span></li>
 <li class="fragment">An outcome of an experiment is denoted by <span class="math inline">\(\omega \in \Omega\)</span></li>
-<li class="fragment">We typically denote events by capital leters, say <span class="math inline">\(A \subseteq \Omega\)</span></li>
+<li class="fragment">We typically denote events by capital letters, say <span class="math inline">\(A \subseteq \Omega\)</span></li>
 <li class="fragment">Axioms of probability:
 <ul>
 <li class="fragment"><span class="math inline">\(\P(A) \geq 0, \, \text{for all } A\)</span></li>
@@ -568,9 +574,9 @@ Eric Novik | Spring 2023 | Lecture 1
 </div><div class="column" style="width:53%;">
 <div>
 <ul>
-<li class="fragment"><span class="math inline">\(\Omega\)</span> consits of all pairs <span class="math inline">\(\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}\)</span></li>
+<li class="fragment"><span class="math inline">\(\Omega\)</span> consists of all pairs <span class="math inline">\(\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}\)</span></li>
 <li class="fragment">There are 36 such pairs</li>
-<li class="fragment">33 of those pairs result in the sum less than 11</li>
+<li class="fragment">33 of those pairs result in a sum of less than 11</li>
 <li class="fragment">Therefore, <span class="math inline">\(\P(A) = \frac{33}{36} = \frac{11}{12}\)</span></li>
 </ul>
 </div>
@@ -593,7 +599,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <section id="example-simulation" class="slide level2 smaller">
 <h2>Example Simulation</h2>
 <ul>
-<li>We will use R’s <code>sample()</code> function to simulate rolls of a die, and <code>replicate()</code> function to repeat the rolling process many times</li>
+<li>We will use R’s <code>sample()</code> function to simulate rolls of a die and <code>replicate()</code> function to repeat the rolling process many times</li>
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -604,29 +610,29 @@ Eric Novik | Spring 2023 | Lecture 1
 <span id="cb3-4"><a href="#cb3-4"></a>}</span>
 <span id="cb3-5"><a href="#cb3-5"></a><span class="fu">roll</span>(die, <span class="dv">2</span>) <span class="co"># roll the die twice</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2 6</code></pre>
+<pre><code>[1] 1 5</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>rolls <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e4</span>, <span class="fu">roll</span>(die, <span class="dv">2</span>))</span>
 <span id="cb5-2"><a href="#cb5-2"></a>rolls[, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]    1    1    1    6    2    1
-[2,]    6    1    3    1    4    5</code></pre>
+[1,]    2    6    4    1    5    6
+[2,]    4    4    5    4    4    6</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>roll_sums <span class="ot">&lt;-</span> <span class="fu">colSums</span>(rolls)</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="fu">head</span>(roll_sums)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 7 2 4 7 6 6</code></pre>
+<pre><code>[1]  6 10  9  5  9 12</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">mean</span>(roll_sums <span class="sc">&lt;</span> <span class="dv">11</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9142</code></pre>
+<pre><code>[1] 0.9125</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment">Given a Random Vairable <span class="math inline">\(Y\)</span>, <span class="math inline">\(y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N\)</span> are simulations or draws from <span class="math inline">\(Y\)</span></li>
+<li class="fragment">Given a Random Variable <span class="math inline">\(Y\)</span>, <span class="math inline">\(y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N\)</span> are simulations or draws from <span class="math inline">\(Y\)</span></li>
 <li class="fragment">Fundamental bridge (Blitzstein &amp; Hwang p.&nbsp;164): <span class="math inline">\(\P(A) = \E(\I_A)\)</span></li>
 <li class="fragment">Computationally: <span class="math inline">\(\P(Y &lt; 11) \approx \frac{1}{N} \sum^{N}_{n=1} \I(y^n &lt; 11)\)</span></li>
 <li class="fragment">In R, <code>roll_sums &lt; 11</code> creates an indicator variable</li>
@@ -654,8 +660,8 @@ Eric Novik | Spring 2023 | Lecture 1
 <section id="joint-marginal-and-conditional" class="slide level2 smaller">
 <h2>Joint, Marginal, and Conditional</h2>
 <ul>
-<li>Titanic carried approximately 2,200 passengers and sunk on 15 April 1912</li>
-<li>Let <span class="math inline">\(G: \{m, f\}\)</span> represent Gender and <span class="math inline">\(S: \{n, y\}\)</span> represent Surival</li>
+<li>Titanic carried approximately 2,200 passengers and sank on 15 April 1912</li>
+<li>Let <span class="math inline">\(G: \{m, f\}\)</span> represent Gender and <span class="math inline">\(S: \{n, y\}\)</span> represent Survival</li>
 </ul>
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
@@ -788,8 +794,8 @@ Eric Novik | Spring 2023 | Lecture 1
                \frac{\P(B \mid A) \P(A)}{\sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)}
 \]</span></p>
 <ul>
-<li class="fragment"><p>We typically think of <span class="math inline">\(A\)</span> is some uknown we wish to learn (e.g., status of a disease) and <span class="math inline">\(B\)</span> as the data we observe (e.g., result of a diagnostic test)</p></li>
-<li class="fragment"><p>We call <span class="math inline">\(\P(A)\)</span> prior probability of A (e.g., how prevalent is the disease in the popultion)</p></li>
+<li class="fragment"><p>We typically think of <span class="math inline">\(A\)</span> is some unknown we wish to learn (e.g., the status of a disease) and <span class="math inline">\(B\)</span> as the data we observe (e.g., the result of a diagnostic test)</p></li>
+<li class="fragment"><p>We call <span class="math inline">\(\P(A)\)</span> prior probability of A (e.g., how prevalent is the disease in the population)</p></li>
 <li class="fragment"><p>We call <span class="math inline">\(\P(A \mid B)\)</span>, the posterior probability of the unknown <span class="math inline">\(A\)</span> given data <span class="math inline">\(B\)</span></p></li>
 </ul>
 </div>
@@ -824,13 +830,13 @@ Eric Novik | Spring 2023 | Lecture 1
 <ul>
 <li class="fragment">Suppose, we enrolled 5 people in an early cancer clinical trial</li>
 <li class="fragment">Each person was given an active treatment</li>
-<li class="fragment">From previous trials we have some idea of historical response rates (proportion of people responding)</li>
+<li class="fragment">From previous trials, we have some idea of historical response rates (proportion of people responding)</li>
 <li class="fragment">At the end of the trial, <span class="math inline">\(Y = y \in \{0,1,...,5 \}\)</span> people will have responded<sup>1</sup> to the treatment</li>
-<li class="fragment">We interested in estimating the probability that the response rate greater great or equal to 50%</li>
+<li class="fragment">We are interested in estimating the probability that the response rate is greater great or equal to 50%</li>
 </ul>
 </div>
 </div><div class="column" style="width:50%;">
-<p><img data-src="images/recist.jpeg" data-fig-align="center"> Image from Fokko Smits, Martijn Dirksen and Ivo Schoots: <a href="https://radiologyassistant.nl/more/recist-1-1/recist-1-1">RECIST 1.1 - and more</a></p>
+<p><img data-src="images/recist.jpeg" data-fig-align="center"> Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: <a href="https://radiologyassistant.nl/more/recist-1-1/recist-1-1">RECIST 1.1 - and more</a></p>
 </div>
 </div>
 <aside><ol class="aside-footnotes"><li id="fn1"><p>Partial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement.</p></li></ol></aside></section>
@@ -838,7 +844,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <h2>Notation Confusion</h2>
 <div>
 <ul>
-<li class="fragment"><span class="math inline">\(\theta\)</span>: unknowns or parameters to be estimated, could be multivariate, discrete, and continuous (your book uses <span class="math inline">\(\pi\)</span>)</li>
+<li class="fragment"><span class="math inline">\(\theta\)</span>: unknowns or parameters to be estimated could be multivariate, discrete, and continuous (your book uses <span class="math inline">\(\pi\)</span>)</li>
 <li class="fragment"><span class="math inline">\(y\)</span>: observations or measurements to be modelled (<span class="math inline">\(y_1, y_2, ...\)</span>)</li>
 <li class="fragment"><span class="math inline">\(\tilde{y}\)</span>: unobserved but observable quantities (in your book <span class="math inline">\(y'\)</span>)</li>
 <li class="fragment"><span class="math inline">\(x\)</span>: covariates</li>
@@ -853,40 +859,45 @@ Eric Novik | Spring 2023 | Lecture 1
 <h2>General Approach</h2>
 <div>
 <ul>
-<li class="fragment">Before observing the data, we need to speficy a prior model <span class="math inline">\(f(\theta)\)</span> on all uknowns <span class="math inline">\(\theta\)</span><sup>1</sup></li>
+<li class="fragment">Before observing the data, we need to specify a prior model <span class="math inline">\(f(\theta)\)</span> on all unknowns <span class="math inline">\(\theta\)</span><sup>1</sup></li>
 <li class="fragment">Pick a data model <span class="math inline">\(f_{Y}(Y \mid \Theta = \theta)\)</span> — this is typically more important than a prior</li>
 <li class="fragment">For more complex models, we construct a prior predictive distribution, <span class="math inline">\(f(y)\)</span>
 <ul>
-<li class="fragment">We will define this qauntity later — it will help us assess if our choice of priors make sense on the observational scale: <span class="math inline">\(f(\theta) \rightarrow f(y)\)</span></li>
+<li class="fragment">We will define this quantity later — it will help us assess if our choice of priors makes sense on the observational scale: <span class="math inline">\(f(\theta) \rightarrow f(y)\)</span></li>
 </ul></li>
 <li class="fragment">After we observe data <span class="math inline">\(y\)</span>, we treat <span class="math inline">\(f_{\Theta}(Y = y \mid \Theta)\)</span> as the likelihood of observing <span class="math inline">\(y\)</span> under all plausible values of <span class="math inline">\(\theta\)</span></li>
 <li class="fragment">Derive a posterior model for <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\, f_{\Theta}(\Theta \mid Y = y)\)</span> using Bayes’s rule</li>
-<li class="fragment">Compute all the quantities of interest from the posterior, such as event probabilities e.g.&nbsp;<span class="math inline">\(\P(\theta &gt; 0.5)\)</span>, posterior predictive distribution <span class="math inline">\(f(\tilde{Y} \mid Y = y)\)</span>, decision functions, etc.</li>
+<li class="fragment">Compute all the quantities of interest from the posterior, such as event probabilities, e.g., <span class="math inline">\(\P(\theta &gt; 0.5)\)</span>, posterior predictive distribution <span class="math inline">\(f(\tilde{Y} \mid Y = y)\)</span>, decision functions, etc.</li>
 </ul>
 </div>
-<aside><ol class="aside-footnotes"><li id="fn2"><p>There is alwyas a prior, even in frequentist inference.</p></li></ol></aside></section>
+<aside><ol class="aside-footnotes"><li id="fn2"><p>There is always a prior, even in frequentist inference.</p></li></ol></aside></section>
 <section id="prior-model" class="slide level2 smaller">
 <h2>Prior Model</h2>
 <ul>
 <li>We will construct a prior model for our clinical trial</li>
-<li>Looking at the database of completed trials, we find the following historical response rates:</li>
+<li>From previous trials, we construct a discretized version of the prior distribution of the resposne rate</li>
+<li>The most likely value for response rate is 30%</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="dv">1</span>)</span>
-<span id="cb12-2"><a href="#cb12-2"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.15</span>, <span class="fl">0.10</span>, <span class="fl">0.05</span>)</span>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
 <span id="cb12-3"><a href="#cb12-3"></a><span class="fu">dot_plot</span>(theta, prior) <span class="sc">+</span></span>
 <span id="cb12-4"><a href="#cb12-4"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prior probability of response rates"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" width="480" class="r-stretch quarto-figure-center"></section>
+<img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" width="480" class="r-stretch quarto-figure-center"><ul>
+<li>Even though <span class="math inline">\(\theta\)</span> is a continuous parameter, we can still specify a discrete prior</li>
+<li>The posterior will also be discrete and of the same cardinality</li>
+</ul>
+</section>
 <section id="data-model" class="slide level2 smaller">
 <h2>Data Model</h2>
 <ul>
 <li>We consider each person’s response rate to be independent, given the treatment</li>
-<li>We have fixed number of people in the trial, <span class="math inline">\(N = 5\)</span>, and <span class="math inline">\(0\)</span> to <span class="math inline">\(5\)</span> successes</li>
+<li>We have a fixed number of people in the trial, <span class="math inline">\(N = 5\)</span>, and <span class="math inline">\(0\)</span> to <span class="math inline">\(5\)</span> successes</li>
 <li>We will therefore consider: <span class="math inline">\(Y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(5,\theta)\)</span></li>
 <li><span class="math inline">\(f(y \mid \theta) = \text{Bin} (y \mid 5,\theta) = \binom{5}{y} \theta^y (1 - \theta)^{5 - y}\)</span> for <span class="math inline">\(y \in \{0,1,\ldots,5\}\)</span></li>
-<li>Is this a valid probability distribution, as a function of <span class="math inline">\(y\)</span>?</li>
+<li>Is this a valid probability distribution as a function of <span class="math inline">\(y\)</span>?</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>N <span class="ot">=</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>N; theta <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
@@ -907,7 +918,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <ul>
 <li>We ran the trial and observed 3 out of 5 responders</li>
 <li>We can now construct a likelihood function for <span class="math inline">\(y = 3\)</span> as a function of <span class="math inline">\(\theta\)</span></li>
-<li>Let’s check if this function is a probability distribition: <span class="math display">\[
+<li>Let’s check if this function is a probability distribution: <span class="math display">\[
 f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
 \]</span></li>
 </ul>
@@ -922,8 +933,8 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 </div>
 <ul>
-<li><span class="math inline">\(f(y)\)</span> is called marginal distribution of the data or more aptly prior predictive distribution</li>
-<li>It tells us that prior to observing <span class="math inline">\(y\)</span>, all values of <span class="math inline">\(y\)</span> are equaly likely</li>
+<li><span class="math inline">\(f(y)\)</span> is called marginal distribution of the data or, more aptly, prior predictive distribution</li>
+<li>It tells us that prior to observing <span class="math inline">\(y\)</span>, all values of <span class="math inline">\(y\)</span> are equally likely</li>
 </ul>
 </section>
 <section id="likelihood-function-1" class="slide level2 smaller">
@@ -950,9 +961,6 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 </div>
 </section>
-<section id="continuous-version-of-bayess-rule" class="slide level2 smaller">
-<h2>Continuous Version of Bayes’s Rule</h2>
-</section>
 <section id="compute-the-posterior" class="slide level2 smaller">
 <h2>Compute the Posterior</h2>
 <div class="columns">
@@ -961,15 +969,15 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <ul>
 <li class="fragment">First, we compute the likelihood
 <ul>
-<li class="fragment"><span class="math inline">\(\binom{5}{3} \theta^3 (1 - \theta)^{2}\)</span> for <span class="math inline">\(\theta \in \{0, 0.25, 0.50, 0.75, 1\}\)</span></li>
+<li class="fragment"><span class="math inline">\(\binom{5}{3} \theta^3 (1 - \theta)^{2}\)</span> for <span class="math inline">\(\theta \in \{0.10, 0.30, 0.50, 0.70, 0.90\}\)</span></li>
 </ul></li>
-<li class="fragment">Next, we multiply the likelihood by the prior to get the numerator
+<li class="fragment">Next, we multiply the likelihood by the prior, to get the numerator
 <ul>
 <li class="fragment"><span class="math inline">\(f(y = 3 \mid \theta) f(\theta)\)</span></li>
 </ul></li>
 <li class="fragment">Sum the numerator to get the marginal likelihood
 <ul>
-<li class="fragment"><span class="math inline">\(f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.1\)</span></li>
+<li class="fragment"><span class="math inline">\(f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2\)</span></li>
 </ul></li>
 <li class="fragment">Finally, compute the posterior
 <ul>
@@ -980,8 +988,8 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div><div class="column" style="width:50%;">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb19-2"><a href="#cb19-2"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="dv">1</span>)</span>
-<span id="cb19-3"><a href="#cb19-3"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.15</span>, <span class="fl">0.10</span>, <span class="fl">0.05</span>)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
 <span id="cb19-4"><a href="#cb19-4"></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
 <span id="cb19-5"><a href="#cb19-5"></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
 <span id="cb19-6"><a href="#cb19-6"></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
@@ -1003,45 +1011,45 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> 0 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.40 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
+   <td style="text-align:left;"> 0.1 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.05 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.01 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 0.25 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(39, 127, 142, 1) !important;"> 0.30 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 58, 131, 1) !important;"> 0.09 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.03 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.26 </td>
+   <td style="text-align:left;"> 0.3 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.45 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(60, 80, 139, 1) !important;"> 0.13 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(44, 115, 142, 1) !important;"> 0.06 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(44, 115, 142, 1) !important;"> 0.29 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 0.5 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 59, 132, 1) !important;"> 0.15 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(44, 113, 142, 1) !important;"> 0.30 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.31 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.05 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.47 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.09 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.46 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 0.75 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(72, 32, 112, 1) !important;"> 0.10 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(32, 146, 140, 1) !important;"> 0.26 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.03 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.26 </td>
+   <td style="text-align:left;"> 0.7 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(70, 52, 128, 1) !important;"> 0.15 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(33, 166, 133, 1) !important;"> 0.31 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(53, 94, 141, 1) !important;"> 0.05 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(53, 94, 141, 1) !important;"> 0.23 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;"> 0.9 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.05 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(71, 45, 123, 1) !important;"> 0.07 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(70, 9, 93, 1) !important;"> 0.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(70, 9, 93, 1) !important;"> 0.02 </td>
   </tr>
   <tr>
    <td style="text-align:left;color: black !important;background-color: #f0f1eb !important;"> Total </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.66 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.10 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.83 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.20 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
   </tr>
 </tbody>
@@ -1057,17 +1065,17 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>To compute event probabilities we integrate (or sum) the relevant regions of the parameter space</li>
+<li>To compute event probabilities, we integrate (or sum) the relevant regions of the parameter space</li>
 </ul>
 <p><span class="math display">\[
 \P(\theta \geq 0.5) = \int_{0.5}^{1} f(\theta) \, d\theta
 \]</span></p>
 <ul>
-<li>In this case, we only have discrete quantities so sum:</li>
+<li>In this case, we only have discrete quantities, so we sum:</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>probs <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">filter</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">filter</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.50</span>) <span class="sc">|&gt;</span></span>
 <span id="cb20-3"><a href="#cb20-3"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(prior, post) <span class="sc">|&gt;</span></span>
 <span id="cb20-4"><a href="#cb20-4"></a>  <span class="fu">colSums</span>() <span class="sc">|&gt;</span></span>
 <span id="cb20-5"><a href="#cb20-5"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1088,45 +1096,45 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> 0 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.40 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
+   <td style="text-align:left;"> 0.1 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.05 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.01 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 0.25 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(39, 127, 142, 1) !important;"> 0.30 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 58, 131, 1) !important;"> 0.09 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.03 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.26 </td>
+   <td style="text-align:left;"> 0.3 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.45 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(60, 80, 139, 1) !important;"> 0.13 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(44, 115, 142, 1) !important;"> 0.06 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(44, 115, 142, 1) !important;"> 0.29 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 0.5 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 59, 132, 1) !important;"> 0.15 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(44, 113, 142, 1) !important;"> 0.30 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.31 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.05 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.47 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.09 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.46 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 0.75 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(72, 32, 112, 1) !important;"> 0.10 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(32, 146, 140, 1) !important;"> 0.26 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.03 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(48, 105, 142, 1) !important;"> 0.26 </td>
+   <td style="text-align:left;"> 0.7 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(70, 52, 128, 1) !important;"> 0.15 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(33, 166, 133, 1) !important;"> 0.31 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(53, 94, 141, 1) !important;"> 0.05 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(53, 94, 141, 1) !important;"> 0.23 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;"> 0.9 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.05 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(71, 45, 123, 1) !important;"> 0.07 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(70, 9, 93, 1) !important;"> 0.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(70, 9, 93, 1) !important;"> 0.02 </td>
   </tr>
   <tr>
    <td style="text-align:left;color: black !important;background-color: #f0f1eb !important;"> Total </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.66 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.10 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.83 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.20 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
   </tr>
 </tbody>
@@ -1136,7 +1144,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 <p><br></p>
 <ul>
-<li><span class="math inline">\(\P(\theta \geq 0.50) =\)</span> 0.3 and <span class="math inline">\(\P(\theta | y \geq 0.50) =\)</span> 0.74</li>
+<li><span class="math inline">\(\P(\theta \geq 0.50) =\)</span> 0.5 and <span class="math inline">\(\P(\theta | y \geq 0.50) =\)</span> 0.71</li>
 </ul>
 </div>
 </div>
@@ -1144,12 +1152,12 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <section id="what-if-we-used-a-flat-prior" class="slide level2 smaller">
 <h2>What If We Used a Flat Prior?</h2>
 <ul>
-<li>Flat prior means that we consider all values of <span class="math inline">\(\theta\)</span> equality likely</li>
+<li>Flat or uniform prior means that we consider all values of <span class="math inline">\(\theta\)</span> equality likely</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb21-2"><a href="#cb21-2"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="dv">1</span>)</span>
-<span id="cb21-3"><a href="#cb21-3"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb21-3"><a href="#cb21-3"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>)</span>
 <span id="cb21-4"><a href="#cb21-4"></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
 <span id="cb21-5"><a href="#cb21-5"></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
 <span id="cb21-6"><a href="#cb21-6"></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
@@ -1170,45 +1178,45 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> 0 </td>
+   <td style="text-align:left;"> 0.1 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(53, 95, 141, 1) !important;"> 0.2 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.01 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.01 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 0.25 </td>
+   <td style="text-align:left;"> 0.3 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(53, 95, 141, 1) !important;"> 0.2 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 58, 131, 1) !important;"> 0.09 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 58, 131, 1) !important;"> 0.02 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 58, 131, 1) !important;"> 0.13 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(60, 80, 139, 1) !important;"> 0.13 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(60, 80, 139, 1) !important;"> 0.03 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(60, 80, 139, 1) !important;"> 0.16 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 0.5 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(53, 95, 141, 1) !important;"> 0.2 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.31 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.06 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.47 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(34, 168, 132, 1) !important;"> 0.37 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 0.75 </td>
+   <td style="text-align:left;"> 0.7 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(53, 95, 141, 1) !important;"> 0.2 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(32, 146, 140, 1) !important;"> 0.26 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(32, 146, 140, 1) !important;"> 0.05 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(32, 146, 140, 1) !important;"> 0.40 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(33, 166, 133, 1) !important;"> 0.31 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(33, 166, 133, 1) !important;"> 0.06 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(33, 166, 133, 1) !important;"> 0.37 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;"> 0.9 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(53, 95, 141, 1) !important;"> 0.2 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;"> 0.00 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(71, 45, 123, 1) !important;"> 0.07 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(71, 45, 123, 1) !important;"> 0.01 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(71, 45, 123, 1) !important;"> 0.09 </td>
   </tr>
   <tr>
    <td style="text-align:left;color: black !important;background-color: #f0f1eb !important;"> Total </td>
    <td style="text-align:right;color: white !important;background-color: rgba(53, 95, 141, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.0 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.66 </td>
-   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.13 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.83 </td>
+   <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 0.17 </td>
    <td style="text-align:right;color: white !important;background-color: rgba(68, 1, 84, 1) !important;color: black !important;background-color: #f0f1eb !important;"> 1.00 </td>
   </tr>
 </tbody>
@@ -1220,7 +1228,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 
 </div>
 <ul>
-<li><span class="math inline">\(\P(\theta \geq 0.50) =\)</span> 0.6 and <span class="math inline">\(\P(\theta | y \geq 0.50) =\)</span> 0.87</li>
+<li><span class="math inline">\(\P(\theta \geq 0.50) =\)</span> 0.6 and <span class="math inline">\(\P(\theta | y \geq 0.50) =\)</span> 0.83</li>
 </ul>
 </section>
 <section id="bayesian-workflow" class="slide level2 smaller">
