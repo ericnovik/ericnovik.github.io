@@ -23,12 +23,11 @@ always_allow_html: true
 - Beta distribution
 - Great expectations
 - Tuning the prior model for the clinical trial analysis
-- Binomial likelihood with continous $\theta$
+- Binomial likelihood with continuous $\theta$
 - Deriving the conjugate posterior
 - Analysis of the sex ratio
 - Compromise between priors and data model
 - Coherence of Bayesian inference
-- Subjectivity debate
 :::
 
 ```{r}
@@ -118,12 +117,12 @@ $$
 ::: {.column width="50%"}
 
 ::: incremental
-- Last time we presented the discritized version of the prior
-- In practice, we are typically working in continous space
-- In gerenal, the prior model can be arbitrarily complex
-- There is a family of distributions, called exponential family, for which the prior has the same kernel as the posterior
+- Last time, we presented the discretized version of the prior
+- In practice, we are typically working in continuous space
+- In general, the prior model can be arbitrarily complex
+- There is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior
 - This is called conjugacy
-- In practive, we seldom rely on conjugate relationships
+- In practice, we seldom rely on conjugate relationships
 - Beta distribution is conjugate to Binomial
 :::
 
@@ -138,7 +137,7 @@ $$
 
 ## Continous Probability Distributions {.smaller}
 
-- Recall that for the for continuos RVs we have, the CDF is defined as
+- Recall that for the continuous RVs we have, the CDF is defined as
 
 $$
 \begin{eqnarray}
@@ -194,7 +193,7 @@ $$
 
 - For positive integrers $n$: $\, \Gamma(n+1) = n!$ and in general $\Gamma(z + 1) = z \Gamma(z)$
 - $\text{Beta}(1, 1)$ is equivalent to $\text{Unif(0, 1)}$
-- The above makes Beta a nantural choice for priors on the probability scale
+- The above makes Beta a natural choice for priors on the probability scale
 
 
 ## Visualizing Beta {.smaller}
@@ -222,7 +221,7 @@ grid.arrange(p[[1]], p[[2]], p[[3]],
 
 
 ## Expectations {.smaller}
-- Recall, the definition of expectations for continous random variables
+- Recall the definition of expectations for continuous random variables
 - We often write $\mu$ or $\mu_X$ for expected value of $X$
 
 $$
@@ -235,7 +234,7 @@ $$
 \sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx 
 $$
 
-- It often more coninient to write the variance as
+- It is often more convenient to write the variance as
 
 $$
 \V(X) = \E(X^2) - \mu^2
@@ -243,14 +242,14 @@ $$
 
 ## What to expect from Beta {.smaller}
 
-- Keeping in mind that a Gamma function is a continous analog of the factorial:
+- Keeping in mind that a Gamma function is a continuous analog of the factorial:
 
 $$
 \begin{eqnarray}
 \E(\theta) &=& \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
-&=& \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta \\
+&=& \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, d\theta \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot 
-\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)} \\
+ \color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)}} \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
 \frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
@@ -266,7 +265,7 @@ Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \
 
 ## What to expect from Beta {.smaller}
 
-- We can find the the mode of this distribution by taking the log, differentiating with respect to $\theta$ and setting the derivative funtion to zero
+- We can find the mode of this distribution by taking the log, differentiating with respect to $\theta$, and setting the derivative function to zero
 
 $$
 \begin{eqnarray}
@@ -275,7 +274,7 @@ $$
 \end{eqnarray}
 $$
 
-- The variance of $\theta$ can derived using the definition of the variance operator
+- The variance of $\theta$ can be derived using the definition of the variance operator
 
 $$
 \begin{eqnarray}
@@ -292,9 +291,9 @@ $$
 
 ::: {.incremental}
 - We borrow an example from BDA3: probability of a girl birth given placenta previa (PP)
-- Placenta previa is condition when the placenta completely or partially covers the opening of the uterus
+- Placenta previa is a condition when the placenta completely or partially covers the opening of the uterus
 - A PP study in Germany found that out of 980 births, 437 or $\approx 45\%$ were female
-- Sex ratio in the population has been extremenly stable over space and time at 48.5% females with diviations within no more than 1%[^1]
+- Sex ratio in the population has been extremely stable over space and time at 48.5% females with deviations within no more than 1%[^1]
 - Our task is to assess the evidence for $\P(\text{ratio} < .485 \mid \text{PP})$
 :::
 
@@ -364,9 +363,9 @@ Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N
 
 $$
 \begin{eqnarray}
-\E(\theta \mid Y=y)  & = & \frac{\alpha + y}{\alpha + \beta + n} \\
+\E(\theta \mid Y=y)  & = & \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
 \V(\theta \mid Y=y)  & = & \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
-\text{Mode}(\theta \mid Y=y) & = & \frac{\alpha + y - 1}{\alpha + \beta + n - 2} 
+\text{Mode}(\theta \mid Y=y) & = & \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
 \end{eqnarray}
 $$
 
@@ -424,7 +423,7 @@ p + geom_histogram(bins = 30) + ylab("") +
   theme(axis.text.y = element_blank()) + 
   xlab(expression(theta))
 ```
-- We can use the `quantile()` function to get the posterior interval and compute the event probability by evaluating the expectaion of the indicator function as before
+- We can use the `quantile()` function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before
 
 ```{r}
 #| echo: true
@@ -438,7 +437,7 @@ cat("Probability that the ratio < 0.485 under uniform prior =", mean(draws < 0.4
 ::: {.column width="50%"}
 
 ::: {.incremental}
-- What priors should we use if we think the sample that is draws from the sex ratio "hyperpopulation"?
+- What priors should we use if we think the sample is drawn from the sex ratio "hyper-population"?
 
 - We know that the population mean is 0.485 and the standard deviation is about 0.01
 
@@ -549,7 +548,21 @@ A 2017 Pew Research survey found that 10.2% of LGBT adults in the U.S. were marr
 - Does the posterior model more closely reflect the prior information or the data? Explain your reasoning.
 
 
-## Bayesian Coherance
-- A few examples of sequential updating
+## Data Order and Batch Invariance {.smaller}
+
+::: {.incremental}
+- In Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)
+- This is a general result, not just for Beta Binomial (see Section 4.5)
+- In practice, when we don't have analytic posteriors, this is not so easy to do
+- Suppose we observe $y = y_1 + y_2$ and $N = N_1 + N_2$ trials all at once
+- Also assume we start with $\text{Beta}(1, 1)$ prior
+- For all at once case, the posterior is in $f(\theta \mid y) = \text{Beta}(\alpha + y, \,\beta + N - y)$ as before
+- Now, suppose we observe $y_1$ successes in $n_1$ trials first
+- The posterior is $f(\theta \mid y_1) = \text{Beta}(\alpha + y_1, \,\beta + N_1 - y_1)$ 
+- We now observe, $y_2$ successes in $n_2$ trials. The posterior is $f(\theta \mid y= y_1 + y_2) = \text{Beta}(\alpha + y_1 + y_2, \,\beta + N_1 - y_1 + N_2 - y_2)\\ = \text{Beta}(\alpha + y, \,\beta + N - y)$ 
+::: 
+
+
+
 
 

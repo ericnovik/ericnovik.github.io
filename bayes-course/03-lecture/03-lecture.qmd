@@ -1,0 +1,108 @@
+---
+title: "Bayesian Inference"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author: "Eric Novik | Spring 2023 | Lecture 3"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+---
+
+
+## Other Conjugate Models and Posterior Sampling
+
+::: incremental
+
+:::
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(MASS)
+library(gridExtra)
+library(purrr)
+library(bayesrules)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+plot_binom_lik <- function(N, y, MLE = TRUE) {
+  theta <- seq(0, 1, len = 100)
+  lik <- dbinom_theta(theta, N, y)
+  d <- data.frame(theta, lik)
+  p <- ggplot(d, aes(theta, lik)) + geom_line(linewidth = 0.1) 
+  if (MLE) {
+    p <- p + 
+      geom_point(x = y/N, y = 0, color = 'red', size = 0.5) +
+      geom_point(x = y/N, y = dbinom_theta(y/N, N, y), 
+                 color = 'blue', alpha = 0.5, size = 0.5) +
+      geom_vline(xintercept = y/N, linewidth = 0.1, linetype = "dashed")
+  }
+  return(p)
+}
+
+plot_beta <- function(a, b, MLE = TRUE) {
+  theta <- seq(0, 1, len = 100)
+  lik <- dbeta(theta, a, b)
+  d <- data.frame(theta, lik)
+  p <- ggplot(d, aes(theta, lik)) + geom_line(linewidth = 0.1) 
+  if (MLE) {
+    mode <- (a - 1) / (a + b - 2)
+    p <- p + 
+      geom_point(x = mode, y = 0, color = 'red', size = 0.5) +
+      geom_point(x = mode, y = dbeta(mode, a, b), 
+                 color = 'blue', alpha = 0.5, size = 0.5) +
+      geom_vline(xintercept = mode, linewidth = 0.1, linetype = "dashed")
+  }
+  return(p)
+}
+
+add_bin_vsegment <- function(p, N, y, theta, ...) {
+  p + geom_segment(x = theta, y = 0, xend = theta, 
+                   yend = dbinom(y, N, theta), 
+                   linewidth = 0.1, ...) +
+    geom_point(x = theta, y = 0, color = 'red', size = 0.5, ...)
+}
+
+post_beta_var <- function(a, b, n, y) {
+  (a + y) * (b + n - y) / ((a + b + n)^2 * (a + b + n + 1))
+}
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+$$
+
+## Introduction {.smaller}
+
