@@ -410,12 +410,11 @@ Eric Novik | Spring 2023 | Lecture 2
 <li class="fragment">Beta distribution</li>
 <li class="fragment">Great expectations</li>
 <li class="fragment">Tuning the prior model for the clinical trial analysis</li>
-<li class="fragment">Binomial likelihood with continous <span class="math inline">\(\theta\)</span></li>
+<li class="fragment">Binomial likelihood with continuous <span class="math inline">\(\theta\)</span></li>
 <li class="fragment">Deriving the conjugate posterior</li>
 <li class="fragment">Analysis of the sex ratio</li>
 <li class="fragment">Compromise between priors and data model</li>
 <li class="fragment">Coherence of Bayesian inference</li>
-<li class="fragment">Subjectivity debate</li>
 </ul>
 </div>
 <div class="cell">
@@ -437,12 +436,12 @@ Eric Novik | Spring 2023 | Lecture 2
 <div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment">Last time we presented the discritized version of the prior</li>
-<li class="fragment">In practice, we are typically working in continous space</li>
-<li class="fragment">In gerenal, the prior model can be arbitrarily complex</li>
-<li class="fragment">There is a family of distributions, called exponential family, for which the prior has the same kernel as the posterior</li>
+<li class="fragment">Last time, we presented the discretized version of the prior</li>
+<li class="fragment">In practice, we are typically working in continuous space</li>
+<li class="fragment">In general, the prior model can be arbitrarily complex</li>
+<li class="fragment">There is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior</li>
 <li class="fragment">This is called conjugacy</li>
-<li class="fragment">In practive, we seldom rely on conjugate relationships</li>
+<li class="fragment">In practice, we seldom rely on conjugate relationships</li>
 <li class="fragment">Beta distribution is conjugate to Binomial</li>
 </ul>
 </div>
@@ -458,7 +457,7 @@ Eric Novik | Spring 2023 | Lecture 2
 <section id="continous-probability-distributions" class="slide level2 smaller">
 <h2>Continous Probability Distributions</h2>
 <ul>
-<li>Recall that for the for continuos RVs we have, the CDF is defined as</li>
+<li>Recall that for the continuous RVs we have, the CDF is defined as</li>
 </ul>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -514,7 +513,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <ul>
 <li>For positive integrers <span class="math inline">\(n\)</span>: <span class="math inline">\(\, \Gamma(n+1) = n!\)</span> and in general <span class="math inline">\(\Gamma(z + 1) = z \Gamma(z)\)</span></li>
 <li><span class="math inline">\(\text{Beta}(1, 1)\)</span> is equivalent to <span class="math inline">\(\text{Unif(0, 1)}\)</span></li>
-<li>The above makes Beta a nantural choice for priors on the probability scale</li>
+<li>The above makes Beta a natural choice for priors on the probability scale</li>
 </ul>
 </section>
 <section id="visualizing-beta" class="slide level2 smaller">
@@ -527,7 +526,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <section id="expectations" class="slide level2 smaller">
 <h2>Expectations</h2>
 <ul>
-<li>Recall, the definition of expectations for continous random variables</li>
+<li>Recall the definition of expectations for continuous random variables</li>
 <li>We often write <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\mu_X\)</span> for expected value of <span class="math inline">\(X\)</span></li>
 </ul>
 <p><span class="math display">\[
@@ -540,7 +539,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 \sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx
 \]</span></p>
 <ul>
-<li>It often more coninient to write the variance as</li>
+<li>It is often more convenient to write the variance as</li>
 </ul>
 <p><span class="math display">\[
 \V(X) = \E(X^2) - \mu^2
@@ -549,14 +548,14 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <section id="what-to-expect-from-beta" class="slide level2 smaller">
 <h2>What to expect from Beta</h2>
 <ul>
-<li>Keeping in mind that a Gamma function is a continous analog of the factorial:</li>
+<li>Keeping in mind that a Gamma function is a continuous analog of the factorial:</li>
 </ul>
 <p><span class="math display">\[
 \begin{eqnarray}
 \E(\theta) &amp;=&amp; \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
-&amp;=&amp; \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta \\
+&amp;=&amp; \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, d\theta \\
 &amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot
-\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)} \\
+\color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)}} \\
 &amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot
 \frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
 &amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot
@@ -571,7 +570,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <section id="what-to-expect-from-beta-1" class="slide level2 smaller">
 <h2>What to expect from Beta</h2>
 <ul>
-<li>We can find the the mode of this distribution by taking the log, differentiating with respect to <span class="math inline">\(\theta\)</span> and setting the derivative funtion to zero</li>
+<li>We can find the mode of this distribution by taking the log, differentiating with respect to <span class="math inline">\(\theta\)</span>, and setting the derivative function to zero</li>
 </ul>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -580,7 +579,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 \end{eqnarray}
 \]</span></p>
 <ul>
-<li>The variance of <span class="math inline">\(\theta\)</span> can derived using the definition of the variance operator</li>
+<li>The variance of <span class="math inline">\(\theta\)</span> can be derived using the definition of the variance operator</li>
 </ul>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -595,9 +594,9 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <div>
 <ul>
 <li class="fragment">We borrow an example from BDA3: probability of a girl birth given placenta previa (PP)</li>
-<li class="fragment">Placenta previa is condition when the placenta completely or partially covers the opening of the uterus</li>
+<li class="fragment">Placenta previa is a condition when the placenta completely or partially covers the opening of the uterus</li>
 <li class="fragment">A PP study in Germany found that out of 980 births, 437 or <span class="math inline">\(\approx 45\%\)</span> were female</li>
-<li class="fragment">Sex ratio in the population has been extremenly stable over space and time at 48.5% females with diviations within no more than 1%<sup>1</sup></li>
+<li class="fragment">Sex ratio in the population has been extremely stable over space and time at 48.5% females with deviations within no more than 1%<sup>1</sup></li>
 <li class="fragment">Our task is to assess the evidence for <span class="math inline">\(\P(\text{ratio} &lt; .485 \mid \text{PP})\)</span></li>
 </ul>
 </div>
@@ -651,9 +650,9 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <h2>Posterior Expectations</h2>
 <p><span class="math display">\[
 \begin{eqnarray}
-\E(\theta \mid Y=y)  &amp; = &amp; \frac{\alpha + y}{\alpha + \beta + n} \\
+\E(\theta \mid Y=y)  &amp; = &amp; \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
 \V(\theta \mid Y=y)  &amp; = &amp; \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
-\text{Mode}(\theta \mid Y=y) &amp; = &amp; \frac{\alpha + y - 1}{\alpha + \beta + n - 2}
+\text{Mode}(\theta \mid Y=y) &amp; = &amp; \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
 \end{eqnarray}
 \]</span></p>
 <div>
@@ -717,7 +716,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 </div>
 <ul>
-<li>We can use the <code>quantile()</code> function to get the posterior interval and compute the event probability by evaluating the expectaion of the indicator function as before</li>
+<li>We can use the <code>quantile()</code> function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">quantile</span>(draws, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -737,7 +736,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment"><p>What priors should we use if we think the sample that is draws from the sex ratio “hyperpopulation”?</p></li>
+<li class="fragment"><p>What priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?</p></li>
 <li class="fragment"><p>We know that the population mean is 0.485 and the standard deviation is about 0.01</p></li>
 <li class="fragment"><p>Back out the parameters of the population Beta distribution</p></li>
 </ul>
@@ -841,11 +840,21 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <li>Does the posterior model more closely reflect the prior information or the data? Explain your reasoning.</li>
 </ul>
 </section>
-<section id="bayesian-coherance" class="slide level2">
-<h2>Bayesian Coherance</h2>
+<section id="data-order-and-batch-invariance" class="slide level2 smaller">
+<h2>Data Order and Batch Invariance</h2>
+<div>
 <ul>
-<li>A few examples of sequential updating</li>
+<li class="fragment">In Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)</li>
+<li class="fragment">This is a general result, not just for Beta Binomial (see Section 4.5)</li>
+<li class="fragment">In practice, when we don’t have analytic posteriors, this is not so easy to do</li>
+<li class="fragment">Suppose we observe <span class="math inline">\(y = y_1 + y_2\)</span> and <span class="math inline">\(N = N_1 + N_2\)</span> trials all at once</li>
+<li class="fragment">Also assume we start with <span class="math inline">\(\text{Beta}(1, 1)\)</span> prior</li>
+<li class="fragment">For all at once case, the posterior is in <span class="math inline">\(f(\theta \mid y) = \text{Beta}(\alpha + y, \,\beta + N - y)\)</span> as before</li>
+<li class="fragment">Now, suppose we observe <span class="math inline">\(y_1\)</span> successes in <span class="math inline">\(n_1\)</span> trials first</li>
+<li class="fragment">The posterior is <span class="math inline">\(f(\theta \mid y_1) = \text{Beta}(\alpha + y_1, \,\beta + N_1 - y_1)\)</span></li>
+<li class="fragment">We now observe, <span class="math inline">\(y_2\)</span> successes in <span class="math inline">\(n_2\)</span> trials. The posterior is <span class="math inline">\(f(\theta \mid y= y_1 + y_2) = \text{Beta}(\alpha + y_1 + y_2, \,\beta + N_1 - y_1 + N_2 - y_2)\\ = \text{Beta}(\alpha + y, \,\beta + N - y)\)</span></li>
 </ul>
+</div>
 
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
