@@ -60,7 +60,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "title": "Bayesian Inference",
     "section": "Example Simulation",
-    "text": "Example Simulation\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 4 6\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    3    4    6    3    3    6\n[2,]    6    4    5    4    4    5\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  9  8 11  7  7 11\n\nmean(roll_sums < 11) \n\n[1] 0.9156\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
+    "text": "Example Simulation\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 5 2\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    3    3    4    1    6    3\n[2,]    2    4    1    2    4    6\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  5  7  5  3 10  9\n\nmean(roll_sums < 11) \n\n[1] 0.9173\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
@@ -347,6 +347,6 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "Thanks for stopping by. Here is random quote for you. Enjoy.\n\n\n    id\n1 1749\n                                                                                                                                     quote\n1 <p>We ourselves feel that what we are doing is just a drop in the ocean. But the ocean would be less because of that missing drop.</p>\\n\n                                       link        author\n1 https://quotesondesign.com/mother-teresa/ Mother Teresa"
+    "text": "Thanks for stopping by."
   }
 ]
