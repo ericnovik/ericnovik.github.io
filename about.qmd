@@ -7,8 +7,24 @@ format:
     toc: true
 ---
 
-About this site
+Thanks for stopping by. 
 
 ```{r}
-1 + 1
+#| echo: false
+
+library(ggplot2)
+library(distributional)
+library(ggdist)
+
+data.frame(alpha = seq(5, 100, length.out = 20)) |>
+  ggplot(aes(xdist = dist_beta(alpha, 10), color = alpha), size = 0.05) +
+  stat_slab(fill = NA) +
+  coord_cartesian(expand = FALSE) +
+  scale_color_viridis_c() +
+    theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),legend.position="none",
+          panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),plot.background=element_blank())
 ```

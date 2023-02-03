@@ -17,10 +17,16 @@ always_allow_html: true
 ---
 
 
-## Other Conjugate Models and Posterior Sampling
+##    Conjugate Models and Posterior Sampling
 
 ::: incremental
-
+- Gamma-Poisson family
+- Normal-Normal family
+- Introduction to posterion sampling on a grid
+- Introduction to Stan 
+- Basic Markov Chain diagnostics
+- Effective sample size
+- Computing the R-Hat statistic
 :::
 
 ```{r}
@@ -44,16 +50,35 @@ dbinom_theta <- function(theta, N, y) {
   choose(N, y) * theta^y * (1 - theta)^(N - y) 
 }
 
-dot_plot <- function(x, y) {
+dot_plot <- function(x, y, yc = NULL, dodge = 0.2) {
+  x <- as.factor(x)
   p <- ggplot(data.frame(x, y), aes(x, y))
-  p + geom_point(aes(x = x, y = y), size = 0.5) +
-    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+  p <- p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(
+      x = x,
+      y = 0,
+      xend = x,
+      yend = y
+    ), linewidth = 0.2) +
     xlab(expression(theta)) + ylab(expression(f(theta)))
+  
+  if (!is.null(yc)) {
+    xc <- as.numeric(x) + dodge
+    p1 <- p + geom_point(aes(x = xc, y = yc), color = 'red', size = 0.5) +
+      geom_segment(aes(
+        x = xc,
+        y = 0,
+        xend = xc,
+        yend = yc
+      ), color = 'red', linewidth = 0.2)
+    return(p1)
+  }
+  return(p)
 }
 
 plot_binom_lik <- function(N, y, MLE = TRUE) {
   theta <- seq(0, 1, len = 100)
-  lik <- dbinom_theta(theta, N, y)
+  lik <- dbinom(y, N, theta)
   d <- data.frame(theta, lik)
   p <- ggplot(d, aes(theta, lik)) + geom_line(linewidth = 0.1) 
   if (MLE) {
@@ -82,6 +107,22 @@ plot_beta <- function(a, b, MLE = TRUE) {
   return(p)
 }
 
+plot_gamma_pdf <- function(a, b, xlim = c(0, 10), MLE = TRUE) {
+  y <- seq(xlim[1], xlim[2], len = 100)
+  dens <- dgamma(y, shape = a, rate = b)
+  d <- data.frame(y, dens)
+  p <- ggplot(d, aes(y, dens)) + geom_line(linewidth = 0.1) 
+  if (MLE) {
+    mode <- (a - 1) / b
+    p <- p + 
+      geom_point(x = mode, y = 0, color = 'red', size = 0.5) +
+      geom_point(x = mode, y = dgamma(mode, a, b), 
+                 color = 'blue', alpha = 0.5, size = 0.5) +
+      geom_vline(xintercept = mode, linewidth = 0.1, linetype = "dashed") + xlim(c(xlim[1], xlim[2]))
+  }
+  return(p)
+}
+
 add_bin_vsegment <- function(p, N, y, theta, ...) {
   p + geom_segment(x = theta, y = 0, xend = theta, 
                    yend = dbinom(y, N, theta), 
@@ -104,5 +145,676 @@ $$
 \DeclareMathOperator*{\argmin}{arg\,min}
 $$
 
-## Introduction {.smaller}
+## Poisson {.smaller}
+
+::: {.incremental}
+- Poisson distribution arises when we are interested in counts
+- In practive, we almost never use Poisson due to it's restrictive nature
+- Poisson RV $Y$ is paremeterized with a rate of occurance $\lambda$: $Y|\lambda \sim \text{Pois}(\lambda)$  
+
+$$
+f(y \mid \lambda) =  \frac{e^{-\lambda} \lambda^y}{y!}\;\; \text{ for } y \in \{0,1,2,\ldots\}
+$$
+
+- Notice, the Tailor series for $e^\lambda = \sum_{y=0}^{\infty} \frac{\lambda^y}{y!}$ immediately validates that $f$ is a PDF
+
+- Also, $\E(Y | \lambda) = \V(Y | \lambda) = \lambda$, which is the restrictive case mentioned about --- real count data seldom satisfied this constraint
+:::
+
+## Visualizing Poission {.smaller}
+
+- Notice that as the rate increases, so does the expected number of events as well as variance, which immediately followes from $\E(Y) = \V(Y) = \lambda$
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+#| echo: false
+
+N <- 6
+y <- round(seq(1, 15, len = N))
+lambda <- y
+
+p <- list()
+for (i in 1:N) {
+  titl <- paste("λ =", lambda[i])
+  p[[i]] <- dot_plot(y, dpois(y, lambda[i])) + xlab(expression(y)) + 
+    ylab(expression(f(y))) + ggtitle(titl)
+}
+grid.arrange(p[[1]], p[[2]], p[[3]], 
+             p[[4]], p[[5]], p[[6]],
+             nrow = 2)
+```
+
+## Motivating Example {.smaller}
+
+::: incremental
+- Serving in Prussian caverly in 1800s was a perilous affair
+- Aside form the usual dangers of military service, you were at risk for being killed by a hourse kick
+- Data from the book The Law of Small Numbers by [Ladislaus Bortkiewicz](https://en.wikipedia.org/wiki/Ladislaus_Bortkiewicz) (1898)
+- Bortkiewicz was a Russian economist and statistician of Polish ancestry
+:::
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+#| echo: false
+#| cache: true
+
+d <- vroom::vroom("data/horsekicks.csv")
+d <- dplyr::tibble(year = as.integer(d$Year), 
+            count = rowSums(d[, -1]))
+p <- ggplot(aes(year, count), data = d)
+p + geom_line(linewidth = 0.2) + geom_point(size = 0.5)  +
+  ggtitle("Number of soilders in the Prussian cavalry killed by horse kicks") + ylab("") + xlab("")
+```
+
+## Poisson Likelihood {.smaller}
+
+::: {.incremental}
+- Assume we observe $Y_1, Y_2, ..., Y_n$ independant Poisson random variables
+- The joint lilelihood, a function of the parameter $\lambda$ for $y_i \in \mathbb{Z}^+$ and $\lambda > 0$, is given by:
+
+$$
+\begin{eqnarray}
+f(y \mid \lambda) & = & \prod_{i=1}^n f(y_i \mid \lambda) = f(y_1 \mid \lambda)  f(y_2 \mid \lambda) \cdots f(y_n \mid \lambda)  =  \prod_{i=1}^{n}\frac{\lambda^{y_i}e^{-\lambda}}{y_i!} \\
+& = &\frac{\lambda^{y_1}e^{-\lambda}}{y_1!} \cdot \frac{\lambda^{y_2}e^{-\lambda}}{y_2!} \cdots \frac{\lambda^{y_n}e^{-\lambda}}{y_n!} \\
+& =  &\frac{\left(\lambda^{y_1}\lambda^{y_2} \cdots \lambda^{y_n}\right) \left(e^{-\lambda}e^{-\lambda} \cdots e^{-\lambda}\right)}{y_1! y_2! \cdots y_n!} \\
+& = &\frac{\lambda^{\sum_{i=1}^{n} y_i}e^{-n\lambda}}{\prod_{i=1}^n y_i!} \propto 
+\lambda^{\sum_{i=1}^{n} y_i}e^{-n\lambda}
+\end{eqnarray}
+$$
+
+- We call $\sum_{i=1}^{n} y_i$ a sufficient statistic
+::: 
+
+## Conjugate Prior for Poisson {.smaller}
+
+::: {.incremental}
+- The likelihood has a form of $\lambda^{x} e^{-y\lambda}$ so we expect the conjugate prior to be of the same form
+
+- Gamma PDF satisfied this condition: $f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}$
+
+- Matching up the exponents, we can interpret $(\alpha - 1)$ as the total number of incidents $\sum y_i$ out of $\beta$ observations $n$
+
+- Full Gamma density is $\text{Gamma}(\lambda|\alpha,\beta)=\frac{\beta^{\alpha}}   {\Gamma(\alpha)} \, \lambda^{\alpha - 1}e^{-\beta \, \lambda}$ for $\lambda, \alpha, \beta \in \mathbb{R}^+$
+
+$$
+\begin{equation}
+\begin{split}
+\E(\lambda) & = \frac{\alpha}{\beta} \\
+\text{Mode}(\lambda) & = \frac{\alpha - 1}{\beta} \;\; \text{ for } \alpha \ge 1 \\
+\V(\lambda) & = \frac{\alpha}{\beta^2} \\
+\end{split}
+\end{equation}
+$$
+
+- When $\alpha = 1$, $\lambda \sim \text{Exp}(\beta)$
+:::
+
+## Visualizing Gamma {.smaller}
+
+::: {.incremental}
+- Notive that variance, mean, and mode are increasing with $\alpha$
+:::
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+#| echo: false
+#| cache: true
+
+p <- list()
+p[[1]] <- plot_gamma_pdf(1, 1) + ggtitle("Gamma(1, 1)") + ylab("") + xlab(expression(lambda))
+p[[2]] <- plot_gamma_pdf(2, 1) + ggtitle("Gamma(2, 1)") + ylab("") + xlab(expression(lambda))
+p[[3]] <- plot_gamma_pdf(4, 1) + ggtitle("Gamma(4, 1)") + ylab("") + xlab(expression(lambda))
+p[[4]] <- plot_gamma_pdf(2, 2) + ggtitle("Gamma(2, 2)") + ylab("") + xlab(expression(lambda))
+p[[5]] <- plot_gamma_pdf(2, 3) + ggtitle("Gamma(2, 3)") + ylab("") + xlab(expression(lambda))
+p[[6]] <- plot_gamma_pdf(2, 10) + ggtitle("Gamma(2, 10)") + ylab("") + xlab(expression(lambda))
+grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], p[[6]], nrow = 2)
+```
+
+## Gamma Posterior {.smaller}
+
+::: {.incremental}
+- Prior is $f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}$
+- Likelihood is $f(y | \lambda) \propto \lambda^{\sum_{i=1}^{n} y_i}e^{-n\lambda}$ 
+
+$$
+\begin{eqnarray}
+f(\lambda \mid y) & \propto & \text{prior} \cdot \text{likelihood} \\
+& = & \lambda^{\alpha - 1} e^{-\beta\lambda} \cdot  \lambda^{\sum_{i=1}^{n} y_i}e^{-n\lambda} \\
+& = & \lambda^{\alpha + \sum_{i=1}^{n} y_i - 1} \cdot e^{-\beta\lambda - n\lambda} \\
+& = & \lambda^{\color{red}{\alpha + \sum_{i=1}^{n} y_i} - 1} \cdot e^{-\color{red}{(\beta + n)} \lambda} \\
+f(\lambda \mid y) & = & \text{Gamma}(\alpha + \sum_{i=1}^{n} y_i, \, \beta + n)
+\end{eqnarray}
+$$
+
+- As before, we can guess the Gamma kernel without doing the integration
+:::
+
+## Checking the Constant
+
+::: {.incremental}
+- Gamma prior integration constant: $\frac{\beta^{\alpha}}{\Gamma(\alpha)}$
+- The posterior kernel integration constant must be: $\frac{\Gamma(\alpha + \sum y_i)}{(\beta + n)^{\alpha + \sum y_i}}$
+- We can sanity check this in Mathematica where $t = \sum y_i$:
+:::
+
+![](images/gamma.png){fig-align="center"}
+
+## Prussian Army Hourse Kicks {.smaller}
+
+::: {.incremental}
+- From 1875 to 1894, and there are 14 different cavalry corps
+- Each reported a number of deaths by hourse-kick every year
+- There are 20 years x 14 corps making 280 observations
+:::
+
+```{r}
+#| echo: false
+
+library(gt)
+d <- vroom::vroom("data/horsekicks.csv")
+d |> filter(Year < 1883) |> gt()
+```
+
+
+## Prussian Army Hourse Kicks {.smaller}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+
+# this flattens the dataframe into a vector
+dd <- unlist(d[, -1]) 
+p <- ggplot(aes(y), data = data.frame(y = dd))
+p1 <- p + geom_histogram() +
+  xlab("Number of deaths reported") + ylab("") +
+  ggtitle("Total reported counts of deaths")
+p2 <- p + geom_histogram(aes(y = ..count../sum(..count..))) +
+  xlab("Number of deaths reported") + ylab("") +
+  ggtitle("Proportion of reported counts of deaths")
+
+grid.arrange(p1, p2, nrow = 1)
+```
+
+
+## Prussian Army Hourse Kicks {.smaller}
+
+::: panel-tabset
+
+## Prior and Posterior
+- Let's assume that before seeing the data your friend told you that last year, in 1874, there were no deaths reported in his corps
+- That would imply $\beta = 1$ and $\alpha - 1 = 0$ or $\alpha = 1$
+- The prior on lambda would therefore be $\text{Gamma}(1, 1)$
+
+```{r}
+#| echo: true
+N <- length(dd)
+sum_yi <- sum(dd)
+y_bar <- sum_yi/N
+cat("Total number of observations N =", N)
+cat("Total number of deaths =", sum_yi)
+cat("Average number of deaths =", y_bar)
+```
+
+- The posterior is $\text{Gamma}(\alpha + \sum y_i, \, \beta + N) = \text{Gamma}(197, \, 281)$
+
+## Plots
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+p1 <- plot_gamma_pdf(a = 1, b = 1) + xlab(expression(lambda)) +
+  ylab("") + ggtitle("Prior distribution for the rate",
+                     subtitle = "Gamma(1, 1)")
+p2 <- plot_gamma_pdf(a = 1 + sum_yi, b = 1 + N, xlim = c(0.55, 0.9)) +
+  xlab(expression(lambda)) +
+  ylab("") + ggtitle("Posterior distribution for the rate",
+                     subtitle = "Gamma(197, 281)")
+grid.arrange(p1, p2, nrow = 1)
+```
+
+:::
+
+## Likelihood Dominates {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+- With so much data relative to prior observations, the likelihood completely dominates the prior
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+
+plot_gamma_poisson(1, 1, sum_y = sum_yi, n = N) + 
+  xlim(0, 3)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+map <- (1 + sum_yi - 1) / (1 + N) 
+sd_post <- sqrt((1 + sum_yi) / (1 + N)^2) 
+cat("Mode or MAP =", map |> round(3))
+cat("Average rate =", y_bar)
+cat("Posterior sd =", sd_post |> round(2))
+```
+
+:::
+
+::::
+
+
+## Checking the Fit {.smaller}
+- We can plug the MAP estimate for $\lambda$ into the Poisson PMF
+- Later, we will learn how to account for uncertainty in $\lambda$ using the posterior predictive distribution
+```{r}
+#| echo: true
+
+# prediction not accounting for uncertainty in lambda
+map <- (1 + sum_yi - 1) / (1 + N) 
+deaths <- 0:4
+pred <- dpois(deaths, lambda = map)
+actual <- as.numeric(table(dd) / N)
+```
+
+```{r}
+#| fig-width: 9
+#| fig-height: 4
+#| fig-align: center
+#| echo: false
+
+p1 <- dot_plot(x = deaths, y = actual, yc = pred, dodge = 0.1) +
+  xlab("Number of deaths") +
+  ylab("Proportion of deaths") +
+  ggtitle("Death by hourse-kick proportions", 
+          subtitle = "Actuals in black and predictions in red")
+
+p <- ggplot(aes(actual, pred), data = data.frame(pred, actual))
+p2 <- p + geom_point() + geom_abline(slope = 1, intercept = 0, 
+                               linewidth = 0.1) +
+  ggtitle("Death by hourse-kick proportions") +
+  xlab("Actual proportion of deaths") +
+  ylab("Predicted proportion")
+
+grid.arrange(p1, p2, nrow = 1)
+```
+
+## Adding Exposure {.smaller}
+
+::: {.incremental}
+- Poisson likelihood seems to work well for these data
+- It is likely the each of the 14 corps had about the same number of soldier-hourses, a common military practice
+- Suppose, each corps has different number of cavalrymen
+- We need to introduce an exposure variable $x_i$ for each corps unit
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Poisson}(x_i \lambda)\\
+\lambda & \sim & \text{Gamma}(\alpha, \beta) \\
+f(y \mid \lambda) & \propto & \lambda^{\sum_{i=1}^{n} y_i}e^{- (\sum_{i=1}^{n} x_i) \lambda} \\
+f(\lambda \mid y) & = & \text{Gamma}(\alpha + \sum_{i=1}^{n} y_i, \, \beta + \sum_{i=1}^{n} x_i)
+\end{eqnarray}
+$$
+:::
+
+## Normal PDF {.smaller}
+::: {.incremental}
+- The last conjugate distribution we will introduce is Normal
+- We will only consider a somewhat unrealistic case of known variance $\sigma \in \mathbb{R}^+$ and unkown mean $\mu \in \mathbb{R}$
+- Normal PDF is for one observation $y$ is given by:
+$$
+\begin{eqnarray}
+\text{Normal}(y \mid \mu,\sigma) & = &\frac{1}{\sqrt{2 \pi} \
+\sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{y - \mu}{\sigma} \right)^2     \right) \\
+\E(Y) & = & \text{ Mode}(Y) = \mu \\
+\V(Y) & = & \sigma^2 \\
+\end{eqnarray}
+$$
+:::
+```{r}
+#| fig-width: 10
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+y <- seq(-6, 6, len = 100)
+dy <- dnorm(y, mean = 0, sd = 1)
+p1 <- ggplot(aes(y, dy), data = data.frame(y, dy)) +
+  ggtitle("Normal(0, 1)") + xlab(expression(y)) + ylab(expression(f(y)))
+p1 <- p1 + geom_line(linewidth = 0.2) + ylim(0, 0.6)
+dy <- dnorm(y, mean = 0, sd = 2)
+p2 <- ggplot(aes(y, dy), data = data.frame(y, dy)) +
+  ggtitle("Normal(0, 2)") + xlab(expression(y)) + ylab(expression(f(y)))
+p2 <- p2 + geom_line(linewidth = 0.2) + ylim(0, 0.6)
+dy <- dnorm(y, mean = 1, sd = 0.7)
+p3 <- ggplot(aes(y, dy), data = data.frame(y, dy)) +
+  ggtitle("Normal(1, 0.7)") + xlab(expression(y)) + ylab(expression(f(y)))
+p3 <- p3 + geom_line(linewidth = 0.2) + ylim(0, 0.6)
+grid.arrange(p1, p2, p3, nrow = 1)
+```
+
+## Normal PDF {.smaller}
+- Normal arises when many independent small contributions are added up
+- It is a limitting distribution of means of an arbitrary distribution
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4.3
+#| fig-align: center
+#| output-location: column
+#| cache: true
+#| echo: true
+#| code-line-numbers: "|2|3|4|5|6|8|10|17|19"
+
+plot_xbar <- function(n_repl, n_samples) {
+  x <- seq(0.6, 1.4, len = 100)
+  xbar <- replicate(n_repl, 
+                    mean(rexp(n_samples, rate = 1)))
+  mu <- dnorm(x, mean = 1, sd = 1/sqrt(n_samples))
+  p <- ggplot(aes(x = xbar), 
+              data = tibble(xbar))
+  p + geom_histogram(aes(y = ..density..), 
+                     bins = 30, alpha = 0.6) +
+    geom_line(aes(x = x, y = mu), 
+              color = 'red', 
+              linewidth = 0.3, 
+              data = tibble(x, y)) +
+    ylab("") + theme(axis.text.y = element_blank())
+}
+
+p1 <- plot_xbar(1e4, 100) + 
+  ggtitle("Sampling means from rexp(100, 1)")
+p2 <- plot_xbar(1e4, 300) + 
+  ggtitle("Sampling means from rexp(300, 1)")
+grid.arrange(p1, p2, nrow = 2)
+```
+
+## Joint Normal Likelihood {.smaller}
+::: {.incremental}
+- After observing data $y$, we can compute the joint normal likelihood, assuming $\sigma$ is known
+$$
+\begin{eqnarray}
+f(y \mid \mu) & = & \prod_{i=1}^{n}\frac{1}{\sqrt{2 \pi} \
+\sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2     \right) \\
+& \propto & \prod_{i=1}^{n} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2 \right) \\  
+& = & \exp \left( {-\frac{\sum_{i=1}^n(y_i-\mu)^2}{2\sigma^2}}\right) \\
+&\propto& \exp\left({-\frac{(\bar{y}-\mu)^2}{2\sigma^2/n}}\right)
+\end{eqnarray}
+$$
+
+- The last line is derived by expanding the square and dropping terms that don't depend on $\mu$; $\bar{y} = \frac{1}{n} \sum_{i=1}^{n} y_i$
+:::
+
+## Normal Prior {.smaller}
+::: {.incremental}
+- We can now define the prior on $\mu$
+- We will choose $\mu$ to be normal: $\mu \sim \text{Normal}(\theta, \tau^2)$
+$$
+\begin{eqnarray}
+f(\mu \mid \theta, \tau) & \propto &  \exp\left( - \, \frac{1}{2} \left(  \frac{\mu - \theta}{\tau} \right)^2 \right) \\
+f(\mu \mid y) & \propto &  \exp\left( - \, \frac{1}{2} \left(  \frac{\mu - \theta}{\tau} \right)^2 \right)
+\end{eqnarray}
+$$
+:::
+
+## Normal Posterior {.smaller}
+
+$$
+\begin{eqnarray}
+f(y \mid \mu) & \propto &  \exp\left( - \, \frac{1}{2} \left(  \frac{y - \mu}{\sigma} \right)^2 \right) \\
+f(\mu) & \propto &  \exp\left( - \, \frac{1}{2} \left(  \frac{\mu - \theta}{\tau} \right)^2 \right) \\
+f(\mu \mid y) & \propto &  \exp\left( - \, \frac{1}{2} \left(  \frac{\mu - \theta}{\tau} \right)^2 - \frac{1}{2} \left(  \frac{y - \mu}{\sigma} \right)^2 \right) \\
+& = & \exp \left( -\frac{1}{2} \left(  \frac{(\mu - \theta)^2}{\tau^2} + \frac{(y - \mu)^2}{\sigma^2} \right)\right) \\
+& = &  \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \mu_1 \right)^2    \right)
+\end{eqnarray}
+$$
+
+$$
+\mu_1 = \frac{\frac{1}{\tau^2} \theta + \frac{1}{\sigma^2} y}{\frac{1}{\tau^2} + \frac{1}{\sigma^2}} \\
+\frac{1}{\tau_1^2} = \frac{1}{\tau^2} + \frac{1}{\sigma^2}
+$$
+## Multivariate {.smaller}
+- For multivariate outcomes:
+
+$$
+\mu_1 = \frac{\frac{1}{\tau^2} \theta + \frac{n}{\sigma^2} y}{\frac{1}{\tau^2} + \frac{n}{\sigma^2}} \\
+\frac{1}{\tau_1^2} = \frac{1}{\tau^2} + \frac{n}{\sigma^2}
+$$
+
+## Posterior Simulation
+![](images/rosenbluth.png){fig-align="center" width="672"}
+
+::: footer
+[Arianna Rosenbluth Dies at 93](https://www.nytimes.com/2021/02/09/science/arianna-wright-dead.html), The New York Times 
+:::
+
+## Grid approximation {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.incremental}
+- Most posterior distributions do not have analytical form
+- In those cases, we must resort to sampling methods
+- Sampling in high-dimentions requires specialized algorithms
+- Here, we will look at one-dimentional sampling on the grid (of parameter values)
+- At the end of this lecture, we look at some output of a state-of-the-art HMC NUTS sampler
+- Next week, we will examine the Matropolis-Hastings-Rosenbluth algorithm
+:::
+:::
+
+::: {.column width="50%"}
+![](images/grid.png){fig-align="center"}
+:::
+
+::::
+
+## Grid approximation {.smaller}
+
+::: {.incremental}
+- We already saw how given samples from the target disribution, we can compute quantities of interest
+- The grid approach to getting samples:
+  1. Generate discreet points in parameter space $\theta$
+  1. Define our likelihood function $f(y|\theta)$ and prior $f(\theta)$
+  1. For each point on the grid, compute the product $f(y|\theta)f(\theta)$
+  1. Normalize the product to sum to 1
+  1. Sample from the resulting distrution in proportion to the posterior probability
+- What are some limitations of this approach?
+:::
+
+## Early Clinical Trial Example {.smaller}
+::: panel-tabset
+
+## Deriving $f(\theta, y)$
+::: {.incremental}
+- For simplicity we will assume uniform $\text{Beta}(1, 1)$ prior
+$$
+\begin{eqnarray}
+f(\theta)f(y\mid \theta) &\propto& \theta^{a -1}(1 - \theta)^{b-1} \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
+&=& \theta^0(1 - \theta)^0 \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
+&=& \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
+&=& \theta^{\sum_{i=1}^{n} y_i} \cdot (1 - \theta)^{\sum_{i=1}^{n} (1- y_i)}
+\end{eqnarray}
+$$
+- On the log scale: $\log f(\theta, y) \propto \log(\theta) \cdot\sum_{i=1}^{n} y_i + \log(1 - \theta) \cdot\sum_{i=1}^{n} (1-y_i)$
+
+:::
+
+## R Implementation
+- Recall we had 3 responders out of 5 patients 
+- Model: $\text{lp}(\theta) = \log(\theta) \cdot\sum_{i=1}^{n} y_i + \log(1 - \theta) \cdot\sum_{i=1}^{n} (1-y_i)$
+
+```{r}
+#| echo: true
+#| cache: true
+lp <- function(theta, data) {
+# log(theta) * sum(data$y) + log(1 - theta) * sum(1 - data$y)
+  lp <- 0
+  for (i in 1:data$N) {
+    lp <- lp + log(theta) * data$y[i] + log(1 - theta) * (1 - data$y[i])
+  }
+  return(lp)
+}
+data <- list(N = 5, y = c(0, 1, 1, 0, 1))
+# generate theta parameter grid
+theta <- seq(0.01, 0.99, len = 100)
+# compute log likelihood and prior for every value of the grid
+log_lik <- lp(theta, data); log_prior <- log(dbeta(theta, 1, 1))
+# compute log posterior
+log_post <- log_lik + log_prior
+# covert back to the original scale and normalize
+post <- exp(log_post); post <- post / sum(post)
+# sample theta in proportion to the posterior probability
+draws <- sample(theta, size = 1e5, replace = TRUE, prob = post)
+```
+
+## Graphs
+- From the first lecture we know the the posterior is $\text{Beta}(1 + 3, 1 + 5 - 3) = \text{Beta}(4, 3)$
+- We can compare this density to the posterior draws
+```{r}
+#| echo: true
+
+beta_dens <- dbeta(theta, 4, 3)
+(mle <- sum(data$y) / data$N)
+```
+
+```{r}
+#| cache: true
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+p <- ggplot(aes(draws), data = tibble(draws))
+p + geom_histogram(aes(y = after_stat(density)), bins = 50, alpha = 0.6) +
+  geom_line(aes(theta, beta_dens), linewidth = 0.5, color = 'red', 
+            data = tibble(theta, beta_dens)) + 
+  geom_vline(xintercept = mle, linewidth = 0.2,
+             linetype = "dashed") +
+  ylab("") + xlab(expression(theta)) + 
+  ggtitle("Comparing posterior draws to Beta(4, 3)")
+```
+
+:::
+
+## Introduction to Stan {.smaller}
+::: {.incremental}
+- Stan is a general purpose, turing complete, probabilistic programming language
+- Stan language expresses a probabilistic model
+- Stan transpiler converts it to C++
+- Stan inference algorithms perform parameter estimation
+- Our model: $\text{lp}(\theta) = \log(\theta) \cdot\sum_{i=1}^{n} y_i + \log(1 - \theta) \cdot\sum_{i=1}^{n} (1-y_i)$
+:::
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  array[N] int<lower=0, upper=1> y;
+}
+parameters {
+  real<lower=0, upper=1> theta;
+}
+model {
+  for (i in 1:N) {
+    target += log(theta * y[i] + 
+              log(1 - theta) * (1 - y[i]);
+  }
+}
+```
+:::
+
+::: {.column width="50%"}
+```{stan, output.var = 'stan2', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  array[N] int<lower=0, upper=1> y;
+}
+parameters {
+  real<lower=0, upper=1> theta;
+}
+model {
+  theta ~ beta(1, 1);
+  y ~ bernoulli(theta);
+}
+
+
+```
+:::
+::::
+
+## Extra Credit Homework {.smaller}
+
+1. Modify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2)
+1. Modify the program to account for an arbitrary Beta(a, b) distribution
+1. Verify that you got the right result by comparing Stan's posterior means and posterior standard deviations to the means and standard deviations under the conjugate model
+
+- Hint: Pass parameters a and b in the data block
+
+```{stan, output.var = 'stan3', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  array[N] int<lower=0, upper=1> y;
+}
+parameters {
+  real<lower=0, upper=1> theta;
+}
+model {
+  for (i in 1:N) {
+    target += log(theta * y[i] + 
+              log(1 - theta) * (1 - y[i]);
+  }
+}
+```
+
+
+## Running Stan {.smaller}
+
+```{r}
+#| cache: true
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+#| message: false
+
+library(cmdstanr)
+library(tidybayes)
+
+# compile the model
+m1 <- cmdstan_model("stan/01-bernoulli.stan")
+data <- list(N = 5, y = c(0, 1, 1, 0, 1))
+f1 <- m1$sample(       # for other options to sample, help(sample)
+  data = data,       
+  seed = 123,          # to reproduce results, Stan does not rely on R's seed
+  chains = 4,          # total chains, the more the better
+  parallel_chains = 4, # for multi-processor CPUs 
+  refresh = 0          # number of iterations printed on the screen
+)
+f1$summary()
+```
+
+## MCMC Diagnostics
+- First step in assessing model quality is to make the model samples well
+- Folk theorem of statistics: computational problems often point to problems in the model
+- Second step is to make sure model predicts well for quantities of interest
+- You can have a model the samples well but predictions are still poor for what you are trying to do
+- Will will address the former (quality of the draws) now and the latter (quality of predictions) later in the course
+
+## Effective Sample Size
+
+## Computing R-Hat
+
+
+
+
 

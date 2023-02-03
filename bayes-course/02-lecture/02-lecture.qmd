@@ -52,6 +52,7 @@ dbinom_theta <- function(theta, N, y) {
 }
 
 dot_plot <- function(x, y) {
+  x <- as.factor(x)
   p <- ggplot(data.frame(x, y), aes(x, y))
   p + geom_point(aes(x = x, y = y), size = 0.5) +
     geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
