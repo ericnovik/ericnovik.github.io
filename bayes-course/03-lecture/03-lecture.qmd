@@ -33,7 +33,6 @@ always_allow_html: true
 library(ggplot2)
 library(dplyr)
 library(janitor)
-library(MASS)
 library(gridExtra)
 library(purrr)
 library(bayesrules)
@@ -791,17 +790,48 @@ library(cmdstanr)
 library(tidybayes)
 
 # compile the model
-m1 <- cmdstan_model("stan/01-bernoulli.stan")
-data <- list(N = 5, y = c(0, 1, 1, 0, 1))
-f1 <- m1$sample(       # for other options to sample, help(sample)
-  data = data,       
-  seed = 123,          # to reproduce results, Stan does not rely on R's seed
-  chains = 4,          # total chains, the more the better
-  parallel_chains = 4, # for multi-processor CPUs 
-  refresh = 0          # number of iterations printed on the screen
-)
-f1$summary()
+# m1 <- cmdstan_model("stan/01-bernoulli.stan")
+# data <- list(N = 5, y = c(0, 1, 1, 0, 1))
+# f1 <- m1$sample(       # for other options to sample, help(sample)
+#   data = data,       
+#   seed = 123,          # to reproduce results, Stan does not rely on R's seed
+#   chains = 4,          # total chains, the more the better
+#   parallel_chains = 4, # for multi-processor CPUs 
+#   refresh = 0,         # number of iterations printed on the screen
+#   iter_warmup = 500,   
+#   iter_sampling = 500
+# )
+# f1$summary()
 ```
+
+## Extracting Posterior Draws {.smaller}
+
+```{r}
+#| cache: true
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+library(tidybayes)
+
+# # extract draws in the long form
+# draws <- gather_draws(f1, theta, lp__)
+# tail(draws)
+# draws |> group_by(.variable) |> summarize(mean = mean(.value))
+# 
+# # extract draws in the wide format
+# draws <- spread_draws(f1, theta, lp__)
+# tail(draws)
+# 
+# p <- ggplot(aes(theta), data = draws)
+# p + geom_histogram(aes(y = after_stat(density)), bins = 30, alpha = 0.6) +
+#     geom_line(aes(theta, beta_dens), linewidth = 0.5, color = 'red', 
+#             data = tibble(theta, beta_dens)) + 
+#   ylab("") + xlab(expression(theta)) + 
+#   ggtitle("Posterior draws from Stan")
+
+```
+
 
 ## MCMC Diagnostics
 - First step in assessing model quality is to make the model samples well
