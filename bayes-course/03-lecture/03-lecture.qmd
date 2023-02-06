@@ -460,7 +460,7 @@ $$
 y_i & \sim & \text{Poisson}(x_i \lambda)\\
 \lambda & \sim & \text{Gamma}(\alpha, \beta) \\
 f(y \mid \lambda) & \propto & \lambda^{\sum_{i=1}^{n} y_i}e^{- (\sum_{i=1}^{n} x_i) \lambda} \\
-f(\lambda \mid y) & = & \text{Gamma}(\alpha + \sum_{i=1}^{n} y_i, \, \beta + \sum_{i=1}^{n} x_i)
+f(\lambda \mid y) & = & \text{Gamma} \left( \alpha + \sum_{i=1}^{n} y_i, \, \beta + \sum_{i=1}^{n} x_i \rights )
 \end{eqnarray}
 $$
 :::
@@ -589,7 +589,15 @@ $$
 $$
 
 ## Posterior Simulation
-![](images/rosenbluth.png){fig-align="center" width="672"}
+
+::: panel-tabset
+## Arianna
+![](images/rosenbluth.png){fig-align="center" height=500}
+
+## The Paper
+![](images/equation-of-state.png){fig-align="center" height=500}
+:::
+
 
 ::: footer
 [Arianna Rosenbluth Dies at 93](https://www.nytimes.com/2021/02/09/science/arianna-wright-dead.html), The New York Times 
@@ -703,12 +711,97 @@ p + geom_histogram(aes(y = after_stat(density)), bins = 50, alpha = 0.6) +
 
 :::
 
+## Monte Carlo Integration and MCMC {.smaller}
+::: panel-tabset
+
+## Introduction
+
+::: {.incremental}
+- We already saw a special case of MC integration
+- Suppose we can draw samples from PDF $f$, $(\theta^{(1)}, \theta^{(2)},..., \theta^{(N)})$
+- If we want to compute an expectation of some function $h$:
+$$
+\begin{eqnarray}
+\E_f[h(\theta)] &=& \int h(\theta)f(\theta)\, d\theta 
+&\approx& \frac{1}{N} \sum_{i = 1}^{N} h \left( \theta^{(i)} \right)
+\end{eqnarray}
+$$
+
+- The Law of Large Numbers tells us that these approximations improve with $N$ 
+- In practice, the challange is how to obtain draws from $f$?
+- That's where MCMC comes in 
+:::
+
+## Example 1
+::: {.incremental}
+- Suppose we want to estimate the mean and variance of standard normal
+- In case of the mean, $h(\theta) := \theta$ and variance, $h(\theta) := \theta^2$, and $f(\theta) = \frac{1}{\sqrt{2 \pi} \ } e^{-\theta^2/2}$
+$$
+\begin{eqnarray}
+\E[\theta] &=& \int_{-\infty}^{\infty} \theta f(\theta)\, d\theta 
+&\approx& \frac{1}{N} \sum_{i = 1}^{N} \theta^{(i)} \\
+\E[\theta^2] &=& \int_{-\infty}^{\infty} \theta^2 f(\theta)\, d\theta &\approx&
+\frac{1}{N} \sum_{i = 1}^{N} \left( \theta^{(i)} \right)^2
+\end{eqnarray}
+$$
+
+```{r}
+#| echo: true
+#| cache: true
+
+N <- 1e5
+theta <- rnorm(N, 0, 1)          # draw theta from N(0, 1)
+(1/N * sum(theta)) |> round(2)   # E(theta),   same as mean(theta)
+(1/N * sum(theta^2)) |> round(2) # E(theta^2), same as mean(theta^2)
+```
+:::
+
+## Example 2
+
+::: {.incremental}
+- Suppose we want to estimate a CDF of Normal(0, 1) at some point $t$
+- We let $h(\theta) = \I(\theta < t)$, where $\I$ is an indicator function that returns 1 when $\theta < t$ and $0$ otherwise
+$$
+\begin{eqnarray}
+\E[h(\theta)] = \E[\I(\theta < t)] &=& \int_{-\infty}^{\infty} \I(\theta < t) f(\theta)\, d\theta = 
+\int_{-\infty}^{t}f(\theta)\, d\theta = \Phi(t) \\
+&\approx& \frac{1}{N} \sum_{i = 1}^{N} \I(\theta^{(i)} < t) \\
+\end{eqnarray}
+$$
+:::
+
+```{r}
+#| echo: true
+#| cache: true
+pnorm(1, 0, 1) |> round(2)          # Evalute N(0, 1) CDF at 1
+N <- 1e5
+theta <- rnorm(N, 0, 1)             # draw theta from N(0, 1)
+(1/N * sum(theta < 1)) |> round(2)  # same as mean(theta < 1)
+```
+
+## MCMC
+::: {.incremental}
+- MCMC is a very general method for computing expectations (integrals)
+- It produces dependant (autocorelated) samples but for a good algorithm, dependence is usually small
+- Stan's MCMC algorithm is very efficient (more on that later) and requires all parameters to be continous (data can be discrete)
+- It solves the problem of drawing from distribution $f(\theta)$ where $f$ is not one of the fundamental distributions and $\theta$ is high dimentional 
+- What is high-dimentional? Modern algorithms like NUTS can jointy sample tens of thousands and more parameters
+- That's 10,000+ dimentional integrals of complicated functions!
+
+:::
+
+:::
+
+::: {.notes}
+Include an example where h(x) is an indicator function and we want evaluate Normal CDF at some point t.
+:::
+
 ## Introduction to Stan {.smaller}
 ::: {.incremental}
-- Stan is a general purpose, turing complete, probabilistic programming language
+- Stan is a procedural, statically-typed, turing complete, probabilistic programming language
 - Stan language expresses a probabilistic model
 - Stan transpiler converts it to C++
-- Stan inference algorithms perform parameter estimation
+- Stan inference algorithms perform parameter estimation 
 - Our model: $\text{lp}(\theta) = \log(\theta) \cdot\sum_{i=1}^{n} y_i + \log(1 - \theta) \cdot\sum_{i=1}^{n} (1-y_i)$
 :::
 
@@ -716,6 +809,7 @@ p + geom_histogram(aes(y = after_stat(density)), bins = 50, alpha = 0.6) +
 
 ::: {.column width="50%"}
 ```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
+// 01-bernoulli.stan
 data {
   int<lower=0> N;
   array[N] int<lower=0, upper=1> y;
@@ -734,6 +828,7 @@ model {
 
 ::: {.column width="50%"}
 ```{stan, output.var = 'stan2', eval = FALSE, echo = TRUE}
+// 02-bernoulli.stan
 data {
   int<lower=0> N;
   array[N] int<lower=0, upper=1> y;
@@ -745,8 +840,6 @@ model {
   theta ~ beta(1, 1);
   y ~ bernoulli(theta);
 }
-
-
 ```
 :::
 ::::
@@ -755,7 +848,7 @@ model {
 
 1. Modify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2)
 1. Modify the program to account for an arbitrary Beta(a, b) distribution
-1. Verify that you got the right result by comparing Stan's posterior means and posterior standard deviations to the means and standard deviations under the conjugate model
+1. Verify that you got the right result by comparing Stan's posterior means and posterior standard deviations to the means and standard deviations under the conjugate model. You can also modify the R code to get a third point of comparison.
 
 - Hint: Pass parameters a and b in the data block
 
@@ -801,46 +894,163 @@ f1 <- m1$sample(       # for other options to sample, help(sample)
 f1$summary()
 ```
 
-## Extracting Posterior Draws {.smaller}
+## Working With Posterior Draws {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
 
 ```{r}
 #| cache: true
-#| fig-width: 4
-#| fig-height: 3
-#| fig-align: center
 #| echo: true
 library(tidybayes)
 
-# extract draws in the long form
 draws <- gather_draws(f1, theta, lp__)
-tail(draws)
-draws |> group_by(.variable) |> summarize(mean = mean(.value))
+tail(draws) # draws is a tidy long format
+draws |> 
+  group_by(.variable) |> 
+  summarize(mean = mean(.value))
 
-# extract draws in the wide format
+median_qi(draws, .width = 0.90)
+```
+
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| fig-width: 3
+#| fig-height: 2
+#| fig-align: center
+#| echo: true
 draws <- spread_draws(f1, theta, lp__)
-tail(draws)
+tail(draws) # draws is a tidy wide format
 
+theta <- seq(0.01, 0.99, len = 100)
 p <- ggplot(aes(theta), data = draws)
-p + geom_histogram(aes(y = after_stat(density)), bins = 30, alpha = 0.6) +
-    geom_line(aes(theta, beta_dens), linewidth = 0.5, color = 'red',
-            data = tibble(theta, beta_dens)) +
+p + geom_histogram(aes(y = after_stat(density)), 
+                   bins = 30, alpha = 0.6) +
+    geom_line(aes(theta, beta_dens), 
+              linewidth = 0.5, color = 'red',
+              data = tibble(theta, beta_dens)) +
   ylab("") + xlab(expression(theta)) +
   ggtitle("Posterior draws from Stan")
 ```
 
 
-## MCMC Diagnostics
-- First step in assessing model quality is to make the model samples well
-- Folk theorem of statistics: computational problems often point to problems in the model
-- Second step is to make sure model predicts well for quantities of interest
-- You can have a model the samples well but predictions are still poor for what you are trying to do
-- Will will address the former (quality of the draws) now and the latter (quality of predictions) later in the course
+:::
 
-## Effective Sample Size
+::::
 
-## Computing R-Hat
+## What's a Chain
+
+{{< video https://youtu.be/1TKhH81k7QA >}}
+
+## Dynamic Simulation
+
+https://chi-feng.github.io/mcmc-demo/app.html
+
+## MCMC Diagnostics {.smaller}
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.incremental}
+- In general, you want to assess (1) the quality of the draws and (2) the quality of predictions
+- There are no guarantees in either case but the former is easier than the latter
+- [The folk theorem of statistical computing](https://statmodeling.stat.columbia.edu/2008/05/13/the_folk_theore/): computational problems often point to problems in the model (AG)
+- Will will address quality of the draws now and quality of predictions later in the course
+:::
+
+:::
+
+::: {.column width="50%"}
+![](images/chains.png){fig-align="center" height="600"}
+:::
+
+::::
+
+## Good Chain Bad Chain {.smaller}
+
+```{r}
+#| cache: true
+#| fig-width: 8
+#| fig-height: 6
+#| fig-align: center
+#| echo: true
+
+library(bayesplot)
+draws <- f1$draws("theta")
+color_scheme_set("viridis")
+p1 <- mcmc_trace(draws, pars = "theta") + ylab(expression(theta)) +
+  ggtitle("Good Chain")
+bad_post <- readr::read_rds("data/bad_post.rds")
+bad_draws <- bad_post$draws("mu")
+p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(theta)) +
+  ggtitle("Bad Chain")
+grid.arrange(p1, p2, nrow = 2)
+```
 
 
+## Effective Sample Size and Autocorrelation {.smaller}
+
+::: panel-tabset
+## ESS
+
+::: {.incremental}
+- MCMC generates dependant draws from the target distribution
+- Dependent samples are less efficient as you need more of them to estimate the quantity of interest
+- ESS or $N_{eff}$ is approximately how many independent samples you have
+- Typically, $N_{eff} < N$ for MCMC, as there is some autocorrelation
+- ESS should be considered relative to $N$: $\frac{N_{eff}}{N}$
+- Generally, we don't like to see $\text{ratio} < 0.10$
+:::
+```{r}
+#| cache: true
+#| fig-align: center
+#| echo: true
+neff_ratio(f1, pars = "theta") |> round(2)
+neff_ratio(bad_post, pars = "mu") |> round(2)
+```
 
 
+## ACF
+```{r}
+#| cache: true
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
+#| echo: false
+
+p1 <- mcmc_acf(f1$draws(), pars = "theta", lags = 10) +
+  ggtitle("ACF for a good model")
+p2 <- mcmc_acf(bad_post$draws(), pars = "mu", lags = 10) +
+  ggtitle("ACF for a bad model")
+grid.arrange(p1, p2, ncol = 2)
+```
+
+:::
+
+## Computing R-Hat {.smaller}
+
+::: {.incremental}
+- Autocorrelation assesses the quality of a single chain
+- Split R-Hat estimates the extent to which the chains are consistent with one another
+- It does it by assessing the mixing of chains by comparing variances within and between chains (technically sequences, as chains are split up)
+$$
+\begin{eqnarray}
+\hat{R} = \sqrt{\frac{\frac{n-1}{n}\V_W + \frac{1}{n}\V_B}{\V_W}} = \sqrt{\frac{\V_{\text{total}}}{\V_{W}}}
+\end{eqnarray}
+$$
+
+- $\V_W$ is within chain variance and $\V_B$ is between chain variance
+- We don't like to see R-hats greater than 1.02 and really don't like them greater than 1.05
+:::
+
+```{r}
+#| echo: true
+bayesplot::rhat(f1, pars = "theta") |> round(3)
+bayesplot::rhat(bad_post, pars = "sigma")  |> round(3)
+```
 
