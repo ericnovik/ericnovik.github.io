@@ -286,7 +286,7 @@ f(\lambda \mid y) & \propto & \text{prior} \cdot \text{likelihood} \\
 & = & \lambda^{\alpha - 1} e^{-\beta\lambda} \cdot  \lambda^{\sum_{i=1}^{n} y_i}e^{-n\lambda} \\
 & = & \lambda^{\alpha + \sum_{i=1}^{n} y_i - 1} \cdot e^{-\beta\lambda - n\lambda} \\
 & = & \lambda^{\color{red}{\alpha + \sum_{i=1}^{n} y_i} - 1} \cdot e^{-\color{red}{(\beta + n)} \lambda} \\
-f(\lambda \mid y) & = & \text{Gamma}(\alpha + \sum_{i=1}^{n} y_i, \, \beta + n)
+f(\lambda \mid y) & = & \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, \, \beta + n \right)
 \end{eqnarray}
 $$
 
@@ -361,7 +361,7 @@ cat("Total number of deaths =", sum_yi)
 cat("Average number of deaths =", y_bar)
 ```
 
-- The posterior is $\text{Gamma}(\alpha + \sum y_i, \, \beta + N) = \text{Gamma}(197, \, 281)$
+- The posterior is $\text{Gamma}\left( \alpha + \sum y_i, \, \beta + N \right) = \text{Gamma}(197, \, 281)$
 
 ## Plots
 ```{r}
@@ -460,7 +460,7 @@ $$
 y_i & \sim & \text{Poisson}(x_i \lambda)\\
 \lambda & \sim & \text{Gamma}(\alpha, \beta) \\
 f(y \mid \lambda) & \propto & \lambda^{\sum_{i=1}^{n} y_i}e^{- (\sum_{i=1}^{n} x_i) \lambda} \\
-f(\lambda \mid y) & = & \text{Gamma} \left( \alpha + \sum_{i=1}^{n} y_i, \, \beta + \sum_{i=1}^{n} x_i \rights )
+f(\lambda \mid y) & = & \text{Gamma} \left( \alpha + \sum_{i=1}^{n} y_i, \, \beta + \sum_{i=1}^{n} x_i \right)
 \end{eqnarray}
 $$
 :::
@@ -584,7 +584,7 @@ $$
 - For multivariate outcomes:
 
 $$
-\mu_1 = \frac{\frac{1}{\tau^2} \theta + \frac{n}{\sigma^2} y}{\frac{1}{\tau^2} + \frac{n}{\sigma^2}} \\
+\mu_1 = \frac{\frac{1}{\tau^2} \theta + \frac{n}{\sigma^2} \overline{y}}{\frac{1}{\tau^2} + \frac{n}{\sigma^2}} \\
 \frac{1}{\tau_1^2} = \frac{1}{\tau^2} + \frac{n}{\sigma^2}
 $$
 
