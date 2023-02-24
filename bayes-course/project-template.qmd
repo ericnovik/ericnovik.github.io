@@ -1,0 +1,103 @@
+---
+title: "APSTA-GE 2123: Bayesian Inference"
+subtitle: "Analysis Project Template"
+author: "Instructor: eric.novik@nyu.edu"
+date: today
+date-format: "D MMM YYYY"
+format:
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    geometry:
+      - top=30mm
+      - left=20mm
+      - heightrounded
+    toc: false
+    number-sections: true
+    colorlinks: true
+---
+
+At the beginning of class, we will randomly assign students to 3-person teams. Each team will perform the analysis, write a report, and present their methods and results to the class during finals week. Short project proposals are due at the end of the third week of class. You should use [R Markdown](https://rmarkdown.rstudio.com/) or [Quarto](https://quarto.org/) to prepare your reports. You can use whatever you want (e.g., PowerPoint) to prepare your presentation, but we recommend Quarto Presentation. You should use LaTex to typeset your equations. See the LaTex section for the guide.
+
+## Project Proposal
+
+The proposal should not exceed one page in length. You should include the following information in the proposal:
+
+1.  Title of your project
+2.  What are you hoping to learn from the analysis
+3.  Short description of the data source
+4.  Optional: if you know how you plan to analyze data, please say so
+5.  Names of team members and the intended roles on the project. It's fine to have overlapping or non-overlapping roles, with one caveat below.
+
+Ideally, discuss the project with your team, and agree on what needs to be done. We recommend one person to be the project manager and keep everyone on track. You can elect a PM or choose one randomly, or not at all -- it's up to you. We recommend that _every person_ performs a function of a tester of the final product -- read all the documents, run all the code, and discuss the results with the teammates.
+
+## Project Report
+For inspiration, you can take a look at [this](https://mc-stan.org/users/documentation/case-studies/pool-binary-trials.html) analysis in Stan and [the same analysis](https://mc-stan.org/users/documentation/case-studies/pool-binary-trials-rstanarm.html) in RStanArm. We don't expect you to do anything that extensive, but it's a good example of a thorough analysis. [Here](https://mc-stan.org/users/documentation/case-studies) are other Stan case studies.
+
+### Proposal
+
+You should include the original project proposal as the first section of the report. You don't have to follow your proposal to the letter, but you should discuss significant deviations.
+
+### Attribution
+
+In this section, state the teammates' names; each person should provide a short description of their role with the understanding that not everyone can or should do everything. The grade will be assigned to the project team, not each individual.
+
+### Raw Data Summary
+
+Perform an exploratory data analysis and point out some interesting features in the data; plot important relationships. If the dataset is large, only summarize key features -- please, do not plot every variable, every two-way correlation, etc. Be selective and be nice to your readers.
+
+### Statistical Model
+
+Describe the statistical model. Use statistical notation to specify your likelihood and all the priors. If you have a complex model for the conditional mean, write it out explicitly. If you are not familiar with LaTex, see the LaTeX section.
+
+### Prior Predictive Simulation
+
+Perfome prior predictive simulation and compare it to the observed data. This should help you tune your prior distributions. Make sure to plot your prior predictive distribution. Does the scale seem reasonable?
+
+### Modeling Fitting, PPCs, and Model Selection
+
+Fit your model in stages and perform model selection as discussed in class. Summarize key convergence diagnostics, including R hats.
+
+### Discussion
+
+Provide a short description of the limitations of your analysis, what worked and what didn't, and potential areas for further work
+
+## Project Presentation
+
+Prepare five slides summarizing your work: 1) Title with the name of the project and team members; 2) Research questions; 3) Statistical model; 4) Summary of results/predictions; 5) Conclusions.
+
+You will only have 10 minutes to present, followed by a couple of questions from the audience. Don't cram every piece of information on every slide. Less is more. Here is an example of a good presentation.
+
+## Elements of Style
+You should develop a consistent style for presenting your work, including graphs and tables. Here are a few guidelines.
+
+- Label all your graphs and axis and specify units if applicable.
+- Same goes for the tables if you choose to include them. In R, `knitr::kable` is a good and simple table generator, but there are many others.
+- Don't use the default graph sizes, as they are generally too big (see below)
+- We recommend not using default points and line sizes, which are usually too large. You can use the `size` aesthetic in `geom_point` and `linewidth` aesthetic in `geom_line` to modify the defaults.
+- Use simple (ggplot) themes, you don't want the background of your plot to have too many high-contrast lines, as it is hard to see the data
+- Do not use box plots, instead, use `ggplot2::geom_linerange` or equivalent. Box plots waste space and are no longer necessary. Sorry, John Tukey, we still love you.
+- If you are displaying uncertainty intervals, you should indicate the width of the interval (i.e., 50%, 90%, etc.) and the type of the interval (i.e., quantile, HDI). 50% quantile intervals are nice to have when you are plotting over observations, as the reader can quickly assess calibration (i.e., about half the points should be inside the interval and half outside). You don't have to report 95% uncertainty intervals, as those are arbitrary (as are others).
+- If you want to show several plots side-by-side, use `gridExtra::grid.arrange` or something like that.
+
+See, [this](https://www.mjskay.com/papers/infovis2020-uncertainty-decision-making.pdf) paper from Alex Kale, Matthew Kay, and Jessica Hullman as an example of some of the best practices in the field.
+
+## Typesetting Equations with LaTeX
+
+You should use LaTeX to typeset mathematical expressions. Markdown documents support both inline and display equations. For inline equations, use single dollar signs like this, `$y = f(x)$`, which will produce the following output: $y = f(x)$. For display equations, use double dollar signs like this:
+
+`$$
+\begin{eqnarray}
+y &=& f(x) \\
+g &=& f(z)
+\end{eqnarray}
+$$`
+
+The above will produce the following output:
+$$
+\begin{aligned}
+y &= f(x) \\
+g &= f(z)
+\end{aligned}
+$$
+The double backslash is a new line character, and the ampersands align equations by the equal sign. The easiest way to get started is to use an [online equation editor](https://latexeditor.lagrida.com/) and paste the formula into RStudio.
