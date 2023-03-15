@@ -1,0 +1,103 @@
+---
+title: "scrap"
+format: revealjs
+editor: source
+---
+
+```{r}
+library(rethinking)
+library(dplyr)
+data(Howell1) 
+d <- Howell1 |> filter(age >= 18)
+plot(d$weight ~ d$height)
+
+library(HistData)
+d <- GaltonFamilies
+plot(d$childHeight ~ d$father)
+plot(d$childHeight ~ d$mother)
+library(car)
+scatterplot(childHeight ~ midparentHeight | gender, data=GaltonFamilies, 
+            ellipse=TRUE, levels=0.68, legend.coords=list(x=64, y=78))
+```
+
+
+To push to GitHub, do this from the terminal in /Users/eric/repos/ericnovik.github.io directory:
+
+> quarto publish gh-pages
+
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+
+```
+
+$$
+y = f(x)
+$$
+
+Roses are [red]{style="color:red"}
+
+$$
+{\text{Binomial} (y \mid N,\theta) = \color{red}{\binom{N}{y}}
+\theta^y (1 - \theta)^{N - y}}
+$$
+
+::: incremental
+-   Eat spaghetti
+-   Drink wine
+:::
+
+::: columns
+::: {.column width="50%"}
+Left column
+:::
+
+::: {.column width="50%"}
+Right column
+:::
+:::
+
+::: panel-tabset
+## code
+
+## plot
+
+## more plot
+:::
+
+::: callout-note
+## text
+:::
+
+::: notes
+Speaker notes go here.
+:::
+
+::: footer
+RStudio [cheatsheats](https://www.rstudio.com/resources/cheatsheets/)
+:::
+
+footnote reference[^1]
+
+[^1]: Partial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement.
+
+![](images/int.jpg){fig-align="center" width="672"}
+
+```{r}
+#| cache: true
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+
+#| output-location:column
+#| code-line-numbers: "|2|3|9|20|"
+```
+
+```{r}
+#| cache: true
+#| echo: true
+
+```

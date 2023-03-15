@@ -17,7 +17,7 @@ format:
     colorlinks: true
 ---
 
-At the beginning of class, we will randomly assign students to 3-person teams. Each team will perform the analysis, write a report, and present their methods and results to the class during finals week. Short project proposals are due at the end of the third week of class. You should use [R Markdown](https://rmarkdown.rstudio.com/) or [Quarto](https://quarto.org/) to prepare your reports. You can use whatever you want (e.g., PowerPoint) to prepare your presentation, but we recommend Quarto Presentation. You should use LaTex to typeset your equations. See the LaTex section for the guide.
+At the beginning of class, we will randomly assign students to 3-person teams. Each team will perform the analysis, write a report, and present their methods and results to the class during finals week. Short project proposals are due at the end of the third week of class. You should use [R Markdown](https://rmarkdown.rstudio.com/) or [Quarto](https://quarto.org/) to prepare your reports. You can use whatever you want (e.g., PowerPoint) to prepare your presentation, but we recommend Quarto Presentation. You should use LaTeX to typeset your equations. See the [LaTeX section](#Typesetting-Equations-with-LaTeX) for the guide.
 
 ## Project Proposal
 
@@ -29,7 +29,7 @@ The proposal should not exceed one page in length. You should include the follow
 4.  Optional: if you know how you plan to analyze data, please say so
 5.  Names of team members and the intended roles on the project. It's fine to have overlapping or non-overlapping roles, with one caveat below.
 
-Ideally, discuss the project with your team, and agree on what needs to be done. We recommend one person to be the project manager and keep everyone on track. You can elect a PM or choose one randomly, or not at all -- it's up to you. We recommend that *every person* performs a function of a tester of the final product -- read all the documents, run all the code, and discuss the results with the teammates.
+Ideally, discuss the project with your team, and agree on what needs to be done. We recommend one person be the project manager and keep everyone on track. You can elect a PM or choose one randomly, or not at all -- it's up to you. We recommend that *every person* performs a function of a tester of the final product -- read all the documents, run all the code, and discuss the results with the teammates.
 
 ## Project Report
 
@@ -45,11 +45,11 @@ In this section, state the teammates' names; each person should provide a short 
 
 ### Raw Data Summary
 
-Perform an exploratory data analysis and point out some interesting features in the data; plot important relationships. If the dataset is large, only summarize key features -- please, do not plot every variable, every two-way correlation, etc. Be selective and be nice to your readers.
+Perform an exploratory data analysis and point out some interesting features in your data. Plot important relationships. Only summarize key features -- please, do not plot every variable, every two-way correlation, etc. Be selective and be nice to your readers.
 
 ### Statistical Model
 
-Describe the statistical model. Use statistical notation to specify your likelihood and all the priors. If you have a complex model for the conditional mean, write it out explicitly. If you are not familiar with LaTex, see the LaTeX section.
+Describe the statistical model. Use statistical notation to specify your likelihood and all the priors. Briefly explain why you have selected the a particular likelihood and prior(s). If you are not familiar with LaTeX, see the LaTeX section.
 
 ### Prior Predictive Simulation
 
@@ -61,28 +61,29 @@ Fit your model in stages and perform model selection as discussed in class. Summ
 
 ### Discussion
 
-Provide a short description of the limitations of your analysis, what worked and what didn't, and potential areas for further work
+Provide a short description of the limitations of your analysis, what worked and what didn't, and how the model can be improved.
 
 ## Project Presentation
 
-Prepare five slides summarizing your work: 1) Title with the name of the project and team members; 2) Research questions; 3) Statistical model; 4) Summary of results/predictions; 5) Conclusions.
+Prepare five (+/- 1) slides summarizing your work: 1) Title with the name of the project and team members; 2) Research questions; 3) Statistical model; 4) Summary of results/predictions; 5) Conclusions.
 
-You will only have 10 minutes to present, followed by a couple of questions from the audience. Don't cram every piece of information on every slide. Less is more. Here is an example of a good presentation.
+You will only have 10 minutes to present, followed by a couple of questions from the audience. Don't cram every piece of information on every slide. When it comes to slides, less is more. 
 
 ## Elements of Style
 
 You should develop a consistent style for presenting your work, including graphs and tables. Here are a few guidelines.
 
--   Label all your graphs and axis and specify units if applicable.
+-   Label all your graphs and axes and specify units if applicable.
 -   Same goes for the tables if you choose to include them. In R, `knitr::kable` is a good and simple table generator, but there are many others.
--   Don't use the default graph sizes, as they are generally too big (see the reference paper at the end of this section.)
--   We recommend not using default points and line sizes, which are usually too large. You can use the `size` aesthetic in `geom_point` and `linewidth` aesthetic in `geom_line` to modify the defaults.
--   Use simple (ggplot) themes, you don't want the background of your plot to have too many high-contrast lines, as it is hard to see the data
+-   Don't use the default graph sizes, as they are generally too big (see the reference paper at the end of this section.) If you are using R Markdown see [this](https://bookdown.org/yihui/rmarkdown-cookbook/figure-size.html). If you are using Quarto, see [this](https://quarto.org/docs/authoring/figures.html) and [this](https://quarto.org/docs/computations/execution-options.html#figure-options).
+-   We recommend not using default point and line sizes, which are usually too large. You can use the `size` aesthetic in `geom_point` and `linewidth` aesthetic in `geom_line` to modify the defaults.
+-   Use simple (ggplot) themes, you don't want the background of your plot to have too many high-contrast lines, as it is hard to see the data.
 -   Do not use box plots, instead, use `ggplot2::geom_linerange` or equivalent. Box plots waste space and are no longer necessary. Sorry, John Tukey, we still love you.
--   If you are displaying uncertainty intervals, you should indicate the width of the interval (i.e., 50%, 90%, etc.) and the type of the interval (i.e., quantile, HDI). 50% quantile intervals are nice to have when you are plotting over observations, as the reader can quickly assess calibration (i.e., about half the points should be inside the interval and half outside). You don't have to report 95% uncertainty intervals, as those are arbitrary (as are others).
--   If you want to show several plots side-by-side, use `gridExtra::grid.arrange` or something like that.
+-   If you are displaying uncertainty intervals, you should indicate the width of the interval (i.e., 50%, 90%, etc.) and the type of interval (i.e., quantile, HDI, confidence). 50% posterior quantile intervals are nice to have when you are plotting over observations, as the reader can quickly assess calibration (i.e., about half the points should be inside and half outside the interval.) 
+-   If you want to show several code-generated plots side-by-side, use `gridExtra::grid.arrange` or something like that.
+-   Having a consisten coding style is important. See [this](https://style.tidyverse.org/index.html), for example, particularly if you are using R's `tidyverse`. For Stan code, see [this](https://mc-stan.org/docs/stan-users-guide/stan-program-style-guide.html) section of the Stan User's Guide.
 
-See, [this](https://www.mjskay.com/papers/infovis2020-uncertainty-decision-making.pdf) paper from Alex Kale, Matthew Kay, and Jessica Hullman as an example of some of the best practices in the field.
+See, [this](https://www.mjskay.com/papers/infovis2020-uncertainty-decision-making.pdf) paper from Alex Kale, Matthew Kay, and Jessica Hullman for an example of some of the best practices in the field.
 
 ## Typesetting Equations with LaTeX
 

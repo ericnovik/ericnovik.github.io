@@ -75,20 +75,6 @@ dot_plot <- function(x, y, yc = NULL, dodge = 0.2) {
   return(p)
 }
 
-
-data(Howell1); d2 <- Howell1; #d2 <- d[ d$age >= 18 , ]
-plot( d2$height ~ log(d2$weight) )
-169 average from southern aftica
-
-library(HistData)
-d <- GaltonFamilies
-plot(d$childHeight ~ d$father)
-plot(d$childHeight ~ d$mother)
-library(car)
-scatterplot(childHeight ~ midparentHeight | gender, data=GaltonFamilies, 
-            ellipse=TRUE, levels=0.68, legend.coords=list(x=64, y=78))
-
-
 ```
 
 $$
@@ -101,12 +87,359 @@ $$
 \DeclareMathOperator*{\argmin}{arg\,min}
 $$
 
-## Start
-This is the start
+## Motivating Example {.smaller}
+::: columns
+::: {.column width="50%"}
+::: incremental
+- We borrow this example from Richard McElreath's Statistical Rethinking
+- The data sets provided have been produced between 1969 to 2008, based on Nancy Howell's observations of the !Kung San
+- From Wikipedia: "The ǃKung are one of the San peoples who live mostly on the western edge of the Kalahari desert, Ovamboland (northern Namibia and southern Angola), and Botswana."
+:::
+
+:::
+
+::: {.column width="50%"}
+![](images/kalahari.png){fig-align="right"}
+:::
+:::
+
+
+::: footer
+[Univercity of Toronto Data Sets](https://tspace.library.utoronto.ca/handle/1807/10395)
+:::
+
+## Howell Dataset {.smaller}
+
+::: columns
+::: {.column width="50%"}
+- Data sample and summary:
+```{r}
+#| echo: false
+library(dplyr)
+d <- readr::read_csv("data/howell.csv")
+knitr::kable(d[1:6, ])
+summary(d[, 1:3])
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-width: 4.5
+#| fig-height: 3.4
+#| fig-align: center
+#| echo: false
+library(ggplot2)
+w <- 199.8 / 2.2; h <- 69 * 2.54
+p <- ggplot(aes(height, weight), data = d)
+p + geom_point(aes(color = as.factor(male)), size = 0.2) + 
+  geom_point(aes(x = h, y = w), color = '#00bfc4') + 
+  ylab("Weight (kg)") + xlab("Height (cm)") +
+  annotate("text", y = w - 5, x = h, label = "US male",
+            color = '#00bfc4', size = 3) +
+  annotate("text", y = 42, x = 131, label = "females",
+            color = '#f8766d', size = 3) +
+  annotate("text", y = 42, x = 173, label = "males",
+            color = '#00bfc4', size = 3) +
+  ggtitle("Kalahari !Kung San people") +
+  theme(legend.position = "none")
+```
+:::
+:::
+
+## Howell Dataset {.smaller}
+
+- There is an non-linear relationship between weigh and height
+- We will deal with that later
+- At this point, we will restrict our attention to addults (age > 18)
+
+```{r}
+#| fig-width: 4
+#| fig-height: 3.6
+#| fig-align: center
+#| echo: false
+d <- d |> filter(age >= 18)
+p <- ggplot(aes(height, weight), data = d)
+p + geom_point(size = 0.2) +
+  ylab("Weight (kg)") + xlab("Height (cm)") +
+  ggtitle("Kalahari !Kung San people")
+
+```
+
+## General Aproach {.smaller}
+::: incremental
+- Assess the scope of the inferences that you will get with this model
+- In the case of linear regression, there is likely no causal mechanism and the coeficients should be intepreted as comparisons (RAOS, Page 84)
+- Set up reasonable priors and likelihood
+- Perform a prior predictive simualtion
+- Adjust your priors
+- Fit the model to data
+- Assess quality of the inference and quality of the model
+- Adjust your model
+:::
+
+## Howell Regression {.smaller}
+::: incremental
+- We will build a predictive model for adult Weight $y$ given Height $x$ using the Howell dataset
+- Initial stab at the model:
 $$
 \begin{eqnarray}
-y &=& f(x) \\
-g &=& f(z)
+y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
+\mu_i & = & \alpha + \beta x_i \\
+\alpha & \sim & \text{Normal}(\alpha_{l}, \, \alpha_s) \\
+\beta & \sim & \text{Normal}(\beta_{l}, \, \beta_s) \\
+\sigma & \sim & \text{Exp}(r) \\
 \end{eqnarray}
 $$
+- We have to specify $\alpha_{l}$ and $\alpha_s$, where l and s signify location and scale
+- If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha: it correponds to the weight of the person with zero height
+- This can be fixed by subtracting average weight from $x$
+:::
+
+## Howell Regression {.smaller}
+::: incremental
+- We define a new variable, the centered version of $x$: $x^c_i = x_i - \bar{x}$
+- Now $\alpha$ corresponds to the weight of an average person
+- Checking [Wikipedia](https://en.wikipedia.org/wiki/Human_body_weight) reveals that average weight of a person in Africa is about 60 kg
+- They don't state the standard deviation but it is unlikely that an African adult would weigh less than 30 kg and more than 120 kg and so we will set the prior sd = 10
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
+\mu_i & = & \alpha + \beta x^c_i \\
+\alpha & \sim & \text{Normal}(60, \, 10) \\
+\beta & \sim & \text{Normal}(\beta_{l}, \, \beta_s) \\
+\sigma & \sim & \text{Exp}(r) \\
+\end{eqnarray}
+$$
+- What about the slope $\beta$?
+
+:::
+
+## Howell Regression {.smaller}
+::: incremental
+- In this dataset, the units of $\beta$ are $\frac{kg}{cm}$, since the units of height are $cm$
+- First thing, $\beta$ should be positive. Why?
+- Second, $beta$ is likely less than 1. Why?
+- We can consult [height-weight tables](http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html) for the expected value and variance
+- Turns out $\E(\beta) = 0.33$ and $\text{sd}(\beta) = 0.03$, but we will relax the sd a bit
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
+\mu_i & = & \alpha + \beta x^c_i \\
+\alpha & \sim & \text{Normal}(60, \, 10) \\
+\beta & \sim & \text{Normal}(0.33, \, 0.1) \\
+\sigma & \sim & \text{Exp}(r) \\
+\end{eqnarray}
+$$
+- What about the error term $\sigma$?
+:::
+
+## Howell Regression {.smaller}
+::: incremental
+- We know that $\sigma$ must be positive and so a possible choice for a the prior is $\text{Normal}^+$ or Exponential, or something like that
+- At this stage they key is rule out implausable values, not to get something precise, partcularly since we have enough data (> 340 observations)
+- If we set the $r = 1$, we can expect $\sigma = 1$, but values as high as 5 and 6 are still possible 
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
+\mu_i & = & \alpha + \beta x^c_i \\
+\alpha & \sim & \text{Normal}(60, \, 10) \\
+\beta & \sim & \text{Normal}(0.33, \, 0.1) \\
+\sigma & \sim & \text{Exp}(1) \\
+\end{eqnarray}
+$$
+- We are now ready to perform a prior predictive simulation
+
+:::
+
+## Prior Predictive Simulation {.smaller}
+
+- The simulation follows the generative process defined by the model
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| echo: true
+
+d <- d |>
+  mutate(height_c = height - mean(height))
+round(mean(d$height_c), 2)
+
+prior_pred <- function(data) {
+  alpha <- rnorm(1, 60, 10)
+  beta <- rnorm(1, 0.33, 0.1)
+  sigma <- rexp(1, 1)
+  l <- nrow(data)
+  y <- numeric(l)
+  mu <- numeric(l)
+  
+  for (i in 1:l) {
+    mu[i] <- alpha + beta * data$height_c[i]
+    y[i] <- rnorm(1, mu[i], sigma)
+  }
+  return(y)
+}
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| echo: true
+n <- 100
+pr_p <- replicate(n = n, prior_pred(d))
+dim(pr_p)
+round(pr_p[1:12, 1:8], 2)
+```
+
+:::
+:::
+
+
+
+## Prior Predictive Simulation {.smaller}
+
+- To get a sense for the possible regression lines implied by the prior, we fit a linear model to each simulation draw and plot the lines over observations
+
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| output-location: column
+#| echo: true
+
+intercepts <- numeric(n)
+slopes <- numeric(n)
+for (i in 1:n) {
+  coefs <- coef(lm(pr_p[, i] ~ d$height_c))
+  intercepts[i] <- coefs[1]
+  slopes[i] <- coefs[2]
+}
+
+p <- ggplot(aes(height_c, weight), data = d)
+p + geom_point(size = 0.5) + ylim(20, 90) + 
+  geom_abline(slope = slopes, 
+              intercept = intercepts, 
+              alpha = 1/4) +
+  ylab("Weight (kg)") + 
+  xlab("Centered Height (cm)") +
+  ggtitle("Kalahari !Kung San people", 
+          subtitle = "Prior predictive simulation")
+```
+
+- What do you notice abou this prior?
+
+## Deriving a Posterior Distribution {.smaller}
+
+::: incremental
+- We have seen how to derive posterior and posterior predictive distribution
+- There is nothing new here, except we are dealing a three dimentional posterior: $f(\alpha, \beta, \sigma)$. What happened to $\mu$?
+- We construct the posterior from the prior and data likelihood (for each $y_i$):
+$$
+\begin{eqnarray}
+&\text{Prior: }f(\alpha, \beta, \sigma) = f_1(\alpha) f_2(\beta) f_3(\sigma) \\
+&\text{Likelihood: }f(y \mid \alpha, \beta, \sigma) = \prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \\
+&\text{Posterior: }f(\alpha,\beta,\sigma \mid y) = \frac{f_1(\alpha) f(_2\beta) f_3(\sigma) \cdot \left[\prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \right]}
+ {\int\int\int f_1(\alpha) f_2(\beta) f_3(\sigma) \cdot \left[\prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \right] d\alpha \, d\beta \, d\sigma}
+\end{eqnarray}
+$$
+- To be more precise, we would indicate that $f_1, f_2$ and $f_4$ are Normal with different parameters, and $f_3$ is $\text{Exp}(1)$
+:::
+
+## Fitting the Model {.smaller}
+
+::: incremental
+- Even though our prior is slighly off, 300+ observations is a lot in this case, and so we proceed to model fitting
+- We will use `stan_glm()` function in `rstanarm`
+- `rstanarm` has default priors, but you should specify your own:
+```{r}
+#| echo: false
+library(rstanarm)
+library(bayesplot)
+color_scheme_set("viridis")
+m1 <- readr::read_rds("models/m1.rds")
+options(mc.cores = parallel::detectCores())
+```
+```{r}
+#| echo: true
+#| cache: true
+#| eval: false
+library(rstanarm)
+library(bayesplot)
+options(mc.cores = parallel::detectCores())
+
+m1 <- stan_glm(
+  weight ~ height_c,
+  data = d,
+  family = gaussian,
+  prior_intercept = normal(60, 10),
+  prior = normal(0.33, 0.1),
+  prior_aux = exponential(1),
+  chains = 4,
+  iter = 500,
+  seed = 1234
+)
+```
+- By default, `rstanarm` samples from the posterior. To get back the prior predictive distribution (instead of doing in R) use `prior_PD = TRUE`
+:::
+
+
+## Looking at the Model Summary {.smaller}
+
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+summary(m1)
+```
+- If you can examine the priors by running `prior_summary(m1)`
+
+## Evaluting Quality of the Inferences {.smaller}
+```{r}
+#| fig-width: 12
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+neff_ratio(m1) |> round(2)
+rhat(m1) |> round(2)
+mcmc_trace(m1, size = 0.3)
+```
+
+## Same Model in Stan {.smaller}
+```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  vector[N] x;
+  vector[N] y;
+  int<lower=0, upper=1> prior_PD;
+}
+parameters {
+  real alpha;
+  real beta;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] mu = alpha + beta * x;
+}
+model {
+  alpha ~ normal(60, 10);
+  beta ~ normal(0.33, 0.1);
+  sigma ~ exponential(1);
+  if (!prior_PD) {
+    y ~ normal(mu, sigma);
+  }
+}
+generated quantities {
+  array[N] real y_tilde = normal_rng(mu, sigma);
+}
+```
+
+
+## Posterior Prediction {.smaller}
+
 
