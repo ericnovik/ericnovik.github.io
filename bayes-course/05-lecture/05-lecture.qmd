@@ -19,6 +19,8 @@ always_allow_html: true
 
 ##  Linear Regression and Model Evaluation
 
+::: columns
+::: {.column width="60%"}
 ::: incremental
 - Introducing linear regression
 - Prior predictive simulations
@@ -28,6 +30,12 @@ always_allow_html: true
 - Posterior predictions
 - Cross validation, ELPD, and LOO
 :::
+:::
+
+::: {.column width="40%"}
+![](images/stan.png){fig-align="center" height="500"}
+:::
+:::
 
 ```{r}
 library(ggplot2)
@@ -35,7 +43,6 @@ library(dplyr)
 library(janitor)
 library(gridExtra)
 library(purrr)
-library(bayesrules)
 
 thm <-
   theme_minimal() + theme(
@@ -191,9 +198,9 @@ y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
 \sigma & \sim & \text{Exp}(r) \\
 \end{eqnarray}
 $$
-- We have to specify $\alpha_{l}$ and $\alpha_s$, where l and s signify location and scale
+- We have to specify $\alpha_{l}$ and $\alpha_s$, where l and s signify location and scale, and r, the rate of the exponential
 - If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha: it correponds to the weight of the person with zero height
-- This can be fixed by subtracting average weight from $x$
+- This can be fixed by subtracting average height from $x$
 :::
 
 ## Howell Regression {.smaller}
@@ -221,13 +228,13 @@ $$
 - First thing, $\beta$ should be positive. Why?
 - Second, $beta$ is likely less than 1. Why?
 - We can consult [height-weight tables](http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html) for the expected value and variance
-- Turns out $\E(\beta) = 0.33$ and $\text{sd}(\beta) = 0.03$, but we will relax the sd a bit
+- In the dataset, $\E(\beta) = 0.55$ with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
 \mu_i & = & \alpha + \beta x^c_i \\
 \alpha & \sim & \text{Normal}(60, \, 10) \\
-\beta & \sim & \text{Normal}(0.33, \, 0.1) \\
+\beta & \sim & \text{Normal}(0.55, \, 0.1) \\
 \sigma & \sim & \text{Exp}(r) \\
 \end{eqnarray}
 $$
@@ -236,16 +243,16 @@ $$
 
 ## Howell Regression {.smaller}
 ::: incremental
-- We know that $\sigma$ must be positive and so a possible choice for a the prior is $\text{Normal}^+$ or Exponential, or something like that
+- We know that $\sigma$ must be positive and so a possible choice for a the prior is $\text{Normal}^+$, Exponential, etc.
 - At this stage they key is rule out implausable values, not to get something precise, partcularly since we have enough data (> 340 observations)
-- If we set the $r = 1$, we can expect $\sigma = 1$, but values as high as 5 and 6 are still possible 
+- From the background data, the residual standard error was 4.6, which implies the exponential rate parameter to be 0.2
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
 \mu_i & = & \alpha + \beta x^c_i \\
 \alpha & \sim & \text{Normal}(60, \, 10) \\
-\beta & \sim & \text{Normal}(0.33, \, 0.1) \\
-\sigma & \sim & \text{Exp}(1) \\
+\beta & \sim & \text{Normal}(0.55, \, 0.1) \\
+\sigma & \sim & \text{Exp}(0.2) \\
 \end{eqnarray}
 $$
 - We are now ready to perform a prior predictive simulation
@@ -266,18 +273,16 @@ $$
 d <- d |>
   mutate(height_c = height - mean(height))
 round(mean(d$height_c), 2)
+head(d)
 
 prior_pred <- function(data) {
   alpha <- rnorm(1, 60, 10)
-  beta <- rnorm(1, 0.33, 0.1)
-  sigma <- rexp(1, 1)
-  l <- nrow(data)
-  y <- numeric(l)
-  mu <- numeric(l)
-  
+  beta <- rnorm(1, 0.55, 0.1)
+  sigma <- rexp(1, 0.2)
+  l <- nrow(data); y <- numeric(l)
   for (i in 1:l) {
-    mu[i] <- alpha + beta * data$height_c[i]
-    y[i] <- rnorm(1, mu[i], sigma)
+    mu <- alpha + beta * data$height_c[i]
+    y[i] <- rnorm(1, mu, sigma)
   }
   return(y)
 }
@@ -292,6 +297,8 @@ prior_pred <- function(data) {
 #| echo: true
 n <- 100
 pr_p <- replicate(n = n, prior_pred(d))
+# using library(purrr) functional primitives:
+# pr_p <- map(1:n, \(i) prior_pred(d))
 dim(pr_p)
 round(pr_p[1:12, 1:8], 2)
 ```
@@ -320,18 +327,21 @@ for (i in 1:n) {
   slopes[i] <- coefs[2]
 }
 
+# using library(purrr) functional primitives:
+# df <- pr_p |> map_dfr(\(y) coef(lm(y ~ d$height_c)))
+
 p <- ggplot(aes(height_c, weight), data = d)
 p + geom_point(size = 0.5) + ylim(20, 90) + 
   geom_abline(slope = slopes, 
               intercept = intercepts, 
-              alpha = 1/4) +
+              alpha = 1/6) +
   ylab("Weight (kg)") + 
   xlab("Centered Height (cm)") +
   ggtitle("Kalahari !Kung San people", 
           subtitle = "Prior predictive simulation")
 ```
 
-- What do you notice abou this prior?
+- [What do you notice about this prior?](https://www.polleverywhere.com/free_text_polls/ktA65I0m27uUAnCn44Cui)
 
 ## Deriving a Posterior Distribution {.smaller}
 
@@ -347,13 +357,13 @@ $$
  {\int\int\int f_1(\alpha) f_2(\beta) f_3(\sigma) \cdot \left[\prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \right] d\alpha \, d\beta \, d\sigma}
 \end{eqnarray}
 $$
-- To be more precise, we would indicate that $f_1, f_2$ and $f_4$ are Normal with different parameters, and $f_3$ is $\text{Exp}(1)$
+- To be more precise, we would indicate that $f_1, f_2$ and $f_4$ are Normal with different parameters, and $f_3$ is $\text{Exp}(0.2)$
 :::
 
 ## Fitting the Model {.smaller}
 
 ::: incremental
-- Even though our prior is slighly off, 300+ observations is a lot in this case, and so we proceed to model fitting
+- Even though our prior is slighly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting
 - We will use `stan_glm()` function in `rstanarm`
 - `rstanarm` has default priors, but you should specify your own:
 ```{r}
@@ -362,7 +372,6 @@ library(rstanarm)
 library(bayesplot)
 color_scheme_set("viridis")
 m1 <- readr::read_rds("models/m1.rds")
-options(mc.cores = parallel::detectCores())
 ```
 ```{r}
 #| echo: true
@@ -377,14 +386,14 @@ m1 <- stan_glm(
   data = d,
   family = gaussian,
   prior_intercept = normal(60, 10),
-  prior = normal(0.33, 0.1),
-  prior_aux = exponential(1),
+  prior = normal(0.55, 0.1),
+  prior_aux = exponential(0.2),
   chains = 4,
   iter = 500,
   seed = 1234
 )
 ```
-- By default, `rstanarm` samples from the posterior. To get back the prior predictive distribution (instead of doing in R) use `prior_PD = TRUE`
+- By default, `rstanarm` samples from the posterior. To get back the prior predictive distribution (instead of doing it in R) use `prior_PD = TRUE`
 :::
 
 
@@ -428,8 +437,8 @@ transformed parameters {
 }
 model {
   alpha ~ normal(60, 10);
-  beta ~ normal(0.33, 0.1);
-  sigma ~ exponential(1);
+  beta ~ normal(0.55, 0.1);
+  sigma ~ exponential(0.2);
   if (!prior_PD) {
     y ~ normal(mu, sigma);
   }
@@ -439,7 +448,88 @@ generated quantities {
 }
 ```
 
+- You can pass `prior_PD` as a flag enable drawing from prior predictive distribution
 
-## Posterior Prediction {.smaller}
+## Prior vs Posterior {.smaller}
+::: incremental
+- Comparing the prior to the posterior tell us how much the model learned from data
+- It also helps us to validate if our priors were reasonable
+- In `rstanarm`, you can use `posterior_vs_prior` function
+```{r}
+#| fig-width: 12
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+
+p1 <- posterior_vs_prior(m1, pars = "(Intercept)", color_by = "vs") + xlab("") + thm + theme(legend.position = "none")
+p2 <- posterior_vs_prior(m1, pars = "height_c", color_by = "vs") + xlab("") + thm + theme(legend.position = "none")
+p3 <- posterior_vs_prior(m1, pars = "sigma", color_by = "vs") + xlab("") + thm + theme(legend.position = "none")
+grid.arrange(p1, p2, p3, ncol = 3) 
+```
+
+- Your prior should cover the plausable range of parameter values
+- When we don't have a lot of data and parameters are complex, setting good priors takes work, but there are [guidelines](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)
+:::
+
+## Examining the Posterior {.smaller}
+
+```{r}
+#| echo: true
+library(tidybayes)
+
+draws <- spread_draws(m1, `(Intercept)`, height_c, sigma)
+knitr::kable(head(round(draws, 2)))
+
+```
+
+::: incremental
+-   `spread_draws` will arrange the inferences in columns (wide format)
+-   `gather_draws` will arrange the inferences in rows (long format), which is usually more convenient for plotting and computation
+:::
+
+## Examining the Posterior {.smaller}
+
+```{r}
+#| echo: true
+options(digits = 3)
+draws <- gather_draws(m1, `(Intercept)`, height_c, sigma)
+knitr::kable(tail(draws, 4))
+draws |> mean_qi(.width = 0.90) |> knitr::kable() # also see ?median_qi(), etc
+```
+
+- From the above table: $\E(y|x^c) = 45 (\text{kg}) + 0.62 (\text{kg/cm})x^c (\text{cm})$
+
+## Variability in Parameter Inferences {.smaller}
+
+- The code in section 9.4 in the book doesn't work as the function and variable names have changed
+
+```{r}
+#| echo: true
+dpred <- d |> 
+  # same as add_epred_draws for lin reg not not for other GLMs
+  add_linpred_draws(m1, ndraws = 50)
+head(dpred, 3)
+```
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| output-location: column
+#| echo: true
+dpred |> ggplot(aes(x = height_c, y = weight)) +
+  geom_line(aes(y = .linpred, group = .draw), 
+            alpha = 0.1) + 
+  geom_point(data = d, size = 0.05) +
+  ylab("Weight (kg)") + 
+  xlab("Centered Height (cm)") +
+  ggtitle("100 draws from the slope/intercept posterior")
+```
+
+## Posterior Predictions {.smaller}
 
 
+
+## Posterior Predictions {.smaller}
+
+
+## Evaluting Quality of the Predictions

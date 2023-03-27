@@ -14,8 +14,8 @@ transformed parameters {
 }
 model {
   alpha ~ normal(60, 10);
-  beta ~ normal(0.33, 0.1);
-  sigma ~ exponential(1);
+  beta ~ normal(0.55, 0.1);
+  sigma ~ exponential(0.2);
   if (!prior_PD) {
     y ~ normal(mu, sigma);
   }
