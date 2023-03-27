@@ -7,7 +7,7 @@
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.2.280">
+  <meta name="generator" content="quarto-1.2.335">
 
   <meta name="author" content="Eric Novik | Spring 2023 | Lecture 1">
   <title>Eric Novik - Bayesian Inference</title>
@@ -523,6 +523,20 @@ Eric Novik | Spring 2023 | Lecture 1
 </div>
 </div>
 </section>
+<section id="modern-examples-of-bayesian-analyses" class="slide level2">
+<h2>Modern Examples of Bayesian Analyses</h2>
+
+<img data-src="images/laplace-modern.png" width="100" class="r-stretch quarto-figure-center"><div class="footer">
+<p>OpenAI DALL·E: Pierre Simon Laplace in the style of Wassily Kandinsky</p>
+</div>
+</section>
+<section id="vote-share-analysis" class="slide level2">
+<h2>Vote Share Analysis</h2>
+
+<img data-src="images/voter-preference.png" width="100" class="r-stretch quarto-figure-center"><div class="footer">
+<p>Gelman, A. (2010). <a href="http://www.stat.columbia.edu/~gelman/research/published/atlas_2008.pdf">Breaking down the 2008 vote</a>. In Atlas of the 2008 Elections.</p>
+</div>
+</section>
 <section id="review-of-probability" class="slide level2">
 <h2>Review of Probability</h2>
 <div>
@@ -610,23 +624,23 @@ Eric Novik | Spring 2023 | Lecture 1
 <span id="cb3-4"><a href="#cb3-4"></a>}</span>
 <span id="cb3-5"><a href="#cb3-5"></a><span class="fu">roll</span>(die, <span class="dv">2</span>) <span class="co"># roll the die twice</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 5 2</code></pre>
+<pre><code>[1] 3 1</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>rolls <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e4</span>, <span class="fu">roll</span>(die, <span class="dv">2</span>))</span>
 <span id="cb5-2"><a href="#cb5-2"></a>rolls[, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]    3    3    4    1    6    3
-[2,]    2    4    1    2    4    6</code></pre>
+[1,]    1    4    3    1    1    6
+[2,]    4    1    3    6    3    2</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>roll_sums <span class="ot">&lt;-</span> <span class="fu">colSums</span>(rolls)</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="fu">head</span>(roll_sums)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  5  7  5  3 10  9</code></pre>
+<pre><code>[1] 5 5 6 7 4 8</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">mean</span>(roll_sums <span class="sc">&lt;</span> <span class="dv">11</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9173</code></pre>
+<pre><code>[1] 0.9167</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
