@@ -406,6 +406,10 @@ Eric Novik | Spring 2023 | Lecture 1
 </div>
 
 </section>
+<section id="introductions" class="slide level2">
+<h2>Introductions</h2>
+<p><a href="https://www.polleverywhere.com/free_text_polls/uv28f9hf0xrsysKjRNOVU">What is your first name and where were you born?</a></p>
+</section>
 <section id="lecture-1-bayesian-workflow" class="slide level2">
 <h2>Lecture 1: Bayesian Workflow</h2>
 <div>
@@ -426,7 +430,7 @@ Eric Novik | Spring 2023 | Lecture 1
 \DeclareMathOperator{\E}{\mathbb{E}}
 \DeclareMathOperator{\P}{\mathbb{P}}
 \DeclareMathOperator{\V}{\mathbb{V}}
-\DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\L}{\mathscr{L}}
 \DeclareMathOperator{\I}{\text{I}}
 \]</span></p>
 </section>
@@ -450,6 +454,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <li class="fragment">Identifying tumors on a radiology scan</li>
 <li class="fragment">Playing Chess and Go</li>
 <li class="fragment">Driving a car</li>
+<li class="fragment">Generating reasonable-sounding text</li>
 </ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
@@ -537,6 +542,17 @@ Eric Novik | Spring 2023 | Lecture 1
 <p>Gelman, A. (2010). <a href="http://www.stat.columbia.edu/~gelman/research/published/atlas_2008.pdf">Breaking down the 2008 vote</a>. In Atlas of the 2008 Elections.</p>
 </div>
 </section>
+<section id="pharmacometrics" class="slide level2">
+<h2>Pharmacometrics</h2>
+
+<img data-src="images/pk.png" width="100" class="r-stretch quarto-figure-center"></section>
+<section id="medical-decision-making" class="slide level2">
+<h2>Medical Decision Making</h2>
+
+<img data-src="images/gp.png" width="100" class="r-stretch quarto-figure-center"><div class="footer">
+<p>Joensuu, H., Vehtari, A., et al.&nbsp;(2012). Risk of recurrence of gastrointestinal stromal tumour after surgery: An analysis of pooled population-based cohorts. The Lancet Oncology, 13(3), 265–274.</p>
+</div>
+</section>
 <section id="review-of-probability" class="slide level2">
 <h2>Review of Probability</h2>
 <div>
@@ -562,11 +578,11 @@ Eric Novik | Spring 2023 | Lecture 1
 <div>
 <ul>
 <li class="fragment">You roll a fair six-sided die twice</li>
-<li class="fragment">Give an example of an <span class="math inline">\(\omega \in \Omega\)</span></li>
-<li class="fragment">How many elements are in <span class="math inline">\(\Omega\)</span>? What is <span class="math inline">\(\Omega\)</span>?</li>
+<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/hbp5mikDZQuaAUY93DxEe">Give an example</a> of an <span class="math inline">\(\omega \in \Omega\)</span></li>
+<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/ei1LTjb0Hs527FmxOYcyz">How many elements</a> are in <span class="math inline">\(\Omega\)</span>? What is <span class="math inline">\(\Omega\)</span>?</li>
 <li class="fragment">Define an event <span class="math inline">\(A\)</span> as the sum of the two rolls less than 11</li>
 <li class="fragment">How many elements are in <span class="math inline">\(A\)</span>?</li>
-<li class="fragment">What is <span class="math inline">\(\P(A)\)</span>?</li>
+<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/jeW2aLcvHLARVmmUlcshY">What is</a> <span class="math inline">\(\P(A)\)</span>?</li>
 </ul>
 </div>
 </div>
@@ -600,21 +616,38 @@ Eric Novik | Spring 2023 | Lecture 1
 </div>
 </div>
 </section>
-<section id="random-variables" class="slide level2">
-<h2>Random Variables</h2>
+<section id="random-variables-review" class="slide level2">
+<h2>Random Variables Review</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Review</a></li><li><a href="#tabset-2-2">Mapping</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<div>
 <ul>
-<li>Random variable is not random – it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment</li>
-<li>Include a picture of the mapping</li>
-<li>PMF, PDF, CDF</li>
-<li>Expectations</li>
-<li>Conditional expectations E(X | Y)</li>
+<li class="fragment">Random variable is not random – it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment</li>
+<li class="fragment">PMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)</li>
+<li class="fragment">Expectations (Blitzstein and Hwang, Ch. 4)</li>
+<li class="fragment">Joint Distributions (Blitzstein and Hwang, Ch. 7)</li>
+<li class="fragment">Conditional Expectations (Blitzstein and Hwang, Ch. 9)</li>
 </ul>
+</div>
+</div>
+<div id="tabset-2-2">
+<ul>
+<li>Random variable X for the number of Heads in two flips <img data-src="images/nofheads.png" data-fig-align="center" height="450"></li>
+</ul>
+</div>
+</div>
+</div>
 </section>
 <section id="example-simulation" class="slide level2 smaller">
 <h2>Example Simulation</h2>
+<div>
 <ul>
-<li>We will use R’s <code>sample()</code> function to simulate rolls of a die and <code>replicate()</code> function to repeat the rolling process many times</li>
+<li class="fragment">We will use R’s <code>sample()</code> function to simulate rolls of a die and <code>replicate()</code> function to repeat the rolling process many times</li>
+<li class="fragment">Modern approach: <code>purrr::map(1:n, \(i) expression)</code></li>
 </ul>
+</div>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -624,23 +657,23 @@ Eric Novik | Spring 2023 | Lecture 1
 <span id="cb3-4"><a href="#cb3-4"></a>}</span>
 <span id="cb3-5"><a href="#cb3-5"></a><span class="fu">roll</span>(die, <span class="dv">2</span>) <span class="co"># roll the die twice</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 5 2</code></pre>
+<pre><code>[1] 3 6</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>rolls <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e4</span>, <span class="fu">roll</span>(die, <span class="dv">2</span>))</span>
 <span id="cb5-2"><a href="#cb5-2"></a>rolls[, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]    3    5    2    6    3    5
-[2,]    6    2    6    2    2    6</code></pre>
+[1,]    4    1    3    5    3    4
+[2,]    1    3    2    5    2    3</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>roll_sums <span class="ot">&lt;-</span> <span class="fu">colSums</span>(rolls)</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="fu">head</span>(roll_sums)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  9  7  8  8  5 11</code></pre>
+<pre><code>[1]  5  4  5 10  5  7</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">mean</span>(roll_sums <span class="sc">&lt;</span> <span class="dv">11</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9199</code></pre>
+<pre><code>[1] 0.9208</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
@@ -663,20 +696,22 @@ Eric Novik | Spring 2023 | Lecture 1
 <li class="fragment">For arbitrary <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, if <span class="math inline">\(\P(B) &gt; 0\)</span>:
 <ul>
 <li class="fragment">Conditional probability: <span class="math inline">\(\P(A \mid B) = \frac{\P(AB)}{\P(B)}\)</span></li>
+<li class="fragment">Conditional probability: <span class="math inline">\(\P(B \mid A) = \frac{\P(AB)}{\P(A)}\)</span></li>
 </ul></li>
-<li class="fragment"><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent if observing <span class="math inline">\(B\)</span> does not give you any more information about <span class="math inline">\(A\)</span>: <span class="math inline">\(\P(A \mid B) = \P(A)\)</span></li>
-<li class="fragment">This argument is symmetric: <span class="math inline">\(\P(B \mid A) = \P(B)\)</span></li>
-<li class="fragment">Therefore, <span class="math inline">\(\P(AB) = \P(A \mid B) \; \text{and} \; \P(B) = \P(A) \P(B)\)</span></li>
 <li class="fragment">Bayes’s rule: <span class="math inline">\(\P(A \mid B) = \frac{\P(AB)}{\P(B)} = \frac{\P(B \mid A) \P(A)}{\P(B)}\)</span></li>
+<li class="fragment"><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent if observing <span class="math inline">\(B\)</span> does not give you any more information about <span class="math inline">\(A\)</span>: <span class="math inline">\(\P(A \mid B) = \P(A)\)</span></li>
+<li class="fragment">And <span class="math inline">\(\P(A B) = \P(A) \P(B)\)</span> (from Bayes’s rule)</li>
 </ul>
 </div>
 </section>
 <section id="joint-marginal-and-conditional" class="slide level2 smaller">
 <h2>Joint, Marginal, and Conditional</h2>
+<div>
 <ul>
-<li>Titanic carried approximately 2,200 passengers and sank on 15 April 1912</li>
-<li>Let <span class="math inline">\(G: \{m, f\}\)</span> represent Gender and <span class="math inline">\(S: \{n, y\}\)</span> represent Survival</li>
+<li class="fragment">Titanic carried approximately 2,200 passengers and sank on 15 April 1912</li>
+<li class="fragment">Let <span class="math inline">\(G: \{m, f\}\)</span> represent Gender and <span class="math inline">\(S: \{n, y\}\)</span> represent Survival</li>
 </ul>
+</div>
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
 <div class="sourceCode cell-code" id="cb11" data-code-line-numbers="|1|3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>surv <span class="ot">&lt;-</span> <span class="fu">apply</span>(Titanic, <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), sum) <span class="sc">|&gt;</span> </span>
@@ -743,7 +778,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <li class="fragment">You want <span class="math inline">\(\P(S = y \mid G = m)\)</span>, comparing it to <span class="math inline">\(\P(S = y \mid G = f)\)</span></li>
 <li class="fragment"><span class="math inline">\(\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \\ \approx 0.21\)</span></li>
 <li class="fragment"><span class="math inline">\(\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \\ \approx 0.73\)</span></li>
-<li class="fragment">How would you calculate <span class="math inline">\(\P(S = n \mid G = m)\)</span>?</li>
+<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/fEqKsHkr2OIKXCuh4jeqQ">How would you calculate</a> <span class="math inline">\(\P(S = n \mid G = m)\)</span>?</li>
 <li class="fragment"><span class="math inline">\(\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)\)</span></li>
 </ul>
 </div>
@@ -801,7 +836,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <h2>Bayes’s Rule for Events</h2>
 <div>
 <ul>
-<li class="fragment">We can combine the definition of conditional probability with the LOTP to come up with a Bayes’s rule for events, assuming <span class="math inline">\(\P(B) \neq 0\)</span></li>
+<li class="fragment">We can combine the definition of conditional probability with the LOTP to come up with Bayes’s rule for events, assuming <span class="math inline">\(\P(B) \neq 0\)</span></li>
 </ul>
 <p><span class="math display">\[
 \P(A \mid B) = \frac{\P(B \cap A)}{\P(B)} =
@@ -858,13 +893,13 @@ Eric Novik | Spring 2023 | Lecture 1
 <h2>Notation Confusion</h2>
 <div>
 <ul>
-<li class="fragment"><span class="math inline">\(\theta\)</span>: unknowns or parameters to be estimated could be multivariate, discrete, and continuous (your book uses <span class="math inline">\(\pi\)</span>)</li>
+<li class="fragment"><span class="math inline">\(\theta\)</span>: unknowns or parameters to be estimated; could be multivariate, discrete, and continuous (your book uses <span class="math inline">\(\pi\)</span>)</li>
 <li class="fragment"><span class="math inline">\(y\)</span>: observations or measurements to be modelled (<span class="math inline">\(y_1, y_2, ...\)</span>)</li>
-<li class="fragment"><span class="math inline">\(\tilde{y}\)</span>: unobserved but observable quantities (in your book <span class="math inline">\(y'\)</span>)</li>
+<li class="fragment"><span class="math inline">\(\widetilde{y}\)</span> : unobserved but observable quantities (in your book <span class="math inline">\(y'\)</span>)</li>
 <li class="fragment"><span class="math inline">\(x\)</span>: covariates</li>
 <li class="fragment"><span class="math inline">\(f( \theta )\)</span>: a prior model, P[DM]F of <span class="math inline">\(\theta\)</span></li>
-<li class="fragment"><span class="math inline">\(f(y \mid \theta, x)\)</span>: an observational model, P[DM]F when it is a function of <span class="math inline">\(y\)</span> (in your book: <span class="math inline">\(f(y \mid \pi)\)</span>); we typically drop the <span class="math inline">\(x\)</span> to simplify the notation.</li>
-<li class="fragment"><span class="math inline">\(f(y \mid \theta)\)</span>: is a likelihood function when it is a function of <span class="math inline">\(\theta\)</span> (in your book: <span class="math inline">\(\L(\pi \mid y)\)</span>)</li>
+<li class="fragment"><span class="math inline">\(f_y(y \mid \theta, x)\)</span>: an observational model, P[DM]F when it is a function of <span class="math inline">\(y\)</span> (in your book: <span class="math inline">\(f(y \mid \pi)\)</span>); we typically drop the <span class="math inline">\(x\)</span> to simplify the notation.</li>
+<li class="fragment"><span class="math inline">\(f_{\theta}(y \mid \theta)\)</span>: is a likelihood function when it is a function of <span class="math inline">\(\theta\)</span> (in your book: <span class="math inline">\(\L(\pi \mid y)\)</span>)</li>
 <li class="fragment">Some people write <span class="math inline">\(\L(\theta; y)\)</span> or simply <span class="math inline">\(\L(\theta)\)</span></li>
 </ul>
 </div>
@@ -874,44 +909,64 @@ Eric Novik | Spring 2023 | Lecture 1
 <div>
 <ul>
 <li class="fragment">Before observing the data, we need to specify a prior model <span class="math inline">\(f(\theta)\)</span> on all unknowns <span class="math inline">\(\theta\)</span><sup>1</sup></li>
-<li class="fragment">Pick a data model <span class="math inline">\(f_{Y}(Y \mid \Theta = \theta)\)</span> — this is typically more important than a prior</li>
+<li class="fragment">Pick a data model <span class="math inline">\(f(y \mid \theta, x)\)</span> — this is typically more important than a prior; this includes the model for the conditional mean: <span class="math inline">\(\E(y | x)\)</span></li>
 <li class="fragment">For more complex models, we construct a prior predictive distribution, <span class="math inline">\(f(y)\)</span>
 <ul>
 <li class="fragment">We will define this quantity later — it will help us assess if our choice of priors makes sense on the observational scale: <span class="math inline">\(f(\theta) \rightarrow f(y)\)</span></li>
 </ul></li>
-<li class="fragment">After we observe data <span class="math inline">\(y\)</span>, we treat <span class="math inline">\(f_{\Theta}(Y = y \mid \Theta)\)</span> as the likelihood of observing <span class="math inline">\(y\)</span> under all plausible values of <span class="math inline">\(\theta\)</span></li>
-<li class="fragment">Derive a posterior model for <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\, f_{\Theta}(\Theta \mid Y = y)\)</span> using Bayes’s rule</li>
-<li class="fragment">Compute all the quantities of interest from the posterior, such as event probabilities, e.g., <span class="math inline">\(\P(\theta &gt; 0.5)\)</span>, posterior predictive distribution <span class="math inline">\(f(\tilde{Y} \mid Y = y)\)</span>, decision functions, etc.</li>
+<li class="fragment">After we observe data <span class="math inline">\(y\)</span>, we treat <span class="math inline">\(f(y \mid \theta, x)\)</span> as the likelihood of observing <span class="math inline">\(y\)</span> under all plausible values of <span class="math inline">\(\theta\)</span></li>
+<li class="fragment">Derive a posterior model for <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\, f(\theta \mid y, x)\)</span> using Bayes’s rule or by simulation</li>
+<li class="fragment">Compute all the quantities of interest from the posterior, such as event probabilities, e.g., <span class="math inline">\(\P(\theta &gt; 0.5)\)</span>, posterior predictive distribution <span class="math inline">\(f(\widetilde{y} \mid y)\)</span>, decision functions, etc.</li>
 </ul>
 </div>
 <aside><ol class="aside-footnotes"><li id="fn2"><p>There is always a prior, even in frequentist inference.</p></li></ol></aside></section>
-<section id="prior-model" class="slide level2 smaller">
-<h2>Prior Model</h2>
+<section id="example-prior-model" class="slide level2 smaller">
+<h2>Example Prior Model</h2>
+<div>
 <ul>
-<li>We will construct a prior model for our clinical trial</li>
-<li>From previous trials, we construct a discretized version of the prior distribution of the resposne rate</li>
-<li>The most likely value for response rate is 30%</li>
+<li class="fragment">We will construct a prior model for our clinical trial</li>
+<li class="fragment">From previous trials, we construct a discretized version of the prior distribution of the resposne rate</li>
+<li class="fragment">The most likely value for response rate is 30%</li>
 </ul>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
-<span id="cb12-2"><a href="#cb12-2"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="fu">dot_plot</span>(theta, prior) <span class="sc">+</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prior probability of response rates"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>dot_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb12-2"><a href="#cb12-2"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, y), <span class="fu">aes</span>(x, y))</span>
+<span id="cb12-3"><a href="#cb12-3"></a>  p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> x, </span>
+<span id="cb12-5"><a href="#cb12-5"></a>                     <span class="at">yend =</span> y), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>    <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span> </span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">f</span>(theta)))</span>
+<span id="cb12-8"><a href="#cb12-8"></a>}</span>
+<span id="cb12-9"><a href="#cb12-9"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb12-10"><a href="#cb12-10"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="fu">dot_plot</span>(theta, prior) <span class="sc">+</span></span>
+<span id="cb12-12"><a href="#cb12-12"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prior probability of response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" width="288"></p>
+</figure>
 </div>
-<img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" width="480" class="r-stretch quarto-figure-center"><ul>
-<li>Even though <span class="math inline">\(\theta\)</span> is a continuous parameter, we can still specify a discrete prior</li>
-<li>The posterior will also be discrete and of the same cardinality</li>
+</div>
+</div>
+</div>
+<ul>
+<li class="fragment">Even though <span class="math inline">\(\theta\)</span> is a continuous parameter, we can still specify a discrete prior</li>
+<li class="fragment">The posterior will also be discrete and of the same cardinality</li>
 </ul>
+</div>
 </section>
 <section id="data-model" class="slide level2 smaller">
 <h2>Data Model</h2>
+<div>
 <ul>
-<li>We consider each person’s response rate to be independent, given the treatment</li>
-<li>We have a fixed number of people in the trial, <span class="math inline">\(N = 5\)</span>, and <span class="math inline">\(0\)</span> to <span class="math inline">\(5\)</span> successes</li>
-<li>We will therefore consider: <span class="math inline">\(Y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(5,\theta)\)</span></li>
-<li><span class="math inline">\(f(y \mid \theta) = \text{Bin} (y \mid 5,\theta) = \binom{5}{y} \theta^y (1 - \theta)^{5 - y}\)</span> for <span class="math inline">\(y \in \{0,1,\ldots,5\}\)</span></li>
-<li>Is this a valid probability distribution as a function of <span class="math inline">\(y\)</span>?</li>
+<li class="fragment">We consider each person’s response rate to be independent, given the treatment</li>
+<li class="fragment">We have a fixed number of people in the trial, <span class="math inline">\(N = 5\)</span>, and <span class="math inline">\(0\)</span> to <span class="math inline">\(5\)</span> successes</li>
+<li class="fragment">We will therefore consider: <span class="math inline">\(y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(5,\theta)\)</span></li>
+<li class="fragment"><span class="math inline">\(f(y \mid \theta) = \text{Bin} (y \mid 5,\theta) = \binom{5}{y} \theta^y (1 - \theta)^{5 - y}\)</span> for <span class="math inline">\(y \in \{0,1,\ldots,5\}\)</span></li>
+<li class="fragment">Is this a valid probability distribution as a function of <span class="math inline">\(y\)</span>?</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>N <span class="ot">=</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>N; theta <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
@@ -925,14 +980,24 @@ Eric Novik | Spring 2023 | Lecture 1
 <pre><code>[1] 1</code></pre>
 </div>
 </div>
-
-<img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" width="1536" class="r-stretch quarto-figure-center"></section>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" width="1536"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
 <section id="likelihood-function" class="slide level2 smaller">
 <h2>Likelihood Function</h2>
+<div>
 <ul>
-<li>We ran the trial and observed 3 out of 5 responders</li>
-<li>We can now construct a likelihood function for <span class="math inline">\(y = 3\)</span> as a function of <span class="math inline">\(\theta\)</span></li>
-<li>Let’s check if this function is a probability distribution: <span class="math display">\[
+<li class="fragment">We ran the trial and observed 3 out of 5 responders</li>
+<li class="fragment">We can now construct a likelihood function for <span class="math inline">\(y = 3\)</span> as a function of <span class="math inline">\(\theta\)</span></li>
+<li class="fragment">Let’s check if this function is a probability distribution: <span class="math display">\[
 f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
 \]</span></li>
 </ul>
@@ -947,9 +1012,10 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 </div>
 <ul>
-<li><span class="math inline">\(f(y)\)</span> is called marginal distribution of the data or, more aptly, prior predictive distribution</li>
-<li>It tells us that prior to observing <span class="math inline">\(y\)</span>, all values of <span class="math inline">\(y\)</span> are equally likely</li>
+<li class="fragment"><span class="math inline">\(f(y)\)</span> is called marginal distribution of the data or, more aptly, prior predictive distribution</li>
+<li class="fragment">It tells us that prior to observing <span class="math inline">\(y\)</span>, all values of <span class="math inline">\(y\)</span> are equally likely</li>
 </ul>
+</div>
 </section>
 <section id="likelihood-function-1" class="slide level2 smaller">
 <h2>Likelihood Function</h2>
@@ -1078,21 +1144,25 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <h2>Computing Event Probability</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
+<div>
 <ul>
-<li>To compute event probabilities, we integrate (or sum) the relevant regions of the parameter space</li>
+<li class="fragment"><p>To compute event probabilities, we integrate (or sum) the relevant regions of the parameter space <span class="math display">\[
+\P(\theta \geq 0.5) = \int_{0.5}^{1} f(\theta \mid y) \, d\theta
+\]</span></p></li>
+<li class="fragment"><p>In this case, we only have discrete quantities, so we sum:</p></li>
 </ul>
-<p><span class="math display">\[
-\P(\theta \geq 0.5) = \int_{0.5}^{1} f(\theta) \, d\theta
-\]</span></p>
-<ul>
-<li>In this case, we only have discrete quantities, so we sum:</li>
-</ul>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>probs <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
 <span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">filter</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.50</span>) <span class="sc">|&gt;</span></span>
 <span id="cb20-3"><a href="#cb20-3"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(prior, post) <span class="sc">|&gt;</span></span>
 <span id="cb20-4"><a href="#cb20-4"></a>  <span class="fu">colSums</span>() <span class="sc">|&gt;</span></span>
-<span id="cb20-5"><a href="#cb20-5"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-5"><a href="#cb20-5"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb20-6"><a href="#cb20-6"></a>probs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>prior  post 
+ 0.50  0.71 </code></pre>
+</div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
@@ -1157,9 +1227,11 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 </div>
 <p><br></p>
+<div>
 <ul>
-<li><span class="math inline">\(\P(\theta \geq 0.50) =\)</span> 0.5 and <span class="math inline">\(\P(\theta | y \geq 0.50) =\)</span> 0.71</li>
+<li class="fragment"><span class="math inline">\(\P(\theta \geq 0.50) =\)</span> 0.5 and <span class="math inline">\(\P(\theta | y \geq 0.50) =\)</span> 0.71</li>
 </ul>
+</div>
 </div>
 </div>
 </section>
@@ -1169,13 +1241,13 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <li>Flat or uniform prior means that we consider all values of <span class="math inline">\(\theta\)</span> equality likely</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb21-2"><a href="#cb21-2"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
-<span id="cb21-3"><a href="#cb21-3"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>)</span>
-<span id="cb21-4"><a href="#cb21-4"></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
-<span id="cb21-5"><a href="#cb21-5"></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
-<span id="cb21-6"><a href="#cb21-6"></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
-<span id="cb21-7"><a href="#cb21-7"></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb22-3"><a href="#cb22-3"></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>)</span>
+<span id="cb22-4"><a href="#cb22-4"></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
+<span id="cb22-5"><a href="#cb22-5"></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
+<span id="cb22-6"><a href="#cb22-6"></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
+<span id="cb22-7"><a href="#cb22-7"></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -1251,6 +1323,16 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <img data-src="images/workflow.png" width="672" class="r-stretch quarto-figure-center"><div class="footer">
 <p>Gelman, A. et al.&nbsp;(2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808</p>
 </div>
+</section>
+<section id="homework" class="slide level2">
+<h2>Homework</h2>
+<p>Homework is due on Monday before 5 pm.</p>
+<ul>
+<li>Exercise 2.3 (Binomial practice)</li>
+<li>Exercise 2.10 (LGBTQ students: rural and urban)</li>
+<li>Exercise 2.15 (Cuckoo birds)</li>
+<li>Exercise 2.19 (Cuckoo birds redux)</li>
+</ul>
 
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>

@@ -1,10 +1,17 @@
 [
   {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#introductions",
+    "href": "bayes-course/01-lecture/01-lecture.html#introductions",
+    "title": "Bayesian Inference",
+    "section": "Introductions",
+    "text": "Introductions\nWhat is your first name and where were you born?"
+  },
+  {
     "objectID": "bayes-course/01-lecture/01-lecture.html#lecture-1-bayesian-workflow",
     "href": "bayes-course/01-lecture/01-lecture.html#lecture-1-bayesian-workflow",
     "title": "Bayesian Inference",
     "section": "Lecture 1: Bayesian Workflow",
-    "text": "Lecture 1: Bayesian Workflow\n\n\nOverview of the Course\nStatistics vs AI/ML\nBrief history of Bayesian inference\nReview of basic probability\nIntroduction to Bayesian workflow\nBayes’s rule for events\nBinomial model and the Bayesian Crank\n\n\n\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "text": "Lecture 1: Bayesian Workflow\n\n\nOverview of the Course\nStatistics vs AI/ML\nBrief history of Bayesian inference\nReview of basic probability\nIntroduction to Bayesian workflow\nBayes’s rule for events\nBinomial model and the Bayesian Crank\n\n\n\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#overview-of-the-class",
@@ -18,7 +25,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#statistics-vs.-aiml",
     "title": "Bayesian Inference",
     "section": "Statistics vs. AI/ML",
-    "text": "Statistics vs. AI/ML\n⚠️ What follows is an oversimplified opinion.\n\n\n\n\nAI is great for automating tasks that humans find easy\n\nRecognizing faces, cats, and other objects\nIdentifying tumors on a radiology scan\nPlaying Chess and Go\nDriving a car\n\n\n\n\nStatistics is great at answering questions that humans find hard\n\nHow fast does a drug clear from the body?\nWhat is the expected tumor size 2 months after treatment?\nHow would patients respond under a different treatment?\nShould I take this drug?\n\n\n\n\n\n“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman"
+    "text": "Statistics vs. AI/ML\n⚠️ What follows is an oversimplified opinion.\n\n\n\n\nAI is great for automating tasks that humans find easy\n\nRecognizing faces, cats, and other objects\nIdentifying tumors on a radiology scan\nPlaying Chess and Go\nDriving a car\nGenerating reasonable-sounding text\n\n\n\n\nStatistics is great at answering questions that humans find hard\n\nHow fast does a drug clear from the body?\nWhat is the expected tumor size 2 months after treatment?\nHow would patients respond under a different treatment?\nShould I take this drug?\n\n\n\n\n\n“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#brief-history",
@@ -49,6 +56,20 @@
     "text": "Vote Share Analysis\n\n\nGelman, A. (2010). Breaking down the 2008 vote. In Atlas of the 2008 Elections."
   },
   {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#pharmacometrics",
+    "href": "bayes-course/01-lecture/01-lecture.html#pharmacometrics",
+    "title": "Bayesian Inference",
+    "section": "Pharmacometrics",
+    "text": "Pharmacometrics"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#medical-decision-making",
+    "href": "bayes-course/01-lecture/01-lecture.html#medical-decision-making",
+    "title": "Bayesian Inference",
+    "section": "Medical Decision Making",
+    "text": "Medical Decision Making\n\n\nJoensuu, H., Vehtari, A., et al. (2012). Risk of recurrence of gastrointestinal stromal tumour after surgery: An analysis of pooled population-based cohorts. The Lancet Oncology, 13(3), 265–274."
+  },
+  {
     "objectID": "bayes-course/01-lecture/01-lecture.html#review-of-probability",
     "href": "bayes-course/01-lecture/01-lecture.html#review-of-probability",
     "title": "Bayesian Inference",
@@ -63,32 +84,32 @@
     "text": "Example\n\nRolling diceOmega\n\n\n\n\nYou roll a fair six-sided die twice\nGive an example of an \\(\\omega \\in \\Omega\\)\nHow many elements are in \\(\\Omega\\)? What is \\(\\Omega\\)?\nDefine an event \\(A\\) as the sum of the two rolls less than 11\nHow many elements are in \\(A\\)?\nWhat is \\(\\P(A)\\)?\n\n\n\n\n\n\n\nouter(1:6, 1:6, FUN = \"+\")\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    2    3    4    5    6    7\n[2,]    3    4    5    6    7    8\n[3,]    4    5    6    7    8    9\n[4,]    5    6    7    8    9   10\n[5,]    6    7    8    9   10   11\n[6,]    7    8    9   10   11   12\n\n\n\n\n\n\\(\\Omega\\) consists of all pairs \\(\\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\\}\\)\nThere are 36 such pairs\n33 of those pairs result in a sum of less than 11\nTherefore, \\(\\P(A) = \\frac{33}{36} = \\frac{11}{12}\\)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture.html#random-variables",
-    "href": "bayes-course/01-lecture/01-lecture.html#random-variables",
+    "objectID": "bayes-course/01-lecture/01-lecture.html#random-variables-review",
+    "href": "bayes-course/01-lecture/01-lecture.html#random-variables-review",
     "title": "Bayesian Inference",
-    "section": "Random Variables",
-    "text": "Random Variables\n\nRandom variable is not random – it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment\nInclude a picture of the mapping\nPMF, PDF, CDF\nExpectations\nConditional expectations E(X | Y)"
+    "section": "Random Variables Review",
+    "text": "Random Variables Review\n\nReviewMapping\n\n\n\n\nRandom variable is not random – it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment\nPMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)\nExpectations (Blitzstein and Hwang, Ch. 4)\nJoint Distributions (Blitzstein and Hwang, Ch. 7)\nConditional Expectations (Blitzstein and Hwang, Ch. 9)\n\n\n\n\n\nRandom variable X for the number of Heads in two flips"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "href": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "title": "Bayesian Inference",
     "section": "Example Simulation",
-    "text": "Example Simulation\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 5 2\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    3    5    2    6    3    5\n[2,]    6    2    6    2    2    6\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  9  7  8  8  5 11\n\nmean(roll_sums < 11) \n\n[1] 0.9199\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
+    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 3 6\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    4    1    3    5    3    4\n[2,]    1    3    2    5    2    3\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  5  4  5 10  5  7\n\nmean(roll_sums < 11) \n\n[1] 0.9208\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
     "href": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
     "title": "Bayesian Inference",
     "section": "Conditional Probability",
-    "text": "Conditional Probability\n\n\nFor arbitrary \\(A\\) and \\(B\\), if \\(\\P(B) > 0\\):\n\nConditional probability: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)}\\)\n\n\\(A\\) and \\(B\\) are independent if observing \\(B\\) does not give you any more information about \\(A\\): \\(\\P(A \\mid B) = \\P(A)\\)\nThis argument is symmetric: \\(\\P(B \\mid A) = \\P(B)\\)\nTherefore, \\(\\P(AB) = \\P(A \\mid B) \\; \\text{and} \\; \\P(B) = \\P(A) \\P(B)\\)\nBayes’s rule: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)} = \\frac{\\P(B \\mid A) \\P(A)}{\\P(B)}\\)"
+    "text": "Conditional Probability\n\n\nFor arbitrary \\(A\\) and \\(B\\), if \\(\\P(B) > 0\\):\n\nConditional probability: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)}\\)\nConditional probability: \\(\\P(B \\mid A) = \\frac{\\P(AB)}{\\P(A)}\\)\n\nBayes’s rule: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)} = \\frac{\\P(B \\mid A) \\P(A)}{\\P(B)}\\)\n\\(A\\) and \\(B\\) are independent if observing \\(B\\) does not give you any more information about \\(A\\): \\(\\P(A \\mid B) = \\P(A)\\)\nAnd \\(\\P(A B) = \\P(A) \\P(B)\\) (from Bayes’s rule)"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#joint-marginal-and-conditional",
     "href": "bayes-course/01-lecture/01-lecture.html#joint-marginal-and-conditional",
     "title": "Bayesian Inference",
     "section": "Joint, Marginal, and Conditional",
-    "text": "Joint, Marginal, and Conditional\n\nTitanic carried approximately 2,200 passengers and sank on 15 April 1912\nLet \\(G: \\{m, f\\}\\) represent Gender and \\(S: \\{n, y\\}\\) represent Survival\n\n\n\nsurv <- apply(Titanic, c(2, 4), sum) |> \n  as_tibble()\nsurv_prop <- round(surv / sum(surv), 3)\nbind_cols(Sex = c(\"Male\", \"Female\"), \n          surv_prop) |> \n  adorn_totals(c(\"row\", \"col\")) |>\n  knitr::kable(caption = \n               \"Titanic survival proportions\")\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n\n\n\n\\(\\P(G = m \\cap S = y) =\\) 0.167\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) =\\) ??\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) = 0.323\\)"
+    "text": "Joint, Marginal, and Conditional\n\n\nTitanic carried approximately 2,200 passengers and sank on 15 April 1912\nLet \\(G: \\{m, f\\}\\) represent Gender and \\(S: \\{n, y\\}\\) represent Survival\n\n\n\n\nsurv <- apply(Titanic, c(2, 4), sum) |> \n  as_tibble()\nsurv_prop <- round(surv / sum(surv), 3)\nbind_cols(Sex = c(\"Male\", \"Female\"), \n          surv_prop) |> \n  adorn_totals(c(\"row\", \"col\")) |>\n  knitr::kable(caption = \n               \"Titanic survival proportions\")\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n\n\n\n\\(\\P(G = m \\cap S = y) =\\) 0.167\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) =\\) ??\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) = 0.323\\)"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#joint-marginal-and-conditional-1",
@@ -109,7 +130,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#bayess-rule-for-events",
     "title": "Bayesian Inference",
     "section": "Bayes’s Rule for Events",
-    "text": "Bayes’s Rule for Events\n\n\nWe can combine the definition of conditional probability with the LOTP to come up with a Bayes’s rule for events, assuming \\(\\P(B) \\neq 0\\)\n\n\\[\n\\P(A \\mid B) = \\frac{\\P(B \\cap A)}{\\P(B)} =\n               \\frac{\\P(B \\mid A) \\P(A)}{\\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)}\n\\]\n\nWe typically think of \\(A\\) is some unknown we wish to learn (e.g., the status of a disease) and \\(B\\) as the data we observe (e.g., the result of a diagnostic test)\nWe call \\(\\P(A)\\) prior probability of A (e.g., how prevalent is the disease in the population)\nWe call \\(\\P(A \\mid B)\\), the posterior probability of the unknown \\(A\\) given data \\(B\\)"
+    "text": "Bayes’s Rule for Events\n\n\nWe can combine the definition of conditional probability with the LOTP to come up with Bayes’s rule for events, assuming \\(\\P(B) \\neq 0\\)\n\n\\[\n\\P(A \\mid B) = \\frac{\\P(B \\cap A)}{\\P(B)} =\n               \\frac{\\P(B \\mid A) \\P(A)}{\\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)}\n\\]\n\nWe typically think of \\(A\\) is some unknown we wish to learn (e.g., the status of a disease) and \\(B\\) as the data we observe (e.g., the result of a diagnostic test)\nWe call \\(\\P(A)\\) prior probability of A (e.g., how prevalent is the disease in the population)\nWe call \\(\\P(A \\mid B)\\), the posterior probability of the unknown \\(A\\) given data \\(B\\)"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#example-medical-testing",
@@ -130,35 +151,35 @@
     "href": "bayes-course/01-lecture/01-lecture.html#notation-confusion",
     "title": "Bayesian Inference",
     "section": "Notation Confusion",
-    "text": "Notation Confusion\n\n\n\\(\\theta\\): unknowns or parameters to be estimated could be multivariate, discrete, and continuous (your book uses \\(\\pi\\))\n\\(y\\): observations or measurements to be modelled (\\(y_1, y_2, ...\\))\n\\(\\tilde{y}\\): unobserved but observable quantities (in your book \\(y'\\))\n\\(x\\): covariates\n\\(f( \\theta )\\): a prior model, P[DM]F of \\(\\theta\\)\n\\(f(y \\mid \\theta, x)\\): an observational model, P[DM]F when it is a function of \\(y\\) (in your book: \\(f(y \\mid \\pi)\\)); we typically drop the \\(x\\) to simplify the notation.\n\\(f(y \\mid \\theta)\\): is a likelihood function when it is a function of \\(\\theta\\) (in your book: \\(\\L(\\pi \\mid y)\\))\nSome people write \\(\\L(\\theta; y)\\) or simply \\(\\L(\\theta)\\)"
+    "text": "Notation Confusion\n\n\n\\(\\theta\\): unknowns or parameters to be estimated; could be multivariate, discrete, and continuous (your book uses \\(\\pi\\))\n\\(y\\): observations or measurements to be modelled (\\(y_1, y_2, ...\\))\n\\(\\widetilde{y}\\) : unobserved but observable quantities (in your book \\(y'\\))\n\\(x\\): covariates\n\\(f( \\theta )\\): a prior model, P[DM]F of \\(\\theta\\)\n\\(f_y(y \\mid \\theta, x)\\): an observational model, P[DM]F when it is a function of \\(y\\) (in your book: \\(f(y \\mid \\pi)\\)); we typically drop the \\(x\\) to simplify the notation.\n\\(f_{\\theta}(y \\mid \\theta)\\): is a likelihood function when it is a function of \\(\\theta\\) (in your book: \\(\\L(\\pi \\mid y)\\))\nSome people write \\(\\L(\\theta; y)\\) or simply \\(\\L(\\theta)\\)"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#general-approach",
     "href": "bayes-course/01-lecture/01-lecture.html#general-approach",
     "title": "Bayesian Inference",
     "section": "General Approach",
-    "text": "General Approach\n\n\nBefore observing the data, we need to specify a prior model \\(f(\\theta)\\) on all unknowns \\(\\theta\\)1\nPick a data model \\(f_{Y}(Y \\mid \\Theta = \\theta)\\) — this is typically more important than a prior\nFor more complex models, we construct a prior predictive distribution, \\(f(y)\\)\n\nWe will define this quantity later — it will help us assess if our choice of priors makes sense on the observational scale: \\(f(\\theta) \\rightarrow f(y)\\)\n\nAfter we observe data \\(y\\), we treat \\(f_{\\Theta}(Y = y \\mid \\Theta)\\) as the likelihood of observing \\(y\\) under all plausible values of \\(\\theta\\)\nDerive a posterior model for \\(\\theta\\), \\(\\, f_{\\Theta}(\\Theta \\mid Y = y)\\) using Bayes’s rule\nCompute all the quantities of interest from the posterior, such as event probabilities, e.g., \\(\\P(\\theta > 0.5)\\), posterior predictive distribution \\(f(\\tilde{Y} \\mid Y = y)\\), decision functions, etc.\n\n\nThere is always a prior, even in frequentist inference."
+    "text": "General Approach\n\n\nBefore observing the data, we need to specify a prior model \\(f(\\theta)\\) on all unknowns \\(\\theta\\)1\nPick a data model \\(f(y \\mid \\theta, x)\\) — this is typically more important than a prior; this includes the model for the conditional mean: \\(\\E(y | x)\\)\nFor more complex models, we construct a prior predictive distribution, \\(f(y)\\)\n\nWe will define this quantity later — it will help us assess if our choice of priors makes sense on the observational scale: \\(f(\\theta) \\rightarrow f(y)\\)\n\nAfter we observe data \\(y\\), we treat \\(f(y \\mid \\theta, x)\\) as the likelihood of observing \\(y\\) under all plausible values of \\(\\theta\\)\nDerive a posterior model for \\(\\theta\\), \\(\\, f(\\theta \\mid y, x)\\) using Bayes’s rule or by simulation\nCompute all the quantities of interest from the posterior, such as event probabilities, e.g., \\(\\P(\\theta > 0.5)\\), posterior predictive distribution \\(f(\\widetilde{y} \\mid y)\\), decision functions, etc.\n\n\nThere is always a prior, even in frequentist inference."
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture.html#prior-model",
-    "href": "bayes-course/01-lecture/01-lecture.html#prior-model",
+    "objectID": "bayes-course/01-lecture/01-lecture.html#example-prior-model",
+    "href": "bayes-course/01-lecture/01-lecture.html#example-prior-model",
     "title": "Bayesian Inference",
-    "section": "Prior Model",
-    "text": "Prior Model\n\nWe will construct a prior model for our clinical trial\nFrom previous trials, we construct a discretized version of the prior distribution of the resposne rate\nThe most likely value for response rate is 30%\n\n\ntheta <- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior <- c(0.05, 0.45, 0.30, 0.15, 0.05)\ndot_plot(theta, prior) +\n  ggtitle(\"Prior probability of response rates\")\n\n\n\nEven though \\(\\theta\\) is a continuous parameter, we can still specify a discrete prior\nThe posterior will also be discrete and of the same cardinality"
+    "section": "Example Prior Model",
+    "text": "Example Prior Model\n\n\nWe will construct a prior model for our clinical trial\nFrom previous trials, we construct a discretized version of the prior distribution of the resposne rate\nThe most likely value for response rate is 30%\n\n\n\ndot_plot <- function(x, y) {\n  p <- ggplot(data.frame(x, y), aes(x, y))\n  p + geom_point(aes(x = x, y = y), size = 0.5) +\n    geom_segment(aes(x = x, y = 0, xend = x, \n                     yend = y), linewidth = 0.2) +\n    xlab(expression(theta)) + \n    ylab(expression(f(theta)))\n}\ntheta <- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior <- c(0.05, 0.45, 0.30, 0.15, 0.05)\ndot_plot(theta, prior) +\n  ggtitle(\"Prior probability of response\")\n\n\n\n\n\n\n\n\n\n\n\nEven though \\(\\theta\\) is a continuous parameter, we can still specify a discrete prior\nThe posterior will also be discrete and of the same cardinality"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#data-model",
     "href": "bayes-course/01-lecture/01-lecture.html#data-model",
     "title": "Bayesian Inference",
     "section": "Data Model",
-    "text": "Data Model\n\nWe consider each person’s response rate to be independent, given the treatment\nWe have a fixed number of people in the trial, \\(N = 5\\), and \\(0\\) to \\(5\\) successes\nWe will therefore consider: \\(Y | \\theta \\sim \\text{Bin}(N,\\theta) = \\text{Bin}(5,\\theta)\\)\n\\(f(y \\mid \\theta) = \\text{Bin} (y \\mid 5,\\theta) = \\binom{5}{y} \\theta^y (1 - \\theta)^{5 - y}\\) for \\(y \\in \\{0,1,\\ldots,5\\}\\)\nIs this a valid probability distribution as a function of \\(y\\)?\n\n\nN = 5; y <- 0:N; theta <- 0.5\n(f_y <- dbinom(x = y, size = N, prob = theta) |>\n    fractions())\n\n[1] 1/32 5/32 5/16 5/16 5/32 1/32\n\nsum(dbinom(x = y, size = N, prob = theta))\n\n[1] 1"
+    "text": "Data Model\n\n\nWe consider each person’s response rate to be independent, given the treatment\nWe have a fixed number of people in the trial, \\(N = 5\\), and \\(0\\) to \\(5\\) successes\nWe will therefore consider: \\(y | \\theta \\sim \\text{Bin}(N,\\theta) = \\text{Bin}(5,\\theta)\\)\n\\(f(y \\mid \\theta) = \\text{Bin} (y \\mid 5,\\theta) = \\binom{5}{y} \\theta^y (1 - \\theta)^{5 - y}\\) for \\(y \\in \\{0,1,\\ldots,5\\}\\)\nIs this a valid probability distribution as a function of \\(y\\)?\n\n\nN = 5; y <- 0:N; theta <- 0.5\n(f_y <- dbinom(x = y, size = N, prob = theta) |>\n    fractions())\n\n[1] 1/32 5/32 5/16 5/16 5/32 1/32\n\nsum(dbinom(x = y, size = N, prob = theta))\n\n[1] 1"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#likelihood-function",
     "href": "bayes-course/01-lecture/01-lecture.html#likelihood-function",
     "title": "Bayesian Inference",
     "section": "Likelihood Function",
-    "text": "Likelihood Function\n\nWe ran the trial and observed 3 out of 5 responders\nWe can now construct a likelihood function for \\(y = 3\\) as a function of \\(\\theta\\)\nLet’s check if this function is a probability distribution: \\[\nf (y) = \\int_{0}^{1} \\binom{N}{y} \\theta^y (1 - \\theta)^{N - y}\\, d\\theta = \\frac{1}{N + 1}\n\\]\n\n\ndbinom_theta <- function(theta, N, y) {\n  choose(N, y) * theta^y * (1 - theta)^(N - y) \n}\nintegrate(dbinom_theta, lower = 0, upper = 1, \n          N = 5, y = 3)[[1]] |> fractions()\n\n[1] 1/6\n\n\n\n\\(f(y)\\) is called marginal distribution of the data or, more aptly, prior predictive distribution\nIt tells us that prior to observing \\(y\\), all values of \\(y\\) are equally likely"
+    "text": "Likelihood Function\n\n\nWe ran the trial and observed 3 out of 5 responders\nWe can now construct a likelihood function for \\(y = 3\\) as a function of \\(\\theta\\)\nLet’s check if this function is a probability distribution: \\[\nf (y) = \\int_{0}^{1} \\binom{N}{y} \\theta^y (1 - \\theta)^{N - y}\\, d\\theta = \\frac{1}{N + 1}\n\\]\n\n\ndbinom_theta <- function(theta, N, y) {\n  choose(N, y) * theta^y * (1 - theta)^(N - y) \n}\nintegrate(dbinom_theta, lower = 0, upper = 1, \n          N = 5, y = 3)[[1]] |> fractions()\n\n[1] 1/6\n\n\n\n\\(f(y)\\) is called marginal distribution of the data or, more aptly, prior predictive distribution\nIt tells us that prior to observing \\(y\\), all values of \\(y\\) are equally likely"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#likelihood-function-1",
@@ -179,7 +200,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#computing-event-probability",
     "title": "Bayesian Inference",
     "section": "Computing Event Probability",
-    "text": "Computing Event Probability\n\n\n\nTo compute event probabilities, we integrate (or sum) the relevant regions of the parameter space\n\n\\[\n\\P(\\theta \\geq 0.5) = \\int_{0.5}^{1} f(\\theta) \\, d\\theta\n\\]\n\nIn this case, we only have discrete quantities, so we sum:\n\n\nprobs <- d |>\n  filter(theta >= 0.50) |>\n  dplyr::select(prior, post) |>\n  colSums() |>\n  round(2)\n\n\n\n\n\n\n \n  \n    theta \n    prior \n    lik \n    lik_x_prior \n    post \n  \n \n\n  \n    0.1 \n    0.05 \n    0.01 \n    0.00 \n    0.00 \n  \n  \n    0.3 \n    0.45 \n    0.13 \n    0.06 \n    0.29 \n  \n  \n    0.5 \n    0.30 \n    0.31 \n    0.09 \n    0.46 \n  \n  \n    0.7 \n    0.15 \n    0.31 \n    0.05 \n    0.23 \n  \n  \n    0.9 \n    0.05 \n    0.07 \n    0.00 \n    0.02 \n  \n  \n    Total \n    1.00 \n    0.83 \n    0.20 \n    1.00 \n  \n\n\n\n\n\n\n\n\\(\\P(\\theta \\geq 0.50) =\\) 0.5 and \\(\\P(\\theta | y \\geq 0.50) =\\) 0.71"
+    "text": "Computing Event Probability\n\n\n\n\nTo compute event probabilities, we integrate (or sum) the relevant regions of the parameter space \\[\n\\P(\\theta \\geq 0.5) = \\int_{0.5}^{1} f(\\theta \\mid y) \\, d\\theta\n\\]\nIn this case, we only have discrete quantities, so we sum:\n\n\n\nprobs <- d |>\n  filter(theta >= 0.50) |>\n  dplyr::select(prior, post) |>\n  colSums() |>\n  round(2)\nprobs\n\nprior  post \n 0.50  0.71 \n\n\n\n\n\n\n\n \n  \n    theta \n    prior \n    lik \n    lik_x_prior \n    post \n  \n \n\n  \n    0.1 \n    0.05 \n    0.01 \n    0.00 \n    0.00 \n  \n  \n    0.3 \n    0.45 \n    0.13 \n    0.06 \n    0.29 \n  \n  \n    0.5 \n    0.30 \n    0.31 \n    0.09 \n    0.46 \n  \n  \n    0.7 \n    0.15 \n    0.31 \n    0.05 \n    0.23 \n  \n  \n    0.9 \n    0.05 \n    0.07 \n    0.00 \n    0.02 \n  \n  \n    Total \n    1.00 \n    0.83 \n    0.20 \n    1.00 \n  \n\n\n\n\n\n\n\n\n\\(\\P(\\theta \\geq 0.50) =\\) 0.5 and \\(\\P(\\theta | y \\geq 0.50) =\\) 0.71"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#what-if-we-used-a-flat-prior",
@@ -193,7 +214,14 @@
     "href": "bayes-course/01-lecture/01-lecture.html#bayesian-workflow",
     "title": "Bayesian Inference",
     "section": "Bayesian Workflow",
-    "text": "Bayesian Workflow\n\n\nGelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Bayesian Workflow\n\n\nGelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#homework",
+    "href": "bayes-course/01-lecture/01-lecture.html#homework",
+    "title": "Bayesian Inference",
+    "section": "Homework",
+    "text": "Homework\nHomework is due on Monday before 5 pm.\n\nExercise 2.3 (Binomial practice)\nExercise 2.10 (LGBTQ students: rural and urban)\nExercise 2.15 (Cuckoo birds)\nExercise 2.19 (Cuckoo birds redux)\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
   },
   {
     "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
