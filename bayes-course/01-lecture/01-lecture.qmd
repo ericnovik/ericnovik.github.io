@@ -445,15 +445,20 @@ Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: [RECIST 1.1 - and more
 ## General Approach {.smaller}
 ::: incremental
 - Before observing the data, we need to specify a prior model $f(\theta)$ on all unknowns $\theta$[^2] 
-- Pick a data model $f(y \mid \theta, x)$ --- this is typically more important than a prior; this includes the model for the conditional mean: $\E(y | x)$
+- Pick a data model $f(y | \theta, x)$ --- this is typically more important than the prior; this includes the model for the conditional mean: $\E(y | x)$
 - For more complex models, we construct a prior predictive distribution, $f(y)$
   - We will define this quantity later --- it will help us assess if our choice of priors makes sense on the observational scale: $f(\theta) \rightarrow f(y)$
-- After we observe data $y$, we treat $f(y \mid \theta, x)$ as the likelihood of observing $y$ under all plausible values of $\theta$
-- Derive a posterior model for $\theta$, $\, f(\theta \mid y, x)$ using Bayes's rule or by simulation
-- Compute all the quantities of interest from the posterior, such as event probabilities, e.g., $\P(\theta > 0.5)$, posterior predictive distribution $f(\widetilde{y} \mid y)$, decision functions, etc.
+- After we observe data $y$, we treat $f(y | \theta, x)$ as the likelihood of observing $y$ under all plausible values of $\theta$
+- Derive a posterior model for $\theta$, $\, f(\theta | y, x)$ using Bayes's rule or by simulation
+- Evaluate model quality: 1) quality of the inferences; 2) quality of predictions. Revise the model if necessary
+- Compute all the quantities of interest from the posterior, such as event probabilities, e.g., $\P(\theta > 0.5)$, posterior predictive distribution $f(\widetilde{y} | y)$, decision functions, etc.
 :::
 
 [^2]: There is always a prior, even in frequentist inference. 
+
+::: footer
+For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011.01808) by Gelman et al. (2020)
+:::
 
 ## Example Prior Model {.smaller}
 ::: incremental

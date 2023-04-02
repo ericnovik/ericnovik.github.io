@@ -119,6 +119,7 @@ $$
 
 ::: columns
 ::: {.column width="50%"}
+::: {.fragment}
 - Data sample and summary:
 ```{r}
 #| echo: false
@@ -127,10 +128,11 @@ d <- readr::read_csv("data/howell.csv")
 knitr::kable(d[1:6, ])
 summary(d[, 1:3])
 ```
-
+:::
 :::
 
 ::: {.column width="50%"}
+::: {.fragment}
 ```{r}
 #| fig-width: 4.5
 #| fig-height: 3.4
@@ -152,17 +154,27 @@ p + geom_point(aes(color = as.factor(male)), size = 0.2) +
   theme(legend.position = "none")
 ```
 :::
+
+::: incremental
+-   Notice a non-linearity
+-   Thinking about why should this be, can give you an insight into how to model these data
+:::
+
+:::
+
 :::
 
 ## Howell Dataset {.smaller}
+::: incremental
+- For now, we will focus on the linear subset of the data
+- We will denonstrate the non-linear model at the end
+- We will restrict our attention to adults (age > 18)
+:::
 
-- There is an non-linear relationship between weigh and height
-- We will deal with that later
-- At this point, we will restrict our attention to addults (age > 18)
-
+::: {.fragment}
 ```{r}
-#| fig-width: 4
-#| fig-height: 3.6
+#| fig-width: 5
+#| fig-height: 4.5
 #| fig-align: center
 #| echo: false
 d <- d |> filter(age >= 18)
@@ -172,6 +184,7 @@ p + geom_point(size = 0.2) +
   ggtitle("Kalahari !Kung San people")
 
 ```
+:::
 
 ## General Aproach {.smaller}
 ::: incremental
@@ -261,11 +274,14 @@ $$
 
 ## Prior Predictive Simulation {.smaller}
 
+::: incremental
 - The simulation follows the generative process defined by the model
+:::
 
 ::: columns
 ::: {.column width="50%"}
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -287,11 +303,13 @@ prior_pred <- function(data) {
   return(y)
 }
 ```
+:::
 
 :::
 
 ::: {.column width="50%"}
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -302,6 +320,7 @@ pr_p <- replicate(n = n, prior_pred(d))
 dim(pr_p)
 round(pr_p[1:12, 1:8], 2)
 ```
+:::
 
 :::
 :::
@@ -310,8 +329,11 @@ round(pr_p[1:12, 1:8], 2)
 
 ## Prior Predictive Simulation {.smaller}
 
+::: incremental
 - To get a sense for the possible regression lines implied by the prior, we fit a linear model to each simulation draw and plot the lines over observations
+:::
 
+::: {.fragment}
 ```{r}
 #| fig-width: 4
 #| fig-height: 3
@@ -340,14 +362,17 @@ p + geom_point(size = 0.5) + ylim(20, 90) +
   ggtitle("Kalahari !Kung San people", 
           subtitle = "Prior predictive simulation")
 ```
+:::
 
+::: incremental
 - [What do you notice about this prior?](https://www.polleverywhere.com/free_text_polls/ktA65I0m27uUAnCn44Cui)
+:::
 
 ## Deriving a Posterior Distribution {.smaller}
 
 ::: incremental
 - We have seen how to derive posterior and posterior predictive distribution
-- There is nothing new here, except we are dealing a three dimentional posterior: $f(\alpha, \beta, \sigma)$. What happened to $\mu$?
+- Three dimentional posterior: $f(\alpha, \beta, \sigma)$. What happened to $\mu$?
 - We construct the posterior from the prior and data likelihood (for each $y_i$):
 $$
 \begin{eqnarray}
@@ -366,6 +391,7 @@ $$
 - Even though our prior is slighly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting
 - We will use `stan_glm()` function in `rstanarm`
 - `rstanarm` has default priors, but you should specify your own:
+
 ```{r}
 #| echo: false
 library(rstanarm)
@@ -373,6 +399,7 @@ library(bayesplot)
 color_scheme_set("viridis")
 m1 <- readr::read_rds("models/m1.rds")
 ```
+::: {.fragment}
 ```{r}
 #| echo: true
 #| cache: true
@@ -393,12 +420,15 @@ m1 <- stan_glm(
   seed = 1234
 )
 ```
+::: 
+
 - By default, `rstanarm` samples from the posterior. To get back the prior predictive distribution (instead of doing it in R) use `prior_PD = TRUE`
 :::
 
 
 ## Looking at the Model Summary {.smaller}
 
+::: {.fragment}
 ```{r}
 #| fig-width: 4.5
 #| fig-height: 4.5
@@ -406,20 +436,44 @@ m1 <- stan_glm(
 #| echo: true
 summary(m1)
 ```
+::: 
+
+::: incremental
 - If you can examine the priors by running `prior_summary(m1)`
+:::
+
 
 ## Evaluting Quality of the Inferences {.smaller}
+
+::: {.fragment}
+```{r}
+#| echo: true
+neff_ratio(m1) |> round(2)
+```
+:::
+
+
+::: {.fragment}
+```{r}
+#| echo: true
+rhat(m1) |> round(2)
+```
+:::
+
+
+::: {.fragment}
 ```{r}
 #| fig-width: 12
 #| fig-height: 4
 #| fig-align: center
 #| echo: true
-neff_ratio(m1) |> round(2)
-rhat(m1) |> round(2)
 mcmc_trace(m1, size = 0.3)
 ```
+:::
 
 ## Same Model in Stan {.smaller}
+
+::: {.fragment}
 ```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
 data {
   int<lower=0> N;
@@ -447,15 +501,21 @@ generated quantities {
   array[N] real y_tilde = normal_rng(mu, sigma);
 }
 ```
+:::
 
-- You can pass `prior_PD` as a flag enable drawing from prior predictive distribution
+::: incremental
+- You can pass `prior_PD` as a flag to enable drawing from prior predictive distribution
+:::
 
 ## Prior vs Posterior {.smaller}
-::: incremental
+::: incremental   
 - Comparing the prior to the posterior tell us how much the model learned from data
 - It also helps us to validate if our priors were reasonable
 - In `rstanarm`, you can use `posterior_vs_prior` function
-```{r}
+:::
+
+::: {.fragment}
+```{r} 
 #| fig-width: 12
 #| fig-height: 3
 #| fig-align: center
@@ -466,13 +526,16 @@ p2 <- posterior_vs_prior(m1, pars = "height_c", color_by = "vs") + xlab("") + th
 p3 <- posterior_vs_prior(m1, pars = "sigma", color_by = "vs") + xlab("") + thm + theme(legend.position = "none")
 grid.arrange(p1, p2, p3, ncol = 3) 
 ```
+:::
 
+::: incremental
 - Your prior should cover the plausable range of parameter values
 - When we don't have a lot of data and parameters are complex, setting good priors takes work, but there are [guidelines](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)
 :::
 
 ## Examining the Posterior {.smaller}
 
+::: {.fragment}
 ```{r}
 #| echo: true
 library(tidybayes)
@@ -481,6 +544,7 @@ draws <- spread_draws(m1, `(Intercept)`, height_c, sigma)
 knitr::kable(head(round(draws, 2)))
 
 ```
+:::
 
 ::: incremental
 -   `spread_draws` will arrange the inferences in columns (wide format)
@@ -489,20 +553,33 @@ knitr::kable(head(round(draws, 2)))
 
 ## Examining the Posterior {.smaller}
 
+::: {.fragment}
 ```{r}
 #| echo: true
 options(digits = 3)
 draws <- gather_draws(m1, `(Intercept)`, height_c, sigma)
 knitr::kable(tail(draws, 4))
+```
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
 draws |> mean_qi(.width = 0.90) |> knitr::kable() # also see ?median_qi(), etc
 ```
+:::
 
+::: incremental
 - From the above table: $\E(y|x^c) = 45 (\text{kg}) + 0.62 (\text{kg/cm})x^c (\text{cm})$
+:::
 
 ## Variability in Parameter Inferences {.smaller}
 
+::: incremental
 - The code in section 9.4 in the book doesn't work as the function and variable names have changed
+:::
 
+::: {.fragment}
 ```{r}
 #| echo: true
 dpred <- d |> 
@@ -510,26 +587,157 @@ dpred <- d |>
   add_linpred_draws(m1, ndraws = 50)
 head(dpred, 3)
 ```
+:::
+
+::: {.fragment}
 ```{r}
-#| fig-width: 5
+#| fig-width: 4
 #| fig-height: 3
 #| fig-align: center
-#| output-location: column
+#| output-location: column-fragment
 #| echo: true
-dpred |> ggplot(aes(x = height_c, y = weight)) +
+p <- dpred |> ggplot(aes(x = height_c, y = weight)) +
   geom_line(aes(y = .linpred, group = .draw), 
             alpha = 0.1) + 
   geom_point(data = d, size = 0.05) +
   ylab("Weight (kg)") + 
   xlab("Centered Height (cm)") +
   ggtitle("100 draws from the slope/intercept posterior")
+print(p)
 ```
-
-## Posterior Predictions {.smaller}
-
+:::
 
 
 ## Posterior Predictions {.smaller}
 
+::: incremental
+- Suppose we are interested in predicting the weight of a person with the height of 160 cm
+- This corresponds to the centered height of 5.4: ($160 - \bar{x}$)
+- We can now compute the distribution of the mean weight of a 160 cm person (reflecting variability in the slope and intercept only):
+  - $\mu = \alpha + \beta \cdot 5.4$, for each posterior draw
+- And a predictive distribution:
+  -  $y_{\text{pred}}  \sim \text{Normal}(\mu, \sigma)$
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+draws <- spread_draws(m1, `(Intercept)`, height_c, sigma)
+draws <- draws |>
+  mutate(mu = `(Intercept)` + height_c * 5.4,
+         y_pred = rnorm(nrow(draws), mu, sigma))
+draws[1:3, 4:8]
+```
+:::
+
+## Posterior Predictions {.smaller}
+
+::: incremental
+-   We can compare predictive and average densitives
+-   Left panel showing the densities on their own
+-   Right panel showing the same densities in the context of raw observations
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+mqi <- draws |> median_qi(.width = 0.90)
+select(mqi, contains(c('mu', 'y_pred'))) |> round(2)
+```
+:::
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 5
+#| fig-height: 3
+#| echo: false
+p1 <- ggplot(aes(mu), data = draws)
+p1 + geom_density(color = 'red') + geom_density(aes(y_pred), color = 'blue') +
+  ylab("") + annotate("text", 51, 0.15, label = expression(y_pred), color = 'blue') +
+  annotate("text", 49.3, 0.5, label = expression(mu), color = 'red') +
+  xlab("Weight (kg)")
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 5
+#| fig-height: 3
+#| echo: false
+p + 
+  geom_segment(aes(x = 5.4, y = mu.lower, xend = 5.4, yend = mu.upper), 
+               linewidth = 1.5, color = 'red', data = mqi) +
+  geom_segment(aes(x = 5.4, y = y_pred.lower, xend = 5.4, yend = y_pred.upper), 
+               linewidth = 2, color = 'blue', alpha = 1/5, data = mqi) + 
+  ggtitle("Predicting the weight of a 160 cm person")
+  
+```
+:::
+
+:::
+:::
+
+## RStanArm Prediction Functions 
+
+::: incremental
+- `posterior_linpred` returns $D \times N$ matrix with D draws and N data points
+   - $\eta_n = \alpha + \sum_{p=1}^P \beta_p x_{np}$, where $P$ is the total number of regression inputs
+
+- `posterior_epred` returns an $D \times N$ matrix that applies the inverse link (in GLMs) to the linear predictor $\eta$
+   - $\mu_n = \E(y | x_n)$; this is the same as $\eta$ in Lin Regression
+   
+- `posterior_predict` returns an $D \times N$ matrix of predictions: $y \mid \mu_n$
+:::
+
+## Predictions in RStanArm {.smaller}
+
+::: incremental
+
+- Posterior linear predictor
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+eta <- posterior_linpred(m1, newdata = data.frame(height_c = 5.4))
+quantile(eta, probs = c(0.05, 0.50, 0.95)) |> round(2)
+glue::glue('From the R simulation, eta = [{mqi$mu.lower |> round(2)}, {mqi$mu.upper |> round(2)}]')
+```
+:::
+
+- Posterior conditional mean
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+mu <- posterior_epred(m1, newdata = data.frame(height_c = 5.4))
+quantile(mu, probs = c(0.05, 0.50, 0.95)) |> round(2)
+```
+:::
+
+- Posterior prediction
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+y_pred <- posterior_predict(m1, newdata = data.frame(height_c = 5.4))
+quantile(y_pred, probs = c(0.05, 0.50, 0.95)) |> round(2)
+glue::glue('From the R simulation, eta = [{mqi$y_pred.lower |> round(2)}, {mqi$y_pred.upper |> round(2)}]')
+```
+:::
+
+:::
 
 ## Evaluting Quality of the Predictions
