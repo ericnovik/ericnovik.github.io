@@ -95,7 +95,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "title": "Bayesian Inference",
     "section": "Example Simulation",
-    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 1 2\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    1    6    4    6    5    2\n[2,]    2    6    2    3    2    5\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  3 12  6  9  7  7\n\nmean(roll_sums < 11) \n\n[1] 0.9158\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
+    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 2 4\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    3    3    1    4    3    6\n[2,]    2    1    6    3    6    6\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1]  5  4  7  7  9 12\n\nmean(roll_sums < 11) \n\n[1] 0.9197\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
@@ -291,7 +291,7 @@
     "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks",
     "title": "Bayesian Inference",
     "section": "Prussian Army Hourse Kicks",
-    "text": "Prussian Army Hourse Kicks\n\n\nFrom 1875 to 1894, there were 14 different cavalry corps\nEach reported a number of deaths by horse kick every year\nThere are 20 years x 14 corps making 280 observations\n\n\n\n\n\n\n\n\n  \n  \n    \n      Year\n      GC\n      C1\n      C2\n      C3\n      C4\n      C5\n      C6\n      C7\n      C8\n      C9\n      C10\n      C11\n      C14\n      C15\n    \n  \n  \n    1875\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n1\n0\n    1876\n2\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n1\n1\n    1877\n2\n0\n0\n0\n0\n0\n1\n1\n0\n0\n1\n0\n2\n0\n    1878\n1\n2\n2\n1\n1\n0\n0\n0\n0\n0\n1\n0\n1\n0\n    1879\n0\n0\n0\n1\n1\n2\n2\n0\n1\n0\n0\n2\n1\n0\n    1880\n0\n3\n2\n1\n1\n1\n0\n0\n0\n2\n1\n4\n3\n0\n    1881\n1\n0\n0\n2\n1\n0\n0\n1\n0\n1\n0\n0\n0\n0\n    1882\n1\n2\n0\n0\n0\n0\n1\n0\n1\n1\n2\n1\n4\n1"
+    "text": "Prussian Army Hourse Kicks\n\n\nFrom 1875 to 1894, there were 14 different cavalry corps\nEach reported a number of deaths by horse kick every year\nThere are 20 years x 14 corps making 280 observations\n\n\n\n\n\n\n\n\n  \n    \n    \n      Year\n      GC\n      C1\n      C2\n      C3\n      C4\n      C5\n      C6\n      C7\n      C8\n      C9\n      C10\n      C11\n      C14\n      C15\n    \n  \n  \n    1875\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n1\n0\n    1876\n2\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n1\n1\n    1877\n2\n0\n0\n0\n0\n0\n1\n1\n0\n0\n1\n0\n2\n0\n    1878\n1\n2\n2\n1\n1\n0\n0\n0\n0\n0\n1\n0\n1\n0\n    1879\n0\n0\n0\n1\n1\n2\n2\n0\n1\n0\n0\n2\n1\n0\n    1880\n0\n3\n2\n1\n1\n1\n0\n0\n0\n2\n1\n4\n3\n0\n    1881\n1\n0\n0\n2\n1\n0\n0\n1\n0\n1\n0\n0\n0\n0\n    1882\n1\n2\n0\n0\n0\n0\n1\n0\n1\n1\n2\n1\n4\n1"
   },
   {
     "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-1",
@@ -476,6 +476,13 @@
     "text": "Conjugate models and Beta-Binomial\n\n\nBeta distribution\nGreat expectations\nTuning the prior model for the clinical trial analysis\nBinomial likelihood with continuous \\(\\theta\\)\nDeriving the conjugate posterior\nAnalysis of the sex ratio\nCompromise between priors and data model\nCoherence of Bayesian inference\n\n\n\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
   },
   {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#homework",
+    "href": "bayes-course/02-lecture/02-lecture.html#homework",
+    "title": "Bayesian Inference",
+    "section": "Homework",
+    "text": "Homework\n\nHow did you find the homework?\nHomework review"
+  },
+  {
     "objectID": "bayes-course/02-lecture/02-lecture.html#introduction",
     "href": "bayes-course/02-lecture/02-lecture.html#introduction",
     "title": "Bayesian Inference",
@@ -487,119 +494,126 @@
     "href": "bayes-course/02-lecture/02-lecture.html#continous-probability-distributions",
     "title": "Bayesian Inference",
     "section": "Continous Probability Distributions",
-    "text": "Continous Probability Distributions\n\nRecall that for the continuous RVs we have, the CDF is defined as\n\n\\[\n\\begin{eqnarray}\nF(x) & = & \\int_{-\\infty}^{x} f(t) \\, dt, \\, \\text{and} \\\\\nf(x) & = & F'(x), \\, \\text{where } F \\text{ is differentiable}\n\\end{eqnarray}\n\\]\n\nTo compute event probabilities:\n\n\\[\n\\begin{eqnarray}\n\\P(a \\le X \\leq b) & = & F(b) − F(a) = \\int_{a}^{b} f(x) \\, dx \\\\\n\\P(X \\in A) & = & \\int_{A} f(x) \\, dx\n\\end{eqnarray}\n\\]\n\nAs in the case of PMFs:\n\n\\[\n\\begin{eqnarray}\nf(x) \\geq 0 \\\\\n\\int_{-\\infty}^{\\infty} f(x) \\, dx = 1\n\\end{eqnarray}\n\\]"
+    "text": "Continous Probability Distributions\n\n\nRecall that for the continuous RVs we have, the CDF is defined as \\[\n\\begin{eqnarray}\nF(x) & = & \\int_{-\\infty}^{x} f(t) \\, dt, \\, \\text{and} \\\\\nf(x) & = & F'(x), \\, \\text{where } F \\text{ is differentiable}\n\\end{eqnarray}\n\\]\nTo compute event probabilities: \\[\n\\begin{eqnarray}\n\\P(a \\le X \\leq b) & = & F(b) − F(a) = \\int_{a}^{b} f(x) \\, dx \\\\\n\\P(X \\in A) & = & \\int_{A} f(x) \\, dx\n\\end{eqnarray}\n\\]\nAs in the case of PMFs: \\[\n\\begin{eqnarray}\nf(x) \\geq 0 \\\\\n\\int_{-\\infty}^{\\infty} f(x) \\, dx = 1\n\\end{eqnarray}\n\\]"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "href": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "title": "Bayesian Inference",
     "section": "Introducing Beta",
-    "text": "Introducing Beta\n\n\n\nBeta distribution has the following functional form for \\(\\alpha > 0, \\, \\beta > 0, \\, \\theta \\in (0, 1)\\)\n\n\\[\n\\begin{eqnarray}\n\\text{Beta}(\\theta \\mid \\alpha,\\beta) & = &\n\\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta^{\\alpha - 1} \\, (1 -\n\\theta)^{\\beta - 1} \\\\\n\\text{B}(a,b) \\ & = & \\ \\int_0^1 u^{a - 1} (1 - u)^{b - 1} \\,\ndu \\ = \\ \\frac{\\Gamma(a) \\, \\Gamma(b)}{\\Gamma(a+b)} \\\\\n\\Gamma(x) & = &\n\\int_0^{\\infty} u^{x - 1} \\exp(-u) \\, du\n\\end{eqnarray}\n\\]\n\n\n\n\n\n\n\n\n\nFor positive integrers \\(n\\): \\(\\, \\Gamma(n+1) = n!\\) and in general \\(\\Gamma(z + 1) = z \\Gamma(z)\\)\n\\(\\text{Beta}(1, 1)\\) is equivalent to \\(\\text{Unif(0, 1)}\\)\nThe above makes Beta a natural choice for priors on the probability scale"
+    "text": "Introducing Beta\n\n\n\n\nBeta distribution has the following functional form for \\(\\alpha > 0, \\, \\beta > 0, \\, \\theta \\in (0, 1)\\) \\[\n\\begin{eqnarray}\n\\text{Beta}(\\theta \\mid \\alpha,\\beta) & = &\n\\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta^{\\alpha - 1} \\, (1 -\n\\theta)^{\\beta - 1} \\\\\n\\text{B}(a,b) \\ & = & \\ \\int_0^1 u^{a - 1} (1 - u)^{b - 1} \\,\ndu \\ = \\ \\frac{\\Gamma(a) \\, \\Gamma(b)}{\\Gamma(a+b)} \\\\\n\\Gamma(x) & = &\n\\int_0^{\\infty} u^{x - 1} \\exp(-u) \\, du\n\\end{eqnarray}\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nFor positive integrers \\(n\\): \\(\\, \\Gamma(n+1) = n!\\) and in general \\(\\Gamma(z + 1) = z \\Gamma(z)\\)\n\\(\\text{Beta}(1, 1)\\) is equivalent to \\(\\text{Unif(0, 1)}\\)\nThe above makes Beta a natural choice for priors on the probability scale"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
     "href": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
     "title": "Bayesian Inference",
     "section": "Visualizing Beta",
-    "text": "Visualizing Beta\n\nThe mode of Beta, \\(\\text{Mode}(\\theta) = \\argmax_\\theta \\text{Beta}(\\theta \\mid \\alpha, \\beta)\\) is shown in red and the function maximum in blue"
+    "text": "Visualizing Beta\n\n\nThe mode of Beta, \\(\\text{Mode}(\\theta) = \\argmax_\\theta \\text{Beta}(\\theta \\mid \\alpha, \\beta)\\) is shown in red and the function maximum in blue"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#expectations",
     "href": "bayes-course/02-lecture/02-lecture.html#expectations",
     "title": "Bayesian Inference",
     "section": "Expectations",
-    "text": "Expectations\n\nRecall the definition of expectations for continuous random variables\nWe often write \\(\\mu\\) or \\(\\mu_X\\) for expected value of \\(X\\)\n\n\\[\n\\mu_X = \\E(X) = \\int x \\cdot f(x) \\, dx\n\\]\n\nVariance is a type of expectation, which we often denote by \\(\\sigma^2\\)\n\n\\[\n\\sigma_X = \\V(X) = \\E(X - \\mu)^2 = \\int (X - \\mu)^2 f(x) \\, dx\n\\]\n\nIt is often more convenient to write the variance as\n\n\\[\n\\V(X) = \\E(X^2) - \\mu^2\n\\]"
+    "text": "Expectations\n\n\nRecall the definition of expectations for continuous random variables\nWe often write \\(\\mu\\) or \\(\\mu_X\\) for expected value of \\(X\\) \\[\n\\mu_X = \\E(X) = \\int x \\cdot f(x) \\, dx\n\\]\nVariance is a type of expectation, which we often denote by \\(\\sigma^2\\) \\[\n\\sigma_X = \\V(X) = \\E(X - \\mu)^2 = \\int (X - \\mu)^2 f(x) \\, dx\n\\]\nIt is often more convenient to write the variance as \\[\n\\V(X) = \\E(X^2) - \\mu^2\n\\]"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
     "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
     "title": "Bayesian Inference",
     "section": "What to expect from Beta",
-    "text": "What to expect from Beta\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial:\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, d\\theta \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}.\n\\end{eqnarray}\n\\]\n\nCheck the integral \\(\\int_{0}^{1} \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
+    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial: \\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, d\\theta \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}.\n\\end{eqnarray}\n\\]\nWhat is the value of \\(\\int_{0}^{1} \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1} \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
     "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
     "title": "Bayesian Inference",
     "section": "What to expect from Beta",
-    "text": "What to expect from Beta\n\nWe can find the mode of this distribution by taking the log, differentiating with respect to \\(\\theta\\), and setting the derivative function to zero\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) & = & \\frac{\\alpha}{\\alpha + \\beta} \\\\\n\\text{Mode}(\\theta) & = & \\frac{\\alpha - 1}{\\alpha + \\beta - 2} \\;\\; \\text{ when } \\; \\alpha, \\beta > 1. \\\\\n\\end{eqnarray}\n\\]\n\nThe variance of \\(\\theta\\) can be derived using the definition of the variance operator\n\n\\[\n\\begin{eqnarray}\n\\V(\\theta) & = & \\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}\n\\end{eqnarray}\n\\]"
+    "text": "What to expect from Beta\n\n\nWe can find the mode of this distribution by taking the log, differentiating with respect to \\(\\theta\\), and setting the derivative function to zero \\[\n\\begin{eqnarray}\n\\E(\\theta) & = & \\frac{\\alpha}{\\alpha + \\beta} \\\\\n\\text{Mode}(\\theta) & = & \\frac{\\alpha - 1}{\\alpha + \\beta - 2} \\;\\; \\text{ when } \\; \\alpha, \\beta > 1. \\\\\n\\end{eqnarray}\n\\]\nThe variance of \\(\\theta\\) can be derived using the definition of the variance operator \\[\n\\begin{eqnarray}\n\\V(\\theta) & = & \\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}\n\\end{eqnarray}\n\\]\nNotice when \\(\\alpha = \\beta\\), \\(\\E(\\theta) = \\text{Mode}(\\theta)\\)"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa",
     "href": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa",
     "title": "Bayesian Inference",
     "section": "Example: Placenta Previa",
-    "text": "Example: Placenta Previa\n\n\n\n\nWe borrow an example from BDA3: probability of a girl birth given placenta previa (PP)\nPlacenta previa is a condition when the placenta completely or partially covers the opening of the uterus\nA PP study in Germany found that out of 980 births, 437 or \\(\\approx 45\\%\\) were female\nSex ratio in the population has been extremely stable over space and time at 48.5% females with deviations within no more than 1%1\nOur task is to assess the evidence for \\(\\P(\\text{ratio} < .485 \\mid \\text{PP})\\)\n\n\n\n\n\n\n\n\n\n\nGelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310"
+    "text": "Example: Placenta Previa\n\n\n\n\nWe borrow an example from BDA3: the probability of girl birth given placenta previa (PP)\nPlacenta previa is a condition when the placenta completely or partially covers the opening of the uterus\nA PP study in Germany found that out of 980 births, 437 or \\(\\approx 45\\%\\) were female\nSex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%1\nOur task is to assess the evidence for \\(\\P(\\text{ratio} < .485 \\mid \\text{PP})\\)\n\n\n\n\n\n\n\n\n\n\nGelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#biomomial-likelihood",
     "href": "bayes-course/02-lecture/02-lecture.html#biomomial-likelihood",
     "title": "Bayesian Inference",
     "section": "Biomomial Likelihood",
-    "text": "Biomomial Likelihood\n\nRecall that Likelihood is the function of the paramter \\(\\theta\\), assuming \\(\\theta \\in [0,1]\\)\n\n\\[\n\\text{Bin}(y \\mid \\theta) = \\binom{N}{y}\n\\theta^y (1 - \\theta)^{N - y} \\propto \\theta^y (1 - \\theta)^{N - y}\n\\]\n\nAssuming \\(N = 10\\), here is the likelihood for \\(\\theta\\), given a few possible values of \\(y\\) successes"
+    "text": "Biomomial Likelihood\n\n\nRecall that Likelihood is the function of the parameter \\(\\theta\\), assuming \\(\\theta \\in [0,1]\\) \\[\n\\text{Bin}(y \\mid \\theta) = \\binom{N}{y}\n\\theta^y (1 - \\theta)^{N - y} \\propto \\theta^y (1 - \\theta)^{N - y}\n\\]\nAssuming \\(N = 10\\), the likelihood for \\(\\theta\\), given a few possible values of \\(y\\) successes"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
     "href": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
     "title": "Bayesian Inference",
     "section": "Deriving the Posterior Distribution",
-    "text": "Deriving the Posterior Distribution\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion\n\n\\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\n\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is a conjugate to Binomial\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
+    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
     "href": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
     "title": "Bayesian Inference",
     "section": "Posterior Expectations",
-    "text": "Posterior Expectations\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid Y=y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid Y=y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid Y=y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\nNote tha the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid Y=y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid Y=y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid Y=y) = \\E(\\theta \\mid Y=y)\\), when \\(\\alpha = \\beta\\)"
+    "text": "Posterior Expectations\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid Y=y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid Y=y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid Y=y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\n\nNote tha the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid Y=y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid Y=y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid Y=y) = \\E(\\theta \\mid Y=y)\\), when \\(\\alpha = \\beta\\)"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
     "href": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
     "title": "Bayesian Inference",
     "section": "Example: Placenta Previa",
-    "text": "Example: Placenta Previa\n\n\nLet’s derive the analytical posterior and compare it with the samples from the posterior distribution\nFirst, we will consider the uniform \\(\\text{Beta}(1, 1)\\) prior\nWe are told that data are \\(N = 980\\) and \\(y = 437\\) female births\nThe posterior is \\(\\text{Beta}(1 + 437, 1 + 980 - 437) = \\text{Beta}(438, 544)\\)\n\\(\\E(\\theta \\mid Y=437) = \\frac{\\alpha + 437}{\\alpha + \\beta + 980} = \\frac{438}{982} \\approx 0.446\\)\n\\(\\sqrt{\\V(\\theta \\mid Y=y)} \\approx\\) 0.016\n\n\nint <- 0.95; l <- (1 - int)/2; u <- 1 - l\nupper <- qbeta(u, 438, 544) |> round(3)\nlower <- qbeta(l, 438, 544) |> round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.415, 0.477]\n\nevent_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 438, shape2 = 544)[[1]]\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", round(event_prob, 3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.993"
+    "text": "Example: Placenta Previa\n\n\nLet’s derive the analytical posterior and compare it with the samples from the posterior distribution\nFirst, we will consider the uniform \\(\\text{Beta}(1, 1)\\) prior\nWe are told that data are \\(N = 980\\) and \\(y = 437\\) female births\nThe posterior is \\(\\text{Beta}(1 + 437, 1 + 980 - 437) = \\text{Beta}(438, 544)\\)\n\\(\\E(\\theta \\mid Y=437) = \\frac{\\alpha + 437}{\\alpha + \\beta + 980} = \\frac{438}{982} \\approx 0.446\\)\n\\(\\sqrt{\\V(\\theta \\mid Y=y)} \\approx\\) 0.016\n\n\n\nint <- 0.95; l <- (1 - int)/2; u <- 1 - l\nupper <- qbeta(u, 438, 544) |> round(3)\nlower <- qbeta(l, 438, 544) |> round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.415, 0.477]\n\nevent_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 438, shape2 = 544)[[1]]\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", round(event_prob, 3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.993\n\npbeta(0.485, shape1 = 438, shape2 = 544) |> round(3)\n\n[1] 0.993"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
     "href": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
     "title": "Bayesian Inference",
     "section": "Obtaining Quantiles by Sampling",
-    "text": "Obtaining Quantiles by Sampling\n\nWe can use R’s rbeta() RNG to generate draws from the posterion\n\n\n\ndraws <- rbeta(n = 1e5, 438, 544)\np <- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", mean(draws < 0.485) |> round(3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.993"
+    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws <- rbeta(n = 1e5, 438, 544)\np <- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", mean(draws < 0.485) |> round(3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.993"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#population-priors",
     "href": "bayes-course/02-lecture/02-lecture.html#population-priors",
     "title": "Bayesian Inference",
     "section": "Population Priors",
-    "text": "Population Priors\n\n\n\n\nWhat priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?\nWe know that the population mean is 0.485 and the standard deviation is about 0.01\nBack out the parameters of the population Beta distribution\n\n\n\\[\n\\begin{eqnarray}\n\\begin{cases}\n\\frac{\\alpha}{\\alpha + \\beta} & = & 0.485 \\\\\n\\sqrt{\\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}} & = & 0.01\n\\end{cases}\n\\end{eqnarray}\n\\]\n\n\n\\(\\alpha \\approx 1211\\) and \\(\\beta \\approx 1286\\)\n\n\n\n\n\nCheck the result with the simulation\n\n\n\nx <- rbeta(1e4, 1211, 1286)\nmean(x) |> round(3)\n\n[1] 0.485\n\nsd(x) |> round(3)\n\n[1] 0.01\n\n\n\n\nWe can let Mathematica do the algebra"
+    "text": "Population Priors\n\n\n\n\nWhat priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?\nWe know that the population mean is 0.485 and the standard deviation is about 0.01\nBack out the parameters of the population Beta distribution\n\n\n\n\\[\n\\begin{eqnarray}\n\\begin{cases}\n\\frac{\\alpha}{\\alpha + \\beta} & = & 0.485 \\\\\n\\sqrt{\\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}} & = & 0.01\n\\end{cases}\n\\end{eqnarray}\n\\]\n\n\n\n\\(\\alpha \\approx 1211\\) and \\(\\beta \\approx 1286\\)\n\n\n\n\n\nCheck the result with the simulation\n\n\n\n\nx <- rbeta(1e4, 1211, 1286)\nmean(x) |> round(3)\n\n[1] 0.485\n\nsd(x) |> round(3)\n\n[1] 0.01\n\n\n\n\n\nWe can let Mathematica do the algebra"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-with-population-priors",
     "href": "bayes-course/02-lecture/02-lecture.html#posterior-with-population-priors",
     "title": "Bayesian Inference",
     "section": "Posterior with Population Priors",
-    "text": "Posterior with Population Priors\n\n\n\\(f(\\theta | y) = \\text{Beta}(1211 + 437, 1286 + 543) = \\text{Beta}(1648,1829)\\)\nWe can compare the prior and posterior using summarize_beta_binomial() in the bayesrules package\n\n\nlibrary(bayesrules)\nsummarize_beta_binomial(alpha = 1211, beta = 1286, y = 437, n = 980)\n\n      model alpha beta      mean      mode          var          sd\n1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489\n2 posterior  1648 1829 0.4739718 0.4739568 7.168560e-05 0.008466735\n\n\n\nint <- 0.95; l <- (1 - int)/2; u <- 1 - l\nupper <- qbeta(u, 1648, 1829) |> round(3)\nlower <- qbeta(l, 1648, 1829) |> round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.457, 0.491]\n\nevent_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 1648, shape2 = 1829)[[1]]\ncat(\"Probability that the ratio < 0.485 under population prior =\", round(event_prob, 3))\n\nProbability that the ratio < 0.485 under population prior = 0.904\n\n\n\nUnder uniform prior 95% posterior interval was [0.415, 0.477]\nAnd probability that the ratio < 0.485 under uniform prior = 0.993"
+    "text": "Posterior with Population Priors\n\n\n\\(f(\\theta | y) = \\text{Beta}(1211 + 437, 1286 + 543) = \\text{Beta}(1648,1829)\\)\nWe can compare the prior and posterior using summarize_beta_binomial() in the bayesrules package\n\n\n\nlibrary(bayesrules)\nsummarize_beta_binomial(alpha = 1211, beta = 1286, y = 437, n = 980)\n\n      model alpha beta      mean      mode          var          sd\n1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489\n2 posterior  1648 1829 0.4739718 0.4739568 7.168560e-05 0.008466735\n\n\n\n\n\nint <- 0.95; l <- (1 - int)/2; u <- 1 - l\nupper <- qbeta(u, 1648, 1829) |> round(3)\nlower <- qbeta(l, 1648, 1829) |> round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.457, 0.491]\n\n\n\n\n\nevent_prob <- pbeta(0.485, shape1 = 1648, shape2 = 1829)\ncat(\"Probability that the ratio < 0.485 under population prior =\", round(event_prob, 3))\n\nProbability that the ratio < 0.485 under population prior = 0.904\n\n\n\n\nUnder uniform prior 95% posterior interval was [0.415, 0.477]\nAnd probability that the ratio < 0.485 under uniform prior = 0.993"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
     "href": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
     "title": "Bayesian Inference",
     "section": "Visualizing Bayesian Rebalancing",
-    "text": "Visualizing Bayesian Rebalancing\n\nThe following uses \\(\\text{Beta}(5, 5)\\) prior and N = 10."
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#example-same-sex-marriage",
-    "href": "bayes-course/02-lecture/02-lecture.html#example-same-sex-marriage",
-    "title": "Bayesian Inference",
-    "section": "Example: Same-sex marriage",
-    "text": "Example: Same-sex marriage\n\nThis is Exercise 3.12, p 71 in your book\n\nA 2017 Pew Research survey found that 10.2% of LGBT adults in the U.S. were married to a same-sex spouse. Now it’s the 2020s, and Bayard guesses that \\(\\pi\\), the percent of LGBT adults in the U.S. who are married to a same-sex spouse, has most likely increased to about 15% but could reasonably range from 10% to 25%.\n\nIdentify and plot a Beta model that reflects Bayard’s prior ideas about \\(\\pi\\)\nBayard wants to update his prior, so he randomly selects 90 US LGBT adults and 30 of them are married to a same-sex partner. What is the posterior model for \\(\\pi\\)\nCalculate the posterior mean, mode, and standard deviation of \\(\\pi\\)\nDoes the posterior model more closely reflect the prior information or the data? Explain your reasoning."
+    "text": "Visualizing Bayesian Rebalancing\n\n\nThe following uses \\(\\text{Beta}(5, 5)\\) prior and N = 10:"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
     "href": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
     "title": "Bayesian Inference",
     "section": "Data Order and Batch Invariance",
-    "text": "Data Order and Batch Invariance\n\n\nIn Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)\nThis is a general result, not just for Beta Binomial (see Section 4.5)\nIn practice, when we don’t have analytic posteriors, this is not so easy to do\nSuppose we observe \\(y = y_1 + y_2\\) and \\(N = N_1 + N_2\\) trials all at once\nAlso assume we start with \\(\\text{Beta}(1, 1)\\) prior\nFor all at once case, the posterior is in \\(f(\\theta \\mid y) = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\) as before\nNow, suppose we observe \\(y_1\\) successes in \\(n_1\\) trials first\nThe posterior is \\(f(\\theta \\mid y_1) = \\text{Beta}(\\alpha + y_1, \\,\\beta + N_1 - y_1)\\)\nWe now observe, \\(y_2\\) successes in \\(n_2\\) trials. The posterior is \\(f(\\theta \\mid y= y_1 + y_2) = \\text{Beta}(\\alpha + y_1 + y_2, \\,\\beta + N_1 - y_1 + N_2 - y_2)\\\\ = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\)\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Data Order and Batch Invariance\n\n\nIn Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)\nThis is a general result, not just for Beta Binomial (see Section 4.5)\nIn practice, when we don’t have analytic posteriors, this is not so easy to do\nSuppose we observe \\(y = y_1 + y_2\\) and \\(N = N_1 + N_2\\) trials all at once\nAlso assume we start with \\(\\text{Beta}(1, 1)\\) prior\nFor all at once case, the posterior is in \\(f(\\theta \\mid y) = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\) as before\nNow, suppose we observe \\(y_1\\) successes in \\(n_1\\) trials first\nThe posterior is \\(f(\\theta \\mid y_1) = \\text{Beta}(\\alpha + y_1, \\,\\beta + N_1 - y_1)\\)\nWe now observe, \\(y_2\\) successes in \\(n_2\\) trials. The posterior is \\(f(\\theta \\mid y= y_1 + y_2) = \\text{Beta}(\\alpha + y_1 + y_2, \\,\\beta + N_1 - y_1 + N_2 - y_2)\\\\ = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\)"
+  },
+  {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#general-case",
+    "href": "bayes-course/02-lecture/02-lecture.html#general-case",
+    "title": "Bayesian Inference",
+    "section": "General Case",
+    "text": "General Case\n\n\nSuppose we observe data point \\(y_1\\), and then data point \\(y_2\\)\n\n\n\n\\[\nf(\\theta \\mid y_1,y_2) =  \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\]\n\n\n\nObserving data point \\(y_2\\), and then data point \\(y_1\\), will results in the same distribution\nWhat if observed both points at once?\n\n\n\n\\[\n\\begin{split}\nf(\\theta \\mid y_1,y_2)\n& = \\frac{f(\\theta)f(y_1,y_2 \\mid \\theta)}{f(y_1)f(y_2)} \\\\\n& = \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{split}\n\\]"
+  },
+  {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow-chapter-2",
+    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow-chapter-2",
+    "title": "Bayesian Inference",
+    "section": "Bayesian Workflow Chapter 2",
+    "text": "Bayesian Workflow Chapter 2\n\n\n\n\nWhat do we do before fitting a model\n\nChoosing an initial model\nModular construction\nScaling and transforming the parameters\nPrior predictive checking\n\n\n\n\n\n\n\n\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
   },
   {
     "objectID": "bayes-course/04-lecture/04-lecture.html#mcmc-posterior-inference-and-prediction",
@@ -767,14 +781,14 @@
     "href": "bayes-course/05-lecture/05-lecture.html#howell-dataset",
     "title": "Bayesian Inference",
     "section": "Howell Dataset",
-    "text": "Howell Dataset\n\n\n\nData sample and summary:\n\n\n\n\n\n\nheight\nweight\nage\nmale\n\n\n\n\n151.765\n47.82561\n63\n1\n\n\n139.700\n36.48581\n63\n0\n\n\n136.525\n31.86484\n65\n0\n\n\n156.845\n53.04191\n41\n1\n\n\n145.415\n41.27687\n51\n0\n\n\n163.830\n62.99259\n35\n1\n\n\n\n\n\n     height           weight            age       \n Min.   : 53.98   Min.   : 4.252   Min.   : 0.00  \n 1st Qu.:125.09   1st Qu.:22.008   1st Qu.:12.00  \n Median :148.59   Median :40.058   Median :27.00  \n Mean   :138.26   Mean   :35.611   Mean   :29.34  \n 3rd Qu.:157.48   3rd Qu.:47.209   3rd Qu.:43.00  \n Max.   :179.07   Max.   :62.993   Max.   :88.00"
+    "text": "Howell Dataset\n\n\n\n\nData sample and summary:\n\n\n\n\n\n\nheight\nweight\nage\nmale\n\n\n\n\n151.765\n47.82561\n63\n1\n\n\n139.700\n36.48581\n63\n0\n\n\n136.525\n31.86484\n65\n0\n\n\n156.845\n53.04191\n41\n1\n\n\n145.415\n41.27687\n51\n0\n\n\n163.830\n62.99259\n35\n1\n\n\n\n\n\n     height           weight            age       \n Min.   : 53.98   Min.   : 4.252   Min.   : 0.00  \n 1st Qu.:125.09   1st Qu.:22.008   1st Qu.:12.00  \n Median :148.59   Median :40.058   Median :27.00  \n Mean   :138.26   Mean   :35.611   Mean   :29.34  \n 3rd Qu.:157.48   3rd Qu.:47.209   3rd Qu.:43.00  \n Max.   :179.07   Max.   :62.993   Max.   :88.00  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNotice a non-linearity\nThinking about why should this be, can give you an insight into how to model these data"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#howell-dataset-1",
     "href": "bayes-course/05-lecture/05-lecture.html#howell-dataset-1",
     "title": "Bayesian Inference",
     "section": "Howell Dataset",
-    "text": "Howell Dataset\n\nThere is an non-linear relationship between weigh and height\nWe will deal with that later\nAt this point, we will restrict our attention to addults (age > 18)"
+    "text": "Howell Dataset\n\n\nFor now, we will focus on the linear subset of the data\nWe will denonstrate the non-linear model at the end\nWe will restrict our attention to adults (age > 18)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#general-aproach",
@@ -816,105 +830,126 @@
     "href": "bayes-course/05-lecture/05-lecture.html#prior-predictive-simulation",
     "title": "Bayesian Inference",
     "section": "Prior Predictive Simulation",
-    "text": "Prior Predictive Simulation\n\nThe simulation follows the generative process defined by the model\n\n\n\n\nd <- d |>\n  mutate(height_c = height - mean(height))\nround(mean(d$height_c), 2)\n\n[1] 0\n\nhead(d)\n\n# A tibble: 6 × 5\n  height weight   age  male height_c\n   <dbl>  <dbl> <dbl> <dbl>    <dbl>\n1   152.   47.8    63     1    -2.83\n2   140.   36.5    63     0   -14.9 \n3   137.   31.9    65     0   -18.1 \n4   157.   53.0    41     1     2.25\n5   145.   41.3    51     0    -9.18\n6   164.   63.0    35     1     9.23\n\nprior_pred <- function(data) {\n  alpha <- rnorm(1, 60, 10)\n  beta <- rnorm(1, 0.55, 0.1)\n  sigma <- rexp(1, 0.2)\n  l <- nrow(data); y <- numeric(l)\n  for (i in 1:l) {\n    mu <- alpha + beta * data$height_c[i]\n    y[i] <- rnorm(1, mu, sigma)\n  }\n  return(y)\n}\n\n\n\nn <- 100\npr_p <- replicate(n = n, prior_pred(d))\n# using library(purrr) functional primitives:\n# pr_p <- map(1:n, \\(i) prior_pred(d))\ndim(pr_p)\n\n[1] 352 100\n\nround(pr_p[1:12, 1:8], 2)\n\n       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]\n [1,] 50.02 49.35 67.40 50.84 40.34 47.49 67.09 39.72\n [2,] 46.98 43.39 62.40 53.24 34.19 47.66 62.79 32.45\n [3,] 45.60 41.89 62.17 53.54 34.27 47.21 61.63 30.93\n [4,] 50.96 51.11 69.22 57.28 41.94 58.24 68.66 42.54\n [5,] 48.87 45.78 65.16 52.88 36.66 51.49 64.78 36.91\n [6,] 52.35 54.13 71.59 61.06 44.36 56.78 71.32 47.25\n [7,] 48.64 47.73 66.35 56.74 38.62 44.15 66.08 37.69\n [8,] 55.56 56.36 74.16 55.90 45.27 53.42 73.19 50.21\n [9,] 50.09 47.26 65.32 51.37 39.50 52.89 65.69 39.02\n[10,] 54.01 55.10 72.17 60.16 43.42 50.05 71.78 47.44\n[11,] 52.27 49.91 67.93 61.93 41.40 48.83 67.93 41.93\n[12,] 52.74 48.63 67.90 57.07 40.23 44.49 66.86 39.32"
+    "text": "Prior Predictive Simulation\n\n\nThe simulation follows the generative process defined by the model\n\n\n\n\n\n\nd <- d |>\n  mutate(height_c = height - mean(height))\nround(mean(d$height_c), 2)\n\n[1] 0\n\nhead(d)\n\n# A tibble: 6 × 5\n  height weight   age  male height_c\n   <dbl>  <dbl> <dbl> <dbl>    <dbl>\n1   152.   47.8    63     1    -2.83\n2   140.   36.5    63     0   -14.9 \n3   137.   31.9    65     0   -18.1 \n4   157.   53.0    41     1     2.25\n5   145.   41.3    51     0    -9.18\n6   164.   63.0    35     1     9.23\n\nprior_pred <- function(data) {\n  alpha <- rnorm(1, 60, 10)\n  beta <- rnorm(1, 0.55, 0.1)\n  sigma <- rexp(1, 0.2)\n  l <- nrow(data); y <- numeric(l)\n  for (i in 1:l) {\n    mu <- alpha + beta * data$height_c[i]\n    y[i] <- rnorm(1, mu, sigma)\n  }\n  return(y)\n}\n\n\n\n\n\nn <- 100\npr_p <- replicate(n = n, prior_pred(d))\n# using library(purrr) functional primitives:\n# pr_p <- map(1:n, \\(i) prior_pred(d))\ndim(pr_p)\n\n[1] 352 100\n\nround(pr_p[1:12, 1:8], 2)\n\n       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]\n [1,] 50.02 49.35 67.40 50.84 40.34 47.49 67.09 39.72\n [2,] 46.98 43.39 62.40 53.24 34.19 47.66 62.79 32.45\n [3,] 45.60 41.89 62.17 53.54 34.27 47.21 61.63 30.93\n [4,] 50.96 51.11 69.22 57.28 41.94 58.24 68.66 42.54\n [5,] 48.87 45.78 65.16 52.88 36.66 51.49 64.78 36.91\n [6,] 52.35 54.13 71.59 61.06 44.36 56.78 71.32 47.25\n [7,] 48.64 47.73 66.35 56.74 38.62 44.15 66.08 37.69\n [8,] 55.56 56.36 74.16 55.90 45.27 53.42 73.19 50.21\n [9,] 50.09 47.26 65.32 51.37 39.50 52.89 65.69 39.02\n[10,] 54.01 55.10 72.17 60.16 43.42 50.05 71.78 47.44\n[11,] 52.27 49.91 67.93 61.93 41.40 48.83 67.93 41.93\n[12,] 52.74 48.63 67.90 57.07 40.23 44.49 66.86 39.32"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#prior-predictive-simulation-1",
     "href": "bayes-course/05-lecture/05-lecture.html#prior-predictive-simulation-1",
     "title": "Bayesian Inference",
     "section": "Prior Predictive Simulation",
-    "text": "Prior Predictive Simulation\n\nTo get a sense for the possible regression lines implied by the prior, we fit a linear model to each simulation draw and plot the lines over observations\n\n\n\nintercepts <- numeric(n)\nslopes <- numeric(n)\nfor (i in 1:n) {\n  coefs <- coef(lm(pr_p[, i] ~ d$height_c))\n  intercepts[i] <- coefs[1]\n  slopes[i] <- coefs[2]\n}\n\n# using library(purrr) functional primitives:\n# df <- pr_p |> map_dfr(\\(y) coef(lm(y ~ d$height_c)))\n\np <- ggplot(aes(height_c, weight), data = d)\np + geom_point(size = 0.5) + ylim(20, 90) + \n  geom_abline(slope = slopes, \n              intercept = intercepts, \n              alpha = 1/6) +\n  ylab(\"Weight (kg)\") + \n  xlab(\"Centered Height (cm)\") +\n  ggtitle(\"Kalahari !Kung San people\", \n          subtitle = \"Prior predictive simulation\")\n\n\n\n\n\n\n\n\n\n\n\nWhat do you notice about this prior?"
+    "text": "Prior Predictive Simulation\n\n\nTo get a sense for the possible regression lines implied by the prior, we fit a linear model to each simulation draw and plot the lines over observations\n\n\n\n\n\nintercepts <- numeric(n)\nslopes <- numeric(n)\nfor (i in 1:n) {\n  coefs <- coef(lm(pr_p[, i] ~ d$height_c))\n  intercepts[i] <- coefs[1]\n  slopes[i] <- coefs[2]\n}\n\n# using library(purrr) functional primitives:\n# df <- pr_p |> map_dfr(\\(y) coef(lm(y ~ d$height_c)))\n\np <- ggplot(aes(height_c, weight), data = d)\np + geom_point(size = 0.5) + ylim(20, 90) + \n  geom_abline(slope = slopes, \n              intercept = intercepts, \n              alpha = 1/6) +\n  ylab(\"Weight (kg)\") + \n  xlab(\"Centered Height (cm)\") +\n  ggtitle(\"Kalahari !Kung San people\", \n          subtitle = \"Prior predictive simulation\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat do you notice about this prior?"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#deriving-a-posterior-distribution",
     "href": "bayes-course/05-lecture/05-lecture.html#deriving-a-posterior-distribution",
     "title": "Bayesian Inference",
     "section": "Deriving a Posterior Distribution",
-    "text": "Deriving a Posterior Distribution\n\n\nWe have seen how to derive posterior and posterior predictive distribution\nThere is nothing new here, except we are dealing a three dimentional posterior: \\(f(\\alpha, \\beta, \\sigma)\\). What happened to \\(\\mu\\)?\nWe construct the posterior from the prior and data likelihood (for each \\(y_i\\)): \\[\n\\begin{eqnarray}\n&\\text{Prior: }f(\\alpha, \\beta, \\sigma) = f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\\\\n&\\text{Likelihood: }f(y \\mid \\alpha, \\beta, \\sigma) = \\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\\\\n&\\text{Posterior: }f(\\alpha,\\beta,\\sigma \\mid y) = \\frac{f_1(\\alpha) f(_2\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right]}\n{\\int\\int\\int f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right] d\\alpha \\, d\\beta \\, d\\sigma}\n\\end{eqnarray}\n\\]\nTo be more precise, we would indicate that \\(f_1, f_2\\) and \\(f_4\\) are Normal with different parameters, and \\(f_3\\) is \\(\\text{Exp}(0.2)\\)"
+    "text": "Deriving a Posterior Distribution\n\n\nWe have seen how to derive posterior and posterior predictive distribution\nThree dimentional posterior: \\(f(\\alpha, \\beta, \\sigma)\\). What happened to \\(\\mu\\)?\nWe construct the posterior from the prior and data likelihood (for each \\(y_i\\)): \\[\n\\begin{eqnarray}\n&\\text{Prior: }f(\\alpha, \\beta, \\sigma) = f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\\\\n&\\text{Likelihood: }f(y \\mid \\alpha, \\beta, \\sigma) = \\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\\\\n&\\text{Posterior: }f(\\alpha,\\beta,\\sigma \\mid y) = \\frac{f_1(\\alpha) f(_2\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right]}\n{\\int\\int\\int f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right] d\\alpha \\, d\\beta \\, d\\sigma}\n\\end{eqnarray}\n\\]\nTo be more precise, we would indicate that \\(f_1, f_2\\) and \\(f_4\\) are Normal with different parameters, and \\(f_3\\) is \\(\\text{Exp}(0.2)\\)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#fitting-the-model",
     "href": "bayes-course/05-lecture/05-lecture.html#fitting-the-model",
     "title": "Bayesian Inference",
     "section": "Fitting the Model",
-    "text": "Fitting the Model\n\n\nEven though our prior is slighly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting\nWe will use stan_glm() function in rstanarm\nrstanarm has default priors, but you should specify your own:\n\n\n\n\n\nlibrary(rstanarm)\nlibrary(bayesplot)\noptions(mc.cores = parallel::detectCores())\n\nm1 <- stan_glm(\n  weight ~ height_c,\n  data = d,\n  family = gaussian,\n  prior_intercept = normal(60, 10),\n  prior = normal(0.55, 0.1),\n  prior_aux = exponential(0.2),\n  chains = 4,\n  iter = 500,\n  seed = 1234\n)\n\n\nBy default, rstanarm samples from the posterior. To get back the prior predictive distribution (instead of doing it in R) use prior_PD = TRUE"
+    "text": "Fitting the Model\n\n\nEven though our prior is slighly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting\nWe will use stan_glm() function in rstanarm\nrstanarm has default priors, but you should specify your own:\n\n\n\n\n\n\nlibrary(rstanarm)\nlibrary(bayesplot)\noptions(mc.cores = parallel::detectCores())\n\nm1 <- stan_glm(\n  weight ~ height_c,\n  data = d,\n  family = gaussian,\n  prior_intercept = normal(60, 10),\n  prior = normal(0.55, 0.1),\n  prior_aux = exponential(0.2),\n  chains = 4,\n  iter = 500,\n  seed = 1234\n)\n\n\n\nBy default, rstanarm samples from the posterior. To get back the prior predictive distribution (instead of doing it in R) use prior_PD = TRUE"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#looking-at-the-model-summary",
     "href": "bayes-course/05-lecture/05-lecture.html#looking-at-the-model-summary",
     "title": "Bayesian Inference",
     "section": "Looking at the Model Summary",
-    "text": "Looking at the Model Summary\n\nsummary(m1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      weight ~ height_c\n algorithm:    sampling\n sample:       1000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 352\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 45.0    0.2 44.7  45.0  45.3 \nheight_c     0.6    0.0  0.6   0.6   0.7 \nsigma        4.2    0.2  4.0   4.2   4.5 \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 45.0    0.3 44.6  45.0  45.4 \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  824  \nheight_c      0.0  1.0  994  \nsigma         0.0  1.0  867  \nmean_PPD      0.0  1.0  970  \nlog-posterior 0.1  1.0  459  \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).\n\n\n\nIf you can examine the priors by running prior_summary(m1)"
+    "text": "Looking at the Model Summary\n\n\nsummary(m1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      weight ~ height_c\n algorithm:    sampling\n sample:       1000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 352\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 45.0    0.2 44.7  45.0  45.3 \nheight_c     0.6    0.0  0.6   0.6   0.7 \nsigma        4.2    0.2  4.0   4.2   4.5 \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 45.0    0.3 44.6  45.0  45.4 \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  824  \nheight_c      0.0  1.0  994  \nsigma         0.0  1.0  867  \nmean_PPD      0.0  1.0  970  \nlog-posterior 0.1  1.0  459  \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).\n\n\n\n\n\nIf you can examine the priors by running prior_summary(m1)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-inferences",
     "href": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-inferences",
     "title": "Bayesian Inference",
     "section": "Evaluting Quality of the Inferences",
-    "text": "Evaluting Quality of the Inferences\n\nneff_ratio(m1) |> round(2)\n\n(Intercept)    height_c       sigma \n       0.82        0.99        0.87 \n\nrhat(m1) |> round(2)\n\n(Intercept)    height_c       sigma \n          1           1           1 \n\nmcmc_trace(m1, size = 0.3)"
+    "text": "Evaluting Quality of the Inferences\n\n\nneff_ratio(m1) |> round(2)\n\n(Intercept)    height_c       sigma \n       0.82        0.99        0.87 \n\n\n\n\n\nrhat(m1) |> round(2)\n\n(Intercept)    height_c       sigma \n          1           1           1 \n\n\n\n\n\nmcmc_trace(m1, size = 0.3)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#same-model-in-stan",
     "href": "bayes-course/05-lecture/05-lecture.html#same-model-in-stan",
     "title": "Bayesian Inference",
     "section": "Same Model in Stan",
-    "text": "Same Model in Stan\n\ndata {\n  int<lower=0> N;\n  vector[N] x;\n  vector[N] y;\n  int<lower=0, upper=1> prior_PD;\n}\nparameters {\n  real alpha;\n  real beta;\n  real<lower=0> sigma;\n}\ntransformed parameters {\n  vector[N] mu = alpha + beta * x;\n}\nmodel {\n  alpha ~ normal(60, 10);\n  beta ~ normal(0.55, 0.1);\n  sigma ~ exponential(0.2);\n  if (!prior_PD) {\n    y ~ normal(mu, sigma);\n  }\n}\ngenerated quantities {\n  array[N] real y_tilde = normal_rng(mu, sigma);\n}\n\n\nYou can pass prior_PD as a flag enable drawing from prior predictive distribution"
+    "text": "Same Model in Stan\n\n\ndata {\n  int<lower=0> N;\n  vector[N] x;\n  vector[N] y;\n  int<lower=0, upper=1> prior_PD;\n}\nparameters {\n  real alpha;\n  real beta;\n  real<lower=0> sigma;\n}\ntransformed parameters {\n  vector[N] mu = alpha + beta * x;\n}\nmodel {\n  alpha ~ normal(60, 10);\n  beta ~ normal(0.55, 0.1);\n  sigma ~ exponential(0.2);\n  if (!prior_PD) {\n    y ~ normal(mu, sigma);\n  }\n}\ngenerated quantities {\n  array[N] real y_tilde = normal_rng(mu, sigma);\n}\n\n\n\n\nYou can pass prior_PD as a flag to enable drawing from prior predictive distribution"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#prior-vs-posterior",
     "href": "bayes-course/05-lecture/05-lecture.html#prior-vs-posterior",
     "title": "Bayesian Inference",
     "section": "Prior vs Posterior",
-    "text": "Prior vs Posterior\n\n\nComparing the prior to the posterior tell us how much the model learned from data\nIt also helps us to validate if our priors were reasonable\nIn rstanarm, you can use posterior_vs_prior function\n\n\n\n\n\n\n\n\n\n\n\nYour prior should cover the plausable range of parameter values\nWhen we don’t have a lot of data and parameters are complex, setting good priors takes work, but there are guidelines"
+    "text": "Prior vs Posterior\n\n\nComparing the prior to the posterior tell us how much the model learned from data\nIt also helps us to validate if our priors were reasonable\nIn rstanarm, you can use posterior_vs_prior function\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour prior should cover the plausable range of parameter values\nWhen we don’t have a lot of data and parameters are complex, setting good priors takes work, but there are guidelines"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#examining-the-posterior",
     "href": "bayes-course/05-lecture/05-lecture.html#examining-the-posterior",
     "title": "Bayesian Inference",
     "section": "Examining the Posterior",
-    "text": "Examining the Posterior\n\nlibrary(tidybayes)\n\ndraws <- spread_draws(m1, `(Intercept)`, height_c, sigma)\nknitr::kable(head(round(draws, 2)))\n\n\n\n\n.chain\n.iteration\n.draw\n(Intercept)\nheight_c\nsigma\n\n\n\n\n1\n1\n1\n44.97\n0.62\n4.09\n\n\n1\n2\n2\n45.06\n0.61\n4.21\n\n\n1\n3\n3\n45.02\n0.63\n4.13\n\n\n1\n4\n4\n45.07\n0.64\n4.32\n\n\n1\n5\n5\n44.66\n0.64\n4.38\n\n\n1\n6\n6\n45.31\n0.62\n4.12\n\n\n\n\n\n\n\nspread_draws will arrange the inferences in columns (wide format)\ngather_draws will arrange the inferences in rows (long format), which is usually more convenient for plotting and computation"
+    "text": "Examining the Posterior\n\n\nlibrary(tidybayes)\n\ndraws <- spread_draws(m1, `(Intercept)`, height_c, sigma)\nknitr::kable(head(round(draws, 2)))\n\n\n\n\n.chain\n.iteration\n.draw\n(Intercept)\nheight_c\nsigma\n\n\n\n\n1\n1\n1\n44.97\n0.62\n4.09\n\n\n1\n2\n2\n45.06\n0.61\n4.21\n\n\n1\n3\n3\n45.02\n0.63\n4.13\n\n\n1\n4\n4\n45.07\n0.64\n4.32\n\n\n1\n5\n5\n44.66\n0.64\n4.38\n\n\n1\n6\n6\n45.31\n0.62\n4.12\n\n\n\n\n\n\n\n\nspread_draws will arrange the inferences in columns (wide format)\ngather_draws will arrange the inferences in rows (long format), which is usually more convenient for plotting and computation"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#examining-the-posterior-1",
     "href": "bayes-course/05-lecture/05-lecture.html#examining-the-posterior-1",
     "title": "Bayesian Inference",
     "section": "Examining the Posterior",
-    "text": "Examining the Posterior\n\noptions(digits = 3)\ndraws <- gather_draws(m1, `(Intercept)`, height_c, sigma)\nknitr::kable(tail(draws, 4))\n\n\n\n\n.chain\n.iteration\n.draw\n.variable\n.value\n\n\n\n\n4\n247\n997\nsigma\n4.09\n\n\n4\n248\n998\nsigma\n4.22\n\n\n4\n249\n999\nsigma\n4.20\n\n\n4\n250\n1000\nsigma\n4.11\n\n\n\n\ndraws |> mean_qi(.width = 0.90) |> knitr::kable() # also see ?median_qi(), etc\n\n\n\n\n.variable\n.value\n.lower\n.upper\n.width\n.point\n.interval\n\n\n\n\n(Intercept)\n45.000\n44.635\n45.36\n0.9\nmean\nqi\n\n\nheight_c\n0.624\n0.576\n0.67\n0.9\nmean\nqi\n\n\nsigma\n4.250\n3.996\n4.53\n0.9\nmean\nqi\n\n\n\n\n\n\nFrom the above table: \\(\\E(y|x^c) = 45 (\\text{kg}) + 0.62 (\\text{kg/cm})x^c (\\text{cm})\\)"
+    "text": "Examining the Posterior\n\n\noptions(digits = 3)\ndraws <- gather_draws(m1, `(Intercept)`, height_c, sigma)\nknitr::kable(tail(draws, 4))\n\n\n\n\n.chain\n.iteration\n.draw\n.variable\n.value\n\n\n\n\n4\n247\n997\nsigma\n4.09\n\n\n4\n248\n998\nsigma\n4.22\n\n\n4\n249\n999\nsigma\n4.20\n\n\n4\n250\n1000\nsigma\n4.11\n\n\n\n\n\n\n\n\ndraws |> mean_qi(.width = 0.90) |> knitr::kable() # also see ?median_qi(), etc\n\n\n\n\n.variable\n.value\n.lower\n.upper\n.width\n.point\n.interval\n\n\n\n\n(Intercept)\n45.000\n44.635\n45.36\n0.9\nmean\nqi\n\n\nheight_c\n0.624\n0.576\n0.67\n0.9\nmean\nqi\n\n\nsigma\n4.250\n3.996\n4.53\n0.9\nmean\nqi\n\n\n\n\n\n\n\n\nFrom the above table: \\(\\E(y|x^c) = 45 (\\text{kg}) + 0.62 (\\text{kg/cm})x^c (\\text{cm})\\)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#variability-in-parameter-inferences",
     "href": "bayes-course/05-lecture/05-lecture.html#variability-in-parameter-inferences",
     "title": "Bayesian Inference",
     "section": "Variability in Parameter Inferences",
-    "text": "Variability in Parameter Inferences\n\nThe code in section 9.4 in the book doesn’t work as the function and variable names have changed\n\n\ndpred <- d |> \n  # same as add_epred_draws for lin reg not not for other GLMs\n  add_linpred_draws(m1, ndraws = 50)\nhead(dpred, 3)\n\n# A tibble: 3 × 10\n# Groups:   height, weight, age, male, height_c, .row [1]\n  height weight   age  male height_c  .row .chain .iteration .draw .linpred\n   <dbl>  <dbl> <dbl> <dbl>    <dbl> <int>  <int>      <int> <int>    <dbl>\n1   152.   47.8    63     1    -2.83     1     NA         NA     1     43.4\n2   152.   47.8    63     1    -2.83     1     NA         NA     2     43.0\n3   152.   47.8    63     1    -2.83     1     NA         NA     3     42.9\n\n\n\n\ndpred |> ggplot(aes(x = height_c, y = weight)) +\n  geom_line(aes(y = .linpred, group = .draw), \n            alpha = 0.1) + \n  geom_point(data = d, size = 0.05) +\n  ylab(\"Weight (kg)\") + \n  xlab(\"Centered Height (cm)\") +\n  ggtitle(\"100 draws from the slope/intercept posterior\")"
+    "text": "Variability in Parameter Inferences\n\n\nThe code in section 9.4 in the book doesn’t work as the function and variable names have changed\n\n\n\n\ndpred <- d |> \n  # same as add_epred_draws for lin reg not not for other GLMs\n  add_linpred_draws(m1, ndraws = 50)\nhead(dpred, 3)\n\n# A tibble: 3 × 10\n# Groups:   height, weight, age, male, height_c, .row [1]\n  height weight   age  male height_c  .row .chain .iteration .draw .linpred\n   <dbl>  <dbl> <dbl> <dbl>    <dbl> <int>  <int>      <int> <int>    <dbl>\n1   152.   47.8    63     1    -2.83     1     NA         NA     1     43.4\n2   152.   47.8    63     1    -2.83     1     NA         NA     2     43.0\n3   152.   47.8    63     1    -2.83     1     NA         NA     3     42.9\n\n\n\n\n\n\np <- dpred |> ggplot(aes(x = height_c, y = weight)) +\n  geom_line(aes(y = .linpred, group = .draw), \n            alpha = 0.1) + \n  geom_point(data = d, size = 0.05) +\n  ylab(\"Weight (kg)\") + \n  xlab(\"Centered Height (cm)\") +\n  ggtitle(\"100 draws from the slope/intercept posterior\")\nprint(p)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#posterior-predictions",
     "href": "bayes-course/05-lecture/05-lecture.html#posterior-predictions",
     "title": "Bayesian Inference",
     "section": "Posterior Predictions",
-    "text": "Posterior Predictions"
+    "text": "Posterior Predictions\n\n\nSuppose we are interested in predicting the weight of a person with the height of 160 cm\nThis corresponds to the centered height of 5.4: (\\(160 - \\bar{x}\\))\nWe can now compute the distribution of the mean weight of a 160 cm person (reflecting variability in the slope and intercept only):\n\n\\(\\mu = \\alpha + \\beta \\cdot 5.4\\), for each posterior draw\n\nAnd a predictive distribution:\n\n\\(y_{\\text{pred}} \\sim \\text{Normal}(\\mu, \\sigma)\\)\n\n\n\n\n\ndraws <- spread_draws(m1, `(Intercept)`, height_c, sigma)\ndraws <- draws |>\n  mutate(mu = `(Intercept)` + height_c * 5.4,\n         y_pred = rnorm(nrow(draws), mu, sigma))\ndraws[1:3, 4:8]\n\n# A tibble: 3 × 5\n  `(Intercept)` height_c sigma    mu y_pred\n          <dbl>    <dbl> <dbl> <dbl>  <dbl>\n1          45.0    0.619  4.09  48.3   50.6\n2          45.1    0.607  4.21  48.3   50.8\n3          45.0    0.628  4.13  48.4   40.5"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#posterior-predictions-1",
     "href": "bayes-course/05-lecture/05-lecture.html#posterior-predictions-1",
     "title": "Bayesian Inference",
     "section": "Posterior Predictions",
-    "text": "Posterior Predictions"
+    "text": "Posterior Predictions\n\n\nWe can compare predictive and average densitives\nLeft panel showing the densities on their own\nRight panel showing the same densities in the context of raw observations\n\n\n\n\nmqi <- draws |> median_qi(.width = 0.90)\nselect(mqi, contains(c('mu', 'y_pred'))) |> round(2)\n\n# A tibble: 1 × 6\n     mu mu.lower mu.upper y_pred y_pred.lower y_pred.upper\n  <dbl>    <dbl>    <dbl>  <dbl>        <dbl>        <dbl>\n1  48.4     47.9     48.8   48.4         41.5         55.4"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#rstanarm-prediction-functions",
+    "href": "bayes-course/05-lecture/05-lecture.html#rstanarm-prediction-functions",
+    "title": "Bayesian Inference",
+    "section": "RStanArm Prediction Functions",
+    "text": "RStanArm Prediction Functions\n\n\nposterior_linpred returns \\(D \\times N\\) matrix with D draws and N data points\n\n\\(\\eta_n = \\alpha + \\sum_{p=1}^P \\beta_p x_{np}\\), where \\(P\\) is the total number of regression inputs\n\nposterior_epred returns an \\(D \\times N\\) matrix that applies the inverse link (in GLMs) to the linear predictor \\(\\eta\\)\n\n\\(\\mu_n = \\E(y | x_n)\\); this is the same as \\(\\eta\\) in Lin Regression\n\nposterior_predict returns an \\(D \\times N\\) matrix of predictions: \\(y \\mid \\mu_n\\)"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#predictions-in-rstanarm",
+    "href": "bayes-course/05-lecture/05-lecture.html#predictions-in-rstanarm",
+    "title": "Bayesian Inference",
+    "section": "Predictions in RStanArm",
+    "text": "Predictions in RStanArm\n\n\nPosterior linear predictor\n\n\n\neta <- posterior_linpred(m1, newdata = data.frame(height_c = 5.4))\nquantile(eta, probs = c(0.05, 0.50, 0.95)) |> round(2)\n\n  5%  50%  95% \n47.9 48.4 48.8 \n\nglue::glue('From the R simulation, 90% interval for eta = [{mqi$mu.lower |> round(2)}, {mqi$mu.upper |> round(2)}]')\n\nFrom the R simulation, 90% interval for eta = [47.91, 48.82]\n\n\n\n\nPosterior conditional mean\n\n\n\nmu <- posterior_epred(m1, newdata = data.frame(height_c = 5.4))\nquantile(mu, probs = c(0.05, 0.50, 0.95)) |> round(2)\n\n  5%  50%  95% \n47.9 48.4 48.8 \n\n\n\n\nPosterior prediction\n\n\n\ny_pred <- posterior_predict(m1, newdata = data.frame(height_c = 5.4))\nquantile(y_pred, probs = c(0.05, 0.50, 0.95)) |> round(2)\n\n  5%  50%  95% \n41.0 48.1 55.3 \n\nglue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower |> round(2)}, {mqi$y_pred.upper |> round(2)}]')\n\nFrom the R simulation, 90% interval for y_pred = [41.52, 55.36]"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-predictions",
     "href": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-predictions",
     "title": "Bayesian Inference",
     "section": "Evaluting Quality of the Predictions",
-    "text": "Evaluting Quality of the Predictions\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Evaluting Quality of the Predictions\n\n\n\n\nThere are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions\nJust becuase the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well\nModel performance is assessed how well it can make predictions for the types of questions that you are interested in\nTherefore, there is no universal measure of “goodness of fit”"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-predictions-1",
+    "href": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-predictions-1",
+    "title": "Bayesian Inference",
+    "section": "Evaluting Quality of the Predictions",
+    "text": "Evaluting Quality of the Predictions\n\n\nEat spaghetti\nDrink wine\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
   },
   {
     "objectID": "bayes-course.html",
     "href": "bayes-course.html",
     "title": "Bayesian Data Analysis",
     "section": "",
-    "text": "This is the home for APSTA-GE 2123: Bayesian Inference class at NYU.\n\nThis is the current version of the syllabus: syllabus.pdf\nLecture 01: Introduction and Bayesian Workflow\n\nThe final project is due at the end of the semester and the presentations will take place during finals week. Take a look at these guidelines, when working on your proposal and the final report."
+    "text": "This is the home for APSTA-GE 2123: Bayesian Inference class at NYU.\n\nThis is the current version of the syllabus: syllabus.pdf\nLecture 01: Introduction and Bayesian Workflow\nLecture 02: [Conjugate Models and Beta-Binomial] (bayes-course/02-lecture/02-lecture.html)\n\nThe final project is due at the end of the semester and the presentations will take place during finals week. Take a look at these guidelines, when working on your proposal and the final report."
   },
   {
     "objectID": "index.html",
