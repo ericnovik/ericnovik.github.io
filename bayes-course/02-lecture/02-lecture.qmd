@@ -112,6 +112,12 @@ $$
 \DeclareMathOperator*{\argmin}{arg\,min}
 $$
 
+## Homework
+
+- [How did you find the homework](https://www.polleverywhere.com/multiple_choice_polls/kUTq6uk2aGiYLbBG2Hr8e)?
+
+- Homework review
+
 ## Introduction {.smaller}
 
 ::: columns
@@ -138,8 +144,8 @@ $$
 
 ## Continous Probability Distributions {.smaller}
 
+::: incremental
 - Recall that for the continuous RVs we have, the CDF is defined as
-
 $$
 \begin{eqnarray}
 F(x) & = & \int_{-\infty}^{x} f(t) \, dt, \, \text{and} \\
@@ -148,7 +154,6 @@ f(x) & = & F'(x), \, \text{where } F \text{ is differentiable}
 $$
 
 - To compute event probabilities:
-
 $$
 \begin{eqnarray}
 \P(a \le X \leq b) & = & F(b) − F(a) = \int_{a}^{b} f(x) \, dx \\
@@ -157,22 +162,22 @@ $$
 $$
 
 - As in the case of PMFs:
-
 $$
 \begin{eqnarray}
 f(x) \geq 0 \\ 
 \int_{-\infty}^{\infty} f(x) \, dx = 1
 \end{eqnarray}
 $$
-
+:::
 
 ## Introducing Beta {.smaller}
 
 :::: {.columns}
 
 ::: {.column width="60%"}
-- Beta distribution has the following functional form for $\alpha > 0, \, \beta > 0, \, \theta \in (0, 1)$
 
+::: incremental
+- Beta distribution has the following functional form for $\alpha > 0, \, \beta > 0, \, \theta \in (0, 1)$
 $$
 \begin{eqnarray}
 \text{Beta}(\theta \mid \alpha,\beta) & = & 
@@ -185,22 +190,27 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 \end{eqnarray}
 $$
 :::
-
-::: {.column width="40%"}
-![](images/gamma.png){fig-align="right" width="300"}
 :::
 
-::::
+::: {.column width="40%"}
+![](images/gamma.png){fig-align="right" width="250"}
+:::
 
+:::
+
+::: incremental
 - For positive integrers $n$: $\, \Gamma(n+1) = n!$ and in general $\Gamma(z + 1) = z \Gamma(z)$
 - $\text{Beta}(1, 1)$ is equivalent to $\text{Unif(0, 1)}$
 - The above makes Beta a natural choice for priors on the probability scale
-
+:::
 
 ## Visualizing Beta {.smaller}
 
+::: incremental
 - The mode of Beta, $\text{Mode}(\theta) = \argmax_\theta \text{Beta}(\theta \mid \alpha, \beta)$ is shown in red and the function maximum in blue
+:::
 
+::: {.fragment}
 ```{r}
 #| fig-width: 8
 #| fig-height: 3
@@ -219,32 +229,32 @@ grid.arrange(p[[1]], p[[2]], p[[3]],
              p[[4]], p[[5]], p[[6]],
              nrow = 2)
 ```
-
+:::
 
 ## Expectations {.smaller}
+
+::: incremental
 - Recall the definition of expectations for continuous random variables
 - We often write $\mu$ or $\mu_X$ for expected value of $X$
-
 $$
 \mu_X = \E(X) = \int x \cdot f(x) \, dx
 $$
 
 - Variance is a type of expectation, which we often denote by $\sigma^2$
-
 $$
 \sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx 
 $$
 
 - It is often more convenient to write the variance as
-
 $$
 \V(X) = \E(X^2) - \mu^2
 $$
+:::
 
 ## What to expect from Beta {.smaller}
 
+::: incremental
 - Keeping in mind that a Gamma function is a continuous analog of the factorial:
-
 $$
 \begin{eqnarray}
 \E(\theta) &=& \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
@@ -258,7 +268,8 @@ $$
 &=& \frac{\alpha}{\alpha + \beta}.
 \end{eqnarray}
 $$
-
+- [What is the value](https://www.polleverywhere.com/free_text_polls/Za9vryQs3rJlnSqM3Kf6L) of $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta} \, d\theta$
+:::
 ::: footer
 Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta$ using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5Ea+*+%281+-+x%29%5E%28b+-+1%29+dx+from+0+to+1)
 :::
@@ -266,8 +277,8 @@ Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \
 
 ## What to expect from Beta {.smaller}
 
+::: incremental
 - We can find the mode of this distribution by taking the log, differentiating with respect to $\theta$, and setting the derivative function to zero
-
 $$
 \begin{eqnarray}
 \E(\theta) & = & \frac{\alpha}{\alpha + \beta} \\
@@ -276,13 +287,13 @@ $$
 $$
 
 - The variance of $\theta$ can be derived using the definition of the variance operator
-
 $$
 \begin{eqnarray}
 \V(\theta) & = & \frac{\alpha \beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}
 \end{eqnarray}
 $$
-
+- Notice when $\alpha = \beta$, $\E(\theta) = \text{Mode}(\theta)$
+:::
 
 ## Example: Placenta Previa {.smaller}
 
@@ -291,10 +302,10 @@ $$
 ::: {.column width="60%"}
 
 ::: {.incremental}
-- We borrow an example from BDA3: probability of a girl birth given placenta previa (PP)
+- We borrow an example from BDA3: the probability of girl birth given placenta previa (PP)
 - Placenta previa is a condition when the placenta completely or partially covers the opening of the uterus
 - A PP study in Germany found that out of 980 births, 437 or $\approx 45\%$ were female
-- Sex ratio in the population has been extremely stable over space and time at 48.5% females with deviations within no more than 1%[^1]
+- Sex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%[^1]
 - Our task is to assess the evidence for $\P(\text{ratio} < .485 \mid \text{PP})$
 :::
 
@@ -312,15 +323,17 @@ $$
 
 ## Biomomial Likelihood {.smaller}
 
-- Recall that Likelihood is the function of the paramter $\theta$, assuming $\theta \in [0,1]$
-
+::: incremental
+- Recall that Likelihood is the function of the parameter $\theta$, assuming $\theta \in [0,1]$
 $$
 \text{Bin}(y \mid \theta) = \binom{N}{y}
 \theta^y (1 - \theta)^{N - y} \propto \theta^y (1 - \theta)^{N - y}
 $$
 
-- Assuming $N = 10$, here is the likelihood for $\theta$, given a few possible values of $y$ successes
+- Assuming $N = 10$, the likelihood for $\theta$, given a few possible values of $y$ successes
+:::
 
+::: {.fragment}
 ```{r}
 #| fig-width: 8
 #| fig-height: 3
@@ -336,11 +349,12 @@ for (i in 1:(N + 1)) {
 }
 grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], p1[[6]], nrow = 2)
 ```
+:::
 
 ## Deriving the Posterior Distribution {.smaller}
 
+::: incremental
 - The denominator is constant in $\theta$; we will derive the posterior up to a proportion
-
 $$
 \begin{eqnarray}
 f(y \mid \theta) & \propto & \theta^y (1 - \theta)^{N - y} \\
@@ -354,7 +368,8 @@ $$
 
 - The last equality comes from matching the kernel $\theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1}$ to the normalized Beta PDF which has a normalizing constant $\frac{\Gamma (\alpha +\beta + N)}{\Gamma (\alpha + y) \Gamma (\beta + N - y)}$
 
-- Since the posterior is in the same family as the prior, we say that Beta is a conjugate to Binomial
+- Since the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial
+:::
 
 ::: footer
 Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta$  using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5E%28y+%2B+a+-+1%29+*+%281+-+x%29%5E%28n+%2B+b+-+y+-+1%29+dx+from+0+to+1+)
@@ -362,6 +377,7 @@ Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N
 
 ## Posterior Expectations {.smaller}
 
+::: {.fragment}
 $$
 \begin{eqnarray}
 \E(\theta \mid Y=y)  & = & \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
@@ -369,6 +385,7 @@ $$
 \text{Mode}(\theta \mid Y=y) & = & \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
 \end{eqnarray}
 $$
+:::
 
 ::: {.incremental}
 - Note tha the posterior expectation is between $y/n$ and $\frac{\alpha}{\alpha + \beta}$
@@ -391,6 +408,7 @@ $$
 
 - $\sqrt{\V(\theta \mid Y=y)} \approx$ `r round(sqrt(post_beta_var(1, 1, 980, 437)), 3)`
 
+::: {.fragment}
 ```{r}
 #| echo: true
 int <- 0.95; l <- (1 - int)/2; u <- 1 - l
@@ -400,14 +418,18 @@ cat("95% posterior interval is [", lower, ", ", upper, "]", sep = "")
 
 event_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 438, shape2 = 544)[[1]]
 cat("Probability that the ratio < 0.485 under uniform prior =", round(event_prob, 3))
+pbeta(0.485, shape1 = 438, shape2 = 544) |> round(3)
 ```
-
+:::
 :::
 
 ## Obtaining Quantiles by Sampling {.smaller}
 
-- We can use R's `rbeta()` RNG to generate draws from the posterion
+::: incremental
+- We can use R's `rbeta()` RNG to generate draws from the posterior
+:::
 
+::: {.fragment}
 ```{r}
 #| echo: true
 #| fig-width: 3.5
@@ -424,13 +446,19 @@ p + geom_histogram(bins = 30) + ylab("") +
   theme(axis.text.y = element_blank()) + 
   xlab(expression(theta))
 ```
-- We can use the `quantile()` function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before
+:::
 
+::: incremental
+- We can use the `quantile()` function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before
+:::
+
+::: {.fragment}
 ```{r}
 #| echo: true
 quantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)
 cat("Probability that the ratio < 0.485 under uniform prior =", mean(draws < 0.485) |> round(3))
 ```
+:::
 
 ## Population Priors {.smaller}
 :::: {.columns}
@@ -445,6 +473,7 @@ cat("Probability that the ratio < 0.485 under uniform prior =", mean(draws < 0.4
 - Back out the parameters of the population Beta distribution
 :::
 
+::: {.fragment}
 $$
 \begin{eqnarray}
 \begin{cases}
@@ -453,6 +482,7 @@ $$
 \end{cases}
 \end{eqnarray}
 $$
+:::
 
 ::: {.incremental}
 - $\alpha \approx 1211$ and $\beta \approx 1286$
@@ -466,18 +496,22 @@ $$
 - Check the result with the simulation
 :::
 
+::: {.fragment}
 ```{r}
 #| echo: true
 x <- rbeta(1e4, 1211, 1286)
 mean(x) |> round(3)
 sd(x) |> round(3)
 ```
+:::
 
 ::: {.incremental}
 - We can let Mathematica do the algebra
 :::
 
+::: {.fragment}
 ![](images/beta-system.png){fig-align="center" width="500"}
+:::
 
 :::
 
@@ -491,22 +525,31 @@ sd(x) |> round(3)
 
 - We can compare the prior and posterior using `summarize_beta_binomial()` in the `bayesrules` package
 
+::: {.fragment}
 ```{r}
 #| echo: true
 library(bayesrules)
 summarize_beta_binomial(alpha = 1211, beta = 1286, y = 437, n = 980)
 ```
+:::
 
+::: {.fragment}
 ```{r}
 #| echo: true
 int <- 0.95; l <- (1 - int)/2; u <- 1 - l
 upper <- qbeta(u, 1648, 1829) |> round(3)
 lower <- qbeta(l, 1648, 1829) |> round(3)
 cat("95% posterior interval is [", lower, ", ", upper, "]", sep = "")
+```
+:::
 
-event_prob <- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 1648, shape2 = 1829)[[1]]
+::: {.fragment}
+```{r}
+#| echo: true
+event_prob <- pbeta(0.485, shape1 = 1648, shape2 = 1829)
 cat("Probability that the ratio < 0.485 under population prior =", round(event_prob, 3))
 ```
+:::
 
 - Under uniform prior 95% posterior interval was [0.415, 0.477]
 - And probability that the ratio < 0.485 under uniform prior = 0.993
@@ -515,8 +558,11 @@ cat("Probability that the ratio < 0.485 under population prior =", round(event_p
 
 ## Visualizing Bayesian Rebalancing {.smaller}
 
-- The following uses $\text{Beta}(5, 5)$ prior and N = 10. 
+::: incremental
+- The following uses $\text{Beta}(5, 5)$ prior and N = 10:
+:::
 
+::: {.fragment}
 ```{r}
 #| echo: false
 #| fig-width: 8
@@ -528,7 +574,7 @@ p1 <- list()
 for (i in 1:(N + 1)) {
   p1[[i]] <- plot_beta_binomial(alpha = 5, beta = 5, y = y[i], n = N) +
     xlab(expression(theta)) + ylab("") + 
-    ggtitle(bquote(y == .(y[i]))) + guides(fill="none") +
+    ggtitle(bquote(y == .(y[i]))) + guides(fill = "none") +
     theme(axis.text.y = element_blank()) 
 }
 grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], 
@@ -536,17 +582,7 @@ grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]],
              nrow = 3)
 
 ```
-
-
-## Example: Same-sex marriage {.smaller}
-- This is Exercise 3.12, p 71 in your book
-
-A 2017 Pew Research survey found that 10.2% of LGBT adults in the U.S. were married to a same-sex spouse. Now it’s the 2020s, and Bayard guesses that $\pi$, the percent of LGBT adults in the U.S. who are married to a same-sex spouse, has most likely increased to about 15% but could reasonably range from 10% to 25%.
-
-- Identify and plot a Beta model that reflects Bayard’s prior ideas about $\pi$
-- Bayard wants to update his prior, so he randomly selects 90 US LGBT adults and 30 of them are married to a same-sex partner. What is the posterior model for $\pi$
-- Calculate the posterior mean, mode, and standard deviation of $\pi$
-- Does the posterior model more closely reflect the prior information or the data? Explain your reasoning.
+:::
 
 
 ## Data Order and Batch Invariance {.smaller}
@@ -564,6 +600,53 @@ A 2017 Pew Research survey found that 10.2% of LGBT adults in the U.S. were marr
 ::: 
 
 
+## General Case {.smaller}
+
+::: incremental
+- Suppose we observe data point $y_1$, and then data point $y_2$
+:::
+
+::: {.fragment}
+$$
+f(\theta \mid y_1,y_2) =  \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+$$
+:::
+
+::: incremental
+- Observing data point $y_2$, and then data point $y_1$, will results in the same distribution
+- What if observed both points at once?
+:::
+
+::: {.fragment}
+$$
+\begin{split}
+f(\theta \mid y_1,y_2) 
+& = \frac{f(\theta)f(y_1,y_2 \mid \theta)}{f(y_1)f(y_2)} \\
+& = \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+\end{split}
+$$
+:::
+
+## Bayesian Workflow Chapter 2
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- What do we do before fitting a model
+   - Choosing an initial model
+   - Modular construction
+   - Scaling and transforming the parameters
+   - Prior predictive checking
+:::
+
+
+:::
+
+::: {.column width="50%"}
+![](images/workflow.png){fig-align="center" width="672"}
+:::
+:::
 
 
 
