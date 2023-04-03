@@ -711,7 +711,7 @@ p +
 #| echo: true
 eta <- posterior_linpred(m1, newdata = data.frame(height_c = 5.4))
 quantile(eta, probs = c(0.05, 0.50, 0.95)) |> round(2)
-glue::glue('From the R simulation, eta = [{mqi$mu.lower |> round(2)}, {mqi$mu.upper |> round(2)}]')
+glue::glue('From the R simulation, 90% interval for eta = [{mqi$mu.lower |> round(2)}, {mqi$mu.upper |> round(2)}]')
 ```
 :::
 
@@ -734,10 +734,38 @@ quantile(mu, probs = c(0.05, 0.50, 0.95)) |> round(2)
 #| echo: true
 y_pred <- posterior_predict(m1, newdata = data.frame(height_c = 5.4))
 quantile(y_pred, probs = c(0.05, 0.50, 0.95)) |> round(2)
-glue::glue('From the R simulation, eta = [{mqi$y_pred.lower |> round(2)}, {mqi$y_pred.upper |> round(2)}]')
+glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower |> round(2)}, {mqi$y_pred.upper |> round(2)}]')
 ```
 :::
 
 :::
 
-## Evaluting Quality of the Predictions
+## Evaluting Quality of the Predictions {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions
+- Just becuase the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well
+- Model performance is assessed  how well it can make predictions for the types of questions that you are interested in
+- Therefore, there is no universal measure of "goodness of fit"
+:::
+
+:::
+
+::: {.column width="50%"}
+
+![](images/quality.png){fig-align="center" height="525"}
+:::
+:::
+
+## Evaluting Quality of the Predictions {.smaller}
+
+::: incremental
+- Eat spaghetti
+- Drink wine
+:::
+
+
+
