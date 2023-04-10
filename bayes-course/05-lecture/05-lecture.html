@@ -1365,40 +1365,348 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div>
 </section>
-<section id="evaluting-quality-of-the-predictions" class="slide level2 smaller">
-<h2>Evaluting Quality of the Predictions</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
+<section id="evaluting-model-quality" class="slide level2 smaller">
+<h2>Evaluting Model Quality</h2>
+<p><br> <br></p>
+
+<img data-src="images/data-quality.png" class="r-stretch quarto-figure-center"></section>
+<section id="evaluting-quality-of-the-model" class="slide level2 smaller">
+<h2>Evaluting Quality of the Model</h2>
 <div>
 <ul>
 <li class="fragment">There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions</li>
+<li class="fragment">There is also a question of model fairness
+<ul>
+<li class="fragment">How were the data collected?</li>
+<li class="fragment">People will likely interpret the results causually, even if not appropriate</li>
+<li class="fragment">How will the model be used?</li>
+</ul></li>
 <li class="fragment">Just becuase the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well</li>
-<li class="fragment">Model performance is assessed how well it can make predictions for the types of questions that you are interested in</li>
-<li class="fragment">Therefore, there is no universal measure of “goodness of fit”</li>
+<li class="fragment">Model performance is assessed on how well it can make predictions for the types of questions that you are interested in</li>
 </ul>
 </div>
-</div><div class="column" style="width:50%;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/quality.png" height="525"></p>
-</figure>
+</section>
+<section id="evaluting-quality-of-the-model-1" class="slide level2 smaller">
+<h2>Evaluting Quality of the Model</h2>
+<div>
+<ul>
+<li class="fragment">Once we are satisified that the draws are statistically well-behaved, we can focus on evaluating predictive performance</li>
+<li class="fragment">We typically evalutate predictive performance in-sample and out-of-sample</li>
+<li class="fragment">In general, a good model is well-calibrated and makes sharp predictions (Gneiting et al.&nbsp;2007)<sup>1</sup></li>
+<li class="fragment">For in-sample assessment, we perform Posterior Predictive Checks or PPCs</li>
+<li class="fragment">To assess out-of-sample performance, we rely on cross-validation or its approximations</li>
+<li class="fragment">If you are making causal (counterfactual) predictions, naive cross-validation will not work. Why?</li>
+</ul>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Gneiting, T., Balabdaoui, F., and Raftery, A. E. (2007) Probabilistic forecasts, calibration and sharpness. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 69(2), 243–268.</p></li></ol></aside></section>
+<section id="model-evaluation" class="slide level2 smaller">
+<h2>Model Evaluation</h2>
+<p>Here is the high level plan of attack:</p>
+<div>
+<ul>
+<li class="fragment">Fit a linear model to the full !Kung dataset (not just adults) and let <code>RStanArm</code> pick the priors</li>
+<li class="fragment">We know that this model is not quite right</li>
+<li class="fragment">Evaluate the model fit</li>
+<li class="fragment">Fix the model by thinking about the relationship between height and weight</li>
+<li class="fragment">Evaluate the improved model</li>
+<li class="fragment">Compare the linear model to the improved model</li>
+</ul>
+</div>
+</section>
+<section id="model-evaluation-1" class="slide level2 smaller">
+<h2>Model Evaluation</h2>
+<div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-28_77a0127229aeb273a4c333c4783c84fe">
+
+</div>
+<div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-29_ea6a6b2341af3dff143f9f0d7d8d2fb0">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
+<span id="cb41-2"><a href="#cb41-2"></a>  weight <span class="sc">~</span> height,</span>
+<span id="cb41-3"><a href="#cb41-3"></a>  <span class="at">data =</span> d,</span>
+<span id="cb41-4"><a href="#cb41-4"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb41-5"><a href="#cb41-5"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb41-6"><a href="#cb41-6"></a>  <span class="at">iter =</span> <span class="dv">600</span>,</span>
+<span id="cb41-7"><a href="#cb41-7"></a>  <span class="at">seed =</span> <span class="dv">1234</span></span>
+<span id="cb41-8"><a href="#cb41-8"></a>)</span>
+<span id="cb41-9"><a href="#cb41-9"></a><span class="fu">summary</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div>
+<ul>
+<li class="fragment">There were no sampling problems</li>
+<li class="fragment">And posterior draws look well-behaved</li>
+<li class="fragment">But how good is this model?</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-30_e0b2c28e474dd2169e739528b857d999">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      weight ~ height
+ algorithm:    sampling
+ sample:       1200 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 544
+ predictors:   2
+
+Estimates:
+              mean   sd    10%   50%   90%
+(Intercept) -33.8    1.1 -35.1 -33.7 -32.4
+height        0.5    0.0   0.5   0.5   0.5
+sigma         5.0    0.1   4.8   5.0   5.2
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 35.6    0.3 35.2  35.6  36.0 
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  1198 
+height        0.0  1.0  1228 
+sigma         0.0  1.0   836 
+mean_PPD      0.0  1.0  1126 
+log-posterior 0.1  1.0   497 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </div>
 </section>
-<section id="evaluting-quality-of-the-predictions-1" class="slide level2 smaller">
-<h2>Evaluting Quality of the Predictions</h2>
+<section id="visual-posterior-predictive-checks" class="slide level2 smaller">
+<h2>Visual Posterior Predictive Checks</h2>
 <div>
 <ul>
-<li class="fragment">Eat spaghetti</li>
-<li class="fragment">Drink wine</li>
+<li class="fragment">The idea behind PPCs is to compare the distribution of of the observation to posterior predictions</li>
+<li class="fragment">We already saw an example of how to do it by hand</li>
+<li class="fragment">Here, we will do using functions in <code>RStanArm</code></li>
 </ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="05-lecture_cache/revealjs/unnamed-chunk-31_c6187749cb376193b871ed19f2ea5e11">
+<div class="column">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb43-2"><a href="#cb43-2"></a><span class="co"># bayesplot::pp_check(m2) &lt;-- shortcut</span></span>
+<span id="cb43-3"><a href="#cb43-3"></a></span>
+<span id="cb43-4"><a href="#cb43-4"></a><span class="co"># predict for every observed point</span></span>
+<span id="cb43-5"><a href="#cb43-5"></a>yrep <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m2) </span>
+<span id="cb43-6"><a href="#cb43-6"></a></span>
+<span id="cb43-7"><a href="#cb43-7"></a><span class="co"># select 50 draws at random</span></span>
+<span id="cb43-8"><a href="#cb43-8"></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(yrep), <span class="dv">50</span>)</span>
+<span id="cb43-9"><a href="#cb43-9"></a></span>
+<span id="cb43-10"><a href="#cb43-10"></a><span class="co"># plot data against predictive densities</span></span>
+<span id="cb43-11"><a href="#cb43-11"></a><span class="fu">ppc_dens_overlay</span>(d<span class="sc">$</span>weight, yrep[s, ]) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-31-1.png" width="432"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="visual-posterior-predictive-checks-1" class="slide level2 smaller">
+<h2>Visual Posterior Predictive Checks</h2>
+<div>
+<ul>
+<li class="fragment">We can also compute the distrubutions of test statistics:<br>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="05-lecture_cache/revealjs/unnamed-chunk-32_8de36451a9d8a694dc3116c657707fdb">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb44-2"><a href="#cb44-2"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ppc_stat</span>(d<span class="sc">$</span>weight, yrep, <span class="at">stat =</span> <span class="st">"mean"</span>); p2 <span class="ot">&lt;-</span> <span class="fu">ppc_stat</span>(d<span class="sc">$</span>weight, yrep, <span class="at">stat =</span> <span class="st">"sd"</span>)</span>
+<span id="cb44-3"><a href="#cb44-3"></a>q25 <span class="ot">&lt;-</span> <span class="cf">function</span>(y) <span class="fu">quantile</span>(y, <span class="fl">0.25</span>); q75 <span class="ot">&lt;-</span> <span class="cf">function</span>(y) <span class="fu">quantile</span>(y, <span class="fl">0.75</span>)</span>
+<span id="cb44-4"><a href="#cb44-4"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ppc_stat</span>(d<span class="sc">$</span>weight, yrep, <span class="at">stat =</span> <span class="st">"q25"</span>); p4 <span class="ot">&lt;-</span> <span class="fu">ppc_stat</span>(d<span class="sc">$</span>weight, yrep, <span class="at">stat =</span> <span class="st">"q75"</span>); </span>
+<span id="cb44-5"><a href="#cb44-5"></a><span class="fu">grid.arrange</span>(p1, p2, p3, p4, <span class="at">ncol =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-32-1.png" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment"><code>ppc_stat</code> is a shorthand for a computation on each posterior (predictive) draw</li>
+<li class="fragment">For example, <code>ppc_stat(d$weight, yrep, stat = "mean")</code> is equivalent to:
+<ul>
+<li class="fragment">Setting <span class="math inline">\(T(y) = \text{mean(d\$weight)}\)</span> and <span class="math inline">\(T_{\text{yrep}} = \text{rowMeans(yrep)}\)</span></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="visual-posterior-predictive-checks-2" class="slide level2 smaller">
+<h2>Visual Posterior Predictive Checks</h2>
+<div>
+<ul>
+<li class="fragment">Since we have a distribution at each observation point, we can plot the predictive distribution at each observation</li>
+<li class="fragment">We will first randomly select a subset of 50 people</li>
+<li class="fragment">Each column of <code>yrep</code> is a prediction for each observation point</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="05-lecture_cache/revealjs/unnamed-chunk-33_8d8c418c6d7010e9c554200b24030a62">
+<div class="column">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">ncol</span>(yrep), <span class="dv">50</span>)</span>
+<span id="cb45-2"><a href="#cb45-2"></a></span>
+<span id="cb45-3"><a href="#cb45-3"></a>bayesplot<span class="sc">::</span><span class="fu">ppc_intervals</span>(</span>
+<span id="cb45-4"><a href="#cb45-4"></a>  d<span class="sc">$</span>weight[s],</span>
+<span id="cb45-5"><a href="#cb45-5"></a>  <span class="at">yrep =</span> yrep[, s],</span>
+<span id="cb45-6"><a href="#cb45-6"></a>  <span class="at">x =</span> d<span class="sc">$</span>height[s],</span>
+<span id="cb45-7"><a href="#cb45-7"></a>  <span class="at">prob =</span> <span class="fl">0.5</span>,</span>
+<span id="cb45-8"><a href="#cb45-8"></a>  <span class="at">prob_outer =</span> <span class="fl">0.90</span></span>
+<span id="cb45-9"><a href="#cb45-9"></a>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>)  <span class="sc">+</span> </span>
+<span id="cb45-10"><a href="#cb45-10"></a>  <span class="fu">ylab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span></span>
+<span id="cb45-11"><a href="#cb45-11"></a>  <span class="fu">ggtitle</span>(<span class="st">"Predicted vs observed weight"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-33-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="quantifying-model-accuracy" class="slide level2 smaller">
+<h2>Quantifying Model Accuracy</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div>
+<ul>
+<li class="fragment">We looked at some visual evidence for in-sample model accuracy</li>
+<li class="fragment">The model is clearly doing a poor job at capturing observed data, particularly in the lower quantiles of the predictive distribution</li>
+<li class="fragment">In a situation like this, we would typically proceed to model improvements</li>
+<li class="fragment">Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit<sup>1</sup></li>
+<li class="fragment">We do this, so we can assess the relative performance of the next set of models</li>
+</ul>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/loo.png"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn2"><p>Vehtari, A., Gelman, A., &amp; Gabry, J. (2017). <a href="https://mc-stan.org/loo/index.html">Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</a>. Statistics and Computing, 27(5), 1413–1432. https://doi.org/10.1007/s11222-016-9696-4</p></li></ol></aside></section>
+<section id="quantifying-model-accuracy-1" class="slide level2 smaller">
+<h2>Quantifying Model Accuracy</h2>
+<div>
+<ul>
+<li class="fragment">One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
+<ul>
+<li class="fragment"><span class="math inline">\(\text{MSE} = \frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2\)</span></li>
+<li class="fragment">Or it’s scaled version which devides the summand by <span class="math inline">\(\V(y_i | \theta)\)</span></li>
+</ul></li>
+<li class="fragment">These measures do not work well for non-normal models</li>
+<li class="fragment">On the plus side, it is intuitive and computation is easy</li>
+<li class="fragment">Note that if we just average the errors, we will get zero by definition</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="co"># avarage error</span></span>
+<span id="cb46-2"><a href="#cb46-2"></a><span class="fu">mean</span>(d<span class="sc">$</span>weight <span class="sc">-</span> <span class="fu">colMeans</span>(yrep)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.01</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="co"># mean square error</span></span>
+<span id="cb48-2"><a href="#cb48-2"></a><span class="fu">mean</span>((d<span class="sc">$</span>weight <span class="sc">-</span> <span class="fu">colMeans</span>(yrep))<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 25</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="co"># your book reports median absolute error</span></span>
+<span id="cb50-2"><a href="#cb50-2"></a><span class="fu">median</span>(<span class="fu">abs</span>(d<span class="sc">$</span>weight <span class="sc">-</span> <span class="fu">colMeans</span>(yrep)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.55</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="quantifying-model-accuracy-2" class="slide level2 smaller">
+<h2>Quantifying Model Accuracy</h2>
+<div>
+<ul>
+<li class="fragment">In a probabilistic prediction, we are able to assess model calibration</li>
+<li class="fragment">Calibration says that, for example, 50% intervals contain approximately 50% of the observations, and so on</li>
+<li class="fragment">A well-calibrated model may still be a bad model (see below) as the uncertainty may be too wide; for two models with the same calibration, we prefer the one with lower uncertainty</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a>inside <span class="ot">&lt;-</span> <span class="cf">function</span>(y, obs) <span class="fu">return</span>(obs <span class="sc">&gt;=</span> y[<span class="dv">1</span>] <span class="sc">&amp;</span> obs <span class="sc">&lt;=</span> y[<span class="dv">2</span>])</span>
+<span id="cb52-2"><a href="#cb52-2"></a>calib  <span class="ot">&lt;-</span> <span class="cf">function</span>(y, data, interval) {</span>
+<span id="cb52-3"><a href="#cb52-3"></a>  mid <span class="ot">&lt;-</span> interval <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb52-4"><a href="#cb52-4"></a>  l <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">-</span> mid; u <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">+</span> mid</span>
+<span id="cb52-5"><a href="#cb52-5"></a>  intervals <span class="ot">&lt;-</span> <span class="fu">apply</span>(y, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(l, u))</span>
+<span id="cb52-6"><a href="#cb52-6"></a>  is_inside <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">ncol</span>(intervals))</span>
+<span id="cb52-7"><a href="#cb52-7"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(intervals)) {</span>
+<span id="cb52-8"><a href="#cb52-8"></a>    is_inside[i] <span class="ot">&lt;-</span> <span class="fu">inside</span>(intervals[, i], data[i])</span>
+<span id="cb52-9"><a href="#cb52-9"></a>  }</span>
+<span id="cb52-10"><a href="#cb52-10"></a> <span class="fu">return</span>(<span class="fu">mean</span>(is_inside))</span>
+<span id="cb52-11"><a href="#cb52-11"></a>}</span>
+<span id="cb52-12"><a href="#cb52-12"></a><span class="fu">calib</span>(yrep, d<span class="sc">$</span>weight, <span class="fl">0.50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.474</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="fu">calib</span>(yrep, d<span class="sc">$</span>weight, <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.901</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="quantifying-model-accuracy-3" class="slide level2 smaller">
+<h2>Quantifying Model Accuracy</h2>
+<div>
+<ul>
+<li class="fragment">A popular “proper” scoring for probabilisitc prediction is log score</li>
+<li class="fragment">This is equivalent to the log predictive density <span class="math inline">\(\log f(y | \theta)\)</span></li>
+<li class="fragment">We would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data generating process</li>
+<li class="fragment">This quantity is approximated by log-pointwise-predictive-density <span class="math display">\[
+\text{llpd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
+\]</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="fu">loo</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Computed from 1200 by 544 log-likelihood matrix
+
+         Estimate   SE
+elpd_loo  -1648.7 14.3
+p_loo         3.0  0.3
+looic      3297.3 28.6
+------
+Monte Carlo SE of elpd_loo is 0.1.
+
+All Pareto k estimates are good (k &lt; 0.5).
+See help('pareto-k-diagnostic') for details.</code></pre>
+</div>
+</div>
 </div>
 
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
 </div>
 </section>
+
     </div>
   </div>
 
