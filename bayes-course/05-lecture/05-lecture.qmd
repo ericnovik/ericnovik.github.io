@@ -740,32 +740,279 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 
 :::
 
-## Evaluting Quality of the Predictions {.smaller}
+## Evaluting Model Quality {.smaller}
 
-::: columns
-::: {.column width="50%"}
+</br>
+</br>
+
+![](images/data-quality.png){fig-align="center"}
+
+## Evaluting Quality of the Model {.smaller}
 
 ::: incremental
 - There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions
+- There is also a question of model fairness
+   - How were the data collected? 
+   - People will likely interpret the results causually, even if not appropriate
+   - How will the model be used?
 - Just becuase the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well
-- Model performance is assessed  how well it can make predictions for the types of questions that you are interested in
-- Therefore, there is no universal measure of "goodness of fit"
+- Model performance is assessed on how well it can make predictions for the types of questions that you are interested in
 :::
 
-:::
 
-::: {.column width="50%"}
 
-![](images/quality.png){fig-align="center" height="525"}
-:::
-:::
-
-## Evaluting Quality of the Predictions {.smaller}
+## Evaluting Quality of the Model {.smaller}
 
 ::: incremental
-- Eat spaghetti
-- Drink wine
+- Once we are satisified that the draws are statistically well-behaved, we can focus on evaluating predictive performance
+- We typically evalutate predictive performance in-sample and out-of-sample
+- In general, a good model is well-calibrated and makes sharp predictions (Gneiting et al. 2007)[^1]
+- For in-sample assessment, we perform Posterior Predictive Checks or PPCs
+- To assess out-of-sample performance, we rely on cross-validation or its approximations
+- If you are making causal (counterfactual) predictions, naive cross-validation will not work. Why?
+:::
+
+[^1]: Gneiting, T., Balabdaoui, F., and Raftery, A. E. (2007) Probabilistic forecasts, calibration and sharpness. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 69(2), 243–268.
+
+
+## Model Evaluation {.smaller}
+
+Here is the high level plan of attack:
+
+::: incremental
+- Fit a linear model to the full !Kung dataset (not just adults) and let `RStanArm` pick the priors
+- We know that this model is not quite right
+- Evaluate the model fit 
+- Fix the model by thinking about the relationship between height and weight
+- Evaluate the improved model
+- Compare the linear model to the improved model
+:::
+
+## Model Evaluation {.smaller}
+
+```{r}
+#| cache: true
+#| echo: false
+d <- readr::read_csv("data/howell.csv")
+m2 <- readr::read_rds("models/m2.rds")
+```
+
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+m2 <- stan_glm(
+  weight ~ height,
+  data = d,
+  family = gaussian,
+  chains = 4,
+  iter = 600,
+  seed = 1234
+)
+summary(m2)
+```
+
+::: incremental
+-   There were no sampling problems
+-   And posterior draws look well-behaved
+-   But how good is this model?
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: false
+summary(m2)
+```
+:::
+
+## Visual Posterior Predictive Checks {.smaller}
+
+::: incremental
+- The idea behind PPCs is to compare the distribution of of the observation to posterior predictions
+- We already saw an example of how to do it by hand
+- Here, we will do using functions in `RStanArm`
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| fig-align: center
+#| output-location: column
+library(bayesplot)
+# bayesplot::pp_check(m2) <-- shortcut
+
+# predict for every observed point
+yrep <- posterior_predict(m2) 
+
+# select 50 draws at random
+s <- sample(nrow(yrep), 50)
+
+# plot data against predictive densities
+ppc_dens_overlay(d$weight, yrep[s, ]) 
+```
+:::
+
+## Visual Posterior Predictive Checks {.smaller}
+
+::: incremental
+- We can also compute the distrubutions of test statistics:    
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 11
+#| fig-height: 2
+#| fig-align: center
+library(gridExtra)
+p1 <- ppc_stat(d$weight, yrep, stat = "mean"); p2 <- ppc_stat(d$weight, yrep, stat = "sd")
+q25 <- function(y) quantile(y, 0.25); q75 <- function(y) quantile(y, 0.75)
+p3 <- ppc_stat(d$weight, yrep, stat = "q25"); p4 <- ppc_stat(d$weight, yrep, stat = "q75"); 
+grid.arrange(p1, p2, p3, p4, ncol = 4)
+```
+:::
+
+::: incremental
+- `ppc_stat` is a shorthand for a computation on each posterior (predictive) draw
+- For example, `ppc_stat(d$weight, yrep, stat = "mean")` is equivalent to:
+   - Setting $T(y) = \text{mean(d\$weight)}$ and $T_{\text{yrep}} = \text{rowMeans(yrep)}$ 
+:::
+
+## Visual Posterior Predictive Checks {.smaller}
+
+::: incremental
+- Since we have a distribution at each observation point, we can plot the predictive distribution at each observation
+- We will first randomly select a subset of 50 people
+- Each column of `yrep` is a prediction for each observation point
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+
+s <- sample(ncol(yrep), 50)
+
+bayesplot::ppc_intervals(
+  d$weight[s],
+  yrep = yrep[, s],
+  x = d$height[s],
+  prob = 0.5,
+  prob_outer = 0.90
+) + xlab("Height (cm)")  + 
+  ylab("Weight (kg)") +
+  ggtitle("Predicted vs observed weight")
+
+```
 :::
 
 
+## Quantifying Model Accuracy {.smaller}
 
+::: columns
+::: {.column width="60%"}
+
+::: incremental
+- We looked at some visual evidence for in-sample model accuracy
+- The model is clearly doing a poor job at capturing observed data, particularly in the lower quantiles of the predictive distribution
+- In a situation like this, we would typically proceed to model improvements
+- Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit[^2]
+- We do this, so we can assess the relative performance of the next set of models
+:::
+
+
+:::
+
+::: {.column width="40%"}
+
+::: {.fragment}
+![](images/loo.png){fig-align="center"}
+:::
+:::
+:::
+
+[^2]: Vehtari, A., Gelman, A., & Gabry, J. (2017). [Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC](https://mc-stan.org/loo/index.html). Statistics and Computing, 27(5), 1413–1432. https://doi.org/10.1007/s11222-016-9696-4
+
+
+## Quantifying Model Accuracy {.smaller}
+
+::: incremental
+- One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
+   - $\text{MSE} = \frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2$
+   - Or it's scaled version which devides the summand by $\V(y_i | \theta)$
+- These measures do not work well for non-normal models 
+- On the plus side, it is intuitive and computation is easy
+- Note that if we just average the errors, we will get zero by definition
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+# avarage error
+mean(d$weight - colMeans(yrep)) |> round(2)
+
+# mean square error
+mean((d$weight - colMeans(yrep))^2) |> round(2)
+
+# your book reports median absolute error
+median(abs(d$weight - colMeans(yrep)))
+```
+:::
+
+## Quantifying Model Accuracy {.smaller}
+
+::: incremental
+- In a probabilistic prediction, we are able to assess model calibration
+- Calibration says that, for example, 50% intervals contain approximately 50% of the observations, and so on
+- A well-calibrated model may still be a bad model (see below) as the uncertainty may be too wide; for two models with the same calibration, we prefer the one with lower uncertainty
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+inside <- function(y, obs) return(obs >= y[1] & obs <= y[2])
+calib  <- function(y, data, interval) {
+  mid <- interval / 2
+  l <- 0.5 - mid; u <- 0.5 + mid
+  intervals <- apply(y, 2, quantile, probs = c(l, u))
+  is_inside <- numeric(ncol(intervals))
+  for (i in 1:ncol(intervals)) {
+    is_inside[i] <- inside(intervals[, i], data[i])
+  }
+ return(mean(is_inside))
+}
+calib(yrep, d$weight, 0.50)
+calib(yrep, d$weight, 0.90)
+```
+:::
+
+
+## Quantifying Model Accuracy {.smaller}
+
+::: incremental
+- A popular "proper" scoring for probabilisitc prediction is log score
+- This is equivalent to the log predictive density $\log f(y | \theta)$
+- We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data generating process
+- This quantity is approximated by log-pointwise-predictive-density
+$$
+\text{llpd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
+$$
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+loo(m2)
+```
+:::
