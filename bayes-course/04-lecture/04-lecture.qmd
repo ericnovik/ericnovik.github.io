@@ -25,7 +25,7 @@ always_allow_html: true
 - Computational issues
 - Why does MHR work
 - Posterior predictive distribution
-- Posterio predictive simulation in Stan
+- Posterior predictive simulation in Stan
 - Optimization and code breaking with MCMC
 :::
 
@@ -157,17 +157,17 @@ $$
 \DeclareMathOperator*{\argmin}{arg\,min}
 $$
 
-## High Level Outline of MHR {.smaller}
+## High-Level Outline of MHR {.smaller}
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 ::: {.incremental}
-- The idea is to spend "more time" in the in area of high posterior volume
+- The idea is to spend "more time" in the area of high posterior volume
 - Pick a random starting point at $i=1$ with $\theta^{(1)}$
 - **Propose** a next possible value of $\theta$, call it  $\theta'$ from an (easy) proposal distribution
 - Evaluate if you should **accept or reject** the proposal
-- If accepted, go to $\theta^{'(2)}$, otherise stay at $\theta^{(2)}$
+- If accepted, go to $\theta^{'(2)}$, otherwise stay at $\theta^{(2)}$
 - Rinse and repeat
 :::
 
@@ -176,10 +176,10 @@ $$
 ::: {.column width="50%"}
 ::: {.incremental}
 - If we can get an independant draw from $\theta$, we just take it
-- That ammounts to regular Monte Carlo sampling, like `rnorm(1, mean = 0, sd = 1)`
+- That amounts to regular Monte Carlo sampling, like `rnorm(1, mean = 0, sd = 1)`
 - Otherwise, we need a **rule** for evaluating when to accept and when to reject the proposal
 - We still need a way to **evaluate the density** at the proposed value (it will be part of the rule)
-- The big idea: if the proposed $\theta'$ has a higher plausability than the current $\theta$, accept $\theta'$; if not, sometimes accept $\theta'$
+- The big idea: if the proposed $\theta'$ has a higher plausibility than the current $\theta$, accept $\theta'$; if not, sometimes accept $\theta'$
 :::
 
 :::
@@ -194,6 +194,8 @@ $$
 - Let's say we observe $y = 5$
 - We can immediately compute the posterior $\mu | y \sim \text{Normal}(4.71, 0.49)$
 :::
+
+::: {.fragment}
 ```{r}
 #| echo: true
 normal_normal_post <- function(y, sd, prior_mu, prior_sd) {
@@ -211,7 +213,7 @@ normal_normal_post <- function(y, sd, prior_mu, prior_sd) {
 normal_normal_post(y = 5, sd = 0.5, prior_mu = 0, prior_sd = 2) |>
   unlist() |> round(2)
 ```
-
+:::
 
 ## Metropolis-Hastings-Rosenbluth (MHR) {.smaller}
 
@@ -231,8 +233,11 @@ normal_normal_post(y = 5, sd = 0.5, prior_mu = 0, prior_sd = 2) |>
 
 ## Normal Symmetry
 
+::: incremental
 - Why in case of normals, $q(\theta'|\theta) = q(\theta|\theta')$
+:::
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| fig-width: 8
@@ -259,13 +264,16 @@ p2 <- p2 + geom_segment(x = 0, xend = 0, y = 0, yend = dnorm(0, 1),
 
 grid.arrange(p1, p2, nrow = 1)
 ```
+:::
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
 dnorm(1, mean = 0)
 dnorm(0, mean = 1)
 ```
+:::
 
 :::
 
@@ -303,10 +311,10 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
 }
 ```
 
-## MHR for N Interations
+## MHR for N Iterations
 ```{r}
 #| echo: true
-#| code-line-numbers: "|2|3|4|5|6|8|9|11|12|18|19|20|"
+#| code-line-numbers: "|8|9|11|12|18|19|"
 
 mhr <- function(y, f, N, start, ...) {
 # y: new observation
@@ -343,8 +351,12 @@ Autocorrelation function (ACF)
 ![](anim/anim-10.png){fig-align="left" height="255"}
 ![](anim/anim-2.png){fig-align="left" height="255"}
 
-## Compararing Samples to the True Posterior {.smaller}
 
+## Comparing Samples to the True Posterior {.smaller}
+
+</br>
+
+::: {.fragment}
 ```{r}
 #| cache: true
 #| fig-width: 4
@@ -374,8 +386,13 @@ p + geom_histogram(aes(y = after_stat(density)),
   ylab("") + xlab(expression(theta)) + 
   ggtitle("MHR draws vs Normal(4.71, 0.49)")
 ```
+:::
 
 ## What is Wrong with this Code {.smaller}
+
+</br>
+
+::: {.fragment}
 ```{r}
 #| echo: true
 #| eval: false
@@ -404,11 +421,12 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
   return(next_value)
 }
 ```
+:::
 
 ## What if Y is a vector? {.smaller}
 
 ::: {.incremental}
-- Recall the likelihood of many exchangable observations, is the product of their individual likelihoods
+- Recall the likelihood of many independent observations, is the product of their individual likelihoods
 $$
 \begin{eqnarray}
 f(y \mid \mu) & = & \prod_{i=1}^{n}\frac{1}{\sqrt{2 \pi} \
@@ -420,6 +438,8 @@ $$
 
 - This suggests the following change:
 :::
+
+::: {.fragment}
 ```{r}
 #| echo: true
 #| code-line-numbers: "|6|8|10|11|"
@@ -447,9 +467,11 @@ metropolis_iteration_2 <- function(y, current_mean, proposal_scale, sd,
   return(next_value)
 }
 ```
+:::
 
 ## Handling Underflow {.smaller}
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -465,6 +487,7 @@ replicate(20, metropolis_iteration_2(y = y,
                                      prior_mean = 0, 
                                      prior_sd = 1))
 ```
+:::
 
 ## Always Compute on the Log Scale {.smaller}
 ::: {.incremental}
@@ -476,6 +499,8 @@ $$
 & = & -\log(\sigma) - \frac{1}{2} \left(  \frac{y - \mu}{\sigma} \right)^2
 \end{eqnarray}
 $$
+
+::: {.fragment}
 ```{r}
 #| echo: true
 
@@ -484,6 +509,7 @@ dnorm_log <- function(y, mean = 0, sd = 1) {
   -log(sd) - 0.5 * ((y - mean) / sd)^2
 }
 ```
+:::
 
 - For multiple observations, you can just sum the log-likelihood
 :::
@@ -524,6 +550,7 @@ metropolis_iteration_log <- function(y, current_mean, proposal_scale,
 
 ## Checking the Work {.smaller}
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -531,6 +558,13 @@ set.seed(123)
 y <- rnorm(300, mean = 2, sd = 0.55)
 normal_normal_post(y = y, sd = 0.55, prior_mu = 0, prior_sd = 1) |> unlist() |>
   round(2)
+```
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
 
 replicate(4, metropolis_iteration_2(y = y, 
                                      current_mean = 1, 
@@ -538,22 +572,38 @@ replicate(4, metropolis_iteration_2(y = y,
                                      sd = 0.55, 
                                      prior_mean = 0, 
                                      prior_sd = 1))
+```
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+
 replicate(4, metropolis_iteration_log(y = y, 
                                      current_mean = 1, 
                                      proposal_scale = 2, 
                                      sd = 0.55, 
                                      prior_mean = 0, 
                                      prior_sd = 1))
+```
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
 
 d <- mhr(y, N, f = metropolis_iteration_log, start, proposal_scale = 2, sd = 0.55,  prior_mean = 0, prior_sd = 1)
 mean(d) |> round(2)
 sd(d) |> round(2)
 ```
+:::
 
 ## Why Does the Algorithm Work {.smaller}
 
 ::: {.incremental}
-- To show why the aldorithm works you need to show:
+- To show why the algorithm works, we need to show:
   (a) The chain has stationary distribution and it is unique
   (b) The stationary distribution is our target distribution $f\theta | y)$
 - Condition (a) requires some theory of Markov Chains, but the conditions are mild and are generally satisfied in practice. (See Chapters 11 and 12 in Blitzstein and Hwang for more)
@@ -601,7 +651,7 @@ $$
 
 ## Introducing Posterior Predictive Distribution {.smaller}
 ::: {.incremental}
-- Recall the prior predictive distribution, before observing $y$, that appears in the denominator of the Bayes's rule:
+- Recall the prior predictive distribution, before observing $y$, that appears in the denominator of Bayes's rule:
 $$
 f(y) = \int f(y, \theta) \, d\theta = \int f(\theta) f(y \mid \theta) \, d\theta
 $$
@@ -615,7 +665,7 @@ f(\tilde{y} \mid y) &=& \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 $$
 
 - $f(\tilde{y} \mid \theta, y) = f(\tilde{y} \mid \theta)$ since $y \perp\!\!\!\perp \tilde{y} \mid \theta$ (conditional indepedence)
-- Two sources of variability are accounted for: sampling variabily in $\tilde{y}$ weighted by posterior variabily in $\theta$
+- Two sources of variability are accounted for: sampling variability in $\tilde{y}$ weighted by posterior variability in $\theta$
 - Given draws from $f(\theta \mid y)$, $\theta^{(m)} \sim f(\theta \mid y)$, we can compute the integral in a usual way: $f(\tilde{y} \mid y) \approx \frac{1}{M} \sum_{m = 1}^M f(\tilde{y} \mid \theta^{(m)})$
 :::
 
@@ -628,6 +678,7 @@ $$
 - For $y = 5$, the posterior $\mu | y \sim \text{Normal}(4.71, 0.49)$
 :::
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -640,8 +691,13 @@ pd <- normal_normal_post(y = 5, sd = 0.5, prior_mu = 0, prior_sd = 2)
 y <- replicate(1e5, ppd(pd$post_mu, pd$post_sd))
 cat("y_tilde | y ~ Normal(", round(mean(y), 2), ",", round(sd(y), 2), ")", sep = "")
 ```
-- It can be shown that the posterior predictive distribution will have the same mean as the posterior distrution and the variance as the sum of the posterior variance and data variance:
+:::
 
+::: incremental
+- It can be shown that the posterior predictive distribution will have the same mean as the posterior distribution and the variance as the sum of the posterior variance and data variance:
+:::
+
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -649,7 +705,7 @@ ppd_mu <- pd$post_mu |> round(2)
 ppd_sigma <- sqrt(pd$post_sd^2 + 0.5^2) |> round(2)
 cat("y_tilde | y ~ Normal(", ppd_mu, ", ", ppd_sigma, ")", sep = "")
 ```
-
+:::
 
 ## Posterior Predictions in Stan {.smaller}
 
@@ -659,6 +715,7 @@ cat("y_tilde | y ~ Normal(", ppd_mu, ", ", ppd_sigma, ")", sep = "")
 - We will show an example in `rstanarm` in the next lecture
 :::
 
+::: {.fragment}
 ```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
 data {
   real y;
@@ -675,9 +732,11 @@ generated quantities {
   real y_tilde = normal_rng(mu, sigma);
 }
 ```
+:::
 
 ## Posterior Predictions in Stan {.smaller}
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| fig-width: 4
@@ -700,6 +759,7 @@ f1 <- m1$sample(       # for other options to sample, help(sample)
 )
 f1$summary()
 ```
+:::
 
 ## Extra Credit Homework
 
@@ -716,5 +776,7 @@ f1$summary()
 ## Decoded text
 ![](images/prison2.png){fig-align="center" width="800"}
 :::
+
+
 
 

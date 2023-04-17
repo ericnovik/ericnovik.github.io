@@ -1,0 +1,379 @@
+---
+title: "Bayesian Inference"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author: "Eric Novik | Spring 2023 | Lecture 6"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+---
+
+
+##  More Linear Models and Modeling Counts {.smaller}
+
+::: columns
+::: {.column width="60%"}
+::: incremental
+- Improving the model by thinking about the DGP
+- Adding categorical predictors
+- Adding interactions
+- More on model evaluation and comparison
+- Modeling count data with Poisson
+- Model evaluation and overdispersion
+- Negative binomial model for counts
+- Generalized linear models
+- [Depending on time/space: more on Bayesian Workflow]
+:::
+:::
+
+::: {.column width="40%"}
+- [Insert an overdispersion image here]
+:::
+:::
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(gridExtra)
+library(purrr)
+library(rstanarm)
+library(tidybayes)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y, yc = NULL, dodge = 0.2) {
+  x <- as.factor(x)
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p <- p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(
+      x = x,
+      y = 0,
+      xend = x,
+      yend = y
+    ), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+  
+  if (!is.null(yc)) {
+    xc <- as.numeric(x) + dodge
+    p1 <- p + geom_point(aes(x = xc, y = yc), color = 'red', size = 0.5) +
+      geom_segment(aes(
+        x = xc,
+        y = 0,
+        xend = xc,
+        yend = yc
+      ), color = 'red', linewidth = 0.2)
+    return(p1)
+  }
+  return(p)
+}
+
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+$$
+
+## Motivating Example {.smaller}
+::: incremental
+- At the end of the last lecture we saw that the linear model did not capture the relationship between height and weight very well
+- That's not surprising: the process can't be linear as it has a natural lower and upper bound
+- To remedy this situation, we have to think generatively: either biologically or geometrically/physically
+- The biology of growth is very complex -- we would have to think about what causes primate (or animal) growth and how growth translates into height and weight, which is likely effected by genetic and environmental factors
+- Fortunately, there is a more straightforward, geometrical approach
+- Richard McElreath has a nice presentation in Chapter 16 of his book (2nd edition) -- we reproduce a simplified version here
+:::
+
+## Deriving the model {.smaller}
+
+::: columns
+::: {.column width="60%"}
+
+::: incremental
+- In the spirit of the [spherical cow](https://en.wikipedia.org/wiki/Spherical_cow), we can think of a person as a cylinder
+- The volume of the cylinder is: $V = \pi r^2 h$, where $r$ is a person's radius and $h$ is the height
+- It seems reasonable to assume that a person's width ($2r$) is proprtional to the height $h$: $r = kh$ where $k$ is the proportionality constant
+- Therefore: $V = \pi r^2 h = \pi (kh)^2 h = \theta h^3$ where $\theta$ absorbed other constant terms
+- If the human body has approximately the same density, weight should be proportional to Volume: $w = kV$, $w = k\theta h^3$
+- We will absorbe $k$ into $\theta$, and so $w = \theta h^3$, so the weight is proportional to the cube of height
+:::
+
+:::
+
+::: {.column width="40%"}
+![](images/man-in-cylinder.png){fig-align="center" weight="500"}
+
+:::
+:::
+
+
+## Deriving the model {.smaller}
+
+
+::: incremental
+
+- We can therefore write the model in the following way:
+$$
+\begin{eqnarray}
+w_i & \sim & \text{LogNormal}(\mu_i, \sigma)  \\
+\exp(\mu_i) & = & \theta h_i^3 \\
+\theta & \sim & \text{prior}_{\theta}(.) \\
+\sigma & \sim & \text{Exponetial}(1)
+\end{eqnarray}
+$$
+- Weight is positive quantity and we give it a LogNormal distribution
+- $\exp(\mu_i)$ is the median of a LogNormal, which is where we specify our cubic relationship between weight and height
+- Notice that the model for the conditional median is $\mu_i = \log(\theta) + 3 \log(h_i)$, in other words we do not need to estimate the coefficient on height, we only need the intercept
+- In `RStanArm`, we can estimate a similar model as a linear regression of log weight on log height; (in Stan, we can write this model directly)
+:::
+
+## Choosing Priors {.smaller}
+
+::: incremental
+-   In our log-log linear regression we have an intercept and coefficient on log height, which we said was 3
+-   Instead of fixing it at 3, we will estimate it and give it an informative prior, where most of the mass is between 2 and 4
+- The implies something like $\beta \sim \text{Normal}(3, 0.3)$
+- We will leave our $\sigma \sim \text{Exponetial}(1)$
+- We have less intuition about the intercept, so we will give it a wider prior on a scale of centered predictors (`RStanArm` centeres by default): $\alpha \sim \text{Normal}(0, 5)$
+- How do we now these priors are reasonable on the predictive scale (weight)?
+- We don't, so we will perform another prior predictive simulation
+:::
+
+## Prior Predictive Simulation {.smaller}
+
+::: incremental
+- Compute the new log variables:
+:::
+
+```{r}
+#| cache: true
+#| echo: false
+m3 <- readr::read_rds("models/m3-ppc.rds")
+```
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+d <- readr::read_csv("../05-lecture/data/howell.csv")
+d <- d |>
+  mutate(log_h = log(height),
+         log_w = log(weight))
+```
+:::
+
+::: incremental
+- Run prior predictive simulation:
+:::
+
+::: {.fragment}
+```{r}
+#| eval: false
+#| echo: true
+
+m3 <- stan_glm(
+  log_w ~ log_h,
+  data = d,
+  family = gaussian,
+  prior = normal(3, 0.3),
+  prior_aux = exponential(1),
+  prior_intercept = normal(0, 5),
+  prior_PD = 1,  # don't evaluate the likelyhood
+  seed = 1234,
+  chains = 4,
+  iter = 600
+)
+```
+:::
+
+## Prior Predictive Simulation {.smaller}
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+#| cache: true
+library(tidybayes)
+d |>
+  add_epred_draws(m3, ndraws = 100) |>
+  ggplot(aes(y = log_w, x = log_h)) +
+  geom_point(size = 0.5) +
+  geom_line(aes(y = .epred, group = .draw), alpha = 0.25) +
+  xlab("Log Height") + ylab("Log Weight") + ggtitle("Prior Predictive Simulation")
+```
+:::
+
+## Prior Predictive Simulation {.smaller}
+
+::: incremental
+- We can examine what this looks like on the original scale by exponentiating the predictions:
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
+#| fig-align: center
+#| echo: true
+#| cache: true
+d |>
+  add_epred_draws(m3, ndraws = 100) |>
+  ggplot(aes(y = weight, x = height)) +
+  geom_point(size = 0.5) +
+  geom_line(aes(y = exp(.epred), group = .draw), color = 'green', alpha = 0.25) +
+  xlab("Height") + ylab("Weight") + ggtitle("Prior Predictive Simulation")
+```
+:::
+
+## Prior Predictive Simulation {.smaller}
+
+::: incremental
+- Our intercept scale seems too wide, so we will make some adjustments:
+:::
+
+::: {.fragment}
+```{r}
+#| eval: true
+#| echo: true
+#| cache: true
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| output-location: column
+
+m3 <- stan_glm(
+  log_w ~ log_h,
+  data = d,
+  family = gaussian,
+  prior = normal(3, 0.3),
+  prior_aux = exponential(1),
+  prior_intercept = normal(0, 2.5),
+  prior_PD = 1,  # don't evaluate the likelyhood
+  seed = 1234,
+  refresh = 0,
+  chains = 4,
+  iter = 600
+)
+d |>
+  add_epred_draws(m3, ndraws = 100) |>
+  ggplot(aes(y = weight, x = height)) +
+  geom_point(size = 0.5) +
+  geom_line(aes(y = exp(.epred), group = .draw), 
+            alpha = 0.25, color = 'green') +
+  xlab("Height") + ylab("Weight") + 
+  ggtitle("Prior Predictive Simulation")
+```
+:::
+
+
+## Fitting the Model {.smaller}
+
+::: incremental
+- We can likely do better with these priors, but most of the simulations are covering the data and so we proceed to model fitting
+:::
+
+::: {.fragment}
+```{r}
+#| eval: true
+#| echo: true
+#| cache: true
+
+m3 <- stan_glm(
+  log_w ~ log_h,
+  data = d,
+  family = gaussian,
+  prior = normal(3, 0.3),
+  prior_aux = exponential(1),
+  prior_intercept = normal(0, 2.5),
+  seed = 1234,
+  refresh = 0,
+  chains = 4,
+  iter = 600
+)
+summary(m3)
+```
+:::
+
+## Comparing to the Linear Model {.smaller}
+</br>
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+
+m2 <- readr::read_rds("../05-lecture/models/m2.rds")
+p1 <- pp_check(m2) + xlab("Weight (kg)") + ggtitle("Linear Model")
+p2 <- pp_check(m3) + xlab("Log Weight") + ggtitle("Log-Log Model")
+grid.arrange(p1, p2, ncol = 2) 
+```
+:::
+
+## Plotting Prediction Intervals {.smaller}
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+d |>
+  add_predicted_draws(m3) |>
+  ggplot(aes(y = weight, x = height)) +
+  geom_point(size = 0.5, alpha = 0.2) +
+  stat_lineribbon(aes(y = exp(.prediction)), .width = c(0.90, 0.50), alpha = 0.25) +
+  xlab("Height (cm)") + ylab("Weight (kg)") + ggtitle("In Sample Predictions of Weight from Height")
+```
+:::
+
+## Predicting For New Data {.smaller}
+
+```{r}
+#| cache: true
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+log_h <- seq(0, 5.2, len = 500)
+new_data <- tibble(log_h)
+pred <- add_predicted_draws(new_data, m3)
+pred |>
+  ggplot(aes(x = exp(log_h), y = exp(.prediction))) +
+  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +
+  xlab("Height (cm)") + ylab("Weight (kg)") + ggtitle("Predictions of Weight from Height") + 
+  geom_point(aes(y = weight, x = height), size = 0.5, alpha = 0.2, data = d)
+  
+```
+:::
+
+
+
