@@ -412,7 +412,7 @@ Eric Novik | Spring 2023 | Lecture 4
 <li class="fragment">Computational issues</li>
 <li class="fragment">Why does MHR work</li>
 <li class="fragment">Posterior predictive distribution</li>
-<li class="fragment">Posterio predictive simulation in Stan</li>
+<li class="fragment">Posterior predictive simulation in Stan</li>
 <li class="fragment">Optimization and code breaking with MCMC</li>
 </ul>
 </div>
@@ -430,16 +430,16 @@ Eric Novik | Spring 2023 | Lecture 4
 \]</span></p>
 </section>
 <section id="high-level-outline-of-mhr" class="slide level2 smaller">
-<h2>High Level Outline of MHR</h2>
+<h2>High-Level Outline of MHR</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment">The idea is to spend “more time” in the in area of high posterior volume</li>
+<li class="fragment">The idea is to spend “more time” in the area of high posterior volume</li>
 <li class="fragment">Pick a random starting point at <span class="math inline">\(i=1\)</span> with <span class="math inline">\(\theta^{(1)}\)</span></li>
 <li class="fragment"><strong>Propose</strong> a next possible value of <span class="math inline">\(\theta\)</span>, call it <span class="math inline">\(\theta'\)</span> from an (easy) proposal distribution</li>
 <li class="fragment">Evaluate if you should <strong>accept or reject</strong> the proposal</li>
-<li class="fragment">If accepted, go to <span class="math inline">\(\theta^{'(2)}\)</span>, otherise stay at <span class="math inline">\(\theta^{(2)}\)</span></li>
+<li class="fragment">If accepted, go to <span class="math inline">\(\theta^{'(2)}\)</span>, otherwise stay at <span class="math inline">\(\theta^{(2)}\)</span></li>
 <li class="fragment">Rinse and repeat</li>
 </ul>
 </div>
@@ -447,10 +447,10 @@ Eric Novik | Spring 2023 | Lecture 4
 <div>
 <ul>
 <li class="fragment">If we can get an independant draw from <span class="math inline">\(\theta\)</span>, we just take it</li>
-<li class="fragment">That ammounts to regular Monte Carlo sampling, like <code>rnorm(1, mean = 0, sd = 1)</code></li>
+<li class="fragment">That amounts to regular Monte Carlo sampling, like <code>rnorm(1, mean = 0, sd = 1)</code></li>
 <li class="fragment">Otherwise, we need a <strong>rule</strong> for evaluating when to accept and when to reject the proposal</li>
 <li class="fragment">We still need a way to <strong>evaluate the density</strong> at the proposed value (it will be part of the rule)</li>
-<li class="fragment">The big idea: if the proposed <span class="math inline">\(\theta'\)</span> has a higher plausability than the current <span class="math inline">\(\theta\)</span>, accept <span class="math inline">\(\theta'\)</span>; if not, sometimes accept <span class="math inline">\(\theta'\)</span></li>
+<li class="fragment">The big idea: if the proposed <span class="math inline">\(\theta'\)</span> has a higher plausibility than the current <span class="math inline">\(\theta\)</span>, accept <span class="math inline">\(\theta'\)</span>; if not, sometimes accept <span class="math inline">\(\theta'\)</span></li>
 </ul>
 </div>
 </div>
@@ -467,6 +467,7 @@ Eric Novik | Spring 2023 | Lecture 4
 <li class="fragment">We can immediately compute the posterior <span class="math inline">\(\mu | y \sim \text{Normal}(4.71, 0.49)\)</span></li>
 </ul>
 </div>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>normal_normal_post <span class="ot">&lt;-</span> <span class="cf">function</span>(y, sd, prior_mu, prior_sd) {</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="co"># for the case where sd is known</span></span>
@@ -485,6 +486,7 @@ Eric Novik | Spring 2023 | Lecture 4
 <div class="cell-output cell-output-stdout">
 <pre><code>post_mu post_sd 
    4.71    0.49 </code></pre>
+</div>
 </div>
 </div>
 </section>
@@ -510,9 +512,12 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 </div>
 <div id="tabset-1-2">
+<div>
 <ul>
-<li>Why in case of normals, <span class="math inline">\(q(\theta'|\theta) = q(\theta|\theta')\)</span></li>
+<li class="fragment">Why in case of normals, <span class="math inline">\(q(\theta'|\theta) = q(\theta|\theta')\)</span></li>
 </ul>
+</div>
+<div class="fragment">
 <div class="cell" data-layout-align="center" data-hash="04-lecture_cache/revealjs/unnamed-chunk-3_ec246e41ae0117659dafebee7762e168">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -522,6 +527,8 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 </div>
 </div>
+</div>
+<div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-4_cff0cbf2b1d3ac541bace38c67938637">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">dnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -535,11 +542,12 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="mhr-in-r" class="slide level2 smaller">
 <h2>MHR in R</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">MHR Iteration</a></li><li><a href="#tabset-2-2">MHR for N Interations</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">MHR Iteration</a></li><li><a href="#tabset-2-2">MHR for N Iterations</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
 <div class="cell">
@@ -570,7 +578,7 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8" data-code-line-numbers="|2|3|4|5|6|8|9|11|12|18|19|20|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>mhr <span class="ot">&lt;-</span> <span class="cf">function</span>(y, f, N, start, ...) {</span>
+<div class="sourceCode cell-code" id="cb8" data-code-line-numbers="|8|9|11|12|18|19|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>mhr <span class="ot">&lt;-</span> <span class="cf">function</span>(y, f, N, start, ...) {</span>
 <span id="cb8-2"><a href="#cb8-2"></a><span class="co"># y: new observation</span></span>
 <span id="cb8-3"><a href="#cb8-3"></a><span class="co"># f: function that implements one MHR iteration</span></span>
 <span id="cb8-4"><a href="#cb8-4"></a><span class="co"># N: number of iterations</span></span>
@@ -600,8 +608,10 @@ Eric Novik | Spring 2023 | Lecture 4
 <p><img data-src="anim/anim-0.1.gif" data-fig-align="left" height="255"> <img data-src="anim/anim-10.gif" data-fig-align="left" height="255"> <img data-src="anim/anim-2.gif" data-fig-align="left" height="255"> Autocorrelation function (ACF)</p>
 <p><img data-src="anim/anim-0.1.png" data-fig-align="left" height="255"> <img data-src="anim/anim-10.png" data-fig-align="left" height="255"> <img data-src="anim/anim-2.png" data-fig-align="left" height="255"></p>
 </section>
-<section id="compararing-samples-to-the-true-posterior" class="slide level2 smaller">
-<h2>Compararing Samples to the True Posterior</h2>
+<section id="comparing-samples-to-the-true-posterior" class="slide level2 smaller">
+<h2>Comparing Samples to the True Posterior</h2>
+<p><br></p>
+<div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center" data-hash="04-lecture_cache/revealjs/unnamed-chunk-7_73eb2c396a6c1326a6f4e40e8d75b48c">
 <div class="column">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>np <span class="ot">&lt;-</span> <span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, </span>
@@ -634,9 +644,12 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="what-is-wrong-with-this-code" class="slide level2 smaller">
 <h2>What is Wrong with this Code</h2>
+<p><br></p>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>metropolis_iteration_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
 <span id="cb10-2"><a href="#cb10-2"></a>                                   sd, prior_mean, prior_sd) {</span>
@@ -662,12 +675,13 @@ Eric Novik | Spring 2023 | Lecture 4
 <span id="cb10-22"><a href="#cb10-22"></a>  <span class="fu">return</span>(next_value)</span>
 <span id="cb10-23"><a href="#cb10-23"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
 </section>
 <section id="what-if-y-is-a-vector" class="slide level2 smaller">
 <h2>What if Y is a vector?</h2>
 <div>
 <ul>
-<li class="fragment"><p>Recall the likelihood of many exchangable observations, is the product of their individual likelihoods <span class="math display">\[
+<li class="fragment"><p>Recall the likelihood of many independent observations, is the product of their individual likelihoods <span class="math display">\[
 \begin{eqnarray}
 f(y \mid \mu) &amp; = &amp; \prod_{i=1}^{n}\frac{1}{\sqrt{2 \pi} \
 \sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2     \right) \\
@@ -678,6 +692,7 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <li class="fragment"><p>This suggests the following change:</p></li>
 </ul>
 </div>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11" data-code-line-numbers="|6|8|10|11|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>metropolis_iteration_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, sd,</span>
 <span id="cb11-2"><a href="#cb11-2"></a>                                 prior_mean, prior_sd) {</span>
@@ -702,9 +717,11 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <span id="cb11-21"><a href="#cb11-21"></a>  <span class="fu">return</span>(next_value)</span>
 <span id="cb11-22"><a href="#cb11-22"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
 </section>
 <section id="handling-underflow" class="slide level2 smaller">
 <h2>Handling Underflow</h2>
+<div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-10_b0b220d8e6fb5b9296a243ab366f0f7b">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb12-2"><a href="#cb12-2"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>)</span>
@@ -728,6 +745,7 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 [17] "Error: underflow" "2.82278258359193" "2.67485301455861" "Error: underflow"</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="always-compute-on-the-log-scale" class="slide level2 smaller">
 <h2>Always Compute on the Log Scale</h2>
@@ -741,11 +759,13 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 \end{eqnarray}
 \]</span></li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>dnorm_log <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) {</span>
 <span id="cb16-2"><a href="#cb16-2"></a><span class="co"># dropping constant terms; not needed for MCMC</span></span>
 <span id="cb16-3"><a href="#cb16-3"></a>  <span class="sc">-</span><span class="fu">log</span>(sd) <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> ((y <span class="sc">-</span> mean) <span class="sc">/</span> sd)<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb16-4"><a href="#cb16-4"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <ul>
 <li class="fragment">For multiple observations, you can just sum the log-likelihood</li>
@@ -786,7 +806,8 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 </section>
 <section id="checking-the-work" class="slide level2 smaller">
 <h2>Checking the Work</h2>
-<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-13_8bdf12e97da3759e385256a3a1a1d2de">
+<div class="fragment">
+<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-13_a5cd7e9e7361e16bcbaa8859efdb1964">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb18-2"><a href="#cb18-2"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>)</span>
 <span id="cb18-3"><a href="#cb18-3"></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, <span class="at">sd =</span> <span class="fl">0.55</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
@@ -795,6 +816,10 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <pre><code>post_mu post_sd 
    2.02    0.03 </code></pre>
 </div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-14_eb05eee52519a5ac296a872fbb9f2f8b">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">replicate</span>(<span class="dv">4</span>, <span class="fu">metropolis_iteration_2</span>(<span class="at">y =</span> y, </span>
 <span id="cb20-2"><a href="#cb20-2"></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
 <span id="cb20-3"><a href="#cb20-3"></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
@@ -804,6 +829,10 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Error: underflow" "Error: underflow" "Error: underflow" "Error: underflow"</code></pre>
 </div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-15_401941bf7b84448de81327a5638e4377">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">replicate</span>(<span class="dv">4</span>, <span class="fu">metropolis_iteration_log</span>(<span class="at">y =</span> y, </span>
 <span id="cb22-2"><a href="#cb22-2"></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
 <span id="cb22-3"><a href="#cb22-3"></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
@@ -813,6 +842,10 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.000000 1.000000 1.423961 2.379762</code></pre>
 </div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-16_bd6f9e80a52b0ff027f322c7f1c605cc">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>d <span class="ot">&lt;-</span> <span class="fu">mhr</span>(y, N, <span class="at">f =</span> metropolis_iteration_log, start, <span class="at">proposal_scale =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>,  <span class="at">prior_mean =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>)</span>
 <span id="cb24-2"><a href="#cb24-2"></a><span class="fu">mean</span>(d) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -823,12 +856,13 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <pre><code>[1] 0.03</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="why-does-the-algorithm-work" class="slide level2 smaller">
 <h2>Why Does the Algorithm Work</h2>
 <div>
 <ul>
-<li class="fragment">To show why the aldorithm works you need to show:
+<li class="fragment">To show why the algorithm works, we need to show:
 <ol type="a">
 <li class="fragment">The chain has stationary distribution and it is unique</li>
 <li class="fragment">The stationary distribution is our target distribution <span class="math inline">\(f\theta | y)\)</span></li>
@@ -883,7 +917,7 @@ p_{b  a} &amp;=&amp; q(\theta_a \mid \theta_b) \cdot \min \left \lbrace 1, \frac
 <h2>Introducing Posterior Predictive Distribution</h2>
 <div>
 <ul>
-<li class="fragment"><p>Recall the prior predictive distribution, before observing <span class="math inline">\(y\)</span>, that appears in the denominator of the Bayes’s rule: <span class="math display">\[
+<li class="fragment"><p>Recall the prior predictive distribution, before observing <span class="math inline">\(y\)</span>, that appears in the denominator of Bayes’s rule: <span class="math display">\[
 f(y) = \int f(y, \theta) \, d\theta = \int f(\theta) f(y \mid \theta) \, d\theta
 \]</span></p></li>
 <li class="fragment"><p>A posterior predictive distribution, <span class="math inline">\(f(\tilde{y} | y)\)</span> is obtained in a similar manner <span class="math display">\[
@@ -894,7 +928,7 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 \end{eqnarray}
 \]</span></p></li>
 <li class="fragment"><p><span class="math inline">\(f(\tilde{y} \mid \theta, y) = f(\tilde{y} \mid \theta)\)</span> since <span class="math inline">\(y \perp\!\!\!\perp \tilde{y} \mid \theta\)</span> (conditional indepedence)</p></li>
-<li class="fragment"><p>Two sources of variability are accounted for: sampling variabily in <span class="math inline">\(\tilde{y}\)</span> weighted by posterior variabily in <span class="math inline">\(\theta\)</span></p></li>
+<li class="fragment"><p>Two sources of variability are accounted for: sampling variability in <span class="math inline">\(\tilde{y}\)</span> weighted by posterior variability in <span class="math inline">\(\theta\)</span></p></li>
 <li class="fragment"><p>Given draws from <span class="math inline">\(f(\theta \mid y)\)</span>, <span class="math inline">\(\theta^{(m)} \sim f(\theta \mid y)\)</span>, we can compute the integral in a usual way: <span class="math inline">\(f(\tilde{y} \mid y) \approx \frac{1}{M} \sum_{m = 1}^M f(\tilde{y} \mid \theta^{(m)})\)</span></p></li>
 </ul>
 </div>
@@ -910,7 +944,8 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 <li class="fragment">For <span class="math inline">\(y = 5\)</span>, the posterior <span class="math inline">\(\mu | y \sim \text{Normal}(4.71, 0.49)\)</span></li>
 </ul>
 </div>
-<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-14_df8fcad5e68b5e26ca0035d0c68291e7">
+<div class="fragment">
+<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-17_1cb7f52b610c1929be143c7022ddfd2f">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>ppd <span class="ot">&lt;-</span> <span class="cf">function</span>(post_mu, post_sd) {</span>
 <span id="cb28-2"><a href="#cb28-2"></a>  mu <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> post_mu, <span class="at">sd =</span> post_sd)</span>
 <span id="cb28-3"><a href="#cb28-3"></a>  y  <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> mu, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
@@ -922,15 +957,20 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 <pre><code>y_tilde | y ~ Normal(4.71,0.7)</code></pre>
 </div>
 </div>
+</div>
+<div>
 <ul>
-<li>It can be shown that the posterior predictive distribution will have the same mean as the posterior distrution and the variance as the sum of the posterior variance and data variance:</li>
+<li class="fragment">It can be shown that the posterior predictive distribution will have the same mean as the posterior distribution and the variance as the sum of the posterior variance and data variance:</li>
 </ul>
-<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-15_1ebb855d6fef72fd4ed889ab6238a3d5">
+</div>
+<div class="fragment">
+<div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-18_2a078c4def95f9c886caf140396d4df7">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>ppd_mu <span class="ot">&lt;-</span> pd<span class="sc">$</span>post_mu <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
 <span id="cb30-2"><a href="#cb30-2"></a>ppd_sigma <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(pd<span class="sc">$</span>post_sd<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
 <span id="cb30-3"><a href="#cb30-3"></a><span class="fu">cat</span>(<span class="st">"y_tilde | y ~ Normal("</span>, ppd_mu, <span class="st">", "</span>, ppd_sigma, <span class="st">")"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>y_tilde | y ~ Normal(4.71, 0.7)</code></pre>
+</div>
 </div>
 </div>
 </section>
@@ -943,6 +983,7 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 <li class="fragment">We will show an example in <code>rstanarm</code> in the next lecture</li>
 </ul>
 </div>
+<div class="fragment">
 <div class="cell" data-output.var="stan1">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb32-1"><a href="#cb32-1"></a><span class="kw">data</span> {</span>
 <span id="cb32-2"><a href="#cb32-2"></a>  <span class="dt">real</span> y;</span>
@@ -959,10 +1000,12 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 <span id="cb32-13"><a href="#cb32-13"></a>  <span class="dt">real</span> y_tilde = normal_rng(mu, sigma);</span>
 <span id="cb32-14"><a href="#cb32-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
 </section>
 <section id="posterior-predictions-in-stan-1" class="slide level2 smaller">
 <h2>Posterior Predictions in Stan</h2>
-<div class="cell" data-layout-align="center" data-hash="04-lecture_cache/revealjs/unnamed-chunk-17_56d915a8d4bc62667b054422961983ad">
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="04-lecture_cache/revealjs/unnamed-chunk-20_0f0c743ddf5149124ae8bdc871cc67dc">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="fu">library</span>(cmdstanr)</span>
 <span id="cb33-2"><a href="#cb33-2"></a></span>
 <span id="cb33-3"><a href="#cb33-3"></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/normal_pred.stan"</span>) <span class="co"># compile the model</span></span>
@@ -996,6 +1039,7 @@ Total execution time: 0.2 seconds.</code></pre>
 1 lp__     -3.46  -3.20 0.728 0.348 -4.81 -2.94  1.00     889.    1128.
 2 mu        4.74   4.72 0.494 0.524  3.97  5.56  1.00     720.     958.
 3 y_tilde   4.72   4.74 0.712 0.715  3.51  5.88  1.00    1091.    1441.</code></pre>
+</div>
 </div>
 </div>
 </section>

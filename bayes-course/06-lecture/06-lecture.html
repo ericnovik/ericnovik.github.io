@@ -9,7 +9,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.2.335">
 
-  <meta name="author" content="Eric Novik | Spring 2023 | Lecture 2">
+  <meta name="author" content="Eric Novik | Spring 2023 | Lecture 6">
   <title>Eric Novik - Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -397,25 +397,34 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Spring 2023 | Lecture 2 
+Eric Novik | Spring 2023 | Lecture 6 
 </div>
 </div>
 </div>
 
 </section>
-<section id="conjugate-models-and-beta-binomial" class="slide level2">
-<h2>Conjugate models and Beta-Binomial</h2>
+<section id="more-linear-models-and-modeling-counts" class="slide level2 smaller">
+<h2>More Linear Models and Modeling Counts</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <div>
 <ul>
-<li class="fragment">Beta distribution</li>
-<li class="fragment">Great expectations</li>
-<li class="fragment">Tuning the prior model for the clinical trial analysis</li>
-<li class="fragment">Binomial likelihood with continuous <span class="math inline">\(\theta\)</span></li>
-<li class="fragment">Deriving the conjugate posterior</li>
-<li class="fragment">Analysis of the sex ratio</li>
-<li class="fragment">Compromise between priors and data model</li>
-<li class="fragment">Coherence of Bayesian inference</li>
+<li class="fragment">Improving the model by thinking about the DGP</li>
+<li class="fragment">Adding categorical predictors</li>
+<li class="fragment">Adding interactions</li>
+<li class="fragment">More on model evaluation and comparison</li>
+<li class="fragment">Modeling count data with Poisson</li>
+<li class="fragment">Model evaluation and overdispersion</li>
+<li class="fragment">Negative binomial model for counts</li>
+<li class="fragment">Generalized linear models</li>
+<li class="fragment">[Depending on time/space: more on Bayesian Workflow]</li>
 </ul>
+</div>
+</div><div class="column" style="width:40%;">
+<ul>
+<li>[Insert an overdispersion image here]</li>
+</ul>
+</div>
 </div>
 <div class="cell">
 
@@ -430,539 +439,321 @@ Eric Novik | Spring 2023 | Lecture 2
 \DeclareMathOperator*{\argmin}{arg\,min}
 \]</span></p>
 </section>
-<section id="homework" class="slide level2">
-<h2>Homework</h2>
-<ul>
-<li><p><a href="https://www.polleverywhere.com/multiple_choice_polls/kUTq6uk2aGiYLbBG2Hr8e">How did you find the homework</a>?</p></li>
-<li><p>Homework review</p></li>
-</ul>
-</section>
-<section id="introduction" class="slide level2 smaller">
-<h2>Introduction</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
+<section id="motivating-example" class="slide level2 smaller">
+<h2>Motivating Example</h2>
 <div>
 <ul>
-<li class="fragment">Last time, we presented the discretized version of the prior</li>
-<li class="fragment">In practice, we are typically working in continuous space</li>
-<li class="fragment">In general, the prior model can be arbitrarily complex</li>
-<li class="fragment">There is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior</li>
-<li class="fragment">This is called conjugacy</li>
-<li class="fragment">In practice, we seldom rely on conjugate relationships</li>
-<li class="fragment">Beta distribution is conjugate to Binomial</li>
-</ul>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="quarto-figure quarto-figure-right">
-<figure>
-<p><img data-src="images/fractal.jpg" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="continous-probability-distributions" class="slide level2 smaller">
-<h2>Continous Probability Distributions</h2>
-<div>
-<ul>
-<li class="fragment"><p>Recall that for the continuous RVs we have, the CDF is defined as <span class="math display">\[
-\begin{eqnarray}
-F(x) &amp; = &amp; \int_{-\infty}^{x} f(t) \, dt, \, \text{and} \\
-f(x) &amp; = &amp; F'(x), \, \text{where } F \text{ is differentiable}
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>To compute event probabilities: <span class="math display">\[
-\begin{eqnarray}
-\P(a \le X \leq b) &amp; = &amp; F(b) − F(a) = \int_{a}^{b} f(x) \, dx \\
-\P(X \in A) &amp; = &amp; \int_{A} f(x) \, dx
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>As in the case of PMFs: <span class="math display">\[
-\begin{eqnarray}
-f(x) \geq 0 \\
-\int_{-\infty}^{\infty} f(x) \, dx = 1
-\end{eqnarray}
-\]</span></p></li>
+<li class="fragment">At the end of the last lecture we saw that the linear model did not capture the relationship between height and weight very well</li>
+<li class="fragment">That’s not surprising: the process can’t be linear as it has a natural lower and upper bound</li>
+<li class="fragment">To remedy this situation, we have to think generatively: either biologically or geometrically/physically</li>
+<li class="fragment">The biology of growth is very complex – we would have to think about what causes primate (or animal) growth and how growth translates into height and weight, which is likely effected by genetic and environmental factors</li>
+<li class="fragment">Fortunately, there is a more straightforward, geometrical approach</li>
+<li class="fragment">Richard McElreath has a nice presentation in Chapter 16 of his book (2nd edition) – we reproduce a simplified version here</li>
 </ul>
 </div>
 </section>
-<section id="introducing-beta" class="slide level2 smaller">
-<h2>Introducing Beta</h2>
+<section id="deriving-the-model" class="slide level2 smaller">
+<h2>Deriving the model</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <div>
 <ul>
-<li class="fragment">Beta distribution has the following functional form for <span class="math inline">\(\alpha &gt; 0, \, \beta &gt; 0, \, \theta \in (0, 1)\)</span> <span class="math display">\[
-\begin{eqnarray}
-\text{Beta}(\theta \mid \alpha,\beta) &amp; = &amp;
-\frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta^{\alpha - 1} \, (1 -
-\theta)^{\beta - 1} \\
-\text{B}(a,b) \ &amp; = &amp; \ \int_0^1 u^{a - 1} (1 - u)^{b - 1} \,
-du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
-\Gamma(x) &amp; = &amp;
-\int_0^{\infty} u^{x - 1} \exp(-u) \, du
-\end{eqnarray}
-\]</span></li>
+<li class="fragment">In the spirit of the <a href="https://en.wikipedia.org/wiki/Spherical_cow">spherical cow</a>, we can think of a person as a cylinder</li>
+<li class="fragment">The volume of the cylinder is: <span class="math inline">\(V = \pi r^2 h\)</span>, where <span class="math inline">\(r\)</span> is a person’s radius and <span class="math inline">\(h\)</span> is the height</li>
+<li class="fragment">It seems reasonable to assume that a person’s width (<span class="math inline">\(2r\)</span>) is proprtional to the height <span class="math inline">\(h\)</span>: <span class="math inline">\(r = kh\)</span> where <span class="math inline">\(k\)</span> is the proportionality constant</li>
+<li class="fragment">Therefore: <span class="math inline">\(V = \pi r^2 h = \pi (kh)^2 h = \theta h^3\)</span> where <span class="math inline">\(\theta\)</span> absorbed other constant terms</li>
+<li class="fragment">If the human body has approximately the same density, weight should be proportional to Volume: <span class="math inline">\(w = kV\)</span>, <span class="math inline">\(w = k\theta h^3\)</span></li>
+<li class="fragment">We will absorbe <span class="math inline">\(k\)</span> into <span class="math inline">\(\theta\)</span>, and so <span class="math inline">\(w = \theta h^3\)</span>, so the weight is proportional to the cube of height</li>
 </ul>
 </div>
 </div><div class="column" style="width:40%;">
-<div class="quarto-figure quarto-figure-right">
-<figure>
-<p><img data-src="images/gamma.png" width="250"></p>
-</figure>
-</div>
-</div>
-</div>
-<div>
-<ul>
-<li class="fragment">For positive integrers <span class="math inline">\(n\)</span>: <span class="math inline">\(\, \Gamma(n+1) = n!\)</span> and in general <span class="math inline">\(\Gamma(z + 1) = z \Gamma(z)\)</span></li>
-<li class="fragment"><span class="math inline">\(\text{Beta}(1, 1)\)</span> is equivalent to <span class="math inline">\(\text{Unif(0, 1)}\)</span></li>
-<li class="fragment">The above makes Beta a natural choice for priors on the probability scale</li>
-</ul>
-</div>
-</section>
-<section id="visualizing-beta" class="slide level2 smaller">
-<h2>Visualizing Beta</h2>
-<div>
-<ul>
-<li class="fragment">The mode of Beta, <span class="math inline">\(\text{Mode}(\theta) = \argmax_\theta \text{Beta}(\theta \mid \alpha, \beta)\)</span> is shown in red and the function maximum in blue</li>
-</ul>
-</div>
-<div class="fragment">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" width="768"></p>
+<p><img data-src="images/man-in-cylinder.png" data-weight="500"></p>
 </figure>
 </div>
 </div>
 </div>
-</div>
 </section>
-<section id="expectations" class="slide level2 smaller">
-<h2>Expectations</h2>
+<section id="deriving-the-model-1" class="slide level2 smaller">
+<h2>Deriving the model</h2>
 <div>
 <ul>
-<li class="fragment"><p>Recall the definition of expectations for continuous random variables</p></li>
-<li class="fragment"><p>We often write <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\mu_X\)</span> for expected value of <span class="math inline">\(X\)</span> <span class="math display">\[
-\mu_X = \E(X) = \int x \cdot f(x) \, dx
-\]</span></p></li>
-<li class="fragment"><p>Variance is a type of expectation, which we often denote by <span class="math inline">\(\sigma^2\)</span> <span class="math display">\[
-\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx
-\]</span></p></li>
-<li class="fragment"><p>It is often more convenient to write the variance as <span class="math display">\[
-\V(X) = \E(X^2) - \mu^2
-\]</span></p></li>
-</ul>
-</div>
-</section>
-<section id="what-to-expect-from-beta" class="slide level2 smaller">
-<h2>What to expect from Beta</h2>
-<div>
-<ul>
-<li class="fragment">Keeping in mind that a Gamma function is a continuous analog of the factorial: <span class="math display">\[
+<li class="fragment">We can therefore write the model in the following way: <span class="math display">\[
 \begin{eqnarray}
-\E(\theta) &amp;=&amp; \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
-&amp;=&amp; \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, d\theta \\
-&amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot
-\color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)}} \\
-&amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot
-\frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
-&amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot
-\frac{a \Gamma(\alpha)}{(\alpha + \beta) \Gamma(\alpha + \beta)} \\
-&amp;=&amp; \frac{\alpha}{\alpha + \beta}.
+w_i &amp; \sim &amp; \text{LogNormal}(\mu_i, \sigma)  \\
+\exp(\mu_i) &amp; = &amp; \theta h_i^3 \\
+\theta &amp; \sim &amp; \text{prior}_{\theta}(.) \\
+\sigma &amp; \sim &amp; \text{Exponetial}(1)
 \end{eqnarray}
 \]</span></li>
-<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/Za9vryQs3rJlnSqM3Kf6L">What is the value</a> of <span class="math inline">\(\int_{0}^{1} \, \theta^\alpha \, (1 - \theta)^{\beta} \, d\theta\)</span></li>
-</ul>
-</div>
-<div class="footer">
-<p>Check the integral <span class="math inline">\(\int_{0}^{1} \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta\)</span> using <a href="https://www.wolframalpha.com/input?i=integrate+x%5Ea+*+%281+-+x%29%5E%28b+-+1%29+dx+from+0+to+1">Wolfram Alpha</a></p>
-</div>
-</section>
-<section id="what-to-expect-from-beta-1" class="slide level2 smaller">
-<h2>What to expect from Beta</h2>
-<div>
-<ul>
-<li class="fragment"><p>We can find the mode of this distribution by taking the log, differentiating with respect to <span class="math inline">\(\theta\)</span>, and setting the derivative function to zero <span class="math display">\[
-\begin{eqnarray}
-\E(\theta) &amp; = &amp; \frac{\alpha}{\alpha + \beta} \\
-\text{Mode}(\theta) &amp; = &amp; \frac{\alpha - 1}{\alpha + \beta - 2} \;\; \text{ when } \; \alpha, \beta &gt; 1. \\
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>The variance of <span class="math inline">\(\theta\)</span> can be derived using the definition of the variance operator <span class="math display">\[
-\begin{eqnarray}
-\V(\theta) &amp; = &amp; \frac{\alpha \beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>Notice when <span class="math inline">\(\alpha = \beta\)</span>, <span class="math inline">\(\E(\theta) = \text{Mode}(\theta)\)</span></p></li>
+<li class="fragment">Weight is positive quantity and we give it a LogNormal distribution</li>
+<li class="fragment"><span class="math inline">\(\exp(\mu_i)\)</span> is the median of a LogNormal, which is where we specify our cubic relationship between weight and height</li>
+<li class="fragment">Notice that the model for the conditional median is <span class="math inline">\(\mu_i = \log(\theta) + 3 \log(h_i)\)</span>, in other words we do not need to estimate the coefficient on height, we only need the intercept</li>
+<li class="fragment">In <code>RStanArm</code>, we can estimate a similar model as a linear regression of log weight on log height; (in Stan, we can write this model directly)</li>
 </ul>
 </div>
 </section>
-<section id="example-placenta-previa" class="slide level2 smaller">
-<h2>Example: Placenta Previa</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
+<section id="choosing-priors" class="slide level2 smaller">
+<h2>Choosing Priors</h2>
 <div>
 <ul>
-<li class="fragment">We borrow an example from BDA3: the probability of girl birth given placenta previa (PP)</li>
-<li class="fragment">Placenta previa is a condition when the placenta completely or partially covers the opening of the uterus</li>
-<li class="fragment">A PP study in Germany found that out of 980 births, 437 or <span class="math inline">\(\approx 45\%\)</span> were female</li>
-<li class="fragment">Sex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%<sup>1</sup></li>
-<li class="fragment">Our task is to assess the evidence for <span class="math inline">\(\P(\text{ratio} &lt; .485 \mid \text{PP})\)</span></li>
+<li class="fragment">In our log-log linear regression we have an intercept and coefficient on log height, which we said was 3</li>
+<li class="fragment">Instead of fixing it at 3, we will estimate it and give it an informative prior, where most of the mass is between 2 and 4</li>
+<li class="fragment">The implies something like <span class="math inline">\(\beta \sim \text{Normal}(3, 0.3)\)</span></li>
+<li class="fragment">We will leave our <span class="math inline">\(\sigma \sim \text{Exponetial}(1)\)</span></li>
+<li class="fragment">We have less intuition about the intercept, so we will give it a wider prior on a scale of centered predictors (<code>RStanArm</code> centeres by default): <span class="math inline">\(\alpha \sim \text{Normal}(0, 5)\)</span></li>
+<li class="fragment">How do we now these priors are reasonable on the predictive scale (weight)?</li>
+<li class="fragment">We don’t, so we will perform another prior predictive simulation</li>
 </ul>
 </div>
-</div><div class="column" style="width:40%;">
-<div class="quarto-figure quarto-figure-right">
-<figure>
-<p><img data-src="images/placenta-previa.jpeg" width="500"></p>
-</figure>
-</div>
-</div>
-</div>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Gelman, A., &amp; Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310</p></li></ol></aside></section>
-<section id="biomomial-likelihood" class="slide level2 smaller">
-<h2>Biomomial Likelihood</h2>
+</section>
+<section id="prior-predictive-simulation" class="slide level2 smaller">
+<h2>Prior Predictive Simulation</h2>
 <div>
 <ul>
-<li class="fragment"><p>Recall that Likelihood is the function of the parameter <span class="math inline">\(\theta\)</span>, assuming <span class="math inline">\(\theta \in [0,1]\)</span> <span class="math display">\[
-\text{Bin}(y \mid \theta) = \binom{N}{y}
-\theta^y (1 - \theta)^{N - y} \propto \theta^y (1 - \theta)^{N - y}
-\]</span></p></li>
-<li class="fragment"><p>Assuming <span class="math inline">\(N = 10\)</span>, the likelihood for <span class="math inline">\(\theta\)</span>, given a few possible values of <span class="math inline">\(y\)</span> successes</p></li>
+<li class="fragment">Compute the new log variables:</li>
 </ul>
+</div>
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-2_5edd08a1fe3b28b9ebf595898ac4d75d">
+
 </div>
 <div class="fragment">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" width="768"></p>
-</figure>
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-3_d9d96f1f1c002cbcfae9c29519cb85a7">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>d <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"../05-lecture/data/howell.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>d <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="fu">mutate</span>(<span class="at">log_h =</span> <span class="fu">log</span>(height),</span>
+<span id="cb1-4"><a href="#cb1-4"></a>         <span class="at">log_w =</span> <span class="fu">log</span>(weight))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
-</div>
-</section>
-<section id="deriving-the-posterior-distribution" class="slide level2 smaller">
-<h2>Deriving the Posterior Distribution</h2>
-<div>
-<ul>
-<li class="fragment"><p>The denominator is constant in <span class="math inline">\(\theta\)</span>; we will derive the posterior up to a proportion <span class="math display">\[
-\begin{eqnarray}
-f(y \mid \theta) &amp; \propto &amp; \theta^y (1 - \theta)^{N - y} \\
-f(\theta) &amp; \propto &amp; \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \\
-f(\theta \mid y) &amp; \propto &amp; f(y \mid \theta) f(\theta) \\
-&amp; = &amp; \theta^y (1 - \theta)^{N - y} \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \\
-&amp; = &amp; \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \\
-f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>The last equality comes from matching the kernel <span class="math inline">\(\theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1}\)</span> to the normalized Beta PDF which has a normalizing constant <span class="math inline">\(\frac{\Gamma (\alpha +\beta + N)}{\Gamma (\alpha + y) \Gamma (\beta + N - y)}\)</span></p></li>
-<li class="fragment"><p>Since the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial</p></li>
-</ul>
-</div>
-<div class="footer">
-<p>Check the kernel integral, <span class="math inline">\(\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta\)</span> using <a href="https://www.wolframalpha.com/input?i=integrate+x%5E%28y+%2B+a+-+1%29+*+%281+-+x%29%5E%28n+%2B+b+-+y+-+1%29+dx+from+0+to+1+">Wolfram Alpha</a></p>
-</div>
-</section>
-<section id="posterior-expectations" class="slide level2 smaller">
-<h2>Posterior Expectations</h2>
-<div class="fragment">
-<p><span class="math display">\[
-\begin{eqnarray}
-\E(\theta \mid Y=y)  &amp; = &amp; \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
-\V(\theta \mid Y=y)  &amp; = &amp; \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
-\text{Mode}(\theta \mid Y=y) &amp; = &amp; \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
-\end{eqnarray}
-\]</span></p>
 </div>
 <div>
 <ul>
-<li class="fragment">Note tha the posterior expectation is between <span class="math inline">\(y/n\)</span> and <span class="math inline">\(\frac{\alpha}{\alpha + \beta}\)</span></li>
-<li class="fragment">Also note that as sample becomes very large <span class="math inline">\(\E(\theta \mid Y=y) \rightarrow \frac{y}{n}\)</span> and <span class="math inline">\(\V(\theta \mid Y=y) \rightarrow 0\)</span></li>
-<li class="fragment">As before, <span class="math inline">\(\text{Mode}(\theta \mid Y=y) = \E(\theta \mid Y=y)\)</span>, when <span class="math inline">\(\alpha = \beta\)</span></li>
+<li class="fragment">Run prior predictive simulation:</li>
 </ul>
 </div>
-</section>
-<section id="example-placenta-previa-1" class="slide level2 smaller">
-<h2>Example: Placenta Previa</h2>
-<div>
-<ul>
-<li class="fragment"><p>Let’s derive the analytical posterior and compare it with the samples from the posterior distribution</p></li>
-<li class="fragment"><p>First, we will consider the uniform <span class="math inline">\(\text{Beta}(1, 1)\)</span> prior</p></li>
-<li class="fragment"><p>We are told that data are <span class="math inline">\(N = 980\)</span> and <span class="math inline">\(y = 437\)</span> female births</p></li>
-<li class="fragment"><p>The posterior is <span class="math inline">\(\text{Beta}(1 + 437, 1 + 980 - 437) = \text{Beta}(438, 544)\)</span></p></li>
-<li class="fragment"><p><span class="math inline">\(\E(\theta \mid Y=437) = \frac{\alpha + 437}{\alpha + \beta + 980} = \frac{438}{982} \approx 0.446\)</span></p></li>
-<li class="fragment"><p><span class="math inline">\(\sqrt{\V(\theta \mid Y=y)} \approx\)</span> 0.016</p></li>
-</ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
-<span id="cb1-2"><a href="#cb1-2"></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>95% posterior interval is [0.415, 0.477]</code></pre>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
+<span id="cb2-2"><a href="#cb2-2"></a>  log_w <span class="sc">~</span> log_h,</span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="at">data =</span> d,</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">3</span>, <span class="fl">0.3</span>),</span>
+<span id="cb2-6"><a href="#cb2-6"></a>  <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="dv">1</span>),</span>
+<span id="cb2-7"><a href="#cb2-7"></a>  <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">5</span>),</span>
+<span id="cb2-8"><a href="#cb2-8"></a>  <span class="at">prior_PD =</span> <span class="dv">1</span>,  <span class="co"># don't evaluate the likelyhood</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>  <span class="at">seed =</span> <span class="dv">1234</span>,</span>
+<span id="cb2-10"><a href="#cb2-10"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb2-11"><a href="#cb2-11"></a>  <span class="at">iter =</span> <span class="dv">600</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>event_prob <span class="ot">&lt;-</span> <span class="fu">integrate</span>(dbeta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Probability that the ratio &lt; 0.485 under uniform prior = 0.993</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.993</code></pre>
+</section>
+<section id="prior-predictive-simulation-1" class="slide level2 smaller">
+<h2>Prior Predictive Simulation</h2>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-5_a48c374a08af1b413038cae9aeb572b4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(tidybayes)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="fu">add_epred_draws</span>(m3, <span class="at">ndraws =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> log_w, <span class="at">x =</span> log_h)) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .epred, <span class="at">group =</span> .draw), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>  <span class="fu">xlab</span>(<span class="st">"Log Height"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Log Weight"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Prior Predictive Simulation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" width="576"></p>
+</figure>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="obtaining-quantiles-by-sampling" class="slide level2 smaller">
-<h2>Obtaining Quantiles by Sampling</h2>
+<section id="prior-predictive-simulation-2" class="slide level2 smaller">
+<h2>Prior Predictive Simulation</h2>
 <div>
 <ul>
-<li class="fragment">We can use R’s <code>rbeta()</code> RNG to generate draws from the posterior</li>
+<li class="fragment">We can examine what this looks like on the original scale by exponentiating the predictions:</li>
 </ul>
 </div>
 <div class="fragment">
-<div class="cell columns column-output-location" data-layout-align="center">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-6_1130240c730b290819a7c5b997322122">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="fu">add_epred_draws</span>(m3, <span class="at">ndraws =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> weight, <span class="at">x =</span> height)) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.epred), <span class="at">group =</span> .draw), <span class="at">color =</span> <span class="st">'green'</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>  <span class="fu">xlab</span>(<span class="st">"Height"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Weight"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Prior Predictive Simulation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="prior-predictive-simulation-3" class="slide level2 smaller">
+<h2>Prior Predictive Simulation</h2>
+<div>
+<ul>
+<li class="fragment">Our intercept scale seems too wide, so we will make some adjustments:</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-7_93da79853aa68e3e2267d174ddc4438f">
 <div class="column">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>draws <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="fl">1e5</span>, <span class="dv">438</span>, <span class="dv">544</span>)</span>
-<span id="cb7-2"><a href="#cb7-2"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(draws), <span class="at">data =</span> <span class="fu">data.frame</span>(draws))</span>
-<span id="cb7-3"><a href="#cb7-3"></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.485</span>, </span>
-<span id="cb7-5"><a href="#cb7-5"></a>             <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a>  <span class="fu">ggtitle</span>(<span class="st">"Draws from Beta(438, 544)"</span>) <span class="sc">+</span> </span>
-<span id="cb7-7"><a href="#cb7-7"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span> </span>
-<span id="cb7-8"><a href="#cb7-8"></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  log_w <span class="sc">~</span> log_h,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="at">data =</span> d,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">3</span>, <span class="fl">0.3</span>),</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="dv">1</span>),</span>
+<span id="cb5-7"><a href="#cb5-7"></a>  <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">2.5</span>),</span>
+<span id="cb5-8"><a href="#cb5-8"></a>  <span class="at">prior_PD =</span> <span class="dv">1</span>,  <span class="co"># don't evaluate the likelyhood</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>  <span class="at">seed =</span> <span class="dv">1234</span>,</span>
+<span id="cb5-10"><a href="#cb5-10"></a>  <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb5-11"><a href="#cb5-11"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb5-12"><a href="#cb5-12"></a>  <span class="at">iter =</span> <span class="dv">600</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a>)</span>
+<span id="cb5-14"><a href="#cb5-14"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>  <span class="fu">add_epred_draws</span>(m3, <span class="at">ndraws =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> weight, <span class="at">x =</span> height)) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.epred), <span class="at">group =</span> .draw), </span>
+<span id="cb5-19"><a href="#cb5-19"></a>            <span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">color =</span> <span class="st">'green'</span>) <span class="sc">+</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>  <span class="fu">xlab</span>(<span class="st">"Height"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Weight"</span>) <span class="sc">+</span> </span>
+<span id="cb5-21"><a href="#cb5-21"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prior Predictive Simulation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" width="336"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" width="384"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 </div>
+</section>
+<section id="fitting-the-model" class="slide level2 smaller">
+<h2>Fitting the Model</h2>
 <div>
 <ul>
-<li class="fragment">We can use the <code>quantile()</code> function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before</li>
+<li class="fragment">We can likely do better with these priors, but most of the simulations are covering the data and so we proceed to model fitting</li>
 </ul>
 </div>
 <div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">quantile</span>(draws, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-8_8143d199f5cefeb2640395d729b9cc4b">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
+<span id="cb6-2"><a href="#cb6-2"></a>  log_w <span class="sc">~</span> log_h,</span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="at">data =</span> d,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb6-5"><a href="#cb6-5"></a>  <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">3</span>, <span class="fl">0.3</span>),</span>
+<span id="cb6-6"><a href="#cb6-6"></a>  <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="dv">1</span>),</span>
+<span id="cb6-7"><a href="#cb6-7"></a>  <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">2.5</span>),</span>
+<span id="cb6-8"><a href="#cb6-8"></a>  <span class="at">seed =</span> <span class="dv">1234</span>,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>  <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb6-10"><a href="#cb6-10"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb6-11"><a href="#cb6-11"></a>  <span class="at">iter =</span> <span class="dv">600</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>)</span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="fu">summary</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> 2.5%   50% 97.5% 
-0.415 0.446 0.478 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">mean</span>(draws <span class="sc">&lt;</span> <span class="fl">0.485</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Probability that the ratio &lt; 0.485 under uniform prior = 0.992</code></pre>
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      log_w ~ log_h
+ algorithm:    sampling
+ sample:       1200 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 544
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept) -8.0    0.1 -8.1  -8.0  -7.8 
+log_h        2.3    0.0  2.3   2.3   2.4 
+sigma        0.1    0.0  0.1   0.1   0.1 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 3.4    0.0  3.4   3.4   3.5  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0   619 
+log_h         0.0  1.0   621 
+sigma         0.0  1.0   923 
+mean_PPD      0.0  1.0  1436 
+log-posterior 0.1  1.0   529 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </div>
 </section>
-<section id="population-priors" class="slide level2 smaller">
-<h2>Population Priors</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div>
-<ul>
-<li class="fragment"><p>What priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?</p></li>
-<li class="fragment"><p>We know that the population mean is 0.485 and the standard deviation is about 0.01</p></li>
-<li class="fragment"><p>Back out the parameters of the population Beta distribution</p></li>
-</ul>
-</div>
+<section id="comparing-to-the-linear-model" class="slide level2 smaller">
+<h2>Comparing to the Linear Model</h2>
+<p><br></p>
 <div class="fragment">
-<p><span class="math display">\[
-\begin{eqnarray}
-\begin{cases}
-\frac{\alpha}{\alpha + \beta} &amp; = &amp; 0.485 \\
-\sqrt{\frac{\alpha \beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}} &amp; = &amp; 0.01
-\end{cases}
-\end{eqnarray}
-\]</span></p>
-</div>
-<div>
-<ul>
-<li class="fragment"><span class="math inline">\(\alpha \approx 1211\)</span> and <span class="math inline">\(\beta \approx 1286\)</span></li>
-</ul>
-</div>
-</div><div class="column" style="width:50%;">
-<div>
-<ul>
-<li class="fragment">Check the result with the simulation</li>
-</ul>
-</div>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">1211</span>, <span class="dv">1286</span>)</span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="fu">mean</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.485</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">sd</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.01</code></pre>
-</div>
-</div>
-</div>
-<div>
-<ul>
-<li class="fragment">We can let Mathematica do the algebra</li>
-</ul>
-</div>
-<div class="fragment">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/beta-system.png" width="500"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="posterior-with-population-priors" class="slide level2 smaller">
-<h2>Posterior with Population Priors</h2>
-<div>
-<ul>
-<li class="fragment"><p><span class="math inline">\(f(\theta | y) = \text{Beta}(1211 + 437, 1286 + 543) = \text{Beta}(1648,1829)\)</span></p></li>
-<li class="fragment"><p>We can compare the prior and posterior using <code>summarize_beta_binomial()</code> in the <code>bayesrules</code> package</p></li>
-</ul>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="fu">library</span>(bayesrules)</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="fu">summarize_beta_binomial</span>(<span class="at">alpha =</span> <span class="dv">1211</span>, <span class="at">beta =</span> <span class="dv">1286</span>, <span class="at">y =</span> <span class="dv">437</span>, <span class="at">n =</span> <span class="dv">980</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      model alpha beta      mean      mode          var          sd
-1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489
-2 posterior  1648 1829 0.4739718 0.4739568 7.168560e-05 0.008466735</code></pre>
-</div>
-</div>
-</div>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
-<span id="cb18-2"><a href="#cb18-2"></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb18-3"><a href="#cb18-3"></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb18-4"><a href="#cb18-4"></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>95% posterior interval is [0.457, 0.491]</code></pre>
-</div>
-</div>
-</div>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>event_prob <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">1648</span>, <span class="at">shape2 =</span> <span class="dv">1829</span>)</span>
-<span id="cb20-2"><a href="#cb20-2"></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under population prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Probability that the ratio &lt; 0.485 under population prior = 0.904</code></pre>
-</div>
-</div>
-</div>
-<ul>
-<li class="fragment">Under uniform prior 95% posterior interval was [0.415, 0.477]</li>
-<li class="fragment">And probability that the ratio &lt; 0.485 under uniform prior = 0.993</li>
-</ul>
-</div>
-</section>
-<section id="visualizing-bayesian-rebalancing" class="slide level2 smaller">
-<h2>Visualizing Bayesian Rebalancing</h2>
-<div>
-<ul>
-<li class="fragment">The following uses <span class="math inline">\(\text{Beta}(5, 5)\)</span> prior and N = 10:</li>
-</ul>
-</div>
-<div class="fragment">
-<div class="cell" data-layout-align="center">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-9_9d64cb85f5e44115e5d0fc0522748d9f">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>m2 <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_rds</span>(<span class="st">"../05-lecture/models/m2.rds"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a>p1 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(m2) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Linear Model"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a>p2 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(m3) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Log Weight"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Log-Log Model"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" width="768"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-9-1.png" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="data-order-and-batch-invariance" class="slide level2 smaller">
-<h2>Data Order and Batch Invariance</h2>
-<div>
-<ul>
-<li class="fragment">In Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)</li>
-<li class="fragment">This is a general result, not just for Beta Binomial (see Section 4.5)</li>
-<li class="fragment">In practice, when we don’t have analytic posteriors, this is not so easy to do</li>
-<li class="fragment">Suppose we observe <span class="math inline">\(y = y_1 + y_2\)</span> and <span class="math inline">\(N = N_1 + N_2\)</span> trials all at once</li>
-<li class="fragment">Also assume we start with <span class="math inline">\(\text{Beta}(1, 1)\)</span> prior</li>
-<li class="fragment">For all at once case, the posterior is in <span class="math inline">\(f(\theta \mid y) = \text{Beta}(\alpha + y, \,\beta + N - y)\)</span> as before</li>
-<li class="fragment">Now, suppose we observe <span class="math inline">\(y_1\)</span> successes in <span class="math inline">\(n_1\)</span> trials first</li>
-<li class="fragment">The posterior is <span class="math inline">\(f(\theta \mid y_1) = \text{Beta}(\alpha + y_1, \,\beta + N_1 - y_1)\)</span></li>
-<li class="fragment">We now observe, <span class="math inline">\(y_2\)</span> successes in <span class="math inline">\(n_2\)</span> trials. The posterior is <span class="math inline">\(f(\theta \mid y= y_1 + y_2) = \text{Beta}(\alpha + y_1 + y_2, \,\beta + N_1 - y_1 + N_2 - y_2)\\ = \text{Beta}(\alpha + y, \,\beta + N - y)\)</span></li>
-</ul>
-</div>
-</section>
-<section id="general-case" class="slide level2 smaller">
-<h2>General Case</h2>
-<div>
-<ul>
-<li class="fragment">Suppose we observe data point <span class="math inline">\(y_1\)</span>, and then data point <span class="math inline">\(y_2\)</span></li>
-</ul>
-</div>
+<section id="plotting-prediction-intervals" class="slide level2 smaller">
+<h2>Plotting Prediction Intervals</h2>
 <div class="fragment">
-<p><span class="math display">\[
-f(\theta \mid y_1,y_2) =  \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
-\]</span></p>
-</div>
-<div>
-<ul>
-<li class="fragment">Observing data point <span class="math inline">\(y_2\)</span>, and then data point <span class="math inline">\(y_1\)</span>, will results in the same distribution</li>
-<li class="fragment">What if observed both points at once?</li>
-</ul>
-</div>
-<div class="fragment">
-<p><span class="math display">\[
-\begin{split}
-f(\theta \mid y_1,y_2)
-&amp; = \frac{f(\theta)f(y_1,y_2 \mid \theta)}{f(y_1)f(y_2)} \\
-&amp; = \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
-\end{split}
-\]</span></p>
-</div>
-</section>
-<section id="bayesian-workflow-chapter-2" class="slide level2">
-<h2>Bayesian Workflow Chapter 2</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div>
-<ul>
-<li class="fragment">What do we do before fitting a model
-<ul>
-<li class="fragment">Choosing an initial model</li>
-<li class="fragment">Modular construction</li>
-<li class="fragment">Scaling and transforming the parameters</li>
-<li class="fragment">Prior predictive checking</li>
-</ul></li>
-</ul>
-</div>
-</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-10_c9b27aebce9544d56bee48fe256b1530">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>  <span class="fu">add_predicted_draws</span>(m3) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> weight, <span class="at">x =</span> height)) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>  <span class="fu">stat_lineribbon</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.prediction)), <span class="at">.width =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.50</span>), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"In Sample Predictions of Weight from Height"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/workflow.png" width="672"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
+</div>
+</section>
+<section id="predicting-for-new-data" class="slide level2 smaller">
+<h2>Predicting For New Data</h2>
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-11_c69399b66d9d729b88e0729e195a74ae">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>log_h <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">5.2</span>, <span class="at">len =</span> <span class="dv">500</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a>new_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(log_h)</span>
+<span id="cb10-3"><a href="#cb10-3"></a>pred <span class="ot">&lt;-</span> <span class="fu">add_predicted_draws</span>(new_data, m3)</span>
+<span id="cb10-4"><a href="#cb10-4"></a>pred <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">exp</span>(log_h), <span class="at">y =</span> <span class="fu">exp</span>(.prediction))) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.50</span>), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Predictions of Weight from Height"</span>) <span class="sc">+</span> </span>
+<span id="cb10-8"><a href="#cb10-8"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> weight, <span class="at">x =</span> height), <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" width="576" class="r-stretch quarto-figure-center"><p>:::</p>
 
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
 </div>
 </section>
-
     </div>
   </div>
 
