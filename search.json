@@ -95,7 +95,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "title": "Bayesian Inference",
     "section": "Example Simulation",
-    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 3 3\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    4    5    2    6    5    3\n[2,]    2    4    2    3    4    2\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1] 6 9 4 9 9 5\n\nmean(roll_sums < 11) \n\n[1] 0.9137\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
+    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 3 4\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    4    4    4    3    1    3\n[2,]    6    3    1    5    1    4\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1] 10  7  5  8  2  7\n\nmean(roll_sums < 11) \n\n[1] 0.9239\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
@@ -578,7 +578,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
     "title": "Bayesian Inference",
     "section": "Obtaining Quantiles by Sampling",
-    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws <- rbeta(n = 1e5, 438, 544)\np <- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", mean(draws < 0.485) |> round(3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.993"
+    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws <- rbeta(n = 1e5, 438, 544)\np <- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |> round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.478 \n\ncat(\"Probability that the ratio < 0.485 under uniform prior =\", mean(draws < 0.485) |> round(3))\n\nProbability that the ratio < 0.485 under uniform prior = 0.992"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#population-priors",
@@ -711,7 +711,35 @@
     "href": "bayes-course/06-lecture/06-lecture.html#predicting-for-new-data",
     "title": "Bayesian Inference",
     "section": "Predicting For New Data",
-    "text": "Predicting For New Data\n\nlog_h <- seq(0, 5.2, len = 500)\nnew_data <- tibble(log_h)\npred <- add_predicted_draws(new_data, m3)\npred |>\n  ggplot(aes(x = exp(log_h), y = exp(.prediction))) +\n  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +\n  xlab(\"Height (cm)\") + ylab(\"Weight (kg)\") + ggtitle(\"Predictions of Weight from Height\") + \n  geom_point(aes(y = weight, x = height), size = 0.5, alpha = 0.2, data = d)\n\n\n:::\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Predicting For New Data\n\n\nlog_h <- seq(0, 5.2, len = 500)\nnew_data <- tibble(log_h)\npred <- add_predicted_draws(new_data, m3)\npred |>\n  ggplot(aes(x = exp(log_h), y = exp(.prediction))) +\n  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +\n  xlab(\"Height (cm)\") + ylab(\"Weight (kg)\") + ggtitle(\"Predictions of Weight from Height\") + \n  geom_point(aes(y = weight, x = height), size = 0.5, alpha = 0.2, data = d)"
+  },
+  {
+    "objectID": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine",
+    "href": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine",
+    "title": "Bayesian Inference",
+    "section": "Example: Quality of Wine",
+    "text": "Example: Quality of Wine\n\n\nTo build up a larger regression model, we will take a look at the quality of wine dataset from the UCI machine learning repository"
+  },
+  {
+    "objectID": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine-1",
+    "href": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine-1",
+    "title": "Bayesian Inference",
+    "section": "Example: Quality of Wine",
+    "text": "Example: Quality of Wine\n\n\nOur task is to predict (subjective) quality of wine from measurements like acidity, sugar, and chlorides\nThe outcome is ordinal, which should be analyzed using ordinal regression, but we will start with linear regression\n\n\n\n\n\nd <- readr::read_delim(\"data/winequality-red.csv\")\n\n# remove duplicates\nd <- d[!duplicated(d), ]\np1 <- ggplot(aes(x = quality), data = d)\np1 <- p1 + geom_histogram() + \n  ggtitle(\"Red wine quality ratings\")\np2 <- ggplot(aes(quality, alcohol), data = d)\np2 <- p2 + \n  geom_point(position = \n               position_jitter(width = 0.2),\n             size = 0.3)\ngrid.arrange(p1, p2, nrow = 2)"
+  },
+  {
+    "objectID": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine-2",
+    "href": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine-2",
+    "title": "Bayesian Inference",
+    "section": "Example: Quality of Wine",
+    "text": "Example: Quality of Wine\n\n\nAs before, we will center the predictors, but this time we will also devide by standard deviation\nThis will make the coefficients comparable\nIf you have binary inputs, it may make sense to divide by 2 standard deviations (Page 186 in Regresion and Other Stories)\nWe will also center the quality score\n\n\n\n\nds <- d |>\n  scale() |>\n  as_tibble() |>\n  mutate(quality = d$quality - 5.5)\nhead(ds)\n\n# A tibble: 6 × 12\n  fixed_acidity volatile_acidity citric_acid residual_sugar chlorides\n          <dbl>            <dbl>       <dbl>          <dbl>     <dbl>\n1        -0.524            0.932       -1.39        -0.461    -0.246 \n2        -0.294            1.92        -1.39         0.0566    0.200 \n3        -0.294            1.26        -1.19        -0.165     0.0785\n4         1.66            -1.36         1.47        -0.461    -0.266 \n5        -0.524            0.713       -1.39        -0.535    -0.266 \n6        -0.236            0.385       -1.09        -0.683    -0.387 \n# ℹ 7 more variables: free_sulfur_dioxide <dbl>, total_sulfur_dioxide <dbl>,\n#   density <dbl>, pH <dbl>, sulphates <dbl>, alcohol <dbl>, quality <dbl>"
+  },
+  {
+    "objectID": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine-3",
+    "href": "bayes-course/06-lecture/06-lecture.html#example-quality-of-wine-3",
+    "title": "Bayesian Inference",
+    "section": "Example: Quality of Wine",
+    "text": "Example: Quality of Wine\n\n\nWe can now fit our first regression to alcohol only\nAfter standardization, and since we don’t know much about wine, we can set weakly informative priors\n\n\n\n\n\n\n\nm1 <- stan_glm(quality ~ alcohol, \n               data = ds,\n               family = gaussian,\n               prior_intercept = normal(0, 1),\n               prior = normal(0, 1),\n               prior_aux = exponential(1),\n               iter = 500,\n               chains = 4)\nsummary(m1)\n\n\n\n\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      quality ~ alcohol\n algorithm:    sampling\n sample:       1000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 1359\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 0.1    0.0  0.1   0.1   0.2  \nalcohol     0.4    0.0  0.4   0.4   0.4  \nsigma       0.7    0.0  0.7   0.7   0.7  \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 0.1    0.0  0.1   0.1   0.2  \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  759  \nalcohol       0.0  1.0  720  \nsigma         0.0  1.0  905  \nmean_PPD      0.0  1.0  862  \nlog-posterior 0.1  1.0  373  \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
   },
   {
     "objectID": "bayes-course/04-lecture/04-lecture.html#mcmc-posterior-inference-and-prediction",

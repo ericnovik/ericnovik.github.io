@@ -737,6 +737,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </section>
 <section id="predicting-for-new-data" class="slide level2 smaller">
 <h2>Predicting For New Data</h2>
+<div class="fragment">
 <div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-11_c69399b66d9d729b88e0729e195a74ae">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>log_h <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">5.2</span>, <span class="at">len =</span> <span class="dv">500</span>)</span>
 <span id="cb10-2"><a href="#cb10-2"></a>new_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(log_h)</span>
@@ -746,9 +747,162 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb10-6"><a href="#cb10-6"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.50</span>), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
 <span id="cb10-7"><a href="#cb10-7"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Predictions of Weight from Height"</span>) <span class="sc">+</span> </span>
 <span id="cb10-8"><a href="#cb10-8"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> weight, <span class="at">x =</span> height), <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">To build up a larger regression model, we will take a look at the quality of wine dataset from the UCI machine learning repository</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/redwine.png" height="500"></p>
+</figure>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-1" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">Our task is to predict (subjective) quality of wine from measurements like acidity, sugar, and chlorides</li>
+<li class="fragment">The outcome is ordinal, which should be analyzed using ordinal regression, but we will start with linear regression</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-12_dbbec602b1bbdcf3b5968fc310676e08">
+<div class="column">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>d <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_delim</span>(<span class="st">"data/winequality-red.csv"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># remove duplicates</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>d <span class="ot">&lt;-</span> d[<span class="sc">!</span><span class="fu">duplicated</span>(d), ]</span>
+<span id="cb11-5"><a href="#cb11-5"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> quality), <span class="at">data =</span> d)</span>
+<span id="cb11-6"><a href="#cb11-6"></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb11-7"><a href="#cb11-7"></a>  <span class="fu">ggtitle</span>(<span class="st">"Red wine quality ratings"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(quality, alcohol), <span class="at">data =</span> d)</span>
+<span id="cb11-9"><a href="#cb11-9"></a>p2 <span class="ot">&lt;-</span> p2 <span class="sc">+</span> </span>
+<span id="cb11-10"><a href="#cb11-10"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> </span>
+<span id="cb11-11"><a href="#cb11-11"></a>               <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>),</span>
+<span id="cb11-12"><a href="#cb11-12"></a>             <span class="at">size =</span> <span class="fl">0.3</span>)</span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-2" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">As before, we will center the predictors, but this time we will also devide by standard deviation</li>
+<li class="fragment">This will make the coefficients comparable</li>
+<li class="fragment">If you have binary inputs, it may make sense to divide by 2 standard deviations (Page 186 in Regresion and Other Stories)</li>
+<li class="fragment">We will also center the quality score</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-13_d7f9b72798762c481ae99c6e7d505c3a">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>ds <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>  <span class="fu">scale</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>  <span class="fu">mutate</span>(<span class="at">quality =</span> d<span class="sc">$</span>quality <span class="sc">-</span> <span class="fl">5.5</span>)</span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="fu">head</span>(ds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 12
+  fixed_acidity volatile_acidity citric_acid residual_sugar chlorides
+          &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+1        -0.524            0.932       -1.39        -0.461    -0.246 
+2        -0.294            1.92        -1.39         0.0566    0.200 
+3        -0.294            1.26        -1.19        -0.165     0.0785
+4         1.66            -1.36         1.47        -0.461    -0.266 
+5        -0.524            0.713       -1.39        -0.535    -0.266 
+6        -0.236            0.385       -1.09        -0.683    -0.387 
+# ℹ 7 more variables: free_sulfur_dioxide &lt;dbl&gt;, total_sulfur_dioxide &lt;dbl&gt;,
+#   density &lt;dbl&gt;, pH &lt;dbl&gt;, sulphates &lt;dbl&gt;, alcohol &lt;dbl&gt;, quality &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-3" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We can now fit our first regression to alcohol only</li>
+<li class="fragment">After standardization, and since we don’t know much about wine, we can set weakly informative priors</li>
+</ul>
+</div>
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-14_94da82ddff8ee20959acd4a98ccc60fd">
 
 </div>
-<img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" width="576" class="r-stretch quarto-figure-center"><p>:::</p>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-15_ec6f2d146756d11892b32daf82a7e934">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(quality <span class="sc">~</span> alcohol, </span>
+<span id="cb14-2"><a href="#cb14-2"></a>               <span class="at">data =</span> ds,</span>
+<span id="cb14-3"><a href="#cb14-3"></a>               <span class="at">family =</span> gaussian,</span>
+<span id="cb14-4"><a href="#cb14-4"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb14-5"><a href="#cb14-5"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb14-6"><a href="#cb14-6"></a>               <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="dv">1</span>),</span>
+<span id="cb14-7"><a href="#cb14-7"></a>               <span class="at">iter =</span> <span class="dv">500</span>,</span>
+<span id="cb14-8"><a href="#cb14-8"></a>               <span class="at">chains =</span> <span class="dv">4</span>)</span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-16_cefb5727c9e153d014b8c644dc354bff">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      quality ~ alcohol
+ algorithm:    sampling
+ sample:       1000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 1359
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept) 0.1    0.0  0.1   0.1   0.2  
+alcohol     0.4    0.0  0.4   0.4   0.4  
+sigma       0.7    0.0  0.7   0.7   0.7  
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 0.1    0.0  0.1   0.1   0.2  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  759  
+alcohol       0.0  1.0  720  
+sigma         0.0  1.0  905  
+mean_PPD      0.0  1.0  862  
+log-posterior 0.1  1.0  373  
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
 
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
