@@ -16,6 +16,12 @@ editor: source
 always_allow_html: true
 ---
 
+##  Homework Feedback
+
+![](images/scared.avif){fig-align="center" width="672"}
+
+
+[How was Homework 4?](https://www.polleverywhere.com/multiple_choice_polls/tW6UTzV6VKtaUk8yKO6jx)
 
 ##  Linear Regression and Model Evaluation
 
@@ -167,7 +173,7 @@ p + geom_point(aes(color = as.factor(male)), size = 0.2) +
 ## Howell Dataset {.smaller}
 ::: incremental
 - For now, we will focus on the linear subset of the data
-- We will denonstrate the non-linear model at the end
+- We will demonstrate the non-linear model at the end
 - We will restrict our attention to adults (age > 18)
 :::
 
@@ -188,14 +194,15 @@ p + geom_point(size = 0.2) +
 
 ## General Aproach {.smaller}
 ::: incremental
-- Assess the scope of the inferences that you will get with this model
-- In the case of linear regression, there is likely no causal mechanism and the coeficients should be intepreted as comparisons (RAOS, Page 84)
-- Set up reasonable priors and likelihood
-- Perform a prior predictive simualtion
-- Adjust your priors
-- Fit the model to data
-- Assess quality of the inference and quality of the model
-- Adjust your model
+1. Assess the scope of the inferences that you will get with this model
+1. In the case of linear regression, there is likely no causal mechanism and the coefficients should be interpreted as comparisons (RAOS, Page 84)
+1. Set up reasonable priors and likelihood
+1. (*) For more complex models: perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See [this](https://www.generable.com/post/fitting-a-basic-sir-model-in-stan) example for a standard epidemiological model.
+1. Perform a prior predictive simulation
+1. Adjust your priors
+1. Fit the model to data
+1. Assess the quality of the inference and the quality of the model
+1. Improve or fix your model and go back to #3
 :::
 
 ## Howell Regression {.smaller}
@@ -212,15 +219,15 @@ y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
 \end{eqnarray}
 $$
 - We have to specify $\alpha_{l}$ and $\alpha_s$, where l and s signify location and scale, and r, the rate of the exponential
-- If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha: it correponds to the weight of the person with zero height
-- This can be fixed by subtracting average height from $x$
+- If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha: it corresponds to the weight of the person with zero height
+- This can be fixed by subtracting the average height from $x$
 :::
 
 ## Howell Regression {.smaller}
 ::: incremental
 - We define a new variable, the centered version of $x$: $x^c_i = x_i - \bar{x}$
 - Now $\alpha$ corresponds to the weight of an average person
-- Checking [Wikipedia](https://en.wikipedia.org/wiki/Human_body_weight) reveals that average weight of a person in Africa is about 60 kg
+- Checking [Wikipedia](https://en.wikipedia.org/wiki/Human_body_weight) reveals that the average weight of a person in Africa is about 60 kg
 - They don't state the standard deviation but it is unlikely that an African adult would weigh less than 30 kg and more than 120 kg and so we will set the prior sd = 10
 $$
 \begin{eqnarray}
@@ -257,8 +264,8 @@ $$
 ## Howell Regression {.smaller}
 ::: incremental
 - We know that $\sigma$ must be positive and so a possible choice for a the prior is $\text{Normal}^+$, Exponential, etc.
-- At this stage they key is rule out implausable values, not to get something precise, partcularly since we have enough data (> 340 observations)
-- From the background data, the residual standard error was 4.6, which implies the exponential rate parameter to be 0.2
+- At this stage, the key is to rule out implausible values, not to get something precise, particularly since we have enough data (> 340 observations)
+- From the background data, the residual standard error was 4.6, which implies the exponential rate parameter is 0.2
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
@@ -371,8 +378,8 @@ p + geom_point(size = 0.5) + ylim(20, 90) +
 ## Deriving a Posterior Distribution {.smaller}
 
 ::: incremental
-- We have seen how to derive posterior and posterior predictive distribution
-- Three dimentional posterior: $f(\alpha, \beta, \sigma)$. What happened to $\mu$?
+- We have seen how to derive the posterior and posterior predictive distribution
+- Three dimentional posterior: $f(\alpha, \beta, \sigma)$. [What happened](https://www.polleverywhere.com/free_text_polls/Uj05I36LJbqhNiOylx6Wa) to $\mu$?
 - We construct the posterior from the prior and data likelihood (for each $y_i$):
 $$
 \begin{eqnarray}
@@ -388,7 +395,7 @@ $$
 ## Fitting the Model {.smaller}
 
 ::: incremental
-- Even though our prior is slighly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting
+- Even though our prior is slightly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting
 - We will use `stan_glm()` function in `rstanarm`
 - `rstanarm` has default priors, but you should specify your own:
 
@@ -498,20 +505,20 @@ model {
   }
 }
 generated quantities {
-  array[N] real y_tilde = normal_rng(mu, sigma);
+  array[N] real yrep = normal_rng(mu, sigma);
 }
 ```
 :::
 
 ::: incremental
-- You can pass `prior_PD` as a flag to enable drawing from prior predictive distribution
+- You can pass `prior_PD` as a flag to enable drawing from the prior predictive distribution
 :::
 
 ## Prior vs Posterior {.smaller}
 ::: incremental   
-- Comparing the prior to the posterior tell us how much the model learned from data
+- Comparing the prior to the posterior tells us how much the model learned from data
 - It also helps us to validate if our priors were reasonable
-- In `rstanarm`, you can use `posterior_vs_prior` function
+- In `rstanarm`, you can use the `posterior_vs_prior` function
 :::
 
 ::: {.fragment}
@@ -529,7 +536,7 @@ grid.arrange(p1, p2, p3, ncol = 3)
 :::
 
 ::: incremental
-- Your prior should cover the plausable range of parameter values
+- Your prior should cover the plausible range of parameter values
 - When we don't have a lot of data and parameters are complex, setting good priors takes work, but there are [guidelines](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)
 :::
 
@@ -583,7 +590,7 @@ draws |> mean_qi(.width = 0.90) |> knitr::kable() # also see ?median_qi(), etc
 ```{r}
 #| echo: true
 dpred <- d |> 
-  # same as add_epred_draws for lin reg not not for other GLMs
+  # same as add_epred_draws for lin reg not for other GLMs
   add_linpred_draws(m1, ndraws = 50)
 head(dpred, 3)
 ```
@@ -611,7 +618,7 @@ print(p)
 ## Posterior Predictions {.smaller}
 
 ::: incremental
-- Suppose we are interested in predicting the weight of a person with the height of 160 cm
+- Suppose we are interested in predicting the weight of a person with a height of 160 cm
 - This corresponds to the centered height of 5.4: ($160 - \bar{x}$)
 - We can now compute the distribution of the mean weight of a 160 cm person (reflecting variability in the slope and intercept only):
   - $\mu = \alpha + \beta \cdot 5.4$, for each posterior draw
@@ -634,7 +641,7 @@ draws[1:3, 4:8]
 ## Posterior Predictions {.smaller}
 
 ::: incremental
--   We can compare predictive and average densitives
+-   We can compare predictive and average densities
 -   Left panel showing the densities on their own
 -   Right panel showing the same densities in the context of raw observations
 :::
@@ -747,25 +754,25 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 
 ![](images/data-quality.png){fig-align="center"}
 
-## Evaluting Quality of the Model {.smaller}
+## Evaluating Quality of the Model {.smaller}
 
 ::: incremental
 - There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions
 - There is also a question of model fairness
    - How were the data collected? 
-   - People will likely interpret the results causually, even if not appropriate
+   - People will likely interpret the results causally, even if not appropriate
    - How will the model be used?
-- Just becuase the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well
+- Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well
 - Model performance is assessed on how well it can make predictions for the types of questions that you are interested in
 :::
 
 
 
-## Evaluting Quality of the Model {.smaller}
+## Evaluating Quality of the Model {.smaller}
 
 ::: incremental
-- Once we are satisified that the draws are statistically well-behaved, we can focus on evaluating predictive performance
-- We typically evalutate predictive performance in-sample and out-of-sample
+- Once we are satisfied that the draws are statistically well-behaved, we can focus on evaluating predictive performance
+- We typically evaluate predictive performance in-sample and out-of-sample
 - In general, a good model is well-calibrated and makes sharp predictions (Gneiting et al. 2007)[^1]
 - For in-sample assessment, we perform Posterior Predictive Checks or PPCs
 - To assess out-of-sample performance, we rely on cross-validation or its approximations
@@ -777,10 +784,10 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 
 ## Model Evaluation {.smaller}
 
-Here is the high level plan of attack:
+Here is the high-level plan of attack:
 
 ::: incremental
-- Fit a linear model to the full !Kung dataset (not just adults) and let `RStanArm` pick the priors
+- Fit a linear model to the full !Kung dataset (not just adults) and let `RStanArm` pick the priors (don't do this at home)
 - We know that this model is not quite right
 - Evaluate the model fit 
 - Fix the model by thinking about the relationship between height and weight
@@ -790,6 +797,10 @@ Here is the high level plan of attack:
 
 ## Model Evaluation {.smaller}
 
+::: incremental
+- The following fits a linear model to the full dataset (not just adults)
+:::
+
 ```{r}
 #| cache: true
 #| echo: false
@@ -797,6 +808,7 @@ d <- readr::read_csv("data/howell.csv")
 m2 <- readr::read_rds("models/m2.rds")
 ```
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
@@ -811,6 +823,7 @@ m2 <- stan_glm(
 )
 summary(m2)
 ```
+:::
 
 ::: incremental
 -   There were no sampling problems
@@ -829,7 +842,7 @@ summary(m2)
 ## Visual Posterior Predictive Checks {.smaller}
 
 ::: incremental
-- The idea behind PPCs is to compare the distribution of of the observation to posterior predictions
+- The idea behind PPCs is to compare the distribution of the observation to posterior predictions
 - We already saw an example of how to do it by hand
 - Here, we will do using functions in `RStanArm`
 :::
@@ -859,7 +872,7 @@ ppc_dens_overlay(d$weight, yrep[s, ])
 ## Visual Posterior Predictive Checks {.smaller}
 
 ::: incremental
-- We can also compute the distrubutions of test statistics:    
+- We can also compute the distributions of test statistics:    
 :::
 
 ::: {.fragment}
@@ -878,7 +891,7 @@ grid.arrange(p1, p2, p3, p4, ncol = 4)
 :::
 
 ::: incremental
-- `ppc_stat` is a shorthand for a computation on each posterior (predictive) draw
+- `ppc_stat` is a shorthand for computation on each posterior (predictive) draw
 - For example, `ppc_stat(d$weight, yrep, stat = "mean")` is equivalent to:
    - Setting $T(y) = \text{mean(d\$weight)}$ and $T_{\text{yrep}} = \text{rowMeans(yrep)}$ 
 :::
@@ -923,7 +936,7 @@ bayesplot::ppc_intervals(
 
 ::: incremental
 - We looked at some visual evidence for in-sample model accuracy
-- The model is clearly doing a poor job at capturing observed data, particularly in the lower quantiles of the predictive distribution
+- The model is clearly doing a poor job of capturing observed data, particularly in the lower quantiles of the predictive distribution
 - In a situation like this, we would typically proceed to model improvements
 - Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit[^2]
 - We do this, so we can assess the relative performance of the next set of models
@@ -948,7 +961,7 @@ bayesplot::ppc_intervals(
 ::: incremental
 - One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
    - $\text{MSE} = \frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2$
-   - Or it's scaled version which devides the summand by $\V(y_i | \theta)$
+   - Or its scaled version which divides the summand by $\V(y_i | \theta)$
 - These measures do not work well for non-normal models 
 - On the plus side, it is intuitive and computation is easy
 - Note that if we just average the errors, we will get zero by definition
@@ -1000,19 +1013,32 @@ calib(yrep, d$weight, 0.90)
 ## Quantifying Model Accuracy {.smaller}
 
 ::: incremental
-- A popular "proper" scoring for probabilisitc prediction is log score
+- A popular "proper" scoring for probabilistic prediction is log score
 - This is equivalent to the log predictive density $\log f(y | \theta)$
-- We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data generating process
+- We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data-generating process
 - This quantity is approximated by log-pointwise-predictive-density
 $$
-\text{llpd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
+\text{lppd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
 $$
+- To compute this quantity, fit the model N times, dropping one point at a time (-n)
+- S is the number of posterior samples, and $\theta_{-n, s}$, is the s-th sample that we fit to model without the n-the data point
+- [PSIS-LOO](https://arxiv.org/abs/1507.04544) (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times
 :::
 
-::: {.fragment}
+
+
+## Quantifying Model Accuracy {.smaller}
+
 ```{r}
+#| cache: true
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
 #| echo: true
-
-loo(m2)
+library(loo)
+lm2 <- loo(m2)
+lm2
+plot(lm2)
 ```
-:::
+
+

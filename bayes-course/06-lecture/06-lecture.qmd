@@ -357,6 +357,7 @@ d |>
 
 ## Predicting For New Data {.smaller}
 
+::: {.fragment}
 ```{r}
 #| cache: true
 #| fig-width: 6
@@ -375,5 +376,783 @@ pred |>
 ```
 :::
 
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   To build up a larger regression model, we will take a look at the quality of wine dataset from the UCI machine learning repository
+:::
+
+::: {.fragment}
+![](images/redwine.png){fig-align="center" height="500"}
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   Our task is to predict (subjective) quality of wine from measurements like acidity, sugar, and chlorides
+-   The outcome is ordinal, which should be analyzed using ordinal regression, but we will start with linear regression
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| output-location: column
+d <- readr::read_delim("data/winequality-red.csv")
+
+# remove duplicates
+d <- d[!duplicated(d), ]
+p1 <- ggplot(aes(x = quality), data = d)
+p1 <- p1 + geom_histogram() + 
+  ggtitle("Red wine quality ratings")
+p2 <- ggplot(aes(quality, alcohol), data = d)
+p2 <- p2 + 
+  geom_point(position = 
+               position_jitter(width = 0.2),
+             size = 0.3)
+grid.arrange(p1, p2, nrow = 2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- As before, we will center the predictors, but this time we will also devide by standard deviation 
+- This will make the coefficients comparable
+- If you have binary inputs, it may make sense to divide by 2 standard deviations (Page 186 in Regresion and Other Stories)
+- We will also center the quality score
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+
+ds <- d |>
+  scale() |>
+  as_tibble() |>
+  mutate(quality = d$quality - 5.5)
+head(ds)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- We can now fit our first regression to alcohol only
+- After standardization, and since we don't know much about wine, we can set weakly informative priors
+:::
+
+```{r}
+#| cache: true
+#| echo: false
+m1 <- readr::read_rds("models/m1.rds")
+```
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+
+m1 <- stan_glm(quality ~ alcohol, 
+               data = ds,
+               family = gaussian,
+               prior_intercept = normal(0, 1),
+               prior = normal(0, 1),
+               prior_aux = exponential(1),
+               iter = 500,
+               chains = 4)
+summary(m1)
+```
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: false
+summary(m1)
+```
+:::
+
+## Priors in RStanArm {.smaller}
+
+::: incremental
+- When we say `prior = normal(0, 1)` in RStanArm, every $\beta$, except for the intercept will be given this prior
+- When setting informative priors, you may want to set a specific prior for each $\beta$
+- Suppose your model is:
+$$
+y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \sigma\right)
+$$
+:::
+
+::: incremental
+- And you want to put a $\text{Normal}(-3, 1)$ on $\beta_1$ and $\text{Normal}(2, 0.1)$ on $\beta_2$
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+my_prior <- normal(location = c(-3, 2), scale = c(1, 0.1))
+stan_glm(y ~ x1 + x2, data = dat, prior = my_prior)
+```
+:::
+
+::: incremental
+- Refer to [this](https://cran.r-project.org/web/packages/rstanarm/vignettes/priors.html) vignette for more information about this topic
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   We can look at the inference using `mcmc_areas`
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+library(bayesplot)
+mcmc_areas(m1)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- Let's predict the rating at the high and low alcohol content
+- On standardized scale, that would correspond to alcohol measurement of 4 and -2 (or about 8 and 15 on the original scale) 
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+library(bayesplot)
+d_new <- tibble(alcohol = c(-2, 4))
+pred <- m1 |>
+  posterior_predict(newdata = d_new) |>
+  data.frame()
+colnames(pred) <- c("low_alc", "high_alc") 
+pred <- tidyr::pivot_longer(pred, everything(), 
+                            names_to = "alc",
+                            values_to = "value")
+p <- ggplot(aes(x = value), 
+            data = pred)
+p + geom_density(aes(fill = alc, color = alc), 
+                 alpha = 1/4) +
+  geom_histogram(aes(x = quality, 
+                     y = after_stat(density)), 
+                 alpha = 1/2,
+                 data = ds) +
+  xlab("Quality Score (-2.5, +2.5)") + ylab("")
+```
+:::
 
 
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   We don't expect particularly good fit yet
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+yrep1 <- posterior_predict(m1) # predict at every observation
+ppc_ecdf_overlay(ds$quality, yrep1[sample(nrow(yrep1), 50), ])
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   We can take a look at the distribution of a few statistics to check where the model is particularly strong or weak
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+p1 <- ppc_stat(ds$quality, yrep1, stat = "max")
+p2 <- ppc_stat(ds$quality, yrep1, stat = "min")
+grid.arrange(p1, p2, ncol = 2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   We can also look at predictions directly, and compared them to observed data
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+s <- sample(nrow(yrep1), 50); 
+p1 <- ppc_ribbon(ds$quality[s], yrep1[, s])
+p2 <- ppc_intervals(ds$quality[s], yrep1[, s])
+grid.arrange(p1, p2, nrow = 2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+-   We can now fit a larger model and compare the results
+:::
+
+```{r}
+#| cache: true
+#| echo: false
+m2 <- readr::read_rds("models/m2.rds")
+```
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+
+m2 <- stan_glm(quality ~ ., 
+               data = ds,
+               family = gaussian,
+               prior_intercept = normal(0, 1),
+               prior = normal(0, 1),
+               prior_aux = exponential(1),
+               iter = 700,
+               chains = 4)
+summary(m2)
+```
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: false
+summary(m2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- We can look at all the parameters in one plot, excluding `sigma`
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+#| echo: true
+mcmc_areas(m2, pars = vars(!sigma))
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- Did we improve the model?
+- We will check accuracy using MSE for both models
+- We will also check the width of posterior intervals
+- Finally, we will compare the models using PSIS-LOO CV (preferred)
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 10
+#| fig-height: 3
+#| fig-align: center
+#| cache: true
+#| echo: true
+yrep2 <- posterior_predict(m2)
+p3 <- ppc_intervals(ds$quality[s], yrep2[, s])
+grid.arrange(p2, p3, nrow = 2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- Comparing (Root) Mean Square Errors
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+(colMeans(yrep1) - ds$quality)^2 |> mean() |> sqrt() |> round(2)
+(colMeans(yrep2) - ds$quality)^2 |> mean() |> sqrt() |> round(2)
+```
+:::
+
+::: incremental
+- Comparing posterior intervals
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+width <- function(yrep, q1, q2) {
+  q <- apply(yrep, 2, function(x) quantile(x, probs = c(q1, q2)))
+  width <- apply(q, 2, diff)
+  return(mean(width))
+}
+
+width(yrep1, 0.25, 0.75) |> round(2)
+width(yrep2, 0.25, 0.75) |> round(2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- Let's estimate PSIS-LOO CV, a measure of out-of-sample predictive performance
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+#| cache: true
+#| output-location: column-fragment
+library(loo)
+options(mc.cores = 4)
+loo1 <- loo(m1); loo2 <- loo(m2)
+plot(loo1); plot(loo2)
+```
+:::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- Finally, we can compare the models using `loo_compare`
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+loo_compare(loo1, loo2)
+```
+:::
+
+## Models for Count Data {.smaller}
+
+::: incremental
+-   Modeling count data is typically part of a general GLM framework
+-   The general setup is that we have:
+    - Reponse vector $y$, and predictor matrix $X$
+    - Linear predictor: $\eta = \alpha + X\beta$
+    - $\E(y | X) = g^{-1}(\eta)$, where $g$ is the link function that maps the linear predictor onto the observational scale
+    - For linear regression, $g$ is the identity function (i.e., no transformation)
+    - The Poisson data model is $y_i \sim \text{Poisson}(\lambda_i)$, where $\lambda_i = \exp(X_i\beta)$, and so our link function $g(x) = \log(x)$
+    - As stated before, for one observation $y$, $f(y|\lambda) = \frac{1}{y!} \lambda^y e^{-\lambda}$
+:::
+
+## Poisson Posterior {.smaller}
+
+::: incremental
+- To derive the posterior distribution for Poisson, we consider K regression inputs and independent priors on all $K+1$: $\alpha$ and $\beta_1, \beta_2, ..., \beta_k$
+$$
+\begin{eqnarray}
+f\left(\alpha,\beta \mid y,X\right) & \propto &
+  f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot
+  \prod_{i=1}^N {\frac{g^{-1}(\eta_i)^{y_i}}{y_i!} e^{-g^{-1}(\eta_i)}} \\
+  & \propto & f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot 
+  \prod_{i=1}^N {\frac{\exp(\alpha + x_i^\top\beta)^{y_i}}{y_i!} e^{-\exp(\alpha + x_i^\top\beta)}}
+\end{eqnarray}
+$$
+- When the rate is observed at different time scales or unit scales, we introduce an exposure $u_i$, which multiplies the rate $\lambda_i$
+- The data model then becomes
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Poisson}\left(u_i e^{X_i\beta}\right) \\
+& = & \text{Poisson}\left(e^{\log(u_i)} e^{X_i\beta}\right) \\
+& = &\text{Poisson}\left(e^{X_i\beta + \log(u_i)}\right)
+\end{eqnarray}
+$$
+:::
+
+## Poisson Simulation {.smaller}
+
+::: incremental
+- We can setup a forward simulation to generate Poisson data
+- It's a good practice to fit simulated data and see if you can recover the parameters from a known data generating process
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+set.seed(123)
+n <- 100
+a <- 1.5
+b <- 0.5
+x <- runif(n, -5, 5)
+eta <- a + x * b   # could be negative
+lambda <- exp(eta) # always positive
+y <- rpois(n, lambda)
+sim <- tibble(y, x, lambda)
+p <- ggplot(aes(x, y), data = sim)
+p + geom_point(size = 0.5) + 
+  geom_line(aes(y = lambda), 
+            col = 'red', 
+            linewidth = 0.2) +
+  ggtitle("Simulated Poission Data")
+```
+:::
+
+## Fitting Simulated Data {.smaller}
+::: incremental
+- Complex and non-linear models may have a hard time recovering parameters from forward simulations
+- The process for fitting simulated data may give some insight about the data generated process and priors
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+#| output-location: column
+
+# fitting from eta = 1.5 +  0.5 * x
+m3 <- stan_glm(y ~ x,
+               prior_intercept = normal(0, 1),
+               prior = normal(0, 1),
+               family = poisson(link = "log"), 
+               data = sim,
+               chains = 4,
+               refresh = 0,
+               iter = 1000)
+summary(m3)
+```
+:::
+
+## Checking Poission Assumption {.smaller}
+
+::: incremental
+-   We know that for Poisson model, $\E(y_i) = \V(y_i)$, or equivalently $\sqrt{\E(y_i)} = \text{sd}(y_i)$
+-   We can check that the prediction errors follow this trend, since we have a posterior predictive distribution at each $y_i$
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+#| output-location: column
+library(latex2exp)
+yrep <- posterior_predict(m3)
+d <- tibble(y_mu_hat = sqrt(colMeans(yrep)),
+            y_var = apply(yrep, 2, sd))
+p <- ggplot(aes(y_mu_hat, y_var), data = d)
+p + geom_point(size = 0.5) +
+  geom_abline(slope = 1, intercept = 0,
+              linewidth = 0.2) +
+  xlab(TeX(r'($\sqrt{\widehat{E(y_i)}}$)')) +
+  ylab(TeX(r'($\widehat{sd(y_i)}$)'))
+```
+:::
+
+## Posterior Predictive Checks {.smaller}
+
+::: {.fragment}
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| cache: true  
+
+pred <- add_predicted_draws(sim, m3)
+p1 <- pred |>
+  ggplot(aes(x = x, y = .prediction)) +
+  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +
+  geom_point(aes(x = x, y = y), size = 0.5, alpha = 0.2)
+p2 <- pp_check(m3)
+grid.arrange(p1, p2, ncol = 2)
+```
+:::
+
+## Adding Exposure {.smaller}
+::: incremental
+- Let's check the effect of adding exposure variable to the DGP
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+n <- 100
+a <- 1.5
+b <- 0.5
+x <- runif(n, -5, 5)
+u <- rexp(n, 0.2)
+eta  <- a + x * b + log(u) 
+# or <- a + x * b
+
+lambda <- exp(eta)
+y <- rpois(n, lambda)
+# or rpois(n, u * lambda)
+
+sim_exposure <- tibble(y, x, lambda, 
+                       exposure = u)
+p <- ggplot(aes(x, y), data = sim_exposure)
+p + geom_point(size = 0.5) + 
+ggtitle("Simulated Poission Data with Exposure")
+```
+:::
+
+## Checking Predictions {.smaller}
+
+::: panel-tabset
+
+## Code
+
+::: incremental
+- Suppose we fit the model with and without the exposure term
+:::
+
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+m4 <- stan_glm(y ~ x,
+               prior_intercept = normal(0, 1),
+               prior = normal(0, 1),
+               family = poisson(link = "log"), 
+               data = sim_exposure, refresh = 0,
+               iter = 1200)
+m5 <- stan_glm(y ~ x,
+               prior_intercept = normal(0, 1),
+               prior = normal(0, 1),
+               family = poisson(link = "log"), 
+               offset = log(exposure),
+               refresh = 0,
+               data = sim_exposure, iter = 1200)
+p1 <- pp_check(m4) + ggtitle("No Exposure")
+p2 <- pp_check(m5) + ggtitle("With Exposure")
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+
+pred4 <- add_predicted_draws(sim_exposure, m4)
+pred5 <- add_predicted_draws(sim_exposure, m5, 
+          offset = log(sim_exposure$exposure))
+p3 <- pred4 |>
+  ggplot(aes(x = x, y = .prediction)) +
+  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +
+  geom_point(aes(x = x, y = y), size = 0.5, alpha = 0.2)
+p4 <- pred5 |>
+  ggplot(aes(x = x, y = .prediction)) +
+  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +
+  geom_point(aes(x = x, y = y), size = 0.5, alpha = 0.2)
+```
+:::
+
+:::
+:::
+
+## Plot
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+#| fig-align: center
+#| echo: false
+#| cache: true
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+
+:::
+
+## Example: Trapping Roaches! {.smaller}
+
+::: incremental
+- This example comes from [Gelman and Hill (2007)](http://www.stat.columbia.edu/~gelman/arm/)
+- These data comes from a pest management program aimed to reduce the number of roaches in the city apartments
+- The outcome $y$, is the number of roaches caught
+- There is a pre-treatment number of roaches, `roach1`, a `treatment` indicator, and `seniour` indicator for only elderly residents in a building
+- There is also `exposure2`, a number of days for which the raoch traps were used
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+
+# rescale to make sure coeficients are approximately 
+# on the same scale
+roaches <- roaches |>
+  mutate(roach100 = roach1 / 100) |>
+  as_tibble()
+head(roaches)
+```
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- Out model has three inputs and an intercepts term
+- Since the traps were set for different number of days, we will include an exposure offset $u_i$
+- $b_t$ is the treatment coefficient, $b_r$ is the baseline roach level, and $b_s$ is the senior coefficient
+- We need to consider reasonable priors on all those
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Poisson}(u_i\lambda_i)\\
+\eta_i & = & \alpha + \beta_t x_{it} + \beta_r x_{ir} + \beta_s x_{is} \\
+\lambda_i & = & \exp(\eta_i) \\
+\alpha & \sim & \text{Normal}(?, \, ?) \\
+\beta & \sim & \text{Normal}(?, \, ?)
+\end{eqnarray}
+$$
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- If we look at the exposure, an average number of days that the traps were set was about 1
+- How many roaches do we expect to trap during a whole day? Hundreds would probably be on the high side, so our prior model should not be predicting say 10s of thousands
+- What is the interpretation of the intercept in this regression?
+- There is no way (to my knowledge) to put a half-normal or exponential distribution on the intercept in `rstanarm` and if we put `Normal(3, 1)`, it's unlikely to be negative the number or roaches can be as high as `Exp(5) ~ 150`
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Poisson}(u_i\lambda_i)\\
+\eta_i & = & \alpha + \beta_t x_{it} + \beta_r x_{ir} + \beta_s x_{is} \\
+\lambda_i & = & \exp(\eta_i) \\
+\alpha & \sim & \text{Normal}(3, 1) \\
+\beta & \sim & \text{Normal}(?, \, ?)
+\end{eqnarray}
+$$
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- How large can we expect the effects be in this regression?
+- Let's just consider treatment
+- Suppose we estimate the coeficient to be -0.05
+- That means it reduces roach infestation by 5% on average (exp(-0.05) = 0.95)
+- What if it's -2; that would mean an 86% reduction, an unlikely but possible outcome
+- With this in mind, we will set the betas to Normal(0, 1)
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Poisson}(u_i\lambda_i)\\
+\eta_i & = & \alpha + \beta_t x_{it} + \beta_r x_{ir} + \beta_s x_{is} \\
+\lambda_i & = & \exp(\eta_i) \\
+\alpha & \sim & \text{Normal}(3, 1) \\
+\beta & \sim & \text{Normal}(0, \, 1)
+\end{eqnarray}
+$$
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- We could do a quick sanity check using the prior predictive distribution
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+m6 <- stan_glm(y ~ roach100 + treatment + senior, 
+               offset = log(exposure2),
+               prior_intercept = normal(3, 1),
+               prior = normal(0, 1),
+               family = poisson(link = "log"), 
+               data = roaches, 
+               iter = 600,
+               refresh = 0,
+               prior_PD = 1,
+               seed = 123)
+yrep_m6 <- posterior_predict(m6)
+summary(colMeans(yrep_m6))
+```
+:::
+
+::: incremental
+- The median is not unreasonable but we would not expect the max (of the average!) to be 52,000
+- The numbers or not in another universe, however, so we will go with it
+- Try to do what people usually do, which is put the scale on the intercept at 10 or more and scale of the betas on 5 or more, and see what you get
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- We will now fit the model and evalute the inferences
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+m7 <- stan_glm(y ~ roach100 + treatment + senior, 
+               offset = log(exposure2),
+               prior_intercept = normal(3, 1),
+               prior = normal(0, 1),
+               family = poisson(link = "log"), 
+               data = roaches, 
+               iter = 600,
+               refresh = 0,
+               seed = 123)
+summary(m7)
+```
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- PPCs
+- compute the zeros expected under the model and predicted
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+summary(m7)
+```
+:::
+
+## Negative Binomial {.smaller}
