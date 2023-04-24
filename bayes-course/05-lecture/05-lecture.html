@@ -403,6 +403,11 @@ Eric Novik | Spring 2023 | Lecture 5
 </div>
 
 </section>
+<section id="homework-feedback" class="slide level2">
+<h2>Homework Feedback</h2>
+
+<img data-src="images/scared.avif" width="672" class="r-stretch quarto-figure-center"><p><a href="https://www.polleverywhere.com/multiple_choice_polls/tW6UTzV6VKtaUk8yKO6jx">How was Homework 4?</a></p>
+</section>
 <section id="linear-regression-and-model-evaluation" class="slide level2">
 <h2>Linear Regression and Model Evaluation</h2>
 <div class="columns">
@@ -558,7 +563,7 @@ Eric Novik | Spring 2023 | Lecture 5
 <div>
 <ul>
 <li class="fragment">For now, we will focus on the linear subset of the data</li>
-<li class="fragment">We will denonstrate the non-linear model at the end</li>
+<li class="fragment">We will demonstrate the non-linear model at the end</li>
 <li class="fragment">We will restrict our attention to adults (age &gt; 18)</li>
 </ul>
 </div>
@@ -577,16 +582,17 @@ Eric Novik | Spring 2023 | Lecture 5
 <section id="general-aproach" class="slide level2 smaller">
 <h2>General Aproach</h2>
 <div>
-<ul>
+<ol type="1">
 <li class="fragment">Assess the scope of the inferences that you will get with this model</li>
-<li class="fragment">In the case of linear regression, there is likely no causal mechanism and the coeficients should be intepreted as comparisons (RAOS, Page 84)</li>
+<li class="fragment">In the case of linear regression, there is likely no causal mechanism and the coefficients should be interpreted as comparisons (RAOS, Page 84)</li>
 <li class="fragment">Set up reasonable priors and likelihood</li>
-<li class="fragment">Perform a prior predictive simualtion</li>
+<li class="fragment">(*) For more complex models: perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See <a href="https://www.generable.com/post/fitting-a-basic-sir-model-in-stan">this</a> example for a standard epidemiological model.</li>
+<li class="fragment">Perform a prior predictive simulation</li>
 <li class="fragment">Adjust your priors</li>
 <li class="fragment">Fit the model to data</li>
-<li class="fragment">Assess quality of the inference and quality of the model</li>
-<li class="fragment">Adjust your model</li>
-</ul>
+<li class="fragment">Assess the quality of the inference and the quality of the model</li>
+<li class="fragment">Improve or fix your model and go back to #3</li>
+</ol>
 </div>
 </section>
 <section id="howell-regression" class="slide level2 smaller">
@@ -604,8 +610,8 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 \end{eqnarray}
 \]</span></li>
 <li class="fragment">We have to specify <span class="math inline">\(\alpha_{l}\)</span> and <span class="math inline">\(\alpha_s\)</span>, where l and s signify location and scale, and r, the rate of the exponential</li>
-<li class="fragment">If we work on the original scale for <span class="math inline">\(x\)</span>, it is awkward to choose a prior for the intercept : it correponds to the weight of the person with zero height</li>
-<li class="fragment">This can be fixed by subtracting average height from <span class="math inline">\(x\)</span></li>
+<li class="fragment">If we work on the original scale for <span class="math inline">\(x\)</span>, it is awkward to choose a prior for the intercept : it corresponds to the weight of the person with zero height</li>
+<li class="fragment">This can be fixed by subtracting the average height from <span class="math inline">\(x\)</span></li>
 </ul>
 </div>
 </section>
@@ -615,7 +621,7 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <ul>
 <li class="fragment">We define a new variable, the centered version of <span class="math inline">\(x\)</span>: <span class="math inline">\(x^c_i = x_i - \bar{x}\)</span></li>
 <li class="fragment">Now <span class="math inline">\(\alpha\)</span> corresponds to the weight of an average person</li>
-<li class="fragment">Checking <a href="https://en.wikipedia.org/wiki/Human_body_weight">Wikipedia</a> reveals that average weight of a person in Africa is about 60 kg</li>
+<li class="fragment">Checking <a href="https://en.wikipedia.org/wiki/Human_body_weight">Wikipedia</a> reveals that the average weight of a person in Africa is about 60 kg</li>
 <li class="fragment">They don’t state the standard deviation but it is unlikely that an African adult would weigh less than 30 kg and more than 120 kg and so we will set the prior sd = 10 <span class="math display">\[
 \begin{eqnarray}
 y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
@@ -655,8 +661,8 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <div>
 <ul>
 <li class="fragment">We know that <span class="math inline">\(\sigma\)</span> must be positive and so a possible choice for a the prior is <span class="math inline">\(\text{Normal}^+\)</span>, Exponential, etc.</li>
-<li class="fragment">At this stage they key is rule out implausable values, not to get something precise, partcularly since we have enough data (&gt; 340 observations)</li>
-<li class="fragment">From the background data, the residual standard error was 4.6, which implies the exponential rate parameter to be 0.2 <span class="math display">\[
+<li class="fragment">At this stage, the key is to rule out implausible values, not to get something precise, particularly since we have enough data (&gt; 340 observations)</li>
+<li class="fragment">From the background data, the residual standard error was 4.6, which implies the exponential rate parameter is 0.2 <span class="math display">\[
 \begin{eqnarray}
 y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 \mu_i &amp; = &amp; \alpha + \beta x^c_i \\
@@ -794,8 +800,8 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <h2>Deriving a Posterior Distribution</h2>
 <div>
 <ul>
-<li class="fragment">We have seen how to derive posterior and posterior predictive distribution</li>
-<li class="fragment">Three dimentional posterior: <span class="math inline">\(f(\alpha, \beta, \sigma)\)</span>. What happened to <span class="math inline">\(\mu\)</span>?</li>
+<li class="fragment">We have seen how to derive the posterior and posterior predictive distribution</li>
+<li class="fragment">Three dimentional posterior: <span class="math inline">\(f(\alpha, \beta, \sigma)\)</span>. <a href="https://www.polleverywhere.com/free_text_polls/Uj05I36LJbqhNiOylx6Wa">What happened</a> to <span class="math inline">\(\mu\)</span>?</li>
 <li class="fragment">We construct the posterior from the prior and data likelihood (for each <span class="math inline">\(y_i\)</span>): <span class="math display">\[
 \begin{eqnarray}
 &amp;\text{Prior: }f(\alpha, \beta, \sigma) = f_1(\alpha) f_2(\beta) f_3(\sigma) \\
@@ -812,7 +818,7 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <h2>Fitting the Model</h2>
 <div>
 <ul>
-<li class="fragment">Even though our prior is slighly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting</li>
+<li class="fragment">Even though our prior is slightly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting</li>
 <li class="fragment">We will use <code>stan_glm()</code> function in <code>rstanarm</code></li>
 <li class="fragment"><code>rstanarm</code> has default priors, but you should specify your own:</li>
 </ul>
@@ -950,13 +956,13 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb20-21"><a href="#cb20-21"></a>  }</span>
 <span id="cb20-22"><a href="#cb20-22"></a>}</span>
 <span id="cb20-23"><a href="#cb20-23"></a><span class="kw">generated quantities</span> {</span>
-<span id="cb20-24"><a href="#cb20-24"></a>  <span class="dt">array</span>[N] <span class="dt">real</span> y_tilde = normal_rng(mu, sigma);</span>
+<span id="cb20-24"><a href="#cb20-24"></a>  <span class="dt">array</span>[N] <span class="dt">real</span> yrep = normal_rng(mu, sigma);</span>
 <span id="cb20-25"><a href="#cb20-25"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div>
 <ul>
-<li class="fragment">You can pass <code>prior_PD</code> as a flag to enable drawing from prior predictive distribution</li>
+<li class="fragment">You can pass <code>prior_PD</code> as a flag to enable drawing from the prior predictive distribution</li>
 </ul>
 </div>
 </section>
@@ -964,9 +970,9 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Prior vs Posterior</h2>
 <div>
 <ul>
-<li class="fragment">Comparing the prior to the posterior tell us how much the model learned from data</li>
+<li class="fragment">Comparing the prior to the posterior tells us how much the model learned from data</li>
 <li class="fragment">It also helps us to validate if our priors were reasonable</li>
-<li class="fragment">In <code>rstanarm</code>, you can use <code>posterior_vs_prior</code> function</li>
+<li class="fragment">In <code>rstanarm</code>, you can use the <code>posterior_vs_prior</code> function</li>
 </ul>
 </div>
 <div class="fragment">
@@ -982,7 +988,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 <div>
 <ul>
-<li class="fragment">Your prior should cover the plausable range of parameter values</li>
+<li class="fragment">Your prior should cover the plausible range of parameter values</li>
 <li class="fragment">When we don’t have a lot of data and parameters are complex, setting good priors takes work, but there are <a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">guidelines</a></li>
 </ul>
 </div>
@@ -1185,7 +1191,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>dpred <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> </span>
-<span id="cb24-2"><a href="#cb24-2"></a>  <span class="co"># same as add_epred_draws for lin reg not not for other GLMs</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>  <span class="co"># same as add_epred_draws for lin reg not for other GLMs</span></span>
 <span id="cb24-3"><a href="#cb24-3"></a>  <span class="fu">add_linpred_draws</span>(m1, <span class="at">ndraws =</span> <span class="dv">50</span>)</span>
 <span id="cb24-4"><a href="#cb24-4"></a><span class="fu">head</span>(dpred, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1226,7 +1232,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Posterior Predictions</h2>
 <div>
 <ul>
-<li class="fragment">Suppose we are interested in predicting the weight of a person with the height of 160 cm</li>
+<li class="fragment">Suppose we are interested in predicting the weight of a person with a height of 160 cm</li>
 <li class="fragment">This corresponds to the centered height of 5.4: (<span class="math inline">\(160 - \bar{x}\)</span>)</li>
 <li class="fragment">We can now compute the distribution of the mean weight of a 160 cm person (reflecting variability in the slope and intercept only):
 <ul>
@@ -1260,7 +1266,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Posterior Predictions</h2>
 <div>
 <ul>
-<li class="fragment">We can compare predictive and average densitives</li>
+<li class="fragment">We can compare predictive and average densities</li>
 <li class="fragment">Left panel showing the densities on their own</li>
 <li class="fragment">Right panel showing the same densities in the context of raw observations</li>
 </ul>
@@ -1370,28 +1376,28 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <p><br> <br></p>
 
 <img data-src="images/data-quality.png" class="r-stretch quarto-figure-center"></section>
-<section id="evaluting-quality-of-the-model" class="slide level2 smaller">
-<h2>Evaluting Quality of the Model</h2>
+<section id="evaluating-quality-of-the-model" class="slide level2 smaller">
+<h2>Evaluating Quality of the Model</h2>
 <div>
 <ul>
 <li class="fragment">There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions</li>
 <li class="fragment">There is also a question of model fairness
 <ul>
 <li class="fragment">How were the data collected?</li>
-<li class="fragment">People will likely interpret the results causually, even if not appropriate</li>
+<li class="fragment">People will likely interpret the results causally, even if not appropriate</li>
 <li class="fragment">How will the model be used?</li>
 </ul></li>
-<li class="fragment">Just becuase the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well</li>
+<li class="fragment">Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well</li>
 <li class="fragment">Model performance is assessed on how well it can make predictions for the types of questions that you are interested in</li>
 </ul>
 </div>
 </section>
-<section id="evaluting-quality-of-the-model-1" class="slide level2 smaller">
-<h2>Evaluting Quality of the Model</h2>
+<section id="evaluating-quality-of-the-model-1" class="slide level2 smaller">
+<h2>Evaluating Quality of the Model</h2>
 <div>
 <ul>
-<li class="fragment">Once we are satisified that the draws are statistically well-behaved, we can focus on evaluating predictive performance</li>
-<li class="fragment">We typically evalutate predictive performance in-sample and out-of-sample</li>
+<li class="fragment">Once we are satisfied that the draws are statistically well-behaved, we can focus on evaluating predictive performance</li>
+<li class="fragment">We typically evaluate predictive performance in-sample and out-of-sample</li>
 <li class="fragment">In general, a good model is well-calibrated and makes sharp predictions (Gneiting et al.&nbsp;2007)<sup>1</sup></li>
 <li class="fragment">For in-sample assessment, we perform Posterior Predictive Checks or PPCs</li>
 <li class="fragment">To assess out-of-sample performance, we rely on cross-validation or its approximations</li>
@@ -1401,10 +1407,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <aside><ol class="aside-footnotes"><li id="fn1"><p>Gneiting, T., Balabdaoui, F., and Raftery, A. E. (2007) Probabilistic forecasts, calibration and sharpness. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 69(2), 243–268.</p></li></ol></aside></section>
 <section id="model-evaluation" class="slide level2 smaller">
 <h2>Model Evaluation</h2>
-<p>Here is the high level plan of attack:</p>
+<p>Here is the high-level plan of attack:</p>
 <div>
 <ul>
-<li class="fragment">Fit a linear model to the full !Kung dataset (not just adults) and let <code>RStanArm</code> pick the priors</li>
+<li class="fragment">Fit a linear model to the full !Kung dataset (not just adults) and let <code>RStanArm</code> pick the priors (don’t do this at home)</li>
 <li class="fragment">We know that this model is not quite right</li>
 <li class="fragment">Evaluate the model fit</li>
 <li class="fragment">Fix the model by thinking about the relationship between height and weight</li>
@@ -1415,9 +1421,15 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </section>
 <section id="model-evaluation-1" class="slide level2 smaller">
 <h2>Model Evaluation</h2>
+<div>
+<ul>
+<li class="fragment">The following fits a linear model to the full dataset (not just adults)</li>
+</ul>
+</div>
 <div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-28_77a0127229aeb273a4c333c4783c84fe">
 
 </div>
+<div class="fragment">
 <div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-29_ea6a6b2341af3dff143f9f0d7d8d2fb0">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
 <span id="cb41-2"><a href="#cb41-2"></a>  weight <span class="sc">~</span> height,</span>
@@ -1428,6 +1440,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb41-7"><a href="#cb41-7"></a>  <span class="at">seed =</span> <span class="dv">1234</span></span>
 <span id="cb41-8"><a href="#cb41-8"></a>)</span>
 <span id="cb41-9"><a href="#cb41-9"></a><span class="fu">summary</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <div>
 <ul>
@@ -1479,7 +1492,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Visual Posterior Predictive Checks</h2>
 <div>
 <ul>
-<li class="fragment">The idea behind PPCs is to compare the distribution of of the observation to posterior predictions</li>
+<li class="fragment">The idea behind PPCs is to compare the distribution of the observation to posterior predictions</li>
 <li class="fragment">We already saw an example of how to do it by hand</li>
 <li class="fragment">Here, we will do using functions in <code>RStanArm</code></li>
 </ul>
@@ -1514,7 +1527,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Visual Posterior Predictive Checks</h2>
 <div>
 <ul>
-<li class="fragment">We can also compute the distrubutions of test statistics:<br>
+<li class="fragment">We can also compute the distributions of test statistics:<br>
 </li>
 </ul>
 </div>
@@ -1536,7 +1549,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 <div>
 <ul>
-<li class="fragment"><code>ppc_stat</code> is a shorthand for a computation on each posterior (predictive) draw</li>
+<li class="fragment"><code>ppc_stat</code> is a shorthand for computation on each posterior (predictive) draw</li>
 <li class="fragment">For example, <code>ppc_stat(d$weight, yrep, stat = "mean")</code> is equivalent to:
 <ul>
 <li class="fragment">Setting <span class="math inline">\(T(y) = \text{mean(d\$weight)}\)</span> and <span class="math inline">\(T_{\text{yrep}} = \text{rowMeans(yrep)}\)</span></li>
@@ -1586,7 +1599,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div>
 <ul>
 <li class="fragment">We looked at some visual evidence for in-sample model accuracy</li>
-<li class="fragment">The model is clearly doing a poor job at capturing observed data, particularly in the lower quantiles of the predictive distribution</li>
+<li class="fragment">The model is clearly doing a poor job of capturing observed data, particularly in the lower quantiles of the predictive distribution</li>
 <li class="fragment">In a situation like this, we would typically proceed to model improvements</li>
 <li class="fragment">Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit<sup>1</sup></li>
 <li class="fragment">We do this, so we can assess the relative performance of the next set of models</li>
@@ -1610,7 +1623,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <li class="fragment">One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
 <ul>
 <li class="fragment"><span class="math inline">\(\text{MSE} = \frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2\)</span></li>
-<li class="fragment">Or it’s scaled version which devides the summand by <span class="math inline">\(\V(y_i | \theta)\)</span></li>
+<li class="fragment">Or its scaled version which divides the summand by <span class="math inline">\(\V(y_i | \theta)\)</span></li>
 </ul></li>
 <li class="fragment">These measures do not work well for non-normal models</li>
 <li class="fragment">On the plus side, it is intuitive and computation is easy</li>
@@ -1674,17 +1687,24 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Quantifying Model Accuracy</h2>
 <div>
 <ul>
-<li class="fragment">A popular “proper” scoring for probabilisitc prediction is log score</li>
+<li class="fragment">A popular “proper” scoring for probabilistic prediction is log score</li>
 <li class="fragment">This is equivalent to the log predictive density <span class="math inline">\(\log f(y | \theta)\)</span></li>
-<li class="fragment">We would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data generating process</li>
+<li class="fragment">We would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data-generating process</li>
 <li class="fragment">This quantity is approximated by log-pointwise-predictive-density <span class="math display">\[
-\text{llpd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
+\text{lppd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
 \]</span></li>
+<li class="fragment">To compute this quantity, fit the model N times, dropping one point at a time (-n)</li>
+<li class="fragment">S is the number of posterior samples, and <span class="math inline">\(\theta_{-n, s}\)</span>, is the s-th sample that we fit to model without the n-the data point</li>
+<li class="fragment"><a href="https://arxiv.org/abs/1507.04544">PSIS-LOO</a> (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times</li>
 </ul>
 </div>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="fu">loo</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="quantifying-model-accuracy-4" class="slide level2 smaller">
+<h2>Quantifying Model Accuracy</h2>
+<div class="cell" data-layout-align="center" data-hash="05-lecture_cache/revealjs/unnamed-chunk-36_02ecf82cde908ee9c72f819beaeaec07">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="fu">library</span>(loo)</span>
+<span id="cb56-2"><a href="#cb56-2"></a>lm2 <span class="ot">&lt;-</span> <span class="fu">loo</span>(m2)</span>
+<span id="cb56-3"><a href="#cb56-3"></a>lm2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Computed from 1200 by 544 log-likelihood matrix
@@ -1699,10 +1719,11 @@ Monte Carlo SE of elpd_loo is 0.1.
 All Pareto k estimates are good (k &lt; 0.5).
 See help('pareto-k-diagnostic') for details.</code></pre>
 </div>
-</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a><span class="fu">plot</span>(lm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
 </div>
 
-<div class="footer footer-default">
+<img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-36-1.png" width="384" class="r-stretch quarto-figure-center"><div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
 </div>
 </section>

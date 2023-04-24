@@ -903,6 +903,916 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div>
 </div>
+</section>
+<section id="priors-in-rstanarm" class="slide level2 smaller">
+<h2>Priors in RStanArm</h2>
+<div>
+<ul>
+<li class="fragment">When we say <code>prior = normal(0, 1)</code> in RStanArm, every <span class="math inline">\(\beta\)</span>, except for the intercept will be given this prior</li>
+<li class="fragment">When setting informative priors, you may want to set a specific prior for each <span class="math inline">\(\beta\)</span></li>
+<li class="fragment">Suppose your model is: <span class="math display">\[
+y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \sigma\right)
+\]</span></li>
+</ul>
+</div>
+<div>
+<ul>
+<li class="fragment">And you want to put a <span class="math inline">\(\text{Normal}(-3, 1)\)</span> on <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\text{Normal}(2, 0.1)\)</span> on <span class="math inline">\(\beta_2\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-17_4ccac435f4a7deaa433f9c3ef0888e0e">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>my_prior <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">2</span>), <span class="at">scale =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.1</span>))</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="fu">stan_glm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">data =</span> dat, <span class="at">prior =</span> my_prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Refer to <a href="https://cran.r-project.org/web/packages/rstanarm/vignettes/priors.html">this</a> vignette for more information about this topic</li>
+</ul>
+</div>
+</section>
+<section id="example-quality-of-wine-4" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We can look at the inference using <code>mcmc_areas</code></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">mcmc_areas</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-18-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-5" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">Let’s predict the rating at the high and low alcohol content</li>
+<li class="fragment">On standardized scale, that would correspond to alcohol measurement of 4 and -2 (or about 8 and 15 on the original scale)</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb18-2"><a href="#cb18-2"></a>d_new <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">alcohol =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">4</span>))</span>
+<span id="cb18-3"><a href="#cb18-3"></a>pred <span class="ot">&lt;-</span> m1 <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a>  <span class="fu">posterior_predict</span>(<span class="at">newdata =</span> d_new) <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>  <span class="fu">data.frame</span>()</span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="fu">colnames</span>(pred) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"low_alc"</span>, <span class="st">"high_alc"</span>) </span>
+<span id="cb18-7"><a href="#cb18-7"></a>pred <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(pred, <span class="fu">everything</span>(), </span>
+<span id="cb18-8"><a href="#cb18-8"></a>                            <span class="at">names_to =</span> <span class="st">"alc"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9"></a>                            <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb18-10"><a href="#cb18-10"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value), </span>
+<span id="cb18-11"><a href="#cb18-11"></a>            <span class="at">data =</span> pred)</span>
+<span id="cb18-12"><a href="#cb18-12"></a>p <span class="sc">+</span> <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">fill =</span> alc, <span class="at">color =</span> alc), </span>
+<span id="cb18-13"><a href="#cb18-13"></a>                 <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> quality, </span>
+<span id="cb18-15"><a href="#cb18-15"></a>                     <span class="at">y =</span> <span class="fu">after_stat</span>(density)), </span>
+<span id="cb18-16"><a href="#cb18-16"></a>                 <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb18-17"><a href="#cb18-17"></a>                 <span class="at">data =</span> ds) <span class="sc">+</span></span>
+<span id="cb18-18"><a href="#cb18-18"></a>  <span class="fu">xlab</span>(<span class="st">"Quality Score (-2.5, +2.5)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-19-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-6" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We don’t expect particularly good fit yet</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>yrep1 <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m1) <span class="co"># predict at every observation</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="fu">ppc_ecdf_overlay</span>(ds<span class="sc">$</span>quality, yrep1[<span class="fu">sample</span>(<span class="fu">nrow</span>(yrep1), <span class="dv">50</span>), ])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-20-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-7" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We can take a look at the distribution of a few statistics to check where the model is particularly strong or weak</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ppc_stat</span>(ds<span class="sc">$</span>quality, yrep1, <span class="at">stat =</span> <span class="st">"max"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ppc_stat</span>(ds<span class="sc">$</span>quality, yrep1, <span class="at">stat =</span> <span class="st">"min"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-21-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-8" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We can also look at predictions directly, and compared them to observed data</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(yrep1), <span class="dv">50</span>); </span>
+<span id="cb21-2"><a href="#cb21-2"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ppc_ribbon</span>(ds<span class="sc">$</span>quality[s], yrep1[, s])</span>
+<span id="cb21-3"><a href="#cb21-3"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ppc_intervals</span>(ds<span class="sc">$</span>quality[s], yrep1[, s])</span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-9" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We can now fit a larger model and compare the results</li>
+</ul>
+</div>
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-23_83663e7cf6647d428cfc1031f34701f8">
+
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-24_8d427a7a7f611606dd31d4986aaa1373">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(quality <span class="sc">~</span> ., </span>
+<span id="cb22-2"><a href="#cb22-2"></a>               <span class="at">data =</span> ds,</span>
+<span id="cb22-3"><a href="#cb22-3"></a>               <span class="at">family =</span> gaussian,</span>
+<span id="cb22-4"><a href="#cb22-4"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb22-5"><a href="#cb22-5"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb22-6"><a href="#cb22-6"></a>               <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="dv">1</span>),</span>
+<span id="cb22-7"><a href="#cb22-7"></a>               <span class="at">iter =</span> <span class="dv">700</span>,</span>
+<span id="cb22-8"><a href="#cb22-8"></a>               <span class="at">chains =</span> <span class="dv">4</span>)</span>
+<span id="cb22-9"><a href="#cb22-9"></a><span class="fu">summary</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-25_53d4f11e41c9845ad10c6bc0462bcbc8">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      quality ~ .
+ algorithm:    sampling
+ sample:       1400 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 1359
+ predictors:   12
+
+Estimates:
+                       mean   sd   10%   50%   90%
+(Intercept)           0.1    0.0  0.1   0.1   0.1 
+fixed_acidity         0.0    0.1  0.0   0.0   0.1 
+volatile_acidity     -0.2    0.0 -0.2  -0.2  -0.2 
+citric_acid           0.0    0.0 -0.1   0.0   0.0 
+residual_sugar        0.0    0.0  0.0   0.0   0.0 
+chlorides            -0.1    0.0 -0.1  -0.1  -0.1 
+free_sulfur_dioxide   0.0    0.0  0.0   0.0   0.1 
+total_sulfur_dioxide -0.1    0.0 -0.1  -0.1  -0.1 
+density               0.0    0.0 -0.1   0.0   0.0 
+pH                   -0.1    0.0 -0.1  -0.1   0.0 
+sulphates             0.2    0.0  0.1   0.2   0.2 
+alcohol               0.3    0.0  0.3   0.3   0.4 
+sigma                 0.7    0.0  0.6   0.7   0.7 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 0.1    0.0  0.1   0.1   0.2  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+                     mcse Rhat n_eff
+(Intercept)          0.0  1.0  1827 
+fixed_acidity        0.0  1.0   560 
+volatile_acidity     0.0  1.0  1056 
+citric_acid          0.0  1.0  1057 
+residual_sugar       0.0  1.0   926 
+chlorides            0.0  1.0  1373 
+free_sulfur_dioxide  0.0  1.0  1025 
+total_sulfur_dioxide 0.0  1.0  1044 
+density              0.0  1.0   551 
+pH                   0.0  1.0   722 
+sulphates            0.0  1.0  1244 
+alcohol              0.0  1.0   678 
+sigma                0.0  1.0  1887 
+mean_PPD             0.0  1.0  1464 
+log-posterior        0.1  1.0   636 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-10" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">We can look at all the parameters in one plot, excluding <code>sigma</code></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">mcmc_areas</span>(m2, <span class="at">pars =</span> <span class="fu">vars</span>(<span class="sc">!</span>sigma))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-26-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-11" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">Did we improve the model?</li>
+<li class="fragment">We will check accuracy using MSE for both models</li>
+<li class="fragment">We will also check the width of posterior intervals</li>
+<li class="fragment">Finally, we will compare the models using PSIS-LOO CV (preferred)</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-27_a8022640d91b783f5676a77b1d0938ed">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>yrep2 <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m2)</span>
+<span id="cb25-2"><a href="#cb25-2"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ppc_intervals</span>(ds<span class="sc">$</span>quality[s], yrep2[, s])</span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="fu">grid.arrange</span>(p2, p3, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-12" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">Comparing (Root) Mean Square Errors</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>(<span class="fu">colMeans</span>(yrep1) <span class="sc">-</span> ds<span class="sc">$</span>quality)<span class="sc">^</span><span class="dv">2</span> <span class="sc">|&gt;</span> <span class="fu">mean</span>() <span class="sc">|&gt;</span> <span class="fu">sqrt</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.72</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>(<span class="fu">colMeans</span>(yrep2) <span class="sc">-</span> ds<span class="sc">$</span>quality)<span class="sc">^</span><span class="dv">2</span> <span class="sc">|&gt;</span> <span class="fu">mean</span>() <span class="sc">|&gt;</span> <span class="fu">sqrt</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.66</code></pre>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Comparing posterior intervals</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>width <span class="ot">&lt;-</span> <span class="cf">function</span>(yrep, q1, q2) {</span>
+<span id="cb30-2"><a href="#cb30-2"></a>  q <span class="ot">&lt;-</span> <span class="fu">apply</span>(yrep, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">quantile</span>(x, <span class="at">probs =</span> <span class="fu">c</span>(q1, q2)))</span>
+<span id="cb30-3"><a href="#cb30-3"></a>  width <span class="ot">&lt;-</span> <span class="fu">apply</span>(q, <span class="dv">2</span>, diff)</span>
+<span id="cb30-4"><a href="#cb30-4"></a>  <span class="fu">return</span>(<span class="fu">mean</span>(width))</span>
+<span id="cb30-5"><a href="#cb30-5"></a>}</span>
+<span id="cb30-6"><a href="#cb30-6"></a></span>
+<span id="cb30-7"><a href="#cb30-7"></a><span class="fu">width</span>(yrep1, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.97</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="fu">width</span>(yrep2, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.89</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-13" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">Let’s estimate PSIS-LOO CV, a measure of out-of-sample predictive performance</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-30_c5d7599ab4eac7f265476e6c92118a8e">
+<div class="column">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="fu">library</span>(loo)</span>
+<span id="cb34-2"><a href="#cb34-2"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> <span class="dv">4</span>)</span>
+<span id="cb34-3"><a href="#cb34-3"></a>loo1 <span class="ot">&lt;-</span> <span class="fu">loo</span>(m1); loo2 <span class="ot">&lt;-</span> <span class="fu">loo</span>(m2)</span>
+<span id="cb34-4"><a href="#cb34-4"></a><span class="fu">plot</span>(loo1); <span class="fu">plot</span>(loo2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column fragment">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-30-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-30-2.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-quality-of-wine-14" class="slide level2 smaller">
+<h2>Example: Quality of Wine</h2>
+<div>
+<ul>
+<li class="fragment">Finally, we can compare the models using <code>loo_compare</code></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-31_316d7c0434795c093e39d2fad63b7243">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="fu">loo_compare</span>(loo1, loo2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   elpd_diff se_diff
+m2    0.0       0.0 
+m1 -117.9      17.7 </code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="models-for-count-data" class="slide level2 smaller">
+<h2>Models for Count Data</h2>
+<div>
+<ul>
+<li class="fragment">Modeling count data is typically part of a general GLM framework</li>
+<li class="fragment">The general setup is that we have:
+<ul>
+<li class="fragment">Reponse vector <span class="math inline">\(y\)</span>, and predictor matrix <span class="math inline">\(X\)</span></li>
+<li class="fragment">Linear predictor: <span class="math inline">\(\eta = \alpha + X\beta\)</span></li>
+<li class="fragment"><span class="math inline">\(\E(y | X) = g^{-1}(\eta)\)</span>, where <span class="math inline">\(g\)</span> is the link function that maps the linear predictor onto the observational scale</li>
+<li class="fragment">For linear regression, <span class="math inline">\(g\)</span> is the identity function (i.e., no transformation)</li>
+<li class="fragment">The Poisson data model is <span class="math inline">\(y_i \sim \text{Poisson}(\lambda_i)\)</span>, where <span class="math inline">\(\lambda_i = \exp(X_i\beta)\)</span>, and so our link function <span class="math inline">\(g(x) = \log(x)\)</span></li>
+<li class="fragment">As stated before, for one observation <span class="math inline">\(y\)</span>, <span class="math inline">\(f(y|\lambda) = \frac{1}{y!} \lambda^y e^{-\lambda}\)</span></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="poisson-posterior" class="slide level2 smaller">
+<h2>Poisson Posterior</h2>
+<div>
+<ul>
+<li class="fragment">To derive the posterior distribution for Poisson, we consider K regression inputs and independent priors on all <span class="math inline">\(K+1\)</span>: <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta_1, \beta_2, ..., \beta_k\)</span> <span class="math display">\[
+\begin{eqnarray}
+f\left(\alpha,\beta \mid y,X\right) &amp; \propto &amp;
+f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot
+\prod_{i=1}^N {\frac{g^{-1}(\eta_i)^{y_i}}{y_i!} e^{-g^{-1}(\eta_i)}} \\
+&amp; \propto &amp; f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot
+\prod_{i=1}^N {\frac{\exp(\alpha + x_i^\top\beta)^{y_i}}{y_i!} e^{-\exp(\alpha + x_i^\top\beta)}}
+\end{eqnarray}
+\]</span></li>
+<li class="fragment">When the rate is observed at different time scales or unit scales, we introduce an exposure <span class="math inline">\(u_i\)</span>, which multiplies the rate <span class="math inline">\(\lambda_i\)</span></li>
+<li class="fragment">The data model then becomes <span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Poisson}\left(u_i e^{X_i\beta}\right) \\
+&amp; = &amp; \text{Poisson}\left(e^{\log(u_i)} e^{X_i\beta}\right) \\
+&amp; = &amp;\text{Poisson}\left(e^{X_i\beta + \log(u_i)}\right)
+\end{eqnarray}
+\]</span></li>
+</ul>
+</div>
+</section>
+<section id="poisson-simulation" class="slide level2 smaller">
+<h2>Poisson Simulation</h2>
+<div>
+<ul>
+<li class="fragment">We can setup a forward simulation to generate Poisson data</li>
+<li class="fragment">It’s a good practice to fit simulated data and see if you can recover the parameters from a known data generating process</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb37-2"><a href="#cb37-2"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a>a <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb37-4"><a href="#cb37-4"></a>b <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb37-5"><a href="#cb37-5"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>)</span>
+<span id="cb37-6"><a href="#cb37-6"></a>eta <span class="ot">&lt;-</span> a <span class="sc">+</span> x <span class="sc">*</span> b   <span class="co"># could be negative</span></span>
+<span id="cb37-7"><a href="#cb37-7"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta) <span class="co"># always positive</span></span>
+<span id="cb37-8"><a href="#cb37-8"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, lambda)</span>
+<span id="cb37-9"><a href="#cb37-9"></a>sim <span class="ot">&lt;-</span> <span class="fu">tibble</span>(y, x, lambda)</span>
+<span id="cb37-10"><a href="#cb37-10"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> sim)</span>
+<span id="cb37-11"><a href="#cb37-11"></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb37-12"><a href="#cb37-12"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> lambda), </span>
+<span id="cb37-13"><a href="#cb37-13"></a>            <span class="at">col =</span> <span class="st">'red'</span>, </span>
+<span id="cb37-14"><a href="#cb37-14"></a>            <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb37-15"><a href="#cb37-15"></a>  <span class="fu">ggtitle</span>(<span class="st">"Simulated Poission Data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-32-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="fitting-simulated-data" class="slide level2 smaller">
+<h2>Fitting Simulated Data</h2>
+<div>
+<ul>
+<li class="fragment">Complex and non-linear models may have a hard time recovering parameters from forward simulations</li>
+<li class="fragment">The process for fitting simulated data may give some insight about the data generated process and priors</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="06-lecture_cache/revealjs/unnamed-chunk-33_2f53eb7daa3bb50812d498f8df6a51d9">
+<div class="column">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="co"># fitting from eta = 1.5 +  0.5 * x</span></span>
+<span id="cb38-2"><a href="#cb38-2"></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x,</span>
+<span id="cb38-3"><a href="#cb38-3"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb38-4"><a href="#cb38-4"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb38-5"><a href="#cb38-5"></a>               <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>), </span>
+<span id="cb38-6"><a href="#cb38-6"></a>               <span class="at">data =</span> sim,</span>
+<span id="cb38-7"><a href="#cb38-7"></a>               <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb38-8"><a href="#cb38-8"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb38-9"><a href="#cb38-9"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb38-10"><a href="#cb38-10"></a><span class="fu">summary</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       poisson [log]
+ formula:      y ~ x
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 100
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept) 1.5    0.1  1.4   1.5   1.6  
+x           0.5    0.0  0.5   0.5   0.5  
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 10.7    0.5 10.1  10.7  11.3 
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0   451 
+x             0.0  1.0   504 
+mean_PPD      0.0  1.0  1434 
+log-posterior 0.0  1.0   667 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="checking-poission-assumption" class="slide level2 smaller">
+<h2>Checking Poission Assumption</h2>
+<div>
+<ul>
+<li class="fragment">We know that for Poisson model, <span class="math inline">\(\E(y_i) = \V(y_i)\)</span>, or equivalently <span class="math inline">\(\sqrt{\E(y_i)} = \text{sd}(y_i)\)</span></li>
+<li class="fragment">We can check that the prediction errors follow this trend, since we have a posterior predictive distribution at each <span class="math inline">\(y_i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb40-2"><a href="#cb40-2"></a>yrep <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m3)</span>
+<span id="cb40-3"><a href="#cb40-3"></a>d <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">y_mu_hat =</span> <span class="fu">sqrt</span>(<span class="fu">colMeans</span>(yrep)),</span>
+<span id="cb40-4"><a href="#cb40-4"></a>            <span class="at">y_var =</span> <span class="fu">apply</span>(yrep, <span class="dv">2</span>, sd))</span>
+<span id="cb40-5"><a href="#cb40-5"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(y_mu_hat, y_var), <span class="at">data =</span> d)</span>
+<span id="cb40-6"><a href="#cb40-6"></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>,</span>
+<span id="cb40-8"><a href="#cb40-8"></a>              <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb40-9"><a href="#cb40-9"></a>  <span class="fu">xlab</span>(<span class="fu">TeX</span>(r<span class="st">'($\sqrt{\widehat{E(y_i)}}$)'</span>)) <span class="sc">+</span></span>
+<span id="cb40-10"><a href="#cb40-10"></a>  <span class="fu">ylab</span>(<span class="fu">TeX</span>(r<span class="st">'($\widehat{sd(y_i)}$)'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-34-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="posterior-predictive-checks" class="slide level2 smaller">
+<h2>Posterior Predictive Checks</h2>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-35_ee25a545af7059e687c826bb73d7dd42">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">add_predicted_draws</span>(sim, m3)</span>
+<span id="cb41-2"><a href="#cb41-2"></a>p1 <span class="ot">&lt;-</span> pred <span class="sc">|&gt;</span></span>
+<span id="cb41-3"><a href="#cb41-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> .prediction)) <span class="sc">+</span></span>
+<span id="cb41-4"><a href="#cb41-4"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.50</span>), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>)</span>
+<span id="cb41-6"><a href="#cb41-6"></a>p2 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(m3)</span>
+<span id="cb41-7"><a href="#cb41-7"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-35-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-exposure" class="slide level2 smaller">
+<h2>Adding Exposure</h2>
+<div>
+<ul>
+<li class="fragment">Let’s check the effect of adding exposure variable to the DGP</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb42-2"><a href="#cb42-2"></a>a <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb42-3"><a href="#cb42-3"></a>b <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb42-4"><a href="#cb42-4"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>)</span>
+<span id="cb42-5"><a href="#cb42-5"></a>u <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n, <span class="fl">0.2</span>)</span>
+<span id="cb42-6"><a href="#cb42-6"></a>eta  <span class="ot">&lt;-</span> a <span class="sc">+</span> x <span class="sc">*</span> b <span class="sc">+</span> <span class="fu">log</span>(u) </span>
+<span id="cb42-7"><a href="#cb42-7"></a><span class="co"># or &lt;- a + x * b</span></span>
+<span id="cb42-8"><a href="#cb42-8"></a></span>
+<span id="cb42-9"><a href="#cb42-9"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb42-10"><a href="#cb42-10"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, lambda)</span>
+<span id="cb42-11"><a href="#cb42-11"></a><span class="co"># or rpois(n, u * lambda)</span></span>
+<span id="cb42-12"><a href="#cb42-12"></a></span>
+<span id="cb42-13"><a href="#cb42-13"></a>sim_exposure <span class="ot">&lt;-</span> <span class="fu">tibble</span>(y, x, lambda, </span>
+<span id="cb42-14"><a href="#cb42-14"></a>                       <span class="at">exposure =</span> u)</span>
+<span id="cb42-15"><a href="#cb42-15"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> sim_exposure)</span>
+<span id="cb42-16"><a href="#cb42-16"></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb42-17"><a href="#cb42-17"></a><span class="fu">ggtitle</span>(<span class="st">"Simulated Poission Data with Exposure"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-36-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="checking-predictions" class="slide level2 smaller">
+<h2>Checking Predictions</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Code</a></li><li><a href="#tabset-1-2">Plot</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div>
+<ul>
+<li class="fragment">Suppose we fit the model with and without the exposure term</li>
+</ul>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-37_d82ed49b7fb42af0218fb8248dea8910">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x,</span>
+<span id="cb43-2"><a href="#cb43-2"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb43-3"><a href="#cb43-3"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb43-4"><a href="#cb43-4"></a>               <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>), </span>
+<span id="cb43-5"><a href="#cb43-5"></a>               <span class="at">data =</span> sim_exposure, <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb43-6"><a href="#cb43-6"></a>               <span class="at">iter =</span> <span class="dv">1200</span>)</span>
+<span id="cb43-7"><a href="#cb43-7"></a>m5 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x,</span>
+<span id="cb43-8"><a href="#cb43-8"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb43-9"><a href="#cb43-9"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb43-10"><a href="#cb43-10"></a>               <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>), </span>
+<span id="cb43-11"><a href="#cb43-11"></a>               <span class="at">offset =</span> <span class="fu">log</span>(exposure),</span>
+<span id="cb43-12"><a href="#cb43-12"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb43-13"><a href="#cb43-13"></a>               <span class="at">data =</span> sim_exposure, <span class="at">iter =</span> <span class="dv">1200</span>)</span>
+<span id="cb43-14"><a href="#cb43-14"></a>p1 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(m4) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"No Exposure"</span>)</span>
+<span id="cb43-15"><a href="#cb43-15"></a>p2 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(m5) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"With Exposure"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-38_66df1d6607a9d6deacd745b4784cdf5c">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>pred4 <span class="ot">&lt;-</span> <span class="fu">add_predicted_draws</span>(sim_exposure, m4)</span>
+<span id="cb44-2"><a href="#cb44-2"></a>pred5 <span class="ot">&lt;-</span> <span class="fu">add_predicted_draws</span>(sim_exposure, m5, </span>
+<span id="cb44-3"><a href="#cb44-3"></a>          <span class="at">offset =</span> <span class="fu">log</span>(sim_exposure<span class="sc">$</span>exposure))</span>
+<span id="cb44-4"><a href="#cb44-4"></a>p3 <span class="ot">&lt;-</span> pred4 <span class="sc">|&gt;</span></span>
+<span id="cb44-5"><a href="#cb44-5"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> .prediction)) <span class="sc">+</span></span>
+<span id="cb44-6"><a href="#cb44-6"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.50</span>), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb44-7"><a href="#cb44-7"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>)</span>
+<span id="cb44-8"><a href="#cb44-8"></a>p4 <span class="ot">&lt;-</span> pred5 <span class="sc">|&gt;</span></span>
+<span id="cb44-9"><a href="#cb44-9"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> .prediction)) <span class="sc">+</span></span>
+<span id="cb44-10"><a href="#cb44-10"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.50</span>), <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb44-11"><a href="#cb44-11"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell" data-layout-align="center" data-hash="06-lecture_cache/revealjs/unnamed-chunk-39_93c6ba0e2d4d80570943f3561b5d8bec">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-39-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-trapping-roaches" class="slide level2 smaller">
+<h2>Example: Trapping Roaches!</h2>
+<div>
+<ul>
+<li class="fragment">This example comes from <a href="http://www.stat.columbia.edu/~gelman/arm/">Gelman and Hill (2007)</a></li>
+<li class="fragment">These data comes from a pest management program aimed to reduce the number of roaches in the city apartments</li>
+<li class="fragment">The outcome <span class="math inline">\(y\)</span>, is the number of roaches caught</li>
+<li class="fragment">There is a pre-treatment number of roaches, <code>roach1</code>, a <code>treatment</code> indicator, and <code>seniour</code> indicator for only elderly residents in a building</li>
+<li class="fragment">There is also <code>exposure2</code>, a number of days for which the raoch traps were used</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-40_eac0c93c21faf22cfea33ce67c603461">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># rescale to make sure coeficients are approximately </span></span>
+<span id="cb45-2"><a href="#cb45-2"></a><span class="co"># on the same scale</span></span>
+<span id="cb45-3"><a href="#cb45-3"></a>roaches <span class="ot">&lt;-</span> roaches <span class="sc">|&gt;</span></span>
+<span id="cb45-4"><a href="#cb45-4"></a>  <span class="fu">mutate</span>(<span class="at">roach100 =</span> roach1 <span class="sc">/</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-5"><a href="#cb45-5"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb45-6"><a href="#cb45-6"></a><span class="fu">head</span>(roaches)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+      y roach1 treatment senior exposure2 roach100
+  &lt;int&gt;  &lt;dbl&gt;     &lt;int&gt;  &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1   153 308            1      0      0.8    3.08  
+2   127 331.           1      0      0.6    3.31  
+3     7   1.67         1      0      1      0.0167
+4     7   3            1      0      1      0.03  
+5     0   2            1      0      1.14   0.02  
+6     0   0            1      0      1      0     </code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-trapping-roaches-1" class="slide level2 smaller">
+<h2>Example: Trapping Roaches</h2>
+<div>
+<ul>
+<li class="fragment">Out model has three inputs and an intercepts term</li>
+<li class="fragment">Since the traps were set for different number of days, we will include an exposure offset <span class="math inline">\(u_i\)</span></li>
+<li class="fragment"><span class="math inline">\(b_t\)</span> is the treatment coefficient, <span class="math inline">\(b_r\)</span> is the baseline roach level, and <span class="math inline">\(b_s\)</span> is the senior coefficient</li>
+<li class="fragment">We need to consider reasonable priors on all those <span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Poisson}(u_i\lambda_i)\\
+\eta_i &amp; = &amp; \alpha + \beta_t x_{it} + \beta_r x_{ir} + \beta_s x_{is} \\
+\lambda_i &amp; = &amp; \exp(\eta_i) \\
+\alpha &amp; \sim &amp; \text{Normal}(?, \, ?) \\
+\beta &amp; \sim &amp; \text{Normal}(?, \, ?)
+\end{eqnarray}
+\]</span></li>
+</ul>
+</div>
+</section>
+<section id="example-trapping-roaches-2" class="slide level2 smaller">
+<h2>Example: Trapping Roaches</h2>
+<div>
+<ul>
+<li class="fragment">If we look at the exposure, an average number of days that the traps were set was about 1</li>
+<li class="fragment">How many roaches do we expect to trap during a whole day? Hundreds would probably be on the high side, so our prior model should not be predicting say 10s of thousands</li>
+<li class="fragment">What is the interpretation of the intercept in this regression?</li>
+<li class="fragment">There is no way (to my knowledge) to put a half-normal or exponential distribution on the intercept in <code>rstanarm</code> and if we put <code>Normal(3, 1)</code>, it’s unlikely to be negative the number or roaches can be as high as <code>Exp(5) ~ 150</code> <span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Poisson}(u_i\lambda_i)\\
+\eta_i &amp; = &amp; \alpha + \beta_t x_{it} + \beta_r x_{ir} + \beta_s x_{is} \\
+\lambda_i &amp; = &amp; \exp(\eta_i) \\
+\alpha &amp; \sim &amp; \text{Normal}(3, 1) \\
+\beta &amp; \sim &amp; \text{Normal}(?, \, ?)
+\end{eqnarray}
+\]</span></li>
+</ul>
+</div>
+</section>
+<section id="example-trapping-roaches-3" class="slide level2 smaller">
+<h2>Example: Trapping Roaches</h2>
+<div>
+<ul>
+<li class="fragment">How large can we expect the effects be in this regression?</li>
+<li class="fragment">Let’s just consider treatment</li>
+<li class="fragment">Suppose we estimate the coeficient to be -0.05</li>
+<li class="fragment">That means it reduces roach infestation by 5% on average (exp(-0.05) = 0.95)</li>
+<li class="fragment">What if it’s -2; that would mean an 86% reduction, an unlikely but possible outcome</li>
+<li class="fragment">With this in mind, we will set the betas to Normal(0, 1) <span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Poisson}(u_i\lambda_i)\\
+\eta_i &amp; = &amp; \alpha + \beta_t x_{it} + \beta_r x_{ir} + \beta_s x_{is} \\
+\lambda_i &amp; = &amp; \exp(\eta_i) \\
+\alpha &amp; \sim &amp; \text{Normal}(3, 1) \\
+\beta &amp; \sim &amp; \text{Normal}(0, \, 1)
+\end{eqnarray}
+\]</span></li>
+</ul>
+</div>
+</section>
+<section id="example-trapping-roaches-4" class="slide level2 smaller">
+<h2>Example: Trapping Roaches</h2>
+<div>
+<ul>
+<li class="fragment">We could do a quick sanity check using the prior predictive distribution</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-41_cb95e9710bdf5c7a0a0bbf7f8909077c">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>m6 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> roach100 <span class="sc">+</span> treatment <span class="sc">+</span> senior, </span>
+<span id="cb47-2"><a href="#cb47-2"></a>               <span class="at">offset =</span> <span class="fu">log</span>(exposure2),</span>
+<span id="cb47-3"><a href="#cb47-3"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">3</span>, <span class="dv">1</span>),</span>
+<span id="cb47-4"><a href="#cb47-4"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb47-5"><a href="#cb47-5"></a>               <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>), </span>
+<span id="cb47-6"><a href="#cb47-6"></a>               <span class="at">data =</span> roaches, </span>
+<span id="cb47-7"><a href="#cb47-7"></a>               <span class="at">iter =</span> <span class="dv">600</span>,</span>
+<span id="cb47-8"><a href="#cb47-8"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb47-9"><a href="#cb47-9"></a>               <span class="at">prior_PD =</span> <span class="dv">1</span>,</span>
+<span id="cb47-10"><a href="#cb47-10"></a>               <span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb47-11"><a href="#cb47-11"></a>yrep_m6 <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m6)</span>
+<span id="cb47-12"><a href="#cb47-12"></a><span class="fu">summary</span>(<span class="fu">colMeans</span>(yrep_m6))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+    9.91    42.61    47.56   296.30    57.70 52948.46 </code></pre>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">The median is not unreasonable but we would not expect the max (of the average!) to be 52,000</li>
+<li class="fragment">The numbers or not in another universe, however, so we will go with it</li>
+<li class="fragment">Try to do what people usually do, which is put the scale on the intercept at 10 or more and scale of the betas on 5 or more, and see what you get</li>
+</ul>
+</div>
+</section>
+<section id="example-trapping-roaches-5" class="slide level2 smaller">
+<h2>Example: Trapping Roaches</h2>
+<div>
+<ul>
+<li class="fragment">We will now fit the model and evalute the inferences</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-42_8ffd35f2d5ed823143ecfebacf618b4d">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>m7 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> roach100 <span class="sc">+</span> treatment <span class="sc">+</span> senior, </span>
+<span id="cb49-2"><a href="#cb49-2"></a>               <span class="at">offset =</span> <span class="fu">log</span>(exposure2),</span>
+<span id="cb49-3"><a href="#cb49-3"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">3</span>, <span class="dv">1</span>),</span>
+<span id="cb49-4"><a href="#cb49-4"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb49-5"><a href="#cb49-5"></a>               <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>), </span>
+<span id="cb49-6"><a href="#cb49-6"></a>               <span class="at">data =</span> roaches, </span>
+<span id="cb49-7"><a href="#cb49-7"></a>               <span class="at">iter =</span> <span class="dv">600</span>,</span>
+<span id="cb49-8"><a href="#cb49-8"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb49-9"><a href="#cb49-9"></a>               <span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb49-10"><a href="#cb49-10"></a><span class="fu">summary</span>(m7)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       poisson [log]
+ formula:      y ~ roach100 + treatment + senior
+ algorithm:    sampling
+ sample:       1200 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 262
+ predictors:   4
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept)  3.1    0.0  3.1   3.1   3.1 
+roach100     0.7    0.0  0.7   0.7   0.7 
+treatment   -0.5    0.0 -0.5  -0.5  -0.5 
+senior      -0.4    0.0 -0.4  -0.4  -0.3 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 25.6    0.4 25.1  25.6  26.2 
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0   899 
+roach100      0.0  1.0  1074 
+treatment     0.0  1.0   950 
+senior        0.0  1.0  1045 
+mean_PPD      0.0  1.0  1219 
+log-posterior 0.1  1.0   574 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-trapping-roaches-6" class="slide level2 smaller">
+<h2>Example: Trapping Roaches</h2>
+<div>
+<ul>
+<li class="fragment">PPCs</li>
+<li class="fragment">compute the zeros expected under the model and predicted</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-43_05ad574347e1b3dd68bd64d0f752ce1c">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="fu">summary</span>(m7)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       poisson [log]
+ formula:      y ~ roach100 + treatment + senior
+ algorithm:    sampling
+ sample:       1200 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 262
+ predictors:   4
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept)  3.1    0.0  3.1   3.1   3.1 
+roach100     0.7    0.0  0.7   0.7   0.7 
+treatment   -0.5    0.0 -0.5  -0.5  -0.5 
+senior      -0.4    0.0 -0.4  -0.4  -0.3 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 25.6    0.4 25.1  25.6  26.2 
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0   899 
+roach100      0.0  1.0  1074 
+treatment     0.0  1.0   950 
+senior        0.0  1.0  1045 
+mean_PPD      0.0  1.0  1219 
+log-posterior 0.1  1.0   574 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="negative-binomial" class="slide level2 smaller">
+<h2>Negative Binomial</h2>
 
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
