@@ -95,7 +95,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#example-simulation",
     "title": "Bayesian Inference",
     "section": "Example Simulation",
-    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 2 1\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    3    5    1    5    1    1\n[2,]    2    1    2    2    5    5\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1] 5 6 3 7 6 6\n\nmean(roll_sums < 11) \n\n[1] 0.9131\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
+    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(i) expression)\n\n\n\n\n\ndie <- 1:6\nroll <- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 1 6\n\nrolls <- replicate(1e4, roll(die, 2))\nrolls[, 1:6]\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    4    5    5    5    3    4\n[2,]    6    3    1    4    4    1\n\nroll_sums <- colSums(rolls)\nhead(roll_sums)\n\n[1] 10  8  6  9  7  5\n\nmean(roll_sums < 11) \n\n[1] 0.9155\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y < 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n < 11)\\)\nIn R, roll_sums < 11 creates an indicator variable\nAnd mean() does the average"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#conditional-probability",
@@ -1092,11 +1092,11 @@
     "text": "Homework Feedback\n\nHow was Homework 4?"
   },
   {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#linear-regression-and-model-evaluation",
-    "href": "bayes-course/05-lecture/05-lecture.html#linear-regression-and-model-evaluation",
+    "objectID": "bayes-course/05-lecture/05-lecture.html#section",
+    "href": "bayes-course/05-lecture/05-lecture.html#section",
     "title": "Bayesian Inference",
-    "section": "Linear Regression and Model Evaluation",
-    "text": "Linear Regression and Model Evaluation\n\n\n\n\nIntroducing linear regression\nPrior predictive simulations\nSampling from the posterior\nExample of linear regression in Stan\nEvaluating the quality of the draws\nPosterior predictions\nCross validation, ELPD, and LOO\n\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
+    "section": "",
+    "text": "Introducing linear regression\nPrior predictive simulations\nSampling from the posterior\nExample of linear regression in Stan\nEvaluating the quality of the draws\nPosterior predictions\nCross validation, ELPD, and LOO\n\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#motivating-example",
@@ -1341,7 +1341,7 @@
     "href": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-3",
     "title": "Bayesian Inference",
     "section": "Quantifying Model Accuracy",
-    "text": "Quantifying Model Accuracy\n\n\nA popular “proper” scoring for probabilistic prediction is log score\nThis is equivalent to the log predictive density \\(\\log f(y | \\theta)\\)\nWe would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data-generating process\nThis quantity is approximated by log-pointwise-predictive-density \\[\n\\text{lppd} = \\sum_{n=1}^{N} \\frac{1}{S} \\sum_{s=1}^{S} \\log f(y_n \\mid \\theta_{-n, s})\n\\]\nTo compute this quantity, fit the model N times, dropping one point at a time (-n)\nS is the number of posterior samples, and \\(\\theta_{-n, s}\\), is the s-th sample that we fit to model without the n-the data point\nPSIS-LOO (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times"
+    "text": "Quantifying Model Accuracy\n\n\nA popular “proper” scoring for probabilistic prediction is log score\nThis is equivalent to the log predictive density \\(\\log f(y | \\theta)\\)\nWe would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data-generating process\nThis quantity is approximated by log-pointwise-predictive-density \\[\n\\text{lppd} = \\sum_{n=1}^{N} \\log \\left( \\frac{1}{S} \\sum_{s=1}^{S} f(y_n \\mid \\theta_{-n, s}) \\right)\n\\]\nTo compute this quantity, fit the model N times, dropping one point at a time (-n)\nS is the number of posterior samples, and \\(\\theta_{-n, s}\\), is the s-th sample that we fit to model without the n-the data point\nPSIS-LOO (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-4",

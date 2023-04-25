@@ -408,8 +408,8 @@ Eric Novik | Spring 2023 | Lecture 5
 
 <img data-src="images/scared.avif" width="672" class="r-stretch quarto-figure-center"><p><a href="https://www.polleverywhere.com/multiple_choice_polls/tW6UTzV6VKtaUk8yKO6jx">How was Homework 4?</a></p>
 </section>
-<section id="linear-regression-and-model-evaluation" class="slide level2">
-<h2>Linear Regression and Model Evaluation</h2>
+<section id="section" class="slide level2">
+<h2></h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <div>
@@ -1691,7 +1691,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <li class="fragment">This is equivalent to the log predictive density <span class="math inline">\(\log f(y | \theta)\)</span></li>
 <li class="fragment">We would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data-generating process</li>
 <li class="fragment">This quantity is approximated by log-pointwise-predictive-density <span class="math display">\[
-\text{lppd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
+\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n, s}) \right)
 \]</span></li>
 <li class="fragment">To compute this quantity, fit the model N times, dropping one point at a time (-n)</li>
 <li class="fragment">S is the number of posterior samples, and <span class="math inline">\(\theta_{-n, s}\)</span>, is the s-th sample that we fit to model without the n-the data point</li>
