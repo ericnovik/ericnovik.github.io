@@ -23,7 +23,7 @@ always_allow_html: true
 
 [How was Homework 4?](https://www.polleverywhere.com/multiple_choice_polls/tW6UTzV6VKtaUk8yKO6jx)
 
-##  Linear Regression and Model Evaluation
+##      
 
 ::: columns
 ::: {.column width="60%"}
@@ -1013,19 +1013,17 @@ calib(yrep, d$weight, 0.90)
 ## Quantifying Model Accuracy {.smaller}
 
 ::: incremental
-- A popular "proper" scoring for probabilistic prediction is log score
+- A popular "proper" scoring rule for probabilistic prediction is log score
 - This is equivalent to the log predictive density $\log f(y | \theta)$
 - We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data-generating process
 - This quantity is approximated by log-pointwise-predictive-density
 $$
-\text{lppd} = \sum_{n=1}^{N} \frac{1}{S} \sum_{s=1}^{S} \log f(y_n \mid \theta_{-n, s})
+\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n, s}) \right)
 $$
 - To compute this quantity, fit the model N times, dropping one point at a time (-n)
-- S is the number of posterior samples, and $\theta_{-n, s}$, is the s-th sample that we fit to model without the n-the data point
+- S is the number of posterior samples, and $\theta_{-n, s}$, is the s-th sample without the n-th data point
 - [PSIS-LOO](https://arxiv.org/abs/1507.04544) (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times
 :::
-
-
 
 ## Quantifying Model Accuracy {.smaller}
 

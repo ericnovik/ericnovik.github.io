@@ -23,19 +23,16 @@ always_allow_html: true
 ::: {.column width="60%"}
 ::: incremental
 - Improving the model by thinking about the DGP
-- Adding categorical predictors
-- Adding interactions
 - More on model evaluation and comparison
 - Modeling count data with Poisson
 - Model evaluation and overdispersion
 - Negative binomial model for counts
 - Generalized linear models
-- [Depending on time/space: more on Bayesian Workflow]
 :::
 :::
 
 ::: {.column width="40%"}
-- [Insert an overdispersion image here]
+![](images/counting.png){fig-align="center" height="500"}
 :::
 :::
 
@@ -309,12 +306,13 @@ m3 <- stan_glm(
   family = gaussian,
   prior = normal(3, 0.3),
   prior_aux = exponential(1),
-  prior_intercept = normal(0, 2.5),
+  prior_intercept = normal(0, 2.5), 
   seed = 1234,
   refresh = 0,
   chains = 4,
   iter = 600
 )
+prior_summary(m3)
 summary(m3)
 ```
 :::
@@ -563,7 +561,7 @@ p + geom_density(aes(fill = alc, color = alc),
 ## Example: Quality of Wine {.smaller}
 
 ::: incremental
--   We don't expect particularly good fit yet
+- Naive way to show the posterior predictive check
 :::
 
 ::: {.fragment}
@@ -573,9 +571,48 @@ p + geom_density(aes(fill = alc, color = alc),
 #| fig-align: center
 #| echo: true
 yrep1 <- posterior_predict(m1) # predict at every observation
-ppc_ecdf_overlay(ds$quality, yrep1[sample(nrow(yrep1), 50), ])
+ppc_dens_overlay(ds$quality, yrep1[sample(nrow(yrep1), 50), ])
 ```
 :::
+
+## Example: Quality of Wine {.smaller}
+
+::: incremental
+- We can classify each prediction based on the distance to the nearest rating category
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+
+map_real_number <- function(x) {
+  if (x < -2) {
+    return(-2.5)
+  } else if (x >= -2 && x < -1) {
+    return(-1.5)
+  } else if (x >= -1 && x < 0) {
+    return(-0.5)
+  } else if (x >= 0 && x < 1) {
+    return(0.5)
+  } else if (x >= 1 && x < 2) {
+    return(1.5)
+  } else if (x >= 2) {
+    return(2.5)
+  }
+}
+map_real_number <- Vectorize(map_real_number)
+yrep_cat <- map_real_number(yrep1) |>
+  matrix(nrow = nrow(yrep1), ncol = ncol(yrep1))
+ppc_dens_overlay(ds$quality, 
+            yrep_cat[sample(nrow(yrep1), 50), ])
+```
+:::
+
 
 ## Example: Quality of Wine {.smaller}
 
@@ -730,18 +767,30 @@ width(yrep2, 0.25, 0.75) |> round(2)
 
 ::: {.fragment}
 ```{r}
-#| fig-width: 6
-#| fig-height: 3
+#| fig-width: 5
+#| fig-height: 5.5
 #| fig-align: center
 #| echo: true
 #| cache: true
 #| output-location: column-fragment
 library(loo)
 options(mc.cores = 4)
-loo1 <- loo(m1); loo2 <- loo(m2)
-plot(loo1); plot(loo2)
+loo1 <- loo(m1)
+loo2 <- loo(m2)
+par(mar = c(3,3,2,1), 
+    mgp = c(2,.7,0), 
+    tck = -.01, 
+    bg = "#f0f1eb")
+par(mfrow = c(2, 1))
+plot(loo1)
+plot(loo2)
 ```
 :::
+
+```{r}
+#| echo: false
+par(mfrow = c(1, 1))
+```
 
 ## Example: Quality of Wine {.smaller}
 
@@ -757,7 +806,7 @@ loo_compare(loo1, loo2)
 ```
 :::
 
-## Models for Count Data {.smaller}
+## GLMs and Models for Count Data {.smaller}
 
 ::: incremental
 -   Modeling count data is typically part of a general GLM framework
@@ -961,8 +1010,15 @@ m5 <- stan_glm(y ~ x,
                offset = log(exposure),
                refresh = 0,
                data = sim_exposure, iter = 1200)
-p1 <- pp_check(m4) + ggtitle("No Exposure")
-p2 <- pp_check(m5) + ggtitle("With Exposure")
+yrep_m4 <- posterior_predict(m4)
+yrep_m5 <- posterior_predict(m5)
+s <- sample(nrow(yrep_m4), 100)
+p1 <- ppc_dens_overlay(log(sim_exposure$y + 1), 
+                       log(yrep_m4[s, ] + 1)) + 
+  ggtitle("No Exposure (log scale)")
+p2 <- ppc_dens_overlay(log(sim_exposure$y + 1), 
+                       log(yrep_m5[s, ] + 1)) + 
+  ggtitle("With Exposure (log scale)")
 ```
 :::
 
@@ -980,12 +1036,16 @@ pred5 <- add_predicted_draws(sim_exposure, m5,
           offset = log(sim_exposure$exposure))
 p3 <- pred4 |>
   ggplot(aes(x = x, y = .prediction)) +
-  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +
-  geom_point(aes(x = x, y = y), size = 0.5, alpha = 0.2)
+  stat_lineribbon(.width = c(0.90, 0.50), 
+                  alpha = 0.25) +
+  geom_point(aes(x = x, y = y), size = 0.5, 
+             alpha = 0.2)
 p4 <- pred5 |>
   ggplot(aes(x = x, y = .prediction)) +
-  stat_lineribbon(.width = c(0.90, 0.50), alpha = 0.25) +
-  geom_point(aes(x = x, y = y), size = 0.5, alpha = 0.2)
+  stat_lineribbon(.width = c(0.90, 0.50), 
+                  alpha = 0.25) +
+  geom_point(aes(x = x, y = y), size = 0.5, 
+             alpha = 0.2)
 ```
 :::
 
@@ -999,7 +1059,7 @@ p4 <- pred5 |>
 #| fig-height: 5
 #| fig-align: center
 #| echo: false
-#| cache: true
+
 grid.arrange(p1, p2, p3, p4, ncol = 2)
 ```
 
@@ -1143,16 +1203,134 @@ summary(m7)
 ## Example: Trapping Roaches {.smaller}
 
 ::: incremental
-- PPCs
-- compute the zeros expected under the model and predicted
+- How good is this model?
+- Let's look a the basic posterior predictive check
 :::
 
 ::: {.fragment}
 ```{r}
 #| cache: true
 #| echo: true
-summary(m7)
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| output-location: column
+yrep_m7 <- posterior_predict(m7)
+s <- sample(nrow(yrep_m7), 100)
+
+# on the log scale,
+# so we can better see the data
+p1 <- ppc_dens_overlay(log(roaches$y + 1), 
+                 log(yrep_m7[s, ] + 1)) 
+
+prop_zero <- function(y) mean(y == 0)
+p2 <- pp_check(m7, plotfun = "stat", 
+               stat = "prop_zero", 
+               binwidth = .005)
+grid.arrange(p1, p2, nrow = 2)
 ```
 :::
 
 ## Negative Binomial {.smaller}
+
+::: incremental
+-   PPCs suggest there is overdispersion in the data
+-   We can introduce a likelihood that doesn't force the mean to be equal to the variance
+-   The following is one of the parameterizations that is used in Stan
+$$
+\begin{eqnarray}
+\text{NegBinomial2}(n \, | \, \mu, \phi)  &=& \binom{n + \phi - 1}{n} \,
+\left( \frac{\mu}{\mu+\phi} \right)^{\!n} \, \left(
+\frac{\phi}{\mu+\phi} \right)^{\!\phi} \\
+\E(n) &=& \mu \ \ 
+\text{ and } \ \V(n) = \mu + \frac{\mu^2}{\phi}
+\end{eqnarray}
+$$
+-   Notice that the variance term includes $\mu^2 / \phi > 0$ allowing for more flexibility than in the case of Poisson
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- We will now fit the model using Negative Binomial instead of Poisson
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+m8 <- stan_glm(y ~ roach100 + treatment + senior, 
+               offset = log(exposure2),
+               prior_intercept = normal(3, 1),
+               prior = normal(0, 1),
+               prior_aux = exponential(1),
+               family = neg_binomial_2, 
+               data = roaches, 
+               iter = 600,
+               refresh = 0,
+               seed = 123)
+summary(m8)
+```
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+- How good is this model?
+- Let's look a the basic posterior predictive check
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| output-location: column
+
+yrep_m8 <- posterior_predict(m8)
+s <- sample(nrow(yrep_m8), 100)
+
+# on the log scale,
+# so we can better see the data
+p1 <- ppc_dens_overlay(log(roaches$y + 1), 
+                 log(yrep_m8[s, ] + 1)) 
+
+p2 <- pp_check(m8, plotfun = "stat", 
+               stat = "prop_zero", 
+               binwidth = .005)
+grid.arrange(p1, p2, nrow = 2)
+```
+:::
+
+## Example: Trapping Roaches {.smaller}
+
+::: incremental
+-   Let's check the comparison of the out-of-sample predictive performance relative to the Poisson model
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+loo_pois <- loo(m7)
+loo_nb <- loo(m8)
+loo_compare(loo_pois, loo_nb)
+```
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: false
+#| fig-width: 10
+#| fig-height: 3.5
+#| fig-align: center
+par(mar = c(3,3,2,1), mgp = c(2,.7,0), tck = -.01, bg = "#f0f1eb")
+par(mfrow = c(1, 2))
+plot(loo_pois, main = "Poisson PSIS diagnostic plot")
+plot(loo_nb, main = "NegBi PSIS diagnostic plot")
+par(mfrow = c(1, 1)) 
+```
+:::

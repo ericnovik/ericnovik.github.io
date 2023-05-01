@@ -1,0 +1,111 @@
+---
+title: "Bayesian Inference"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author: "Eric Novik | Spring 2023 | Lecture 7"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+---
+
+
+##  Logistic Regression and Introduction to Hierarchical Models {.smaller}
+
+::: columns
+::: {.column width="60%"}
+::: incremental
+- GLMs and logistic regression
+- Understanding logistic regression
+- Simulating data
+- Prior predictive simulations
+- Example: Diabetes in Pima native americans
+- Introducing heirarchical / multi-level models
+- Pooling: none, complete, and partial
+- Example heirarchical model
+:::
+:::
+
+::: {.column width="40%"}
+- [Insert heirarchical image]
+:::
+:::
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(gridExtra)
+library(purrr)
+library(rstanarm)
+library(tidybayes)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+$$
+
+## Logit and Inverse Logit {.smaller}
+
+::: incremental
+- In logistic regression we have to map from probability space to the real line and from the real line back to probability
+- Logistic funtion (log odds) achieves the former:
+$$
+\text{logit}(p) = \log\left(\frac{p}{1-p}\right)
+$$
+- Inverse logit achieves the latter:
+$$
+\text{logit}^{-1}(x) = \frac{e^x}{1 + e^x}
+$$
+- Notice that $\text{logit}^{-1}(5)$ is very close to 1 and $\text{logit}^{-1}(-5)$ is very close to 0
+- In R, you can set `logit <- qlogis` and `invlogit <- plogis`
+:::
+
+## GLMs and Models 0/1 Outcomes {.smaller}
+
+::: incremental
+-   Modeling a probability of an event can be framed in the GLM context (just like with counts)
+-   The general setup is that we have:
+    - Reponse vector $y$ consisting of zeros and ones
+    - The data model is $y_i \sim \text{Bernoulli}(p_i)$
+    - Linear predictor: $\eta = \alpha + X\beta$, where $X$ is a matrix
+    - In general: $\E(y | X) = g^{-1}(\eta)$, where $g^{-1}$is the inverse link function that maps the linear predictor onto the observational scale
+    - In particular: $\E(y_i | x_i) = \text{logit}^{-1}(\alpha + x_i^{\top}\beta) = p_i$
+       - $\text{logit}(p_i) = \eta_i$ and $p_i = \text{logit}^{-1}(\eta_i)$
+:::
+
+## Logistic Posterior {.smaller}
+
+::: incremental
+- To derive the posterior distribution for Poisson, we consider K regression inputs and independent priors on all $K + 1$ unknowns: $\alpha$ and $\beta_1, \beta_2, ..., \beta_k$
+- Bernoulli likelihood is: $f(y | p) = p^y (1 - p)^{1-y}$ with $y \in \{0, 1\}$
+- And each $p_i = \text{logit}^{-1}(\alpha + x_i^\top\beta)$
+$$
+f\left(\alpha,\beta \mid y,X\right) \propto
+f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot \\
+\prod_{i=1}^N \left(\text{logit}^{-1}(\alpha + x_i^\top\beta) \right)^{y_i} \left(1 - \text{logit}^{-1}(\alpha + x_i^\top\beta)\right)^{1-y_i}
+$$
+
+- In Stan, this can be written on a log scale as `y ~ bernoulli_logit_glm(x, alpha, beta)` or `bernoulli_logit_glm_lupmf(y | x, alpha, beta)`
+:::
