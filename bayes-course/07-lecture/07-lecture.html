@@ -28,6 +28,70 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -341,8 +405,6 @@ Eric Novik | Spring 2023 | Lecture 7
 </section>
 <section id="logistic-regression-and-introduction-to-hierarchical-models" class="slide level2 smaller">
 <h2>Logistic Regression and Introduction to Hierarchical Models</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
 <div>
 <ul>
 <li class="fragment">GLMs and logistic regression</li>
@@ -350,16 +412,10 @@ Eric Novik | Spring 2023 | Lecture 7
 <li class="fragment">Simulating data</li>
 <li class="fragment">Prior predictive simulations</li>
 <li class="fragment">Example: Diabetes in Pima native americans</li>
-<li class="fragment">Introducing heirarchical / multi-level models</li>
+<li class="fragment">Introducing hierarchical/multi-level models</li>
 <li class="fragment">Pooling: none, complete, and partial</li>
-<li class="fragment">Example heirarchical model</li>
+<li class="fragment">Example hierarchical model</li>
 </ul>
-</div>
-</div><div class="column" style="width:40%;">
-<ul>
-<li>[Insert heirarchical image]</li>
-</ul>
-</div>
 </div>
 <div class="cell">
 
@@ -378,8 +434,8 @@ Eric Novik | Spring 2023 | Lecture 7
 <h2>Logit and Inverse Logit</h2>
 <div>
 <ul>
-<li class="fragment">In logistic regression we have to map from probability space to the real line and from the real line back to probability</li>
-<li class="fragment">Logistic funtion (log odds) achieves the former: <span class="math display">\[
+<li class="fragment">In logistic regression, we have to map from probability space to the real line and from the real line back to probability</li>
+<li class="fragment">Logistic function (log odds) achieves the former: <span class="math display">\[
 \text{logit}(p) = \log\left(\frac{p}{1-p}\right)
 \]</span></li>
 <li class="fragment">Inverse logit achieves the latter: <span class="math display">\[
@@ -397,7 +453,7 @@ Eric Novik | Spring 2023 | Lecture 7
 <li class="fragment">Modeling a probability of an event can be framed in the GLM context (just like with counts)</li>
 <li class="fragment">The general setup is that we have:
 <ul>
-<li class="fragment">Reponse vector <span class="math inline">\(y\)</span> consisting of zeros and ones</li>
+<li class="fragment">Response vector <span class="math inline">\(y\)</span> consisting of zeros and ones</li>
 <li class="fragment">The data model is <span class="math inline">\(y_i \sim \text{Bernoulli}(p_i)\)</span></li>
 <li class="fragment">Linear predictor: <span class="math inline">\(\eta = \alpha + X\beta\)</span>, where <span class="math inline">\(X\)</span> is a matrix</li>
 <li class="fragment">In general: <span class="math inline">\(\E(y | X) = g^{-1}(\eta)\)</span>, where <span class="math inline">\(g^{-1}\)</span>is the inverse link function that maps the linear predictor onto the observational scale</li>
@@ -420,8 +476,1755 @@ f\left(\alpha,\beta \mid y,X\right) \propto
 f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot \\
 \prod_{i=1}^N \left(\text{logit}^{-1}(\alpha + x_i^\top\beta) \right)^{y_i} \left(1 - \text{logit}^{-1}(\alpha + x_i^\top\beta)\right)^{1-y_i}
 \]</span></p></li>
-<li class="fragment"><p>In Stan, this can be written on a log scale as <code>y ~ bernoulli_logit_glm(x, alpha, beta)</code> or <code>bernoulli_logit_glm_lupmf(y | x, alpha, beta)</code></p></li>
+<li class="fragment"><p>In Stan, the likelihood term can be written on a log scale as <code>y ~ bernoulli_logit_glm(x, alpha, beta)</code> or <code>bernoulli_logit_glm_lupmf(y | x, alpha, beta)</code></p></li>
 </ul>
+</div>
+</section>
+<section id="logistic-simulation" class="slide level2 smaller">
+<h2>Logistic Simulation</h2>
+<div>
+<ul>
+<li class="fragment">As before, we can forward simulate data for logistic regression</li>
+<li class="fragment">We will fit the data and try to recover the parameters</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>logit <span class="ot">&lt;-</span> qlogis; invlogit <span class="ot">&lt;-</span> plogis</span>
+<span id="cb1-3"><a href="#cb1-3"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>a <span class="ot">&lt;-</span> <span class="fl">1.2</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>b <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">15</span>, <span class="dv">10</span>)</span>
+<span id="cb1-7"><a href="#cb1-7"></a>eta <span class="ot">&lt;-</span> a <span class="sc">+</span> x <span class="sc">*</span> b</span>
+<span id="cb1-8"><a href="#cb1-8"></a>Pr <span class="ot">&lt;-</span> <span class="fu">invlogit</span>(eta)</span>
+<span id="cb1-9"><a href="#cb1-9"></a>y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, Pr)</span>
+<span id="cb1-10"><a href="#cb1-10"></a>sim <span class="ot">&lt;-</span> <span class="fu">tibble</span>(y, x, Pr)</span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> sim)</span>
+<span id="cb1-13"><a href="#cb1-13"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(x, Pr), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, </span>
+<span id="cb1-16"><a href="#cb1-16"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">invlogit</span>(a), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, </span>
+<span id="cb1-18"><a href="#cb1-18"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.50</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>  <span class="fu">ggtitle</span>(<span class="fu">TeX</span>(<span class="st">"$y_i </span><span class="sc">\\</span><span class="st">sim Bernoulli(logit^{-1}(1.2 + 0.4x_i))$"</span>)) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="sc">-</span><span class="fl">5.5</span>, <span class="at">y =</span> <span class="fu">invlogit</span>(a) <span class="sc">-</span> <span class="fl">0.02</span>,</span>
+<span id="cb1-22"><a href="#cb1-22"></a>           <span class="at">label =</span> <span class="fu">TeX</span>(<span class="st">"Intercept = $logit^{-1}(1.2)$ </span><span class="sc">\\</span><span class="st">approx 0.77"</span>)) <span class="sc">+</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="sc">-</span><span class="dv">8</span>, <span class="at">y =</span> <span class="fl">0.53</span>,</span>
+<span id="cb1-24"><a href="#cb1-24"></a>           <span class="at">label =</span> <span class="fu">TeX</span>(<span class="st">"$slope_{.5} = </span><span class="sc">\\</span><span class="st">frac{0.4}{4} = 0.10$"</span>)) <span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>  <span class="fu">ylab</span>(<span class="fu">TeX</span>(<span class="st">"$logit^{-1}(1.2 + 0.4x)$"</span>)); <span class="fu">print</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="interpreting-logistic-coefficients" class="slide level2 smaller">
+<h2>Interpreting Logistic Coefficients</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div>
+<ul>
+<li class="fragment">The intercept is the log odds of an event when <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(\text{logit}^{-1}(1.2) = 0.77\)</span></li>
+<li class="fragment">The slope changes depending on where you are on the curve</li>
+<li class="fragment">When you are near 0.50, the slope of logit(x) is 1/4 and so you can divide your coefficient by 4 to get a rough estimate</li>
+<li class="fragment">This implies that if we go from <span class="math inline">\(x = -3\)</span> to <span class="math inline">\(x = -2\)</span>, the probability will increase by about 0.10</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-3_a6e58e0584c64f55220334d11145d05d">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>(<span class="fu">invlogit</span>(<span class="fl">1.2</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> <span class="sc">-</span><span class="dv">2</span>) <span class="sc">-</span> </span>
+<span id="cb2-2"><a href="#cb2-2"></a>   <span class="fu">invlogit</span>(<span class="fl">1.2</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> <span class="sc">-</span><span class="dv">3</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1</code></pre>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-4-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="fitting-simulated-data" class="slide level2 smaller">
+<h2>Fitting Simulated Data</h2>
+<div>
+<ul>
+<li class="fragment">Complex and non-linear models may have a hard time recovering parameters from forward simulations</li>
+<li class="fragment">The process for fitting simulated data may give some insight into the data-generating process and priors</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-5_f950b9b893929c90e6bd5d35c835a535">
+<div class="column">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># fitting from eta = 1.2 +  0.4 * x</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>m1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x,</span>
+<span id="cb4-3"><a href="#cb4-3"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb4-4"><a href="#cb4-4"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb4-5"><a href="#cb4-5"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb4-6"><a href="#cb4-6"></a>               <span class="at">data =</span> sim,</span>
+<span id="cb4-7"><a href="#cb4-7"></a>               <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb4-8"><a href="#cb4-8"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb4-9"><a href="#cb4-9"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       binomial [logit]
+ formula:      y ~ x
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 100
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept) 1.5    0.5  0.9   1.5   2.1  
+x           0.5    0.1  0.4   0.5   0.7  
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 0.5    0.0  0.5   0.5   0.6  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  1132 
+x             0.0  1.0  1106 
+mean_PPD      0.0  1.0  1584 
+log-posterior 0.0  1.0   817 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="generating-probability-data" class="slide level2 smaller">
+<h2>Generating Probability Data</h2>
+<div>
+<ul>
+<li class="fragment">To get a sense of the variability in probability we can simulate from the prior distribution on the probability scale</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="07-lecture_cache/revealjs/unnamed-chunk-6_802d3b8f4015ea60156f822b8ba4f4a9">
+<div class="column">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>prior_pred_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb6-2"><a href="#cb6-2"></a>  a <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="fl">1.2</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>  b <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="fl">0.4</span>, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a>  Pr <span class="ot">&lt;-</span> <span class="fu">invlogit</span>(a <span class="sc">+</span> b <span class="sc">*</span> x)</span>
+<span id="cb6-5"><a href="#cb6-5"></a>  <span class="fu">return</span>(Pr)</span>
+<span id="cb6-6"><a href="#cb6-6"></a>}</span>
+<span id="cb6-7"><a href="#cb6-7"></a>prior_pred <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">50</span>, <span class="fu">prior_pred_logit</span>(x)) <span class="sc">|&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>  <span class="fu">as.data.frame</span>()</span>
+<span id="cb6-9"><a href="#cb6-9"></a></span>
+<span id="cb6-10"><a href="#cb6-10"></a>df_long <span class="ot">&lt;-</span> prior_pred <span class="sc">|&gt;</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>  <span class="fu">mutate</span>(<span class="at">x =</span> x) <span class="sc">|&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>x, <span class="at">names_to =</span> <span class="st">"line"</span>, <span class="at">values_to =</span> <span class="st">"y"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13"></a></span>
+<span id="cb6-14"><a href="#cb6-14"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> df_long)</span>
+<span id="cb6-15"><a href="#cb6-15"></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> line), <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Pr), <span class="at">data =</span> sim, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a>  <span class="fu">ylab</span>(<span class="fu">TeX</span>(<span class="st">"$logit^{-1}(</span><span class="sc">\\</span><span class="st">alpha + </span><span class="sc">\\</span><span class="st">beta x)$"</span>)) <span class="sc">+</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a>  <span class="fu">ggtitle</span>(<span class="fu">TeX</span>(<span class="st">"Simulating from prior $logit^{-1}(</span><span class="sc">\\</span><span class="st">alpha + </span><span class="sc">\\</span><span class="st">beta x_i))$"</span>),</span>
+<span id="cb6-19"><a href="#cb6-19"></a>  <span class="at">subtitle =</span> <span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">alpha </span><span class="sc">\\</span><span class="st">sim Normal(1.2, 0.5)$ and $</span><span class="sc">\\</span><span class="st">beta </span><span class="sc">\\</span><span class="st">sim Normal(0.4, 0.1)$"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">This example comes from US National Institute of Diabetes and Digestive and Kidney Diseases from a population of women who were at least 21 years old, of Pima Indian heritage, and living near Phoenix, Arizona</li>
+<li class="fragment">It is available as part of the R package <code>pdp</code></li>
+<li class="fragment">The outcome <span class="math inline">\(diabetes\)</span>, is an indicator of the disease</li>
+<li class="fragment">Some other variables are:</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="cell-output-display">
+<table>
+<colgroup>
+<col style="width: 13%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 5%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">pregnant</th>
+<th style="text-align: right;">glucose</th>
+<th style="text-align: right;">pressure</th>
+<th style="text-align: right;">triceps</th>
+<th style="text-align: right;">insulin</th>
+<th style="text-align: right;">mass</th>
+<th style="text-align: right;">pedigree</th>
+<th style="text-align: right;">age</th>
+<th style="text-align: left;">diabetes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">148</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">33.6</td>
+<td style="text-align: right;">0.627</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: left;">pos</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">26.6</td>
+<td style="text-align: right;">0.351</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: left;">neg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">183</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">23.3</td>
+<td style="text-align: right;">0.672</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: left;">pos</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">28.1</td>
+<td style="text-align: right;">0.167</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">neg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">137</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">43.1</td>
+<td style="text-align: right;">2.288</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: left;">pos</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">25.6</td>
+<td style="text-align: right;">0.201</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">neg</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="missing-value-imputation" class="slide level2 smaller">
+<h2>Missing Value Imputation</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div>
+<ul>
+<li class="fragment">This dataset contains missing values</li>
+<li class="fragment">People typically either delete them or replace them with average values of something like that</li>
+<li class="fragment">None of these are good approaches</li>
+<li class="fragment">In R, we recommend a combination of the <code>mice</code> package and <code>brms</code>, <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html">which works nicely</a> with <code>mice</code></li>
+<li class="fragment">From a Bayesian perspective, a missing value is just another unknown parameter in the model, which can be modeled</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div>
+<ul>
+<li class="fragment">Following is an example of a simple missing value estimation from the <a href="https://mc-stan.org/docs/stan-users-guide/missing-data.html">Stan manual</a></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-output.var="stan3">
+<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="|2|3|4|7|8|9|12|13|"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">data</span> {</span>
+<span id="cb7-2"><a href="#cb7-2"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N_obs;</span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N_mis;</span>
+<span id="cb7-4"><a href="#cb7-4"></a>  <span class="dt">array</span>[N_obs] <span class="dt">real</span> y_obs;</span>
+<span id="cb7-5"><a href="#cb7-5"></a>}</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="kw">parameters</span> {</span>
+<span id="cb7-7"><a href="#cb7-7"></a>  <span class="dt">real</span> mu;</span>
+<span id="cb7-8"><a href="#cb7-8"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb7-9"><a href="#cb7-9"></a>  <span class="dt">array</span>[N_mis] <span class="dt">real</span> y_mis;</span>
+<span id="cb7-10"><a href="#cb7-10"></a>}</span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="kw">model</span> {</span>
+<span id="cb7-12"><a href="#cb7-12"></a>  y_obs ~ normal(mu, sigma);</span>
+<span id="cb7-13"><a href="#cb7-13"></a>  y_mis ~ normal(mu, sigma);</span>
+<span id="cb7-14"><a href="#cb7-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Notice, that you need to make an assumption about the model for missing values</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-1" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Code</a></li><li><a href="#tabset-1-2">Plot</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div>
+<ul>
+<li class="fragment">It is well-known that people with high BMI are at risk for Type 2 diabetes</li>
+<li class="fragment">We can do some exploratory analysis to check this</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pima, <span class="fu">aes</span>(<span class="at">x =</span> mass)) <span class="sc">+</span> </span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">group =</span> diabetes, <span class="at">fill =</span> diabetes, <span class="at">color =</span> diabetes), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="fu">xlab</span>(<span class="st">"BMI"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a>p2 <span class="ot">&lt;-</span> pima <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>  <span class="fu">mutate</span>(<span class="at">bmi_cut =</span> <span class="fu">cut</span>(mass, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">15</span>, <span class="dv">70</span>, <span class="at">by =</span> <span class="dv">5</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="fu">group_by</span>(bmi_cut) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="fu">summarize</span>(<span class="at">p =</span> <span class="fu">mean</span>(diabetes <span class="sc">==</span> <span class="st">"pos"</span>),</span>
+<span id="cb8-9"><a href="#cb8-9"></a>            <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb8-10"><a href="#cb8-10"></a>            <span class="at">se =</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n),</span>
+<span id="cb8-11"><a href="#cb8-11"></a>            <span class="at">lower =</span> p <span class="sc">+</span> se,</span>
+<span id="cb8-12"><a href="#cb8-12"></a>            <span class="at">upper =</span> p <span class="sc">-</span> se) <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bmi_cut, <span class="at">y =</span> p)) <span class="sc">+</span> </span>
+<span id="cb8-14"><a href="#cb8-14"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a>  <span class="fu">xlab</span>(<span class="st">"BMI range"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Proportion"</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a>  <span class="fu">ggtitle</span>(<span class="st">"Proportion of diabetics by BMI +/- 1 SE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-2" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">Before building a model, we should scale the variables</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-11_54dfe5309ff354a8121b1b72e885b5d6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(pdp)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>d <span class="ot">&lt;-</span> pima <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>  <span class="fu">select</span>(diabetes, age, pedigree, mass, glucose) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span> <span class="co"># in an important analysis, you should not do this; instead, impute</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>  <span class="fu">mutate</span>(<span class="at">diab =</span> <span class="fu">if_else</span>(diabetes <span class="sc">==</span> <span class="st">"pos"</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb9-7"><a href="#cb9-7"></a>         <span class="at">age =</span> (age <span class="sc">-</span> <span class="fu">mean</span>(age)) <span class="sc">/</span> <span class="dv">10</span>,</span>
+<span id="cb9-8"><a href="#cb9-8"></a>         <span class="at">pedigree =</span> (pedigree <span class="sc">-</span> <span class="fu">mean</span>(pedigree)),</span>
+<span id="cb9-9"><a href="#cb9-9"></a>         <span class="at">bmi =</span> ((mass <span class="sc">-</span> <span class="fu">mean</span>(mass)) <span class="sc">/</span> <span class="dv">10</span>),</span>
+<span id="cb9-10"><a href="#cb9-10"></a>         <span class="at">glucose =</span> ((glucose <span class="sc">-</span> <span class="fu">mean</span>(glucose)) <span class="sc">/</span> <span class="fu">sd</span>(glucose))) </span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="fu">head</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  diabetes     age pedigree  mass glucose  diab    bmi
+  &lt;fct&gt;      &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 pos       1.67      0.154  33.6   0.852     1  0.115
+2 neg      -0.231    -0.122  26.6  -1.21      0 -0.585
+3 pos      -0.131     0.199  23.3   2.00      1 -0.915
+4 neg      -1.23     -0.306  28.1  -1.08      0 -0.435
+5 pos      -0.0312    1.81   43.1   0.492     1  1.06 
+6 neg      -0.331    -0.272  25.6  -0.194     0 -0.685</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-3" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">We will be fitting the following statistical model, where <span class="math inline">\(x_1\)</span> is the BMI and <span class="math inline">\(\bar x_1\)</span> is the average BMI in the sample</li>
+<li class="fragment">We divide by ten so that a unit increase in BMI is a meaningful change</li>
+<li class="fragment">We need to pick priors on <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta_1\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_i &amp;\sim&amp; \text{Bernoulli}(p_i) \\
+\eta_i &amp;=&amp; \alpha + \beta_1 \left( \frac{x_{1i} - \bar x_1}{10} \right) \\
+p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
+\alpha &amp;\sim&amp; \text{Normal}(\mu_\alpha ,\ \sigma_\alpha) \\
+\beta_1 &amp;\sim&amp; \text{Normal}(\mu_\beta , \ \sigma_\beta)
+\end{eqnarray}
+\]</span></p>
+</div>
+</section>
+<section id="example-diabetes-4" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">The prior on the intercept corresponds to the log odds of developing diabetes when a person has an average BMI, which is about 29 in the US (which is considered high-risk)</li>
+<li class="fragment">It is likely that the probability is between 20% and 80%, and so a weakly informative prior can be expressed as <span class="math inline">\(\text{Normal}(0, 0.5)\)</span></li>
+<li class="fragment">Suppose, we also put a weakly informative <span class="math inline">\(\text{Normal}(0, 1)\)</span> pior on <span class="math inline">\(\beta_1\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_i &amp;\sim&amp; \text{Bernoulli}(p_i) \\
+\eta_i &amp;=&amp; \alpha + \beta_1 \left( \frac{x_{1i} - \bar x_1}{10} \right) \\
+p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
+\alpha &amp;\sim&amp; \text{Normal}(0 ,\ 0.5) \\
+\beta_1 &amp;\sim&amp; \text{Normal}(0 , \ 1)
+\end{eqnarray}
+\]</span></p>
+</div>
+</section>
+<section id="example-diabetes-5" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">Let’s perform prior predictive simulation</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-12_a7d19e596e2273ef5b8cc6334a1eae98">
+<div class="column">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>m_prior <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi,</span>
+<span id="cb11-2"><a href="#cb11-2"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
+<span id="cb11-3"><a href="#cb11-3"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), </span>
+<span id="cb11-4"><a href="#cb11-4"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb11-5"><a href="#cb11-5"></a>               <span class="at">refresh =</span> <span class="dv">100</span>,</span>
+<span id="cb11-6"><a href="#cb11-6"></a>               <span class="at">prior_PD =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-7"><a href="#cb11-7"></a>               <span class="at">data =</span> d, </span>
+<span id="cb11-8"><a href="#cb11-8"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb11-9"><a href="#cb11-9"></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb11-10"><a href="#cb11-10"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb11-11"><a href="#cb11-11"></a></span>
+<span id="cb11-12"><a href="#cb11-12"></a><span class="fu">summary</span>(m_prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       binomial [logit]
+ formula:      diab ~ bmi
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 752
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept)  0.0    0.5 -0.6   0.0   0.6 
+bmi          0.0    1.0 -1.3   0.0   1.3 
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  1215 
+bmi           0.0  1.0  1108 
+log-posterior 0.0  1.0   932 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-6" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="07-lecture_cache/revealjs/unnamed-chunk-13_d5b0abe8ab451bee5e6e83066bb27411">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>  <span class="fu">add_epred_draws</span>(m_prior, <span class="at">ndraws =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mass, <span class="at">y =</span> diab)) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .epred, <span class="at">group =</span> .draw), <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(mass, diab), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">20</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>  <span class="fu">xlab</span>(<span class="st">"BMI"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Probability"</span>) <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>  <span class="fu">ggtitle</span>(<span class="st">"Possible Logit Curves Implied by the Prior"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-7" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">The negative associations are implausible given everything we know about diabetes</li>
+<li class="fragment">Suppose the risk of diabetes doubles for every 10 <span class="math inline">\(kg/m^2\)</span> (unverified)</li>
+<li class="fragment">That would imply average <span class="math inline">\(\beta_1 \approx 0.7\)</span>, since the multiplicative change in odds is <span class="math inline">\(e^{0.7} \approx 2\)</span></li>
+<li class="fragment">We will set the standard deviation to 0.2 to avoid negative effects and allow the odds to be as high as 3.5</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_i &amp;\sim&amp; \text{Bernoulli}(p_i) \\
+\eta_i &amp;=&amp; \alpha + \beta_1 \left( \frac{x_{1i} - \bar x_1}{10} \right) \\
+p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
+\alpha &amp;\sim&amp; \text{Normal}(0 ,\ 0.5) \\
+\beta_1 &amp;\sim&amp; \text{Normal}(0.7 , \ 0.2)
+\end{eqnarray}
+\]</span></p>
+</div>
+</section>
+<section id="example-diabetes-8" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">With new priors, let’s repeat the prior predictive simulation</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-14_cd2913344281edfa6d10dcd6dd1df1ab">
+<div class="column">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>m_prior <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi,</span>
+<span id="cb14-2"><a href="#cb14-2"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
+<span id="cb14-3"><a href="#cb14-3"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>), </span>
+<span id="cb14-4"><a href="#cb14-4"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb14-5"><a href="#cb14-5"></a>               <span class="at">refresh =</span> <span class="dv">100</span>,</span>
+<span id="cb14-6"><a href="#cb14-6"></a>               <span class="at">prior_PD =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-7"><a href="#cb14-7"></a>               <span class="at">data =</span> d, </span>
+<span id="cb14-8"><a href="#cb14-8"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb14-9"><a href="#cb14-9"></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb14-10"><a href="#cb14-10"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb14-11"><a href="#cb14-11"></a><span class="fu">summary</span>(m_prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       binomial [logit]
+ formula:      diab ~ bmi
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 752
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept)  0.0    0.5 -0.6   0.0   0.6 
+bmi          0.7    0.2  0.4   0.7   1.0 
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  1215 
+bmi           0.0  1.0  1108 
+log-posterior 0.0  1.0   932 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-9" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>  <span class="fu">add_epred_draws</span>(m_prior, <span class="at">ndraws =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mass, <span class="at">y =</span> diab)) <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .epred, <span class="at">group =</span> .draw), <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(mass, diab), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">20</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>  <span class="fu">xlab</span>(<span class="st">"BMI"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Probability"</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>  <span class="fu">ggtitle</span>(<span class="st">"Possible Logit Curves Implied by the Prior"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-10" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">With this new prior we are ready to fit the model</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-16_a7ce3421addf1da04d44c958a17bb513">
+<div class="column">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi,</span>
+<span id="cb17-2"><a href="#cb17-2"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
+<span id="cb17-3"><a href="#cb17-3"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>), </span>
+<span id="cb17-4"><a href="#cb17-4"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb17-5"><a href="#cb17-5"></a>               <span class="at">prior_PD =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-6"><a href="#cb17-6"></a>               <span class="at">data =</span> d, </span>
+<span id="cb17-7"><a href="#cb17-7"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb17-8"><a href="#cb17-8"></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb17-9"><a href="#cb17-9"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb17-10"><a href="#cb17-10"></a><span class="fu">summary</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       binomial [logit]
+ formula:      diab ~ bmi
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 752
+ predictors:   2
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept) -0.6    0.1 -0.7  -0.6  -0.5 
+bmi          0.9    0.1  0.8   0.9   1.1 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 0.4    0.0  0.3   0.4   0.4  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  1315 
+bmi           0.0  1.0  1299 
+mean_PPD      0.0  1.0  1651 
+log-posterior 0.0  1.0   780 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-11" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">There are no sampling problems, but we should still check the diagnostics</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>p1 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(m2)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_acf</span>(m2)</span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-17-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-12" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">We can examine the posterior probability of diabetes among this population (women who were at least 21 years old, and of Pima Indian heritage)</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>d <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">add_epred_draws</span>(m2, <span class="at">ndraws =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mass, <span class="at">y =</span> diab)) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .epred, <span class="at">group =</span> .draw), <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(mass, diab), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">20</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a>  <span class="fu">xlab</span>(<span class="st">"BMI"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Probability"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-18-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-13" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">We can also see the posterior predictive distribution of the probability of diabetes</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>prop_diab <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb21-2"><a href="#cb21-2"></a>  <span class="fu">mean</span>(x <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb21-3"><a href="#cb21-3"></a>}</span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="fu">pp_check</span>(m2, <span class="at">nreps =</span> <span class="dv">100</span>,</span>
+<span id="cb21-5"><a href="#cb21-5"></a>         <span class="at">plotfun =</span> <span class="st">"stat"</span>, <span class="at">stat =</span> <span class="st">"prop_diab"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Probability of Diabetes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-19-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-14" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">As before, we can compute predictions for new data using <code>posterior_predict</code> or by constructing the posterior distribution directly</li>
+<li class="fragment">Let’s say we want to predict the probability of diabetes for a person with BMI = 40</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-20_40b33ca3633ad8accbdce64f584b5082">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>bmi_scaled <span class="ot">&lt;-</span> (<span class="dv">40</span> <span class="sc">-</span> <span class="fu">mean</span>(d<span class="sc">$</span>mass)) <span class="sc">/</span> <span class="dv">10</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>yepred_m2 <span class="ot">&lt;-</span> <span class="fu">posterior_epred</span>(m2, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">bmi =</span> bmi_scaled))</span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">quantile</span>(yepred_m2, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.50</span>, <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  5%  50%  95% 
+0.47 0.51 0.56 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>d_m2 <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(m2) <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>  <span class="fu">mutate</span>(<span class="at">log_odds =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> bmi <span class="sc">*</span> bmi_scaled,</span>
+<span id="cb24-3"><a href="#cb24-3"></a>         <span class="at">prob =</span> <span class="fu">invlogit</span>(log_odds),</span>
+<span id="cb24-4"><a href="#cb24-4"></a>         <span class="at">ypred =</span> <span class="fu">rbinom</span>(<span class="fl">2e3</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> prob))</span>
+<span id="cb24-5"><a href="#cb24-5"></a>d_m2[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  `(Intercept)`   bmi  log_odds  prob ypred
+          &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+1        -0.676 0.897  0.000969 0.500     1
+2        -0.746 0.936 -0.0403   0.490     0
+3        -0.682 0.957  0.0402   0.510     0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">quantile</span>(d_m2<span class="sc">$</span>prob, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.50</span>, <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  5%  50%  95% 
+0.47 0.51 0.56 </code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-15" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">We will extend this model and evaluate the model performance</li>
+<li class="fragment">Here we set weakly informative priors on the other three coefficients</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-21_b1d460a54de9cd4c1c054c19af80f11d">
+<div class="column">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>priors <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
+<span id="cb28-2"><a href="#cb28-2"></a>                 <span class="at">scale =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb28-3"><a href="#cb28-3"></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi <span class="sc">+</span> pedigree <span class="sc">+</span> </span>
+<span id="cb28-4"><a href="#cb28-4"></a>                 age <span class="sc">+</span> glucose,</span>
+<span id="cb28-5"><a href="#cb28-5"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
+<span id="cb28-6"><a href="#cb28-6"></a>               <span class="at">prior =</span> priors,</span>
+<span id="cb28-7"><a href="#cb28-7"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb28-8"><a href="#cb28-8"></a>               <span class="at">data =</span> d, </span>
+<span id="cb28-9"><a href="#cb28-9"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb28-10"><a href="#cb28-10"></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb28-11"><a href="#cb28-11"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb28-12"><a href="#cb28-12"></a><span class="fu">summary</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       binomial [logit]
+ formula:      diab ~ bmi + pedigree + age + glucose
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 752
+ predictors:   5
+
+Estimates:
+              mean   sd   10%   50%   90%
+(Intercept) -0.8    0.1 -0.9  -0.8  -0.7 
+bmi          0.8    0.1  0.7   0.8   1.0 
+pedigree     0.8    0.3  0.5   0.8   1.2 
+age          0.3    0.1  0.2   0.3   0.4 
+glucose      1.1    0.1  0.9   1.1   1.2 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 0.4    0.0  0.3   0.4   0.4  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  2663 
+bmi           0.0  1.0  2623 
+pedigree      0.0  1.0  2128 
+age           0.0  1.0  2551 
+glucose       0.0  1.0  2861 
+mean_PPD      0.0  1.0  2566 
+log-posterior 0.1  1.0   747 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="shinystan-demo" class="slide level2 smaller">
+<h2>ShinyStan Demo</h2>
+<ul>
+<li>To use <code>install.packages("shinystan")</code> and <code>launch_shinystan(m3)</code></li>
+</ul>
+
+<img data-src="images/shinystan.png" width="672" class="r-stretch quarto-figure-center"></section>
+<section id="making-additional-improvements" class="slide level2 smaller">
+<h2>Making Additional Improvements</h2>
+<div>
+<ul>
+<li class="fragment">There is a good reason to believe that glucose and heredity interact so we will include an interaction term</li>
+<li class="fragment">Age effects are rarely linear and so we include a B-Spline for non-linear age effects</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-22_94c3451130e8df00bd3f573b6e98fe6f">
+<div class="column">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb30-2"><a href="#cb30-2"></a>priors <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">7</span>)), </span>
+<span id="cb30-3"><a href="#cb30-3"></a>                 <span class="at">scale =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">7</span>)))</span>
+<span id="cb30-4"><a href="#cb30-4"></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi <span class="sc">+</span> pedigree <span class="sc">+</span> </span>
+<span id="cb30-5"><a href="#cb30-5"></a>                 <span class="fu">bs</span>(age, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb30-6"><a href="#cb30-6"></a>                 glucose <span class="sc">+</span> glucose<span class="sc">:</span>pedigree,</span>
+<span id="cb30-7"><a href="#cb30-7"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
+<span id="cb30-8"><a href="#cb30-8"></a>               <span class="at">prior =</span> priors,</span>
+<span id="cb30-9"><a href="#cb30-9"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb30-10"><a href="#cb30-10"></a>               <span class="at">data =</span> d, </span>
+<span id="cb30-11"><a href="#cb30-11"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb30-12"><a href="#cb30-12"></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb30-13"><a href="#cb30-13"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb30-14"><a href="#cb30-14"></a><span class="fu">summary</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       binomial [logit]
+ formula:      diab ~ bmi + pedigree + bs(age, df = 4) + glucose + glucose:pedigree
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 752
+ predictors:   9
+
+Estimates:
+                   mean   sd   10%   50%   90%
+(Intercept)      -1.6    0.3 -2.0  -1.6  -1.2 
+bmi               0.8    0.1  0.6   0.8   0.9 
+pedigree          0.9    0.3  0.6   0.9   1.3 
+bs(age, df = 4)1  0.3    0.4 -0.2   0.3   0.8 
+bs(age, df = 4)2  2.6    0.6  1.9   2.6   3.3 
+bs(age, df = 4)3  0.7    0.7 -0.2   0.7   1.6 
+bs(age, df = 4)4 -0.6    0.8 -1.6  -0.6   0.4 
+glucose           1.1    0.1  1.0   1.1   1.3 
+pedigree:glucose -0.6    0.3 -0.9  -0.6  -0.3 
+
+Fit Diagnostics:
+           mean   sd   10%   50%   90%
+mean_PPD 0.4    0.0  0.3   0.4   0.4  
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+                 mcse Rhat n_eff
+(Intercept)      0.0  1.0  1643 
+bmi              0.0  1.0  2228 
+pedigree         0.0  1.0  2015 
+bs(age, df = 4)1 0.0  1.0  1758 
+bs(age, df = 4)2 0.0  1.0  1999 
+bs(age, df = 4)3 0.0  1.0  1853 
+bs(age, df = 4)4 0.0  1.0  2086 
+glucose          0.0  1.0  1749 
+pedigree:glucose 0.0  1.0  1633 
+mean_PPD         0.0  1.0  1912 
+log-posterior    0.1  1.0   960 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-diabetes-16" class="slide level2 smaller">
+<h2>Example: Diabetes</h2>
+<div>
+<ul>
+<li class="fragment">We can perform model comparison using several methods</li>
+<li class="fragment">One way is to assess classification accuracy under different probability cut points, which is often done in Machine Learning (ROC/AUC)</li>
+<li class="fragment">A better way is to use LOO (<code>loo</code> and <code>loo_compare</code> in R)</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-23_3821f5573eb8b9599d4382423b4b519a">
+<div class="column">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>), </span>
+<span id="cb32-2"><a href="#cb32-2"></a>    <span class="at">mgp =</span> <span class="fu">c</span>(<span class="dv">2</span>,.<span class="dv">7</span>,<span class="dv">0</span>), </span>
+<span id="cb32-3"><a href="#cb32-3"></a>    <span class="at">tck =</span> <span class="sc">-</span>.<span class="dv">01</span>, </span>
+<span id="cb32-4"><a href="#cb32-4"></a>    <span class="at">bg  =</span> <span class="st">"#f0f1eb"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5"></a>m2_loo <span class="ot">&lt;-</span> <span class="fu">loo</span>(m2)</span>
+<span id="cb32-6"><a href="#cb32-6"></a>m3_loo <span class="ot">&lt;-</span> <span class="fu">loo</span>(m3)</span>
+<span id="cb32-7"><a href="#cb32-7"></a>m4_loo <span class="ot">&lt;-</span> <span class="fu">loo</span>(m4)</span>
+<span id="cb32-8"><a href="#cb32-8"></a><span class="fu">loo_compare</span>(m2_loo, m3_loo, m4_loo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>   elpd_diff se_diff
+m4    0.0       0.0 
+m3  -15.6       4.6 
+m2 -104.5      12.4 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="fu">plot</span>(m4_loo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-23-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="introduction-to-hierarchical-models" class="slide level2 smaller">
+<h2>Introduction to Hierarchical Models</h2>
+<div>
+<ul>
+<li class="fragment">You can think about hierarchical (sometimes called multi-level or mixed effects) models from a data or parameter perspective, although the parameter view is more fundamental</li>
+<li class="fragment">The basic idea is that want to model all sources of potential variability in the data</li>
+<li class="fragment">Data often arrive in clusters, such as students within schools, patients with hospitals, voters within states, and so on</li>
+<li class="fragment">Since there are local influences, it is often a good idea to assume that units share similar attributes within clusters as well as between clusters</li>
+<li class="fragment">These two sources of variability are likely different and we should treat them as such</li>
+</ul>
+</div>
+</section>
+<section id="sleep-data" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">Let’s look at a classic dataset called <code>sleepstudy</code> from <code>lme4</code> package</li>
+<li class="fragment">These data are from the study described in Belenky et al.&nbsp;(2003), for the most sleep-deprived group (3 hours time-in-bed) and for the first 10 days of the study, up to the recovery period</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Days, Reaction), <span class="at">data =</span> lme4<span class="sc">::</span>sleepstudy)</span>
+<span id="cb35-2"><a href="#cb35-2"></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.3</span>) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(Subject)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Reaction time (ms)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-24-1.png" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sleep-data-1" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">To get a better sense of the differences in per-Subject reaction time distributions, we can plot them side by side</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-25-1.png" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="pooling" class="slide level2 smaller">
+<h2>Pooling</h2>
+<div>
+<ul>
+<li class="fragment">Pooling has to do with how much regularization we induce on parameter estimates in each cluster; sometimes this is called shrinkage</li>
+<li class="fragment">Complete pooling ignores the clusters and estimates a global parameter</li>
+<li class="fragment">Even though reaction time <span class="math inline">\(y_i\)</span>, belongs to subject <span class="math inline">\(j\)</span>, we ignore the groups and index all the <span class="math inline">\(y\)</span>s together</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-26-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="pooling-1" class="slide level2 smaller">
+<h2>Pooling</h2>
+<div>
+<ul>
+<li class="fragment">Complete pooling is the opposite of no pooling, where we estimate a separate model for each group</li>
+<li class="fragment">Here, we have <span class="math inline">\(n\)</span> subjects, and <span class="math inline">\(y_{ij}\)</span> refers to the <span class="math inline">\(i\)</span>th reaction time in subject <span class="math inline">\(j\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-27-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="partial-pooling" class="slide level2 smaller">
+<h2>Partial Pooling</h2>
+<div>
+<ul>
+<li class="fragment">Partial pooling is the compromise between the two extremes</li>
+<li class="fragment">Like any other parameter in a Bayesian model, the global hyperparameter <span class="math inline">\(\tau\)</span> is given a prior and is learned from the data</li>
+<li class="fragment">There could be multiple levels of nesting, say students within schools, within states, etc.</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-28-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="partial-pooling-compromise" class="slide level2 smaller">
+<h2>Partial Pooling Compromise</h2>
+<div>
+<ul>
+<li class="fragment">Posterior <span class="math inline">\(f(\theta | y)\)</span> is is a compromise between prior <span class="math inline">\(f(\theta)\)</span> and likelihood <span class="math inline">\(f(y | \theta)\)</span></li>
+<li class="fragment">In the same spirit, the pooled parameter <span class="math inline">\(\theta_j\)</span> (say reaction time for subject <span class="math inline">\(j\)</span>) is a compromise between within-subject parameters, and among-subject parameters</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\theta_j \approx \frac{\frac{n_j}{\sigma_{y}^2} \overline y_j + \frac{1}{\sigma_{\tau}^2} \overline y_{\tau}} {\frac{n_j}{\sigma_{y}^2} + \frac{1}{\sigma_{\tau}^2}}
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment"><span class="math inline">\(\overline y_j\)</span> is no-pool estimate of average reaction time for subject <span class="math inline">\(j\)</span>, and <span class="math inline">\(\overline y_{\tau}\)</span> is complete-pool estimate</li>
+<li class="fragment"><span class="math inline">\(n_j\)</span> is the number of observations for subject <span class="math inline">\(j\)</span>, <span class="math inline">\(\sigma_{y}^2\)</span> is within subject variance of reaction times, and <span class="math inline">\(\sigma_{\tau}^2\)</span> is the between-subject variance</li>
+</ul>
+</div>
+</section>
+<section id="sleep-data-2" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">Let’s build three models for the sleep data, starting with complete pooling, which is what we have been doing all along</li>
+<li class="fragment">We will start with the intercept-only model</li>
+<li class="fragment">These data contain the same number of observations per Subject, which is unusual, so we will make it more realistic by removing 30% of the measurements</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb36-2"><a href="#cb36-2"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(lme4<span class="sc">::</span>sleepstudy)</span>
+<span id="cb36-3"><a href="#cb36-3"></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, n <span class="sc">*</span> <span class="fl">0.7</span>)</span>
+<span id="cb36-4"><a href="#cb36-4"></a>d <span class="ot">&lt;-</span> lme4<span class="sc">::</span>sleepstudy[s, ] </span>
+<span id="cb36-5"><a href="#cb36-5"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Days, Reaction), </span>
+<span id="cb36-6"><a href="#cb36-6"></a>            <span class="at">data =</span> d)</span>
+<span id="cb36-7"><a href="#cb36-7"></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">width =</span> <span class="fl">0.2</span>)</span>
+<span id="cb36-8"><a href="#cb36-8"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Reaction), </span>
+<span id="cb36-9"><a href="#cb36-9"></a>            <span class="at">data =</span> d)</span>
+<span id="cb36-10"><a href="#cb36-10"></a>p2 <span class="ot">&lt;-</span> p2 <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">20</span>)</span>
+<span id="cb36-11"><a href="#cb36-11"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-29-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sleep-data-3" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">This is a simple model of the mean reaction time <span class="math inline">\(\mu\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_{ij} &amp; \sim &amp; \text{Normal}(\mu, \ \sigma^2) \\
+\mu    &amp; \sim &amp; \text{Normal}(300, 10^2) \\
+\sigma &amp; \sim &amp; \text{Exponential}(0.02)
+\end{eqnarray}
+\]</span></p>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-hash="07-lecture_cache/revealjs/unnamed-chunk-30_8ddaa88eccbf415acdb1b99f57b02ba0">
+<div class="column">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(Reaction <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb37-2"><a href="#cb37-2"></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">10</span>),</span>
+<span id="cb37-3"><a href="#cb37-3"></a>               <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
+<span id="cb37-4"><a href="#cb37-4"></a>               <span class="at">family =</span> gaussian,</span>
+<span id="cb37-5"><a href="#cb37-5"></a>               <span class="at">data =</span> d, </span>
+<span id="cb37-6"><a href="#cb37-6"></a>               <span class="at">iter =</span> <span class="dv">5000</span>,</span>
+<span id="cb37-7"><a href="#cb37-7"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb37-8"><a href="#cb37-8"></a>               <span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb37-9"><a href="#cb37-9"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      Reaction ~ 1
+ algorithm:    sampling
+ sample:       10000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 125
+ predictors:   1
+
+Estimates:
+              mean   sd    10%   50%   90%
+(Intercept) 294.5    4.2 289.2 294.5 299.9
+sigma        52.9    3.4  48.7  52.7  57.3
+
+Fit Diagnostics:
+           mean   sd    10%   50%   90%
+mean_PPD 294.4    6.3 286.4 294.4 302.5
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.1  1.0  6347 
+sigma         0.0  1.0  6890 
+mean_PPD      0.1  1.0  8264 
+log-posterior 0.0  1.0  4152 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sleep-data-4" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">We can compare the predictions from the complete-pooling model to the reaction times of each subject</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="07-lecture_cache/revealjs/unnamed-chunk-31_6ea2f059fdd709e0b8284b99a5f5053f">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a>new <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Subject) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">Reaction =</span> <span class="fu">mean</span>(Reaction)) <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2"></a>  <span class="fu">arrange</span>(Reaction)</span>
+<span id="cb39-3"><a href="#cb39-3"></a>new_pred <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m1, <span class="at">newdata =</span> new)</span>
+<span id="cb39-4"><a href="#cb39-4"></a><span class="fu">ppc_intervals</span>(new<span class="sc">$</span>Reaction, <span class="at">yrep =</span> new_pred) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> new<span class="sc">$</span>Subject,  <span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(new)) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="#cb39-6"></a>  <span class="fu">xlab</span>(<span class="st">"Subject"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Reaction"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-31-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sleep-data-5" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">Next, we will fit a no-pool model, which means we are fitting 18 separate models, one for each subject</li>
+<li class="fragment">You can fit them separately, by making 18 calls to <code>stan_glm</code>, or you can do in all at once</li>
+<li class="fragment">Since we will not run 18 separate regressions, it will be simpler to estimate one global variance parameter <span class="math inline">\(\sigma\)</span>, which means there is some variance pooling</li>
+<li class="fragment">This will not affect the inferences for <span class="math inline">\(\mu_j\)</span> which is our main focus here</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_{ij} &amp; \sim &amp; \text{Normal}(\mu_j, \ \sigma^2) \\
+\mu_j    &amp; \sim &amp; \text{Normal}(300, s_j^2) \\
+\sigma &amp; \sim &amp; \text{Exponential}(0.02)
+\end{eqnarray}
+\]</span></p>
+</div>
+</section>
+<section id="sleep-data-6" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-32_a6cad9db68026246d832a2fa08b367f0">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(Reaction <span class="sc">~</span> Subject <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb40-2"><a href="#cb40-2"></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">10</span>, <span class="at">autoscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb40-3"><a href="#cb40-3"></a>               <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
+<span id="cb40-4"><a href="#cb40-4"></a>               <span class="at">family =</span> gaussian,</span>
+<span id="cb40-5"><a href="#cb40-5"></a>               <span class="at">data =</span> d, </span>
+<span id="cb40-6"><a href="#cb40-6"></a>               <span class="at">iter =</span> <span class="dv">1000</span>,</span>
+<span id="cb40-7"><a href="#cb40-7"></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb40-8"><a href="#cb40-8"></a>               <span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb40-9"><a href="#cb40-9"></a><span class="fu">summary</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      Reaction ~ Subject - 1
+ algorithm:    sampling
+ sample:       2000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 125
+ predictors:   18
+
+Estimates:
+             mean   sd    10%   50%   90%
+Subject308 353.4   17.1 331.0 353.8 375.1
+Subject309 213.0   14.6 194.4 212.8 231.8
+Subject310 223.9   12.9 207.0 224.0 240.2
+Subject330 305.2   12.7 288.6 305.1 321.6
+Subject331 310.0   15.3 290.1 310.2 329.3
+Subject332 272.0   15.2 252.6 271.8 291.7
+Subject333 306.1   16.9 284.3 306.0 327.7
+Subject334 296.9   12.2 281.1 297.1 312.5
+Subject335 248.6   13.2 231.4 248.8 265.1
+Subject337 359.4   14.3 341.2 359.4 378.3
+Subject349 282.0   15.6 262.2 282.0 301.1
+Subject350 336.6   14.5 317.6 336.7 354.8
+Subject351 280.5   18.3 256.7 280.8 303.6
+Subject352 346.1   16.5 325.2 345.9 367.1
+Subject369 294.7   14.3 276.4 294.6 313.6
+Subject370 262.1   14.9 243.7 262.2 281.4
+Subject371 295.4   11.7 280.3 295.2 309.9
+Subject372 317.6   11.9 302.7 317.6 333.0
+sigma       37.4    2.6  34.4  37.2  40.7
+
+Fit Diagnostics:
+           mean   sd    10%   50%   90%
+mean_PPD 293.2    4.8 287.1 293.2 299.2
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+Subject308    0.3  1.0  2742 
+Subject309    0.3  1.0  3019 
+Subject310    0.3  1.0  2411 
+Subject330    0.3  1.0  2263 
+Subject331    0.3  1.0  2563 
+Subject332    0.3  1.0  2924 
+Subject333    0.3  1.0  2560 
+Subject334    0.2  1.0  2928 
+Subject335    0.2  1.0  3386 
+Subject337    0.3  1.0  2424 
+Subject349    0.3  1.0  2629 
+Subject350    0.3  1.0  2490 
+Subject351    0.4  1.0  2272 
+Subject352    0.3  1.0  2909 
+Subject369    0.3  1.0  2915 
+Subject370    0.3  1.0  2594 
+Subject371    0.2  1.0  2399 
+Subject372    0.2  1.0  2760 
+sigma         0.1  1.0  1113 
+mean_PPD      0.1  1.0  2215 
+log-posterior 0.1  1.0   719 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="sleep-data-7" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">We can compare the predictions from the no-pooling model to the reaction times of each subject</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="07-lecture_cache/revealjs/unnamed-chunk-33_df1f5f4fefc4791592ebcfb963a48d20">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>new_pred <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m2, <span class="at">newdata =</span> new)</span>
+<span id="cb42-2"><a href="#cb42-2"></a><span class="fu">ppc_intervals</span>(new<span class="sc">$</span>Reaction, <span class="at">yrep =</span> new_pred) <span class="sc">+</span></span>
+<span id="cb42-3"><a href="#cb42-3"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> new<span class="sc">$</span>Subject,  <span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(new)) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4"></a>  <span class="fu">xlab</span>(<span class="st">"Subject"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Reaction"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-33-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">What are some of the limitations of this approach?</li>
+</ul>
+</div>
+</section>
+<section id="building-a-hierarchical-model" class="slide level2 smaller">
+<h2>Building a Hierarchical Model</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/hierarchy.png" height="300"></p>
+</figure>
+</div>
+<div>
+<ul>
+<li class="fragment"><span class="math inline">\(\mu_j\)</span> is an average reaction time for subject <span class="math inline">\(j\)</span></li>
+<li class="fragment"><span class="math inline">\(\sigma_y\)</span> is the within-subject variability of reaction times</li>
+<li class="fragment"><span class="math inline">\(\mu\)</span> is the global average of reaction times across all subject</li>
+<li class="fragment"><span class="math inline">\(\sigma_{\mu}\)</span> is subject to subject variability of reaction times</li>
+<li class="fragment">Top-level parameters get fixed priors and induce the degree of pooling</li>
+</ul>
+</div>
+</section>
+<section id="sleep-data-8" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">We can now write out the full model giving priors to all global parameters</li>
+<li class="fragment">Notice, how the model could be extended if instead of <span class="math inline">\(\mu_j\)</span> we had our typical linear predictor</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_{ij} &amp;\sim&amp; \text{Normal}(\mu_j, \ \sigma_y^2) \\
+\mu_{j} &amp;\sim&amp; \text{Normal}(\mu, \ \sigma_{\mu}^2) \\
+\mu &amp;\sim&amp; \text{Normal}(300, 50^2) \\
+\sigma_y &amp;\sim&amp; \text{Exponential}(0.02) \\
+\sigma_{\mu} &amp;\sim&amp; \text{Exponential}(1)
+\end{eqnarray}
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment">This model can also be written such that <span class="math inline">\(\mu_j = \mu + b_j\)</span>, where each <span class="math inline">\(b_j \sim \text{Normal}(0, \sigma_{\mu}^2)\)</span></li>
+</ul>
+</div>
+</section>
+<section id="sleep-data-9" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-34_b75e7f1677022661d364782152471ed7">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(Reaction <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> Subject),</span>
+<span id="cb43-2"><a href="#cb43-2"></a>                 <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">50</span>),</span>
+<span id="cb43-3"><a href="#cb43-3"></a>                 <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
+<span id="cb43-4"><a href="#cb43-4"></a>                 <span class="at">prior_covariance =</span> <span class="fu">decov</span>(<span class="at">reg =</span> <span class="dv">1</span>, </span>
+<span id="cb43-5"><a href="#cb43-5"></a>                   <span class="at">conc =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">1</span>),</span>
+<span id="cb43-6"><a href="#cb43-6"></a>                 <span class="at">family =</span> gaussian, <span class="at">data =</span> d, <span class="at">iter =</span> <span class="dv">1500</span>,</span>
+<span id="cb43-7"><a href="#cb43-7"></a>                 <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb43-8"><a href="#cb43-8"></a>                 <span class="at">seed =</span> <span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div>
+<ul>
+<li class="fragment">(Intercept) = <span class="math inline">\(\mu\)</span></li>
+<li class="fragment">sigma = <span class="math inline">\(\sigma_y\)</span></li>
+<li class="fragment">Sigma[Subject:(Intercept),(Intercept)] = <span class="math inline">\(\sigma^2_{\mu}\)</span></li>
+<li class="fragment">b[(Intercept) Subject:XYZ] = <span class="math inline">\(b_j\)</span>, and so <span class="math inline">\(\mu_j = \mu + \beta_j\)</span></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-35_c98fd63e0c21c463167d44c5dfcc5a5d">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">summary</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glmer
+ family:       gaussian [identity]
+ formula:      Reaction ~ (1 | Subject)
+ algorithm:    sampling
+ sample:       3000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 125
+ groups:       Subject (18)
+
+Estimates:
+                                         mean   sd     10%    50%    90% 
+(Intercept)                             294.0   10.2  281.0  294.0  306.9
+b[(Intercept) Subject:308]               49.3   18.7   25.7   49.2   73.3
+b[(Intercept) Subject:309]              -71.1   16.5  -91.8  -71.0  -50.1
+b[(Intercept) Subject:310]              -62.1   15.5  -82.0  -61.9  -42.4
+b[(Intercept) Subject:330]               10.1   15.4   -9.0    9.8   29.3
+b[(Intercept) Subject:331]               14.1   17.0   -8.1   14.3   35.6
+b[(Intercept) Subject:332]              -19.2   16.8  -40.2  -19.5    2.3
+b[(Intercept) Subject:333]                9.9   17.5  -12.3   10.0   31.7
+b[(Intercept) Subject:334]                3.0   14.9  -15.6    3.0   22.1
+b[(Intercept) Subject:335]              -40.2   15.6  -60.1  -40.2  -20.2
+b[(Intercept) Subject:337]               57.2   16.4   36.5   57.2   78.3
+b[(Intercept) Subject:349]              -10.5   17.1  -32.2  -10.7   11.1
+b[(Intercept) Subject:350]               37.4   15.7   18.1   37.3   57.4
+b[(Intercept) Subject:351]              -11.0   18.4  -34.5  -10.8   12.8
+b[(Intercept) Subject:352]               43.4   18.1   21.0   43.0   67.4
+b[(Intercept) Subject:369]               -0.1   16.0  -20.7    0.2   20.0
+b[(Intercept) Subject:370]              -27.5   17.3  -49.3  -27.9   -5.2
+b[(Intercept) Subject:371]                0.9   14.8  -17.6    0.7   19.8
+b[(Intercept) Subject:372]               21.6   14.8    2.8   21.5   40.8
+sigma                                    37.6    2.6   34.3   37.5   41.0
+Sigma[Subject:(Intercept),(Intercept)] 1647.0  718.9  915.6 1502.6 2558.2
+
+Fit Diagnostics:
+           mean   sd    10%   50%   90%
+mean_PPD 293.0    4.6 287.0 293.0 299.1
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+                                       mcse Rhat n_eff
+(Intercept)                             0.4  1.0  571 
+b[(Intercept) Subject:308]              0.5  1.0 1444 
+b[(Intercept) Subject:309]              0.5  1.0 1212 
+b[(Intercept) Subject:310]              0.4  1.0 1193 
+b[(Intercept) Subject:330]              0.4  1.0 1195 
+b[(Intercept) Subject:331]              0.5  1.0 1357 
+b[(Intercept) Subject:332]              0.4  1.0 1458 
+b[(Intercept) Subject:333]              0.5  1.0 1406 
+b[(Intercept) Subject:334]              0.5  1.0  984 
+b[(Intercept) Subject:335]              0.5  1.0 1200 
+b[(Intercept) Subject:337]              0.5  1.0 1152 
+b[(Intercept) Subject:349]              0.5  1.0 1383 
+b[(Intercept) Subject:350]              0.4  1.0 1234 
+b[(Intercept) Subject:351]              0.4  1.0 1802 
+b[(Intercept) Subject:352]              0.5  1.0 1446 
+b[(Intercept) Subject:369]              0.5  1.0 1161 
+b[(Intercept) Subject:370]              0.5  1.0 1352 
+b[(Intercept) Subject:371]              0.5  1.0 1060 
+b[(Intercept) Subject:372]              0.5  1.0 1014 
+sigma                                   0.1  1.0 2069 
+Sigma[Subject:(Intercept),(Intercept)] 26.5  1.0  734 
+mean_PPD                                0.1  1.0 3059 
+log-posterior                           0.2  1.0  549 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="computing-mu_j" class="slide level2 smaller">
+<h2>Computing <span class="math inline">\(\mu_j\)</span></h2>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-36_cb64df09ae85fcac676684636e9a8e79">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a>muj <span class="ot">&lt;-</span> m3 <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2"></a>  <span class="fu">spread_draws</span>(<span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, b[ ,Subject]) <span class="sc">|&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3"></a>  <span class="fu">mutate</span>(<span class="at">mu_j =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> b) <span class="sc">|&gt;</span></span>
+<span id="cb46-4"><a href="#cb46-4"></a>  <span class="fu">select</span>(Subject, mu_j) <span class="sc">|&gt;</span></span>
+<span id="cb46-5"><a href="#cb46-5"></a>  <span class="fu">mean_qi</span>(<span class="at">.width =</span> <span class="fl">0.90</span>)</span>
+<span id="cb46-6"><a href="#cb46-6"></a></span>
+<span id="cb46-7"><a href="#cb46-7"></a><span class="fu">head</span>(muj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  Subject      mu_j .lower .upper .width .point .interval
+  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
+1 Subject:308  343.   316.   370.    0.9 mean   qi       
+2 Subject:309  223.   200.   246.    0.9 mean   qi       
+3 Subject:310  232.   211.   253.    0.9 mean   qi       
+4 Subject:330  304.   284.   325.    0.9 mean   qi       
+5 Subject:331  308.   285.   332.    0.9 mean   qi       
+6 Subject:332  275.   251.   298.    0.9 mean   qi       </code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-37-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sleep-data-10" class="slide level2 smaller">
+<h2>Sleep Data</h2>
+<div>
+<ul>
+<li class="fragment">We can see the effects of hierarchical pooling below</li>
+<li class="fragment">Subjects that are farther away from <span class="math inline">\(\E(\mu) = 294\)</span>(ms) and the ones that have fewer observations are pooled more towards the global mean</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center" data-hash="07-lecture_cache/revealjs/unnamed-chunk-38_b0f4786b0a0e061130e71c2c05c7c9e2">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-38-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="building-a-full-hierarchical-model" class="slide level2 smaller">
+<h2>Building a Full Hierarchical Model</h2>
+<div>
+<ul>
+<li class="fragment">The model we have built so far is for average reaction time only</li>
+<li class="fragment">What we would like to do, is to build a pooled regression model for the reaction time of each subject</li>
+<li class="fragment">The mechanics are similar but now we need a model for the slopes and intercepts for each subject, their covariance, and priors</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-hash="07-lecture_cache/revealjs/unnamed-chunk-39_e08d2190639e14fb5ddcb5e6e1f6c75f">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject),</span>
+<span id="cb48-2"><a href="#cb48-2"></a>                 <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">50</span>),</span>
+<span id="cb48-3"><a href="#cb48-3"></a>                 <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="at">autoscale =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb48-4"><a href="#cb48-4"></a>                 <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
+<span id="cb48-5"><a href="#cb48-5"></a>                 <span class="at">prior_covariance =</span> <span class="fu">decov</span>(<span class="at">reg =</span> <span class="dv">1</span>, </span>
+<span id="cb48-6"><a href="#cb48-6"></a>                   <span class="at">conc =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">1</span>),</span>
+<span id="cb48-7"><a href="#cb48-7"></a>                 <span class="at">family =</span> gaussian, <span class="at">data =</span> d, <span class="at">iter =</span> <span class="dv">1500</span>,</span>
+<span id="cb48-8"><a href="#cb48-8"></a>                 <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb48-9"><a href="#cb48-9"></a><span class="fu">summary</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glmer
+ family:       gaussian [identity]
+ formula:      Reaction ~ Days + (Days | Subject)
+ algorithm:    sampling
+ sample:       3000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 125
+ groups:       Subject (18)
+
+Estimates:
+                                         mean   sd     10%    50%    90% 
+(Intercept)                             256.6    7.7  246.9  256.7  266.4
+Days                                      9.0    1.7    6.8    9.0   11.1
+b[(Intercept) Subject:308]               41.2   22.4   15.0   38.8   72.3
+b[Days Subject:308]                       0.9    4.4   -5.0    1.4    6.1
+b[(Intercept) Subject:309]              -43.6   14.0  -61.7  -43.5  -25.7
+b[Days Subject:309]                      -7.9    3.1  -11.8   -7.8   -4.0
+b[(Intercept) Subject:310]              -43.0   13.7  -60.4  -42.5  -26.2
+b[Days Subject:310]                      -5.0    2.9   -8.8   -5.0   -1.4
+b[(Intercept) Subject:330]               23.3   14.4    5.0   23.2   41.9
+b[Days Subject:330]                      -4.1    2.7   -7.6   -4.2   -0.6
+b[(Intercept) Subject:331]               18.6   12.6    2.6   18.5   34.6
+b[Days Subject:331]                       0.7    2.9   -3.0    0.8    4.2
+b[(Intercept) Subject:332]                2.4   13.1  -14.1    2.2   19.2
+b[Days Subject:332]                      -5.1    3.0   -9.0   -5.0   -1.4
+b[(Intercept) Subject:333]               11.4   14.5   -6.6   10.7   30.7
+b[Days Subject:333]                       0.1    3.1   -3.9    0.2    4.0
+b[(Intercept) Subject:334]               -9.9   13.0  -26.8   -9.7    6.6
+b[Days Subject:334]                       2.3    2.7   -1.0    2.2    5.7
+b[(Intercept) Subject:335]               -7.4   14.1  -25.2   -7.8   10.5
+b[Days Subject:335]                      -8.9    2.8  -12.5   -8.9   -5.4
+b[(Intercept) Subject:337]               33.0   13.2   16.0   32.8   49.7
+b[Days Subject:337]                       9.7    3.1    5.8    9.7   13.7
+b[(Intercept) Subject:349]              -25.5   18.2  -50.2  -24.1   -3.8
+b[Days Subject:349]                       1.4    3.4   -2.8    1.2    5.9
+b[(Intercept) Subject:350]              -11.1   16.6  -32.2  -10.4    9.9
+b[Days Subject:350]                       8.1    3.1    4.2    8.0   12.2
+b[(Intercept) Subject:351]                2.4   17.3  -18.4    1.5   24.8
+b[Days Subject:351]                      -4.0    3.8   -8.8   -3.9    0.5
+b[(Intercept) Subject:352]               26.0   16.4    5.7   25.4   46.7
+b[Days Subject:352]                       3.5    3.2   -0.5    3.5    7.5
+b[(Intercept) Subject:369]               -0.7   13.0  -17.4   -0.6   15.6
+b[Days Subject:369]                       1.1    2.8   -2.4    1.1    4.6
+b[(Intercept) Subject:370]              -31.2   14.8  -50.1  -30.8  -12.4
+b[Days Subject:370]                       4.7    3.6    0.1    4.7    9.4
+b[(Intercept) Subject:371]               -2.3   12.5  -18.3   -2.3   13.7
+b[Days Subject:371]                       0.1    2.6   -3.1    0.1    3.3
+b[(Intercept) Subject:372]                9.7   12.8   -6.1    9.5   26.0
+b[Days Subject:372]                       2.3    2.5   -0.9    2.3    5.5
+sigma                                    22.2    1.8   20.0   22.0   24.5
+Sigma[Subject:(Intercept),(Intercept)]  843.3  439.5  390.6  753.7 1416.4
+Sigma[Subject:Days,(Intercept)]           8.6   64.6  -70.4   13.9   79.6
+Sigma[Subject:Days,Days]                 44.2   22.6   21.4   39.6   72.3
+
+Fit Diagnostics:
+           mean   sd    10%   50%   90%
+mean_PPD 293.3    2.9 289.6 293.3 296.9
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+                                       mcse Rhat n_eff
+(Intercept)                             0.2  1.0 1326 
+Days                                    0.0  1.0 1395 
+b[(Intercept) Subject:308]              0.5  1.0 2089 
+b[Days Subject:308]                     0.1  1.0 2190 
+b[(Intercept) Subject:309]              0.3  1.0 2647 
+b[Days Subject:309]                     0.1  1.0 2656 
+b[(Intercept) Subject:310]              0.3  1.0 2099 
+b[Days Subject:310]                     0.1  1.0 2209 
+b[(Intercept) Subject:330]              0.3  1.0 1920 
+b[Days Subject:330]                     0.1  1.0 1767 
+b[(Intercept) Subject:331]              0.3  1.0 2055 
+b[Days Subject:331]                     0.1  1.0 2328 
+b[(Intercept) Subject:332]              0.3  1.0 2318 
+b[Days Subject:332]                     0.1  1.0 2490 
+b[(Intercept) Subject:333]              0.3  1.0 2660 
+b[Days Subject:333]                     0.1  1.0 2089 
+b[(Intercept) Subject:334]              0.3  1.0 2165 
+b[Days Subject:334]                     0.1  1.0 1884 
+b[(Intercept) Subject:335]              0.3  1.0 2025 
+b[Days Subject:335]                     0.1  1.0 2125 
+b[(Intercept) Subject:337]              0.3  1.0 2728 
+b[Days Subject:337]                     0.1  1.0 2569 
+b[(Intercept) Subject:349]              0.4  1.0 1744 
+b[Days Subject:349]                     0.1  1.0 1996 
+b[(Intercept) Subject:350]              0.4  1.0 1529 
+b[Days Subject:350]                     0.1  1.0 1472 
+b[(Intercept) Subject:351]              0.3  1.0 2654 
+b[Days Subject:351]                     0.1  1.0 2187 
+b[(Intercept) Subject:352]              0.3  1.0 2524 
+b[Days Subject:352]                     0.1  1.0 2224 
+b[(Intercept) Subject:369]              0.3  1.0 2247 
+b[Days Subject:369]                     0.1  1.0 2225 
+b[(Intercept) Subject:370]              0.4  1.0 1623 
+b[Days Subject:370]                     0.1  1.0 1856 
+b[(Intercept) Subject:371]              0.2  1.0 2557 
+b[Days Subject:371]                     0.1  1.0 2073 
+b[(Intercept) Subject:372]              0.3  1.0 2428 
+b[Days Subject:372]                     0.1  1.0 2246 
+sigma                                   0.0  1.0 1572 
+Sigma[Subject:(Intercept),(Intercept)] 12.3  1.0 1280 
+Sigma[Subject:Days,(Intercept)]         2.2  1.0  872 
+Sigma[Subject:Days,Days]                0.7  1.0 1088 
+mean_PPD                                0.1  1.0 3134 
+log-posterior                           0.3  1.0  584 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="building-a-full-hierarchical-model-1" class="slide level2 smaller">
+<h2>Building a Full Hierarchical Model</h2>
+
+<img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-40-1.png" width="1152" class="r-stretch quarto-figure-center"></section>
+<section id="predicting-for-a-new-subject" class="slide level2 smaller">
+<h2>Predicting for a New Subject</h2>
+<div>
+<ul>
+<li class="fragment">We saw that we can make predictions for reaction times of subjects that were part of the model</li>
+<li class="fragment">But we can also make predictions for unobserved subjects by drawing from the “population” distribution, as opposed to subject-specific parameters</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell columns column-output-location" data-layout-align="center" data-hash="07-lecture_cache/revealjs/unnamed-chunk-41_75cc15d7c5b794b86b14af87e870635b">
+<div class="column">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>new_subj <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Days =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>, </span>
+<span id="cb50-2"><a href="#cb50-2"></a>              <span class="at">Subject =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="dv">400</span>, <span class="dv">10</span>)))</span>
+<span id="cb50-3"><a href="#cb50-3"></a>ypred_subj <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m4, </span>
+<span id="cb50-4"><a href="#cb50-4"></a>                        <span class="at">newdata =</span> new_subj)</span>
+<span id="cb50-5"><a href="#cb50-5"></a>new_subj <span class="sc">|&gt;</span></span>
+<span id="cb50-6"><a href="#cb50-6"></a>  <span class="fu">add_predicted_draws</span>(m4) <span class="sc">|&gt;</span></span>
+<span id="cb50-7"><a href="#cb50-7"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Days)) <span class="sc">+</span></span>
+<span id="cb50-8"><a href="#cb50-8"></a>  <span class="fu">stat_lineribbon</span>(<span class="fu">aes</span>(<span class="at">y =</span> .prediction), </span>
+<span id="cb50-9"><a href="#cb50-9"></a>                  <span class="at">width =</span> <span class="fu">c</span>(.<span class="dv">9</span>, .<span class="dv">8</span>, .<span class="dv">5</span>), </span>
+<span id="cb50-10"><a href="#cb50-10"></a>                  <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb50-11"><a href="#cb50-11"></a>  <span class="fu">ylab</span>(<span class="st">"Reaction time"</span>) <span class="sc">+</span> </span>
+<span id="cb50-12"><a href="#cb50-12"></a>  <span class="fu">ggtitle</span>(<span class="st">"Prediction for an unobserved subject"</span>) <span class="sc">+</span></span>
+<span id="cb50-13"><a href="#cb50-13"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Greys"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-41-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 <div class="footer footer-default">
