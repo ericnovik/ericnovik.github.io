@@ -1,0 +1,145 @@
+---
+title: "SMaC: Statistics, Math, and Computing"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author: "Eric Novik | eric.novik@nyu.edu"
+date: today
+date-format: "D MMM YYYY"
+format:
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    geometry:
+      - top=30mm
+      - left=20mm
+      - heightrounded
+    toc: false
+    number-sections: true
+    colorlinks: true
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Course description
+
+This course aims to prepare students for the [Applied Statistics for Social Science Research](https://steinhardt.nyu.edu/degree/ms-applied-statistics-social-science-research) program at NYU. We will cover basic programming using the R language, including data manipulation and graphical displays; some key ideas from Calculus, including differentiation and integration, basic matrix algebra, including vector and matrix arithmetic; some core concepts in Probability, including random variables, discrete and continuous distributions, and expectations; and a few simple regression examples.
+
+## Where and when
+
+The course will run from August 7 through August 18 from 9 am to 12 pm. We will meet at NYU in Room [TBD] and via Zoom. Students are strongly encouraged to attend in person, as this course will be highly interactive.
+
+## Course prerequisites
+
+The students should be fluent in basic algebra and have seen exponential and logarithmic functions. Some programming experience would be helpful but not required. Students should be prepared to write many small R programs during the course.
+
+## Course materials and references
+
+Students are expected to have access to R and RStudio. Use [these](https://rstudio-education.github.io/hopr/starting.html) instructions on downloading and installing the required software. In addition, you may find the following free resources helpful as you continue your studies.
+
+### Programming and Data Visualization 
+-   [Hands-On Programming with R](https://rstudio-education.github.io/hopr/), @grolemund2014
+
+-   [R for Data Science](https://r4ds.had.co.nz), @wickham2016
+
+-   [Data Visualization, A practical introduction](https://socviz.co/), @healy2018
+
+### Calculus
+-   [YouTube: Essence of Calculus](https://bit.ly/calc-3blue1brown), @sanderson2018
+
+-   [Calculus Made Easy](http://calculusmadeeasy.org/), @thompson1980
+
+-   [Calculus](https://openstax.org/details/books/calculus-volume-1), @herman2016
+
+### Probability
+-   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), @blitzstein2019
+
+-   [Introduction to Probability Cheatsheet v2](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf), Chen (2015)
+
+### Linear Algebra (for those who need it)
+-   [YouTube: Essense of Linear Algebra](https://bit.ly/lin-algebra-3blue1brown), @sanderson2018a
+
+-   [Introduction to Linear Algebra](https://web.stanford.edu/~boyd/vmls/), @boyd2018
+
+-   [Matrix Cookbook](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf), @petersen2012
+
+
+## Tentative schedule
+
+The following tentative schedule assumes ten 3-hour sessions, during which we plan to cover the following material.
+
+-   **(1) The Big Picture and Introduction to R**
+
+    We will briefly discuss the motivation behind the topics in the class and give some examples of the types of regression problems you may encounter. We will use Shuttle O-Rings damage and John Snow's (the other one) Cholera datasets as motivating examples. We will introduce programming principles in R, including RStudio IDE, R objects, built-in functions, and how to write your own functions.
+
+    -   Hands-On Programming with R*, [Part 1](https://rstudio-education.github.io/hopr/project-1-weighted-dice.html).*
+    -   R for Data Science, [Introduction](https://r4ds.had.co.nz/introduction.html).
+    -   YouTube: Essence of Calculus, Videos [1](https://youtu.be/WUvTyaaNkzM), [2](https://youtu.be/9vKqVkMQHKk), [3](https://youtu.be/S0_qX4VJhMQ).
+
+-   **(2) Plotting, Exponentials, Logs, and Derivatives**
+
+    We will review linear, exponential, and logarithmic functions and develop some intuition using compound interest. We will explain and code a softmax function using the log-sum-exp trick. We will introduce a derivative geometrically and symbolically. We will cover basic rules for differentiating functions and use noisy measurements of motion in a straight line as a motivating example. We will also practice plotting lines and curves using base `plot` and `ggplot2`.
+
+    -   Hands-On Programming with R*, [Part 2](https://rstudio-education.github.io/hopr/project-2-playing-cards.html)*
+    -   R for Data Science, [Data visualisation](https://r4ds.had.co.nz/data-visualisation.html)
+    -   YouTube: Essence of Calculus, Videos [4](https://youtu.be/YG15m2VwSjA), [5](https://youtu.be/m2MIpDrF7Es), [6](https://youtu.be/qb40J4N1fa4).
+
+-   **(3) Reshaping Data, Loops, and Maps; Introduction to Integration**
+
+    We will practice data wrangling using `dplyr` and `tidyr` packages. We will cover the intuition behind integration, approximating areas, the definite integral, and review the basic integration rules. We will learn how to do numerical and symbolic integration (in one dimension) using R. 
+
+    -   Hands-On Programming with R*, [Part 3](https://rstudio-education.github.io/hopr/project-3-slot-machine.html).*
+    -   R for Data Science, [Data transformations](https://r4ds.had.co.nz/transform.html).
+    -   YouTube: Essence of Calculus, Videos [7](https://youtu.be/kfF40MiS7zA), [8](https://youtu.be/FnJqaIESC2s), [9](https://youtu.be/FnJqaIESC2s).
+
+-   **(4) Introduction to Probability 1**
+
+    We will review sample spaces, counting, and introduce the axiomatic definition of probability. We will discuss how to solve probability problems using simulations and will go through a few famous paradoxes. We will extensively use R's `sample` and `replicate` functions.
+
+    -   R for Data Science, [Data Wrangling](https://r4ds.had.co.nz/wrangle-intro.html)
+    -   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), Chapter 1
+    -   YouTube: Essence of Calculus, Videos [10](https://youtu.be/BLkz5LGWihw), [11](https://youtu.be/3d6DsjIBzJ4), [12](https://youtu.be/CfW845LNObM).
+
+-   **(5) Introduction to Probability 2**
+
+    We will introduce conditional probability, the law of total probabilities, and independence and discuss a few famous paradoxes. We will write R simulations to check analytic solutions.
+
+    -   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), Chapter 2
+
+-   **(6) Introduction to Probability 3**
+
+    We will introduce Random Variables, PDFs, and CDFs. We will cover Bernoulli, Binomial, Uniform, Normal, and Exponential RVs. We will discuss the concept of expectations. We will use R's distribution functions to simulate the realizations of RVs and compute their properties.
+
+    -   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), Chapter 3
+
+-   **(7) Introduction to Matrix Algebra**
+
+    We will review the basics of Linear Algebra, including vector and matrix addition and multiplication. We will practice matrix and vector arithmetic in R. Time permitting, we will solve the over-determined system of linear equations for the motion in a straight-line problem from Lecture 2.
+
+    -   YouTube: Essence of Linear Algebra, Videos [1](https://youtu.be/fNk_zzaMoSs), [2](https://youtu.be/k7RM-ot2NWY), [3](https://youtu.be/kYB8IZa5AuE)
+
+-   **(8) Exploratory Data Analysis (EDA)**
+
+    We will take a break from math and turn our attention to EDA. We will start with an existing dataset and learn how to create various numerical summaries. We will then produce several plots focusing on the purpose of each graph and the comparison you are trying to make. We will discuss the grammar of graphics, what makes a good graph, and the concept of small multiples. We will also learn how to make simple interactive graphs with Shiny.
+
+    -   R for Data Science, [Exploratory Data Analysis](https://r4ds.had.co.nz/exploratory-data-analysis.html)
+    -   Data Visualization, A practical introduction, [Look at Data](https://socviz.co/lookatdata.html#lookatdata)
+
+
+-   **(9) Analysis Workflow and Linear Regression**
+
+    We will introduce an analysis workflow using a dataset containing ratings of red wines. We will use the `rstanarm`. We will attempt to determine what makes a good wine and set up a simple decision problem. After doing some basic EDA, we will fit several regressions and evaluate how well our model performs. 
+
+    -   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), Chapter 3
+
+-   **(10) Review, Presentation, and Discussion**
+
+    We will quickly review the material and answer questions. Before this session, each person will submit either a  one-page proposal for the analysis they would like to perform or a discussion of a particular topic they found interesting Each person (depending on class size, we may need to sample) will have 5 minutes to present it, followed by 5 minutes of Q&A and feedback. You don't need to do the analysis; just discuss what you hope to learn.
+
+## Assessment
+
+-   A short take-home test covering the material from the course
+
+## References
+

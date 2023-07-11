@@ -1,0 +1,1005 @@
+---
+title: "Math and Computing Bootcamp"
+subtitle: "Applied Statistics for Social Science Research"
+author: "Eric Novik | Summer 2023 | Session 1"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+server: shiny
+bibliography: ../references.bib
+---
+
+## Course Objectives
+
+::: incremental
+
+-   This course will help you to prepare for the **A3SR MS Program** by covering the minimal necessary foundation in **computing**, **math,** and **probability**.
+
+-   After completing the course, you will gain some experience with the **R** language, differential and integral **calculus**, basic **linear algebra**, and **probability**.
+
+::: 
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+#library(MASS)
+library(gridExtra)
+library(purrr)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Course Format
+
+::: incremental
+
+-   The course will run for two weeks, five days per week, 3 hours per day
+
+-   Each day will be broken up into three parts:
+
+    -   30-minute going over the homework questions
+
+    -   1.5-hour lecture
+
+    -   1-hour hands of exercises
+
+-   The course will be computationally intensive -- we will write many small programs.
+
+::: 
+
+## Course Outline {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+-   Introduction to the **R language**, RStudio, and R Markdown. Basic simulations.
+
+-   Review of **differentiation**. Meaning of the derivative. Numeric and symbolic differentiation and optimization.
+
+-   Review of **integration**. Riemann integral and basic rules of integration. Numeric and symbolic integration.
+
+-   Review of **one-dimensional** **probability**. Conditional probability, random variables, and expectations. Some **discrete distributions**. Solving probability problems by simulation.
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+-   Some **continuous distributions**.
+
+-   Review of **Linear Algebra**. Vectors and vector arithmetic. Matrixes and matrix operations, multiplication, inverses, and determinants.
+
+-   **Tentative: Two-dimentional probability** distributions (joint distributions). Joint, marginal, and conditional distributions. Covariance and correlation.
+
+-   Basic **statistics and linear regression**.
+:::
+:::
+:::
+
+## References {.smaller}
+
+-   [Hands-On Programming with R](https://rstudio-education.github.io/hopr/), @grolemund2014
+
+-   [R for Data Science](https://r4ds.had.co.nz), @wickham2016
+
+-   [Calculus Made Easy](http://calculusmadeeasy.org/), @thompson1980
+
+-   [Calculus](https://openstax.org/details/books/calculus-volume-1), @herman2016
+
+-   [YouTube: Essence of Calculus](https://bit.ly/calc-3blue1brown), @sanderson2018
+
+-   [YouTube: Essense of Linear Algebra](https://bit.ly/lin-algebra-3blue1brown), @sanderson2018a
+
+-   [Introduction to Linear Algebra](https://web.stanford.edu/~boyd/vmls/), @boyd2018
+
+-   [Matrix Cookbook](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf), @petersen2012
+
+-   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), @blitzstein2019
+
+## Session 1 Outline
+
+::: incremental
+-   The big picture -- costs and benefits
+
+-   Setting up an analysis environment
+
+-   RStudio projects
+
+-   Working with interpreted languages like R
+
+-   Some basic R syntax and elements of R style
+
+-   Generating data with R
+
+-   Some basic R and ggplot graphics
+
+-   Writing your first Monte Carlo simulation
+:::
+
+## Some Mistakes Are Silly
+
+::: columns
+::: {.column width="50%"}
+![](images/nikki-haley.jpg){width="386"}
+:::
+
+::: {.column width="50%"}
+![](images/bill-gates-sharks.png){width="557"}
+:::
+:::
+
+## Some Mistakes Are Deadly
+
+On January 28, 1986, shortly after launch, Shuttle Challenger exploded, killing all seven crew members.
+
+::: panel-tabset
+### O-Ring Data
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
+
+library(ggplot2)
+library(scales)
+
+# Challenger O-Ring data
+file <- "https://archive.ics.uci.edu/ml/machine-learning-databases/space-shuttle/o-ring-erosion-only.data"
+
+d <- readr::read_table(file, col_names = FALSE)
+colnames(d) <- c("n_rings", "n_distress", "temp", "psi", "flight_order")
+
+p <- ggplot(d, aes(temp, n_distress))
+p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
+  ggtitle("Challenger Space Shuttle O-Ring Data",
+          subtitle = "Number of O-rings experiencing thermal distress") +
+  scale_y_continuous(breaks = c(0, 1, 2))
+```
+:::
+
+::: {.column width="50%"}
+![](images/o-rings.png)
+:::
+:::
+
+### Binomial Model
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
+
+library(dplyr)
+library(readr)
+# library(rstanarm)
+# d <- d %>%
+#   mutate(not_in_distress = n_rings - n_distress)
+# 
+# $$
+# \begin{eqnarray*}
+# \text{BinomialLogit}(n~|~N,\alpha) & = &
+# \text{Binomial}(n~|~N,\text{logit}^{-1}(\alpha)) \\[6pt] & = &
+# \binom{N}{n} \left( \text{logit}^{-1}(\alpha) \right)^{n}  \left( 1 -
+# \text{logit}^{-1}(\alpha) \right)^{N - n}
+# \end{eqnarray*}
+# $$
+# or_model <- stan_glm(
+#   cbind(n_distress, not_in_distress) ~ temp,
+#   data = d,
+#   family = binomial(link = "logit"),
+#   cores = 4
+# )
+# newdata <-
+#   tibble(
+#     temp = 30:81,
+#     n_distress = rep(0, 52),
+#     not_in_distress = rep(6, 52)
+# )
+# y_pred <- posterior_pred(or_model, newdata)
+# write_rds(y_pred, file = "stats-math/01-lecture/data/oring_epred.rds")
+# y_pred <- read_rds("stats-math/01-lecture/data/oring_pred.rds")
+y_pred <- read_rds("data/oring_pred.rds") 
+mean_fail <- colMeans(y_pred)
+pred <- tibble(mean_fail, temp = 30:81)
+temp_at_launch <- 36
+expected_fails_at_launch <-
+  pred |> filter(temp == temp_at_launch) |> select(mean_fail) |> as.numeric()
+p <- ggplot(d, aes(temp, n_distress))
+p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
+  geom_line(
+    data = pred,
+    aes(x = temp, y = mean_fail),
+    linewidth = 0.2,
+    color = 'red'
+  ) +
+  geom_point(
+    data = pred,
+    x = temp_at_launch,
+    y = expected_fails_at_launch,
+    color = 'blue',
+    size = 2
+  ) +
+  annotate("segment", x = temp_at_launch + 10, xend = temp_at_launch + 1,
+             y = expected_fails_at_launch, yend = expected_fails_at_launch,
+           colour = "blue", size = 0.2, arrow = arrow(type = "closed", 
+                                                      length = unit(0.1, "inches"))) +
+  annotate("text", x = temp_at_launch + 24, 
+           y = expected_fails_at_launch, 
+           label = paste("Expected number of failures at launch = ", 
+                         round(expected_fails_at_launch)), 
+           size = 3, color = 'blue') +
+  ggtitle("Challenger Space Shuttle O-Ring Data",
+          subtitle = "Number of O-rings experiencing thermal distress")
+
+# library(tidybayes)
+# newdata |>
+#   add_predicted_draws(or_model, ndraws = 1000) |>
+#   ggplot(aes(temp, n_distress)) +
+#   stat_lineribbon(aes(y = .prediction), .width = c(0.9, .5), alpha = 0.25) +
+#   geom_point(data = d) + xlab("Temperature at launch (F)") + ylab("") 
+
+```
+:::
+
+::: column
+-   Probability of *1 or more* rings being damaged at launch is about **`r round(mean(y_pred[, 7] > 0), 2)`**
+
+-   Probability of *all 6 rings* being damaged at launch is about **`r round(mean(y_pred[, 7] == 6), 2)`**
+:::
+:::
+
+### References
+
+-   @fowlkes1989: Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure
+
+-   @martz1992: The Risk of CatastrophicFailure of the Solid Rocket Boosters on the Space Shuttle.
+:::
+
+::: footer
+Data source: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Challenger+USA+Space+Shuttle+O-Ring)
+:::
+
+## Allan McDonald Dies at 83
+
+::: columns
+::: {.column width="50%"}
+![](images/mcdonald.png){fig-align="left"}
+:::
+
+::: {.column width="50%"}
+![](images/hearing.png){fig-align="right" width="1300"}
+:::
+:::
+
+Communication is part of the job --- it's worth learning how to do it well.
+
+::: footer
+Source: [The New York Times, March 9, 2021](https://www.nytimes.com/2021/03/09/us/allan-mcdonald-dead.html)
+:::
+
+## Benefits
+
+::: columns
+::: {.column width="47.5%"}
+::: {.incremental style="font-size: 80%;"}
+-   Programming is a cheap way to do experiments
+-   Programming is easy; probabilistic programming is hard
+-   Differential calculus: a way to optimize functions
+-   Integral calculus: computing probabilities
+-   Linear algebra: a language for n-dimensional problems
+-   Probability: to statistics as Differential equations: to physics
+:::
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+![](images/dowhat.jpg){width="443"}
+:::
+:::
+
+## Example: Differential Calculus {.smaller}
+
+::: panel-tabset
+### Regression Line View
+
+::: columns
+::: {.column width="50%"}
+-   Differentiation comes up when you want to find the most likely values of parameters (unknowns) in optimization-based (sometimes called frequentist) inference
+-   We will learn about optimization later, but for now, imagine that we need to find the values of the slope and intercept such that the red line fits "nicely" through the cloud of points
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-height: 5
+#| fig-width: 5
+
+set.seed(123)
+mu <- c(1, 0.5)
+x <- seq(0, 10, len = 50)
+y <- mu[1] + mu[2] * x + rnorm(50)
+p <- ggplot(data.frame(x, y), aes(x, y))
+p + geom_point() + geom_smooth(method = "lm", size = 0.3, 
+                               color = "yellow", fill = "blue") +
+# p + geom_point() + geom_abline(slope = mu[2], intercept = mu[1], 
+#                                size = 0.2, color = 'red') +
+  xlim(0, 10) + ylim(0, 10) +
+  ggtitle("Regression line with slope = 0.5 and intercept = 1")
+```
+:::
+:::
+
+### Likelihood View
+
+Suppose you have linear regression model of the form $y_n \sim \operatorname{normal}(\alpha + \beta x_n, \, \sigma)$ and you want to learn the most likely values of $\alpha$ and $\beta$.
+
+```{r}
+library(plotly)
+
+alpha <- seq(-2, 4, 0.1)
+beta <- seq(-2.5, 3.5, 0.1)
+sigma <- matrix(c(2,-1,-1, 2), nrow = 2)
+f <- function(x, y) mvtnorm::dmvnorm(cbind(x, y), mu, sigma)
+lik <- outer(alpha, beta, f)
+p <- plot_ly(x = ~alpha, y = ~beta, z = ~lik)
+p <- p %>% add_surface() %>% layout(title = 'Normal Likelihood', 
+                                        plot_bgcolor = "#f0f1eb",
+                                        paper_bgcolor = "#f0f1eb")
+p
+```
+:::
+
+## Example: Integral Calculus {style="font-size: 75%;"}
+
+::: columns
+::: {.column width="47.5%"}
+-   Suppose we have a probability distribution of some parameter $\theta$, which represents the differences between the treated and control units
+
+-   Further, suppose that $\theta > 0$ favors the treatment group
+
+-   We want to know the probability that treatment is better than control
+
+-   This probability can be written as:
+
+    $$
+    P(\theta > 0) = \int_{0}^{\infty} p_{\theta}\, d\theta
+    $$
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+-   Assuming $\theta$ is normally distributed with $\mu = 1$ and $\sigma = 1$ we can evaluate the integral as an area under the normal curve from $0$ to $\infty$.
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
+
+library(ggdist)
+nd <- tibble::tribble(
+  ~ dist,      ~ args,
+  "norm",      list(1, 1),
+) 
+
+nd %>%
+  ggplot(aes(xdist = dist, args = args)) +
+  stat_slab(aes(fill = stat(x > 0))) +
+  scale_fill_manual(values = c("gray85", "skyblue")) +
+  theme(legend.position = "none") + 
+  xlab(expression(theta)) + ylab("") +
+  annotate("text", x=1.2, y=0.3, label= "P(theta > 0) == 0.84", parse = TRUE) +
+  ggtitle("Normal distribution with mean 1 and standard deviation 1")
+
+```
+:::
+:::
+
+## Example: Linear Regression {.smaller}
+
+Notice a Linear Algebra notation $X \beta$, which is matrix-vector multiplication. <br>
+
+```{stan output.var="model0"}
+#| echo: true
+#| eval: false
+data {
+  int<lower=0> N;   // number of data items
+  int<lower=0> K;   // number of predictors
+  matrix[N, K] X;   // predictor matrix
+  vector[N] y;      // outcome vector
+}
+parameters {
+  real alpha;           // intercept
+  vector[K] beta;       // coefficients for predictors
+  real<lower=0> sigma;  // error scale
+}
+model {
+  y ~ normal(X * beta + alpha, sigma);  // likelihood
+}
+```
+
+::: footer
+Linear Regression in Stan. Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/linear-regression.html)
+:::
+
+::: aside
+Stan is a probabilistic programming language. You write your data generating process (model), and Stan performs inference for all the unknowns.
+:::
+
+## Example: Bionomial Regression {.smaller}
+
+This is the type of model we fit to the O-Rings data.
+
+<br>
+
+```{stan output.var="model1"}
+#| echo: true
+#| eval: false
+data {
+  int<lower=0> N_rows; // number of input rows
+  int<lower=0> N;      // number of trials in Binom(N, p)
+  vector[N_rows] x;    // temperature for the O-Rings example
+  array[N_rows] int<lower=0, upper=N> y; // number of "successes" in Binom(N, p)
+}
+parameters {
+  real alpha;
+  real beta;
+}
+model {
+  alpha ~ normal(0, 5); // prior on the intercept
+  beta ~ normal(0, 1);  // prior on the slope
+  y ~ binomial_logit(N, alpha + beta * x);
+}
+```
+
+::: footer
+Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/QR-reparameterization.html)
+:::
+
+## Example: IRT Model {.smaller}
+
+Item-Response Theory models are popular in education research but generalize to other applications. <br>
+
+```{stan output.var="model2"}
+#| echo: true
+#| eval: false
+
+data {
+  int<lower=1> J;                     // number of students
+  int<lower=1> K;                     // number of questions
+  int<lower=1> N;                     // number of observations
+  array[N] int<lower=1, upper=J> jj;  // student for observation n
+  array[N] int<lower=1, upper=K> kk;  // question for observation n
+  array[N] int<lower=0, upper=1> y;   // correctness for observation n
+}
+parameters {
+  real delta;            // mean student ability
+  array[J] real alpha;   // ability of student j - mean ability
+  array[K] real beta;    // difficulty of question k
+}
+model {
+  alpha ~ std_normal();         // informative true prior
+  beta ~ std_normal();          // informative true prior
+  delta ~ normal(0.75, 1);      // informative true prior
+  for (n in 1:N) {
+    y[n] ~ bernoulli_logit(alpha[jj[n]] - beta[kk[n]] + delta);
+  }
+}
+```
+
+::: footer
+1PL item-response model. Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/item-response-models.html)
+:::
+
+## Analysis Environment
+
+::: columns
+::: {.column width="50%" style="font-size: 75%;"}
+-   Install the latest version of R
+
+-   Install the latest version of the RStudio Desktop
+
+-   Create a directory on your hard drive and give it a simple name. Mine is called `statsmath`
+
+-   In RStudio, go to File -\> New Project and select: "Existing Directory"
+:::
+
+::: {.column width="50%"}
+![](images/rstudio1.png)
+:::
+:::
+
+::: footer
+Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio.com/products/rstudio/download/)
+:::
+
+## What is R
+
+::: columns
+::: {.column width="47.5%"}
+::: {.incremental style="font-size: 75%;"}
+-   R is an open-source, interpreted, (somewhat) functional programming language
+
+-   R is an implementation of the S language developed at Bell Labs around 1976
+
+-   [Ross Ihaka](https://en.wikipedia.org/wiki/Ross_Ihaka "Ross Ihaka") and [Robert Gentleman](https://en.wikipedia.org/wiki/Robert_Gentleman_(statistician) "Robert Gentleman (statistician)") started working on R in early 1990s
+
+-   Version 1.0 was released in 2000
+
+-   There are approximately 20,000 R packages available in [CRAN](https://cran.r-project.org/)
+
+-   R has a large and generally friendly [user community](https://stackoverflow.com/questions/tagged/r)
+:::
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+![](images/r-logo.png){width="274"} ![](images/pl-pop.png)
+:::
+:::
+
+## Basic Arithmetic
+
+::: columns
+::: {.column width="47.5%"}
+```{r}
+#| echo: true
+
+2 + 3
+10^3
+sin(pi/2) + cos(pi/2)
+z <- 0 + 1i
+z^2
+round(exp(z*pi) + 1)
+```
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+```{r}
+#| echo: true
+x <- seq(0, 1, len = 10) # vector x 
+length(x)
+str(x) 
+sum(x)
+prod(x)
+mean(x)
+sum(x) / length(x)
+median(x)
+```
+:::
+:::
+
+## Data Frames {.smaller}
+
+::: columns
+::: {.column width="47.5%"}
+::: incremental
+-   Data frames are rectangular structures that are often used in data analysis
+
+-   There is a built-in function called `data.frame`, but we recommend `tibble`, which is part of the `dplyr` package
+
+-   You can look up the documentation of any R function this way: `?dplyr::tibble`. If the package is loaded by using `library(dplyr)` you can omit `dplyr::` prefix
+:::
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+::: incremental
+-   John F. W. Herschel's data on the orbit of the Twin Stars $\gamma$ Virginis
+-   In the process, he [developed the scatterplot](https://friendly.github.io/HistDataVis/ch06-scat.html)
+:::
+
+```{r}
+#| echo: true
+library(HistData)
+data("Virginis.interp")
+head(Virginis.interp)
+dplyr::as_tibble(Virginis.interp)
+```
+:::
+:::
+
+## Lists {.smaller}
+
+-   Lists are collections of objects of different types and shapes
+-   Contrast with a data frame that contains objects of different types but is rectangular
+
+```{r}
+#| echo: true
+x <- list(A = pi, B = c(0, 1), C = 1:10, D = c("one", "two"))
+x$A
+x[1]
+str(x[1])
+x[[1]] # same as x$A
+```
+
+## Basic Plotting {.smaller}
+
+::: panel-tabset
+### Code
+
+-   R base plotting system is great for making quick basic graphs with relatively little typing.
+
+-   We will demonstrate with John Snow's data from the 1854 cholera outbreak.
+
+```{r}
+#| echo: true
+#| eval: false
+library(HistData)
+require(lubridate)
+
+# set up the plotting area so it looks nice
+par(mar=c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01)
+clr <- ifelse(Snow.dates$date < mdy("09/08/1854"), "red", "darkgreen")
+plot(deaths ~ date, data = Snow.dates, 
+     type = "h", lwd = 2, col = clr, xlab="")
+points(deaths ~ date, data = Snow.dates, 
+       cex = 0.5, pch = 16, col = clr)
+text(mdy("09/08/1854"), 40, "Pump handle\nremoved Sept. 8", pos = 4)
+```
+
+### Plot Deaths Over Time
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
+library(HistData)
+require(lubridate)
+
+# set up the plotting area so it looks nice
+par(mar=c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+clr <- ifelse(Snow.dates$date < mdy("09/08/1854"), "red", "darkgreen")
+plot(deaths ~ date, data = Snow.dates, 
+     type = "h", lwd = 2, col = clr, xlab="")
+points(deaths ~ date, data = Snow.dates, 
+       cex = 0.5, pch = 16, col = clr)
+text(mdy("09/08/1854"), 40, "Pump handle\nremoved Sept. 8", pos = 4)
+```
+
+### Plot the Map
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+#| fig-align: center
+par(mar=c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+SnowMap(xlim=c(7.5,16.5), ylim=c(7,16), polygons=FALSE, density=TRUE,
+        main="Snow's Cholera Map")
+```
+:::
+
+## Simulating Coin Flips {.smaller}
+
+We can learn a lot through simulation. We will start with the `sample()` function.
+
+`sample(x, size, replace = FALSE, prob = NULL)`
+
+::: panel-tabset
+### Sample
+
+```{r}
+#| echo: true
+
+# simulating coin flips
+coin <- c("H", "T")
+
+# flip a fair coin 10 times
+sample(coin, 10, replace = TRUE)
+
+# flip a coin that has P(H = 0.6) 10 times
+sample(coin, 10, replace = TRUE, prob = c(0.7, 0.4))
+
+# it's more convenient to make H = 1 and T = 0
+coin <- c(1, 0)
+
+# we can compute the proportion of heads in 1000 samples
+sample(coin, 1e3, replace = TRUE) %>%
+  mean()
+
+# the above is the same as
+mean(sample(coin, 1e3, replace = TRUE))
+```
+
+### Simulate Coin Flips
+
+```{r}
+#| echo: true
+#| eval: false
+
+# flip a fair coin 2, 3, ..., 10000 times, and at each flip
+# compute the proportion of heads
+library(scales)
+set.seed(123)
+n <- 1e4
+est <- numeric(n)
+for (i in 1:n) {
+  x <- sample(coin, i+1, replace = TRUE)
+  est[i] <- mean(x)
+}
+p <- ggplot(data.frame(i = 1:n, est), aes(i, est))
+p + geom_line(size = 0.1) + 
+  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
+  scale_x_continuous(trans = 'log10', label = comma) +
+  xlab("Number of flips of Log10 scale") +
+  ylab("Estimated proportion of Heads")
+```
+
+### Plot
+
+We can see some evidence for the Law of Large Numbers.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3.5
+#| fig-align: center
+#| cache: true
+
+library(scales)
+set.seed(123)
+n <- 1e4
+est <- numeric(n)
+for (i in 1:n) {
+  x <- sample(coin, i+1, replace = TRUE)
+  est[i] <- mean(x)
+}
+p <- ggplot(data.frame(i = 1:n, est), aes(i, est))
+p + geom_line(size = 0.1) + 
+  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
+  scale_x_continuous(trans = 'log10', label = comma) +
+  xlab("Number of flips on Log10 scale") +
+  ylab("Estimated proportion of Heads") +
+  ggtitle("Error decreases with the size of the sample")
+```
+:::
+
+## Functions {.smaller}
+
+::: panel-tabset
+### Structure
+
+-   Functions help you break up the code into self-contained, understandable pieces.
+
+-   Functions take in arguments and return results. You already seen functions like `sum()` and `mean()`. Here you will learn how to write your own.
+
+![](images/function.png){fig-align="center"}
+
+::: footer
+Source: [Hands-On Programming with R](https://rstudio-education.github.io/hopr/basics.html)
+:::
+
+### Coint Flip Function
+
+::: columns
+::: {.column width="50%"}
+We will write a function that produces one estimate of the proportion given a fixed sample size `n`.
+
+```{r}
+#| echo: true
+
+estimate_proportion <- function(n) {
+  coin <- c(1, 0)
+  x <- sample(coin, n, replace = TRUE)
+  est <- mean(x)
+  return(est)
+}
+estimate_proportion(10)
+x <- replicate(1e3, estimate_proportion(10))
+head(x)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| cache: true
+par(
+  mar = c(3, 3, 2, 1),
+  mgp = c(2, .7, 0),
+  tck = -.01,
+  bg = "#f0f1eb"
+)
+hist(x, xlab = "Number of simulations", main = "Distribution of Proportions of Heads")
+```
+:::
+:::
+
+### Coin Flip Example
+
+To reproduce our earlier example, generating estimates for increasing sample sizes, use `map_dbl()` function from `purrr` package.
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3.5
+#| fig-align: center
+#| cache: true
+#| echo: true
+#| code-line-numbers: "|3|5"
+library(purrr)
+par(
+  mar = c(3, 3, 2, 1),
+  mgp = c(2, .7, 0),
+  tck = -.01,
+  bg = "#f0f1eb"
+)
+y <- map_dbl(2:500, estimate_proportion)
+# above is the same as sapply(2:500, estimate_proportion)
+plot(2:500,
+     y,
+     xlab = "",
+     ylab = "",
+     type = 'l')
+```
+:::
+
+## Generating Continuous Uniform Draws
+
+-   Here, we will examine a continuous version of the `sample()` function: `runif(n, min = 0, max = 1)`
+-   `runif` generates realizations of a random variable uniformly distributed between `min` and `max`.
+
+```{r}
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+par(mar=c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+hist(runif(1e3))
+```
+
+## Estimating $\pi$ by Simulation
+
+The idea is that we can approximate the ratio of the area of an inscribed circle, $A_c$, to the area of the square, $A_s$, by uniformly "throwing darts" at the square with the side $2r$ and counting how many darts land inside the circle versus inside the square.
+
+$$
+\begin{align}
+A_{c}& = \pi r^2 \\
+A_{s}& = (2r)^2 = 4r^2 \\
+\frac{A_{c}}{A_{s}}& = \frac{\pi r^2}{4r^2} = \frac{\pi}{4} \implies \pi = \frac{4A_{c}}{A_{s}}
+\end{align}
+$$
+
+## Estimating $\pi$ by Simulation
+
+To estimate $\pi$, we perform the following simulation:
+
+$$
+\begin{align}
+X& \sim \text{Uniform}(-1, 1) \\
+Y& \sim \text{Uniform}(-1, 1) \\
+\pi& \approx \frac{4 \sum_{i=1}^{N} I(x_i^2 + y_i^2 < 1)}{N}
+\end{align}
+$$
+
+The numerator is a sum over an indicator function $\text{I}$ which evaluates to $1$ if the inequality holds and $0$ otherwise.
+
+## Estimating $\pi$ by Simulation {.scrollable transition="slide"}
+
+::: panel-tabset
+### Code and Plot
+
+```{r}
+#| echo: true
+#| fig-width: 3
+#| fig-height: 3
+#| fig-align: center
+library(ggplot2)
+n <- 1e3
+x <- runif(n, -1, 1); y <- runif(n, -1, 1)
+inside <- x^2 + y^2 < 1
+data <- data.frame(x, y, inside)
+p <- ggplot(aes(x = x, y = y), data = data)
+p + geom_point(aes(color = inside)) + theme(legend.position = "none")
+```
+
+### Estimate
+
+```{r}
+#| echo: true
+cat("Estimated value of pi =", 4*sum(inside) / n)
+```
+
+```{r}
+knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
+```
+:::
+
+## Getting a Better Approximation
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+sliderInput("n", "Number of points: ", 
+            min = 10, max = 5e3, value = 10, step = 100, width = "80%")
+plotOutput("distPlot", width = "400px", height = "400px")
+```
+:::
+
+::: {.column width="50%"}
+-   As you move the slider, a new simulation runs in the background
+-   You can see the new value of $\pi$ in the plot title
+-   Move it around and see what happens
+:::
+:::
+
+```{r}
+#| context: server
+
+library(ggplot2)
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
+  )
+theme_set(thm)
+
+output$distPlot <- renderPlot({
+  x <- runif(input$n,-1, 1)
+  y <- runif(input$n,-1, 1)
+  inside <- x ^ 2 + y ^ 2 < 1
+  pi_est <- round(4*sum(inside) / input$n, 2)
+  data <- data.frame(x, y, inside)
+  p <- ggplot(aes(x = x, y = y), data = data)
+  p + geom_point(aes(color = inside)) + theme(legend.position = "none") +
+    ggtitle(stringr::str_c("Estimated value of pi = ", pi_est)) 
+})
+```
+
+## Homework
+
+-   Follow the readings from Session 1 in the syllabus
+-   Modify `estimate_proportion` function to take in an additional parameter specifying the coin's bias. Repeat the plot with the bias of $0.3$ and $0.8$
+-   Write a function for the $\pi$ simulation that takes as an argument the number of simulation points and outputs the estimated value of $pi$
+
+## References
+
