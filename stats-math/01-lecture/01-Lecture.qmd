@@ -1,5 +1,5 @@
 ---
-title: "Math and Computing Bootcamp"
+title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
 author: "Eric Novik | Summer 2023 | Session 1"
 format:
@@ -11,10 +11,9 @@ format:
       buttons: false
       chalk-width: 5
     preview-links: auto
-    footer: <https://ericnovik.github.io/bayes-course.html>
+    footer: <https://ericnovik.github.io/smac.html>
 editor: source
 always_allow_html: true
-server: shiny
 bibliography: ../references.bib
 ---
 
@@ -23,7 +22,7 @@ bibliography: ../references.bib
 ::: incremental
 -   This course will help you to prepare for the **A3SR MS Program** by covering the minimal necessary foundation in **computing**, **math,** and **probability**.
 
--   After completing the course, you will should be able to write simple R programs an perform simulations, plot and manipulate data, solve basic probability problems, and understand the concept of regression
+-   After completing the course, you will be able to write simple R programs and perform simulations, plot and manipulate data, solve basic probability problems, and understand the concept of regression
 :::
 
 ```{r}
@@ -96,13 +95,13 @@ $$
 
 ::: {.column width="50%"}
 ::: incremental
--   **Discrete distributions** like Bernoilli and Binomial and **continuous distributions** like Normal and Exponential
+-   **Discrete distributions** like Bernoulli and Binomial and **continuous distributions** like Normal and Exponential
 
 -   Introduction to **Matrix Algebra**. Vectors and vector arithmetic. Matrixes and matrix operations.
 
 - Manipulating and graphing data and **Exploratory Data Analysis**
 
-- Progamming basics: **variables, flow control, loops, functions**, and writing **simulations**
+- Programming basics: **variables, flow control, loops, functions**, and writing **simulations**
 
 - Introduction to basic **statistics and linear regression**.
 :::
@@ -291,7 +290,7 @@ p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
 
 -   @fowlkes1989: Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure
 
--   @martz1992: The Risk of CatastrophicFailure of the Solid Rocket Boosters on the Space Shuttle.
+-   @martz1992: The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.
 :::
 
 ::: footer
@@ -327,7 +326,7 @@ Source: [The New York Times, March 9, 2021](https://www.nytimes.com/2021/03/09/u
 ::: columns
 ::: {.column width="47.5%"}
 ::: {.incremental style="font-size: 80%;"}
--   Programming: cheap way to do experiments and a lazy way to do math
+-   Programming: a cheap way to do experiments and a lazy way to do math
 -   Differential calculus: optimize functions, compute MLEs
 -   Integral calculus: compute probabilities, expectations
 -   Linear algebra: solve many equations at once
@@ -392,21 +391,23 @@ p + geom_point() + geom_smooth(method = "lm", size = 0.3,
 ::: {.column width="50%"}
 ```{r}
 #| fig-width: 5
-#| fig-height: 7
+#| fig-height: 5
 #| fig-align: center
 
-#library(plotly)
-library(plot3D)
+
 
 alpha <- seq(-2, 4, 0.1)
 beta <- seq(-2.5, 3.5, 0.1)
 sigma <- matrix(c(2,-1,-1, 2), nrow = 2)
 f <- function(x, y) mvtnorm::dmvnorm(cbind(x, y), mu, sigma)
 lik <- outer(alpha, beta, f)
+
+# library(plotly)
 # p <- plot_ly(x = ~alpha, y = ~beta, z = ~lik)
-# p %>% add_surface() %>% layout(title = 'Normal Likelihood', 
+# p %>% add_surface() %>% layout(title = 'Normal Likelihood',
 #                                         plot_bgcolor = "#f0f1eb",
-#                                         paper_bgcolor = "#f0f1eb")
+#                                        paper_bgcolor = "#f0f1eb")
+library(plot3D)
 
 # Generate grid data
 grid_data <- expand.grid(alpha = alpha, beta = beta)
@@ -415,10 +416,11 @@ grid_data <- expand.grid(alpha = alpha, beta = beta)
 grid_data$lik <- apply(grid_data, 1, function(row) f(row['alpha'], row['beta']))
 
 par(mar = c(3,3,2,1), mgp = c(2,.7,0), tck = -.01, bg = "#f0f1eb")
-scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik, 
-          phi = 10, theta = 30, 
+scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
+          phi = 10, theta = 30,
           xlab = "Alpha", ylab = "Beta", zlab = "Likelihood",
           col = "blue", ticktype = "detailed", pch = ".")
+
 ```
 :::
 :::
@@ -512,7 +514,7 @@ Linear Regression in Stan. Source: [Stan Manual](https://mc-stan.org/docs/stan-u
 :::
 
 ::: aside
-Stan is a probabilistic programming language. You write your data generating process (model), and Stan performs inference for all the unknowns.
+Stan is a probabilistic programming language. You write your data-generating process (model), and Stan performs inference for all the unknowns.
 :::
 
 ## Example: Bionomial Regression {.smaller}
@@ -613,7 +615,7 @@ Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio
 
 -   R is an implementation of the S language developed at Bell Labs around 1976
 
--   [Ross Ihaka](https://en.wikipedia.org/wiki/Ross_Ihaka "Ross Ihaka") and [Robert Gentleman](https://en.wikipedia.org/wiki/Robert_Gentleman_(statistician) "Robert Gentleman (statistician)") started working on R in early 1990s
+-   [Ross Ihaka](https://en.wikipedia.org/wiki/Ross_Ihaka "Ross Ihaka") and [Robert Gentleman](https://en.wikipedia.org/wiki/Robert_Gentleman_(statistician) "Robert Gentleman (statistician)") started working on R in the early 1990s
 
 -   Version 1.0 was released in 2000
 
@@ -631,7 +633,7 @@ Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio
 :::
 :::
 
-## Hands On: Very Basics {.smaller}
+## Hands-On: Very Basics {.smaller}
 
 ::: columns
 ::: {.column width="47.5%"}
@@ -684,19 +686,19 @@ sd(die)
 
 ## Your Turn {.smaller}
 
-- Create a variable called `fib` that contains first 10 Fibonacci numbers
+- Create a variable called `fib` that contains the first 10 Fibonacci numbers
 - They are: `0, 1, 1, 2, 3, 5, 8, 13, 21, 34`
 - Compute the length of this vector in R
 - Compute the sum, the product, and the difference (`diff()`) between successive numbers
 - What do you notice about the pattern in the differences?
-- Now, create a vector 100 integers from 1 to 100
+- Now, create a vector of 100 integers from 1 to 100
 - Young Gauss was asked to sum them by hand
 - He figured out that the sum has to be $N (N + 1) / 2$
 - Verify that Gauss was right (just for 100)
 - Now compute the sum of the first hundred squares
 
 
-## Hands On: Lists {.smaller}
+## Hands-On: Lists {.smaller}
 
 ::: incremental
 -   Lists are collections of objects of different types and shapes
@@ -858,7 +860,7 @@ SnowMap(
 ```
 :::
 
-## Hands On: Simulating Coin Flips {.smaller}
+## Hands-On: Simulating Coin Flips {.smaller}
 
 We can learn a lot through simulation. We will start with the `sample()` function.
 
@@ -885,13 +887,13 @@ sample(coin, 10, replace = TRUE)
 ```
 
 ::: incremental
--   Your turn: flip a coune 1000 times and compute the proportion of heads
+-   Your turn: flip a coin 1000 times and compute the proportion of heads
 :::
 
 ### For Loops
 
 ::: incremental
--   Suppose you want to add first 100 integers as before but without using the `sum()` function or the formula
+-   Suppose you want to add the first 100 integers as before but without using the `sum()` function or the formula
 -   In math notation: $\sum_{i = 1}^{100}x_i, \ x \in \{1, ..., 100\}$
 :::
 
@@ -945,11 +947,11 @@ s == sum(seq(2, 100, by = 2))
 :::
 
 
+::: {.fragment}
 ```{r}
 #| echo: true
 #| eval: false
 
-library(scales)
 set.seed(1) # why do we do this?
 n <- 1e4
 est_prop <- numeric(n) # allocate a vector of size n
@@ -958,37 +960,74 @@ for (i in 1:n) {
   est_prop[i] <- mean(x)
 }
 ```
+:::
+
+::: incremental
+- Your turn: write down in plain English what the above code is doing
+- At the end of the loop, what does the variable `est_prop` contain?
+:::
+
+
+
 
 ## Introduction to ggplot {.smaller}
 
+::: incremental
+- Our task is to visualize the estimated proportion as a function of the number of coin flips
+- This can be done in base `plot()`, but we will do it with `ggplot`
+:::
+
+::: {.fragment}
 ```{r}
-p <- ggplot(data.frame(i = 1:n, est_prop), aes(i, est_prop))
-p + geom_line(size = 0.1) + 
-  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
-  scale_x_continuous(trans = 'log10', label = comma) +
-  xlab("Number of flips of Log10 scale") +
-  ylab("Estimated proportion of Heads")
+#| cache: true
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+library(ggplot2)
+library(gridExtra)
+
+x <- seq(0, 100, by = 5)
+y <- x^2
+
+quadratic <- tibble(x = x, y = y)
+p1 <- ggplot(data = quadratic, 
+             mapping = aes(x = x, y = y))
+p2 <- p1 + geom_point(size = 0.5)
+p3 <- p1 + geom_line(linewidth = 0.2, 
+                     color = 'red')
+p4 <- p1 + geom_point(size = 0.5) + 
+  geom_line(linewidth = 0.2, color = 'red')
+
+grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
+:::
 
-## Law of Large Numbers  {.smaller}
+## Law of Large Numbers 
 
-We can see some evidence for the Law of Large Numbers.
+::: panel-tabset
 
+## Code
 ```{r}
 #| fig-width: 7
 #| fig-height: 3.5
 #| fig-align: center
 #| cache: true
+#| eval: false
+#| echo: true
+
+set.seed(1) 
+n <- 1e4
+est_prop <- numeric(n) 
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i] <- mean(x)
+}
 
 library(scales)
-set.seed(123)
-n <- 1e4
-est <- numeric(n)
-for (i in 1:n) {
-  x <- sample(coin, i + 1, replace = TRUE)
-  est[i] <- mean(x)
-}
-p <- ggplot(data.frame(i = 1:n, est), aes(i, est))
+data <- tibble(num_flips = 1:n, est_prop = est_prop)
+p <- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))
 p + geom_line(size = 0.1) + 
   geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
   scale_x_continuous(trans = 'log10', label = comma) +
@@ -997,17 +1036,50 @@ p + geom_line(size = 0.1) +
   ggtitle("Error decreases with the size of the sample")
 ```
 
+## Plot
+
+We can see some evidence for the Law of Large Numbers.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3.5
+#| fig-align: center
+#| cache: true
+set.seed(1) # why do we do this?
+n <- 1e4
+est_prop <- numeric(n) # allocate a vector of size n
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i] <- mean(x)
+}
+
+library(scales)
+data <- tibble(num_flips = 1:n, est_prop = est_prop)
+p <- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))
+p + geom_line(size = 0.1) + 
+  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
+  scale_x_continuous(trans = 'log10', label = comma) +
+  xlab("Number of flips on Log10 scale") +
+  ylab("Estimated proportion of Heads") +
+  ggtitle("Error decreases with the size of the sample")
+```
+:::
+
 
 ## Functions {.smaller}
 
 ::: panel-tabset
 ### Structure
 
+::: incremental
 -   Functions help you break up the code into self-contained, understandable pieces.
 
--   Functions take in arguments and return results. You already seen functions like `sum()` and `mean()`. Here you will learn how to write your own.
+-   Functions take in arguments and return results. You saw functions like `sum()` and `mean()` before. Here, you will learn how to write your own.
+:::
 
+::: {.fragment}
 ![](images/function.png){fig-align="center"}
+:::
 
 ::: footer
 Source: [Hands-On Programming with R](https://rstudio-education.github.io/hopr/basics.html)
@@ -1019,6 +1091,7 @@ Source: [Hands-On Programming with R](https://rstudio-education.github.io/hopr/b
 ::: {.column width="50%"}
 We will write a function that produces one estimate of the proportion given a fixed sample size `n`.
 
+::: {.fragment}
 ```{r}
 #| echo: true
 
@@ -1034,7 +1107,21 @@ head(x)
 ```
 :::
 
+::: {.fragment}
+```{r}
+#| eval: false
+#| echo: true
+hist(x, 
+     xlab = "Number of simulations", 
+     main = "Distribution of Proportions of Heads")
+```
+:::
+
+:::
+
 ::: {.column width="50%"}
+
+::: {.fragment}
 ```{r}
 #| fig-width: 4
 #| fig-height: 4
@@ -1049,12 +1136,17 @@ par(
 hist(x, xlab = "Number of simulations", main = "Distribution of Proportions of Heads")
 ```
 :::
+
+:::
 :::
 
 ### Coin Flip Example
 
-To reproduce our earlier example, generating estimates for increasing sample sizes, use `map_dbl()` function from `purrr` package.
+::: {.fragment}
+To reproduce our earlier example, generating estimates for increasing sample sizes, use `map_dbl()` function from `purrr` package. More on that [here](https://adv-r.hadley.nz/functionals.html).
+:::
 
+::: {.fragment}
 ```{r}
 #| fig-width: 8
 #| fig-height: 3.5
@@ -1063,40 +1155,43 @@ To reproduce our earlier example, generating estimates for increasing sample siz
 #| echo: true
 #| code-line-numbers: "|3|5"
 library(purrr)
-par(
-  mar = c(3, 3, 2, 1),
-  mgp = c(2, .7, 0),
-  tck = -.01,
-  bg = "#f0f1eb"
-)
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
 y <- map_dbl(2:500, estimate_proportion)
 # above is the same as sapply(2:500, estimate_proportion)
-plot(2:500,
-     y,
-     xlab = "",
-     ylab = "",
-     type = 'l')
+plot(2:500, y, xlab = "", ylab = "", type = 'l')
 ```
 :::
 
-## Generating Continuous Uniform Draws
+:::
 
+## Generating Continuous Uniform Draws {.smaller}
+
+::: incremental
 -   Here, we will examine a continuous version of the `sample()` function: `runif(n, min = 0, max = 1)`
 -   `runif` generates realizations of a random variable uniformly distributed between `min` and `max`.
+:::
 
+::: {.fragment}
 ```{r}
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 4
+#| fig-height: 3
 #| fig-align: center
 
-par(mar=c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
 hist(runif(1e3))
 ```
+:::
+
+::: incremental
+-   Your turn: what is the approximate value of this line of code: `mean(runif(1e3, min = -1, max = 0))`? Guess before running it.
+:::
+
 
 ## Estimating $\pi$ by Simulation
 
 The idea is that we can approximate the ratio of the area of an inscribed circle, $A_c$, to the area of the square, $A_s$, by uniformly "throwing darts" at the square with the side $2r$ and counting how many darts land inside the circle versus inside the square.
 
+::: {.fragment}
 $$
 \begin{align}
 A_{c}& = \pi r^2 \\
@@ -1104,39 +1199,45 @@ A_{s}& = (2r)^2 = 4r^2 \\
 \frac{A_{c}}{A_{s}}& = \frac{\pi r^2}{4r^2} = \frac{\pi}{4} \implies \pi = \frac{4A_{c}}{A_{s}}
 \end{align}
 $$
+:::
 
 ## Estimating $\pi$ by Simulation
 
 To estimate $\pi$, we perform the following simulation:
 
+::: {.fragment}
 $$
 \begin{align}
 X& \sim \text{Uniform}(-1, 1) \\
 Y& \sim \text{Uniform}(-1, 1) \\
-\pi& \approx \frac{4 \sum_{i=1}^{N} I(x_i^2 + y_i^2 < 1)}{N}
+\pi& \approx \frac{4 \sum_{i=1}^{N} \I(x_i^2 + y_i^2 < 1)}{N}
 \end{align}
 $$
+:::
 
-The numerator is a sum over an indicator function $\text{I}$ which evaluates to $1$ if the inequality holds and $0$ otherwise.
+::: {.fragment}
+The numerator is a sum over an indicator function $\I$, which evaluates to $1$ if the inequality holds and $0$ otherwise.
+:::
 
-## Estimating $\pi$ by Simulation {.scrollable transition="slide"}
+## Estimating $\pi$ by Simulation
 
 ::: panel-tabset
 ### Code and Plot
 
+::: {.fragment}
 ```{r}
 #| echo: true
 #| fig-width: 3
 #| fig-height: 3
 #| fig-align: center
-library(ggplot2)
 n <- 1e3
 x <- runif(n, -1, 1); y <- runif(n, -1, 1)
 inside <- x^2 + y^2 < 1
-data <- data.frame(x, y, inside)
+data <- tibble(x, y, inside)
 p <- ggplot(aes(x = x, y = y), data = data)
 p + geom_point(aes(color = inside)) + theme(legend.position = "none")
 ```
+:::
 
 ### Estimate
 
@@ -1145,57 +1246,15 @@ p + geom_point(aes(color = inside)) + theme(legend.position = "none")
 cat("Estimated value of pi =", 4*sum(inside) / n)
 ```
 
+::: {.fragment}
 ```{r}
 knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
 ```
 :::
 
-## Getting a Better Approximation
-
-::: columns
-::: {.column width="50%"}
-```{r}
-#| fig-align: center
-sliderInput("n", "Number of points: ", 
-            min = 10, max = 5e3, value = 10, step = 100, width = "80%")
-plotOutput("distPlot", width = "400px", height = "400px")
-```
 :::
 
-::: {.column width="50%"}
--   As you move the slider, a new simulation runs in the background
--   You can see the new value of $\pi$ in the plot title
--   Move it around and see what happens
-:::
-:::
-
-```{r}
-#| context: server
-
-library(ggplot2)
-thm <-
-  theme_minimal() + theme(
-    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
-    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
-  )
-theme_set(thm)
-
-output$distPlot <- renderPlot({
-  x <- runif(input$n,-1, 1)
-  y <- runif(input$n,-1, 1)
-  inside <- x ^ 2 + y ^ 2 < 1
-  pi_est <- round(4*sum(inside) / input$n, 2)
-  data <- data.frame(x, y, inside)
-  p <- ggplot(aes(x = x, y = y), data = data)
-  p + geom_point(aes(color = inside)) + theme(legend.position = "none") +
-    ggtitle(stringr::str_c("Estimated value of pi = ", pi_est)) 
-})
-```
-
-## Homework
-
--   Follow the readings from Session 1 in the syllabus
--   Modify `estimate_proportion` function to take in an additional parameter specifying the coin's bias. Repeat the plot with the bias of $0.3$ and $0.8$
--   Write a function for the $\pi$ simulation that takes as an argument the number of simulation points and outputs the estimated value of $pi$
 
 ## References
+
+
