@@ -1,0 +1,695 @@
+---
+title: "SMaC: Statistics, Math, and Computing"
+subtitle: "Applied Statistics for Social Science Research"
+author: "Eric Novik | Summer 2023 | Session 3"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/smac.html>
+editor: source
+always_allow_html: true
+bibliography: ../references.bib
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+#library(MASS)
+library(gridExtra)
+library(purrr)
+reticulate::use_condaenv("miniconda3")
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+```
+
+## Session 3 Outline
+
+::: incremental
+-   Transforming data for plotting
+-   Antiderivative
+-   Some rules of integration
+-   Evaluating integrals numerically
+-   The waiting time distribution
+:::
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Data transformations
+
+::: columns
+::: {.column width="60%"}
+::: incremental
+-   We saw that *continuous compounding* does not make such a big difference over time
+-   How would the value vary by rate?
+-   We investigate with a common simulate-pivot-plot pattern
+:::
+:::
+
+::: {.column width="40%"}
+![](images/trans.jpg){width="330"}
+:::
+:::
+
+## Map Function {.smaller}
+
+"The `purrr::map*` functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input."
+
+::: incremental
+- Generate 10 vectors of 100 uniform random realizations, where the first vector has `min = 1`, second `min = 2` ... last vector has `min = 10`, and `max = 15` for all
+- Now compute the average value of each of the 10 vectors
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| eval: false 
+
+library(purrr)
+
+x <- 1:10
+y <- x |>
+  map(\(x) runif(n = 100, min = x, max = 15))
+
+y <- x |>
+  map(\(x) runif(n = 100, min = x, max = 15)) |>
+  map_dbl(mean)
+
+```
+:::
+
+::: incremental
+-   Run the code and look inside y after then first function call and after the second. What do you expect to see?
+:::
+
+## Pivot Functions {.smaller}
+
+"`pivot_longer()` "lengthens" data, increasing the number of rows and decreasing the number of columns. The inverse transformation is `pivot_wider()`"
+
+::: {.fragment}
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+library(tidyr)
+head(iris)
+long <- iris |> pivot_longer(!Species, names_to = "species", values_to = "measure")
+head(long)
+```
+:::
+
+## Data Transformations {.smaller}
+
+::: panel-tabset
+### Simulate
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+
+library(purrr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+rates <- seq(0.05, 0.20, length = 10)
+P <- 100 
+time <- seq(1, 50, length = 50)
+
+Pe <- function(A, r, t) A * exp(r * t)
+d <- time |>
+  map(\(x) Pe(A = P, r = rates, t = x)) 
+class(d)
+d[[1]][1:4]
+names(d) <- as.character(time)
+d <- as_tibble(d)
+```
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+knitr::kable(d[1:10, 1:3])
+```
+:::
+
+:::
+:::
+
+### Loops and Maps
+
+::: incremental
+-   Modern R usage offers a lot of shortcuts but those may be confusing to beginners.
+-   In particular, R loops have mostly been replaced with `map()` functions.
+-   We recommend `purrr::map()` functions instead of R's `*apply()`.
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| eval: false
+
+rates <- seq(0.05, 0.20, length = 10)
+P <- 100 
+time <- seq(1, 5, length = 50)
+
+Pe <- function(A, r, t) A * exp(r * t)
+time |> map(\(x) Pe(A = P, r = rates, t = x)) 
+
+# above is a shortcut for
+map(time, function(x) Pe(A = P, r = rates, t = x))
+
+# and the above is a shortcut for the following loop
+l <- list()
+for (i in seq_along(time)) {
+  l[[i]] <- Pe(A = P, r = rates, t = time[i])
+}
+
+```
+:::
+
+### Pivot
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| echo: true
+library(tidyr)
+# add rates as a column
+d <- d %>% mutate(rate = 
+            round(rates, 2) |>
+              as.character())
+
+# convert from wide format to long
+d <- d %>% 
+  pivot_longer(!rate, 
+               names_to = "year", 
+               values_to = "value") 
+
+d$year <- as.numeric(d$year)
+```
+
+[Here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf) is a cheat sheet explaining `tidyr` functions.
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+knitr::kable(d[1:10, ])
+```
+:::
+:::
+:::
+
+### Plot
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+#| eval: false
+p <- ggplot(d, aes(year, value))
+p + geom_line(aes(color = rate), linewidth = 0.2) +
+  scale_y_continuous(labels = 
+          scales::dollar_format()) +
+  xlab("Time (years)") + 
+  ylab("Asset value") +
+  ggtitle("Growth of $100 at different interest rates")
+```
+
+::: {.fragment}
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4
+#| fig-align: center
+p <- ggplot(d, aes(year, value))
+p + geom_line(aes(color = rate), linewidth = 0.2) +
+  scale_y_continuous(labels = 
+          scales::dollar_format()) +
+  xlim(30, 50) +
+  xlab("Time (years)") + 
+  ylab("Asset value") +
+  ggtitle("Growth of $100 at different interest rates")
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+#| echo: true
+d |> group_by(rate) |> 
+  summarise(y50 = last(value)) |>
+  knitr::kable()
+```
+:::
+:::
+:::
+:::
+
+::: footer
+RStudio [cheatsheats](https://www.rstudio.com/resources/cheatsheets/)
+:::
+
+## Your Turn {.smaller}
+
+::: panel-tabset
+
+### Data
+
+![](images/arbuthnot.png){fig-align="center" width="672"}
+
+### Instructions
+
+-   Run the following command: `install.packages('HistData')`
+-   Followed by `library(HistData)`
+-   Tale a look at the Arbuthnot dataset: `?Arbuthnot`
+
+```{r}
+library(HistData)
+knitr::kable(Arbuthnot[1:6, ])
+```
+
+### Output
+
+-   Use the tools to produce the plot the looks something like this.
+-   Bonus: compute the ratio of female births and plot it.
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+library(scales)
+d <- Arbuthnot %>%
+  select(1:3) %>%
+  pivot_longer(!Year)
+
+p <- ggplot(d, aes(Year, value))
+p + geom_line(aes(color = name)) + xlab("Year") +
+  ylab("Number of Christenings") +
+  ggtitle("Male and female births in London 1629-1710") +
+  scale_y_continuous(label = comma) +
+  theme(legend.title = element_blank())
+```
+:::
+
+## Integral Calculus {.smaller}
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+-   Integration plays a central role in Statistics
+-   It is a way to compute Expectations and Event Probabilities
+-   In Bayesian Statistics, we use integration to compute posterior distributions of the unknowns
+-   In Frequentist Statistics, we use derivatives to find the most likely values of the unknowns
+:::
+:::
+
+::: {.column width="50%"}
+![](images/int.jpg){fig-align="center" width="672"}
+
+::: incremental
+-   Unknowns are sometimes called parameters, like our $a$ and $b$, in the $x(t) = a + bt^2$ model
+:::
+:::
+:::
+
+## Intuition Behind Integration {.smaller}
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+-   Integration is a continous analog of summation
+-   You can also think of an integral as undoing a derivative
+- You can also think of it as a signed area under a function $f$
+-   In modern applications, integration is almost always done numerically on the computer
+-   But it helps to understand what what the computer is doing
+:::
+:::
+
+::: {.column width="50%"}
+![](images/area.jpeg){fig-align="center" width="672"}
+:::
+:::
+
+::: footer
+Image Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas)
+:::
+
+## From Velocity to Postion Functions {.smaller}
+
+::: panel-tabset
+## Antiderivative
+
+::: incremental
+-   Recal our position function $x(t) = 2 + 3t^2$
+-   We found the velocity function by differentiating and we can *almost* get back the position function by integrating.
+:::
+
+::: {.fragment}
+$$
+\begin{eqnarray}
+v(t) & = & \frac{d}{dt} \left( 2 + 3t^2 \right) = 6t \\
+x(t) & = & \int{6t\, dt} = 3t^2 + C
+\end{eqnarray}
+$$
+:::
+
+::: incremental
+-   Why almost? Look at the constant $2$ in $\frac{d}{dt}(2 + 3t^2)$. You can replace it with any other constant and the result will still be $6t$.
+
+-   To put it another way, to characterize the position fucntion you need to know the intial position and you can't get that from the velocity function alone.
+:::
+
+## Plot
+
+The position function for different values of initial position $C$. Notice that the only thing that changes is the intercept.
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+
+t <- (0:50 * 5) / 50
+c <- seq(0, 90, by = 10)
+y <- function(x) 3*x^2
+
+d <- c %>% map(~ y(t) + .x)
+d <- as.data.frame(d)
+colnames(d) <- as.factor(c)
+d$time <- t 
+d <- pivot_longer(d, !time)
+p <- ggplot(d, aes(time, value))
+p + geom_line(aes(color = name)) +
+  xlab("time t (s)") + ylab("position x (m)") +
+  ggtitle("Position functions for different values of C") +
+  annotate("text", 1, 150, label = "x(t) == 3*t^2 + C", parse = TRUE) +
+  guides(color = guide_legend(title = "C"))
+
+```
+:::
+
+
+
+:::
+
+## Some Common Integrals
+
+![](images/integrals.png){fig-align="center"}
+
+::: footer
+OpenStax: [Here is a more complete list](https://openstax.org/books/calculus-volume-1/pages/a-table-of-integrals)
+:::
+
+## Techniques of Intergration {.smaller}
+
+::: incremental
+-   Integral, like a derivative, is a linear operator:
+:::
+
+::: {.fragment}
+$$
+\begin{eqnarray}
+\int [f(x) + g(x)] \, dx &=& \int f(x) \, dx + \int g(x) \, dx \\
+\int [c \cdot f(x)] \, dx &=& c \int f(x) \, dx
+\end{eqnarray}
+$$
+:::
+
+::: incremental
+-   Unlike derivatives, there are generablly no rules for finding integrals 
+
+-   Most integrals do not have a closed-form, analytical solutions. This is true for almost all integrals in statistics.
+
+-   In one or two dimentions, it is easy to evaluate most integrals numerically.
+
+-   In higher dimentions, you need very sophisticated methods that rely on Markov Chain Monte Carlo ([MCMC](https://arxiv.org/abs/1701.02434)). We will not cover MCMC in this course.
+
+-   For simple integrals we can somtimes find a closed-form solution by relying on u-substitution and integration by parts.
+:::
+
+::: 
+
+## Playing with Integrals {.smaller}
+
+::: incremental
+-   Given our intuition for integrals being singed areas, let's see how to compute them analytically and numerically.
+-   Warning: these techniques only work in low dimentions. For high dimentional integrals you need to use MCMC.
+-   Suppose we want evaluate the integral $\int_{1}^{3} x \sin(x^2)\, dx$
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+
+f <- function(x) x * sin(x^2)
+x <- seq(0, pi, len = 100)
+p <- ggplot(data.frame(x, y = f(x)), aes(x, y))
+p + geom_line() + 
+  annotate("text", 0.5, 2, label = "y == x %.% sin(x^2)", parse = TRUE) +
+  stat_function(fun = f, 
+                xlim = c(1,3),
+                geom = "area",
+                fill = 'lightblue') 
+```
+:::
+
+
+## Constructing a Riemann Sum {.smaller}
+
+![](images/right-endpoints.jpeg){fig-align="center" width="400" height="200"}
+
+
+::: {.fragment}
+```{r}
+#| echo: true
+riemann <- function(f, lower, upper, step_size) {
+  step <- seq(lower, upper, by = step_size)
+  s <- 0 # initialize the sum
+  for (i in 2:length(step)) {
+    # multiply base by the height of the rectangle
+    area <- step_size * f(step[i]) 
+    s <- s + area
+  }
+  return(s)
+}
+```
+:::
+
+
+::: {.fragment}
+Notice that the function takes a function as an argument. These are called higher order functions.
+::: 
+
+::: footer
+Source: [OpenStax Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas)
+:::
+
+## Evaluating the Integral
+
+```{r}
+#| echo: true
+
+f <- function(x) x * sin(x^2)
+x <- seq(0, pi, len = 100)
+
+riemann(f, 1, 3, 0.01)
+
+# compute using R's integrate function
+integrate(f, 1, 3)
+
+```
+
+## Integrating Analytically {.smaller}
+
+::: incremental
+-   Most integrals can't be evaluated analytically but we can do $\int x \sin(x^2)\, dx$.
+-   We make a substitution. Let $u = x^2$, then $du/dx = 2x$ and $dx = \frac{1}{2 \sqrt{u}}du$ 
+:::
+
+::: {.fragment}
+$$
+\begin{eqnarray}
+\int \sqrt{u} \cdot \sin(u) \frac{1}{2\sqrt{u}}du  & = & \\
+\frac{1}{2}\int \sin(u)\, du & = & \\
+-\frac{1}{2} \cos(u) & = & -\frac{1}{2} \cos(x^2)  
+\end{eqnarray}
+$$ 
+:::
+
+## Comparing the Results
+
+::: {.fragment}
+-   Using R's `integrate` function:
+
+```{r}
+#| echo: true
+integrate(f, 1, 3)
+```
+:::
+
+::: {.fragment}
+-   Using the analytical solution
+
+```{r}
+#| echo: true
+f1 <- function(x) -1/2 * cos(x^2)
+
+f1(3) - f1(1)
+```
+:::
+
+::: {.fragment}
+-   The universe is in balance!
+:::
+
+## Analytical Integration on the Computer {.smaller}
+
+::: incremental
+-   When in doubt, you can always try [WolframAlpha](https://www.wolframalpha.com/)
+
+-   Python library [SymPy](https://live.sympy.org/) through R pacakge `caracas`
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: false
+#| results: asis
+
+library(caracas); library(stringr)
+add_align <- function(latex) {
+  str_c("\\begin{align} ", latex, " \\end{align}")
+}
+add_int <- function(latex) {
+  str_c("\\int ", latex, "\\, dx")
+}
+x <- symbol('x'); f <- x^2 / sqrt(x^2 + 4)
+tex(f) %>% add_int() %>% str_c(" =") %>% add_align() %>% cat()
+int(f, x) %>% tex() %>% add_align() %>% cat()
+```
+:::
+
+## Your Turn: Waiting Time {.smaller}
+
+- There is s famous distribution in statistics called Exponential distribution
+- Its probability density function (PDF) is given by:
+
+$$
+f(x) = \lambda e^{-\lambda x}, \, x > 0, \text{and } \lambda > 0
+$$
+
+- This distribution is sometimes called the waiting time (to some event) distribution, where $\lambda$ is the rate of events we expect 
+
+- One property of this distribution is that no matter how long you wait, the probability of seeing an event remains the same.
+
+- One of the properties of the PDF is that it must integrate to 1
+
+- Let's check that it's true
+
+$$
+\int_{0}^{\infty} \lambda e^{-\lambda x} dx = 
+$$
+
+## Ingegration by Parts {.smaller}
+
+$$
+\begin{eqnarray}
+(f g)' & = & f'g + g'f \\
+\int (f g)' \, dx & = & \int f'g dx + \int g'f \, dx \\
+fg & = & \int f'g \, dx + \int g'f \, dx \\
+\int f g' \, dx & = & fg - \int f' g \, dx \\
+u & = & f(x) \\
+v & = & g(x) \\
+du & = & f'(x) \, dx \\
+dv & = & g'(x) \, dx \\
+\int u \, dv & = & uv - \int v \, du
+\end{eqnarray}
+$$
+
+## E(X) with $\lambda = 1$ {.smaller}
+- If the rate of arrival is $\lambda = 1$, we have
+
+$$
+E(X) = \int_{0}^{\infty} x e^{-x} dx = 
+$$
+
+## Homework {.smaller}
+
+- Take a look at dataset `iris` (?iris)
+- Compute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width 
+- Compute the average by each Species of flower (hint: use `group_by` and `summarise` functions from `dplyr`)
+- Produce the plot that looks like this:
+
+![](images/iris.png){fig-align="center" width="500"}
+
+- Produce the plot that looks like this: (check out `geom_density` and `facet_wrap` functions)
+
+![](images/iris_dens.png){fig-align="center" width="500"}
+
+- Compute the following integral and show the steps:
+
+$$
+\int 2x \cos(x^2)\, dx
+$$
+
+- Evaluate this integral (on paper) from $0$ to $2\pi$ and use R's `integrate` function to validate your answer.
+
+```{r}
+#| eval: false
+library(ggplot2)
+png("~/Desktop/iris_dens.png", width=4, height=3, units="in", res=200)
+d <- pivot_longer(iris, !Species)
+p <- ggplot(d, aes(x = value))
+p <- p + geom_density(aes(color = Species, fill = Species), alpha = 1/5) + 
+  facet_wrap(~ name, scales = "free") + xlab("")
+print(p)
+dev.off()
+
+
+p <- ggplot(iris, aes(Petal.Length, Sepal.Length))
+p <- p + geom_point(aes(color = Species))
+```
+
