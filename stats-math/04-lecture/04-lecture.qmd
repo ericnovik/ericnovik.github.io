@@ -147,7 +147,8 @@ Marquis Pierre Simon de Laplace (1729 --- 1827)
 - What is the probability of rolling an even number on a six-sided die?
   - $\P(\text{Even Number}) = \frac{3}{6} = \frac{1}{2}$
 - What is the probability of rolling a prime number?
-  - $\P(\text{Prime Numner}) = $
+  - $\P(\text{Prime Numner}) =$
+  
 :::
 
 ## Counting {.smaller}
@@ -282,7 +283,7 @@ $$
 :::
 
 ::: incremental
--   For $S = \{1, 2, 3, 4\}$, where $s_i = 1/4$, and $A = \{1, 2\}$, verify that all 3 axioms hold.
+-   For $S = \{1, 2, 3, 4\}$, where $s_i = 1/4$, and $A = \{A_1, A_2\}$, where $A_1 = \{1\}$ and $A_2 = \{2\}$. Verify that all 3 axioms hold.
 :::
 
 
@@ -453,31 +454,6 @@ $$
 ## Example: Monte Hall
 
 ![](images/monte.png){fig-align="center" width="672"}
-
-## Your Turn {.smaller}
-
-```{r}
-#| echo: true
-#| eval: false
-one_or_more <- function() {
-  flips <- sample(c(1, 0), size = 4, replace = TRUE)
-  if (mean(flips) >= 1/4) {
-    return(TRUE)
-  } else {
-    return(FALSE)
-  }
-}
-# flip the coin 10,000 times
-x <- replicate(1e4, one_or_more())
-mean(x)
-```
-
--   Modify the function so that instead of 1 or more from 4 trials, it computes 1 or more from $n$ trials.
-
--   Modify it so it computes $x$ or more from $n$ trials and simulate at least 2 Heads out of 5 trials.
-
--   Can you solve it analytically to validate your simulation results?
-
 
 
 
