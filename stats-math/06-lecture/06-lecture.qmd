@@ -1,0 +1,1031 @@
+---
+title: "SMaC: Statistics, Math, and Computing"
+subtitle: "Applied Statistics for Social Science Research"
+author: "Eric Novik | Summer 2023 | Session 6"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/smac.html>
+editor: source
+always_allow_html: true
+bibliography: ../references.bib
+---
+## Session 6 Outline
+
+::: incremental
+- Vectors and vector arithmetic
+- Matrices and matrix arithmetic
+- Determinants
+- Matrix inverses
+- Solving linear systems
+:::
+
+::: footer
+Inspiration for a lot of the examples came from the Essense of Linear Algebra by [3blue1brown](https://www.youtube.com/c/3blue1brown)
+:::
+
+
+```{r}
+library(magrittr)
+library(patchwork)
+library(ggplot2)
+library(caracas)
+library(stringr)
+reticulate::use_condaenv("miniconda3")
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
+  )
+theme_set(thm)
+
+add_align <- function(latex) {
+  str_c("\\begin{align} ", latex, " \\end{align}")
+}
+
+draw_vector <- function(x, ...) {
+  df <- data.frame(x1 = x[1], x2 = x[2])
+  a <- arrow(length = unit(0.03, "npc"))
+  dims <- ceiling(abs(max(x)))
+  p <- ggplot() + xlim(-dims, dims) + ylim(-dims, dims)
+  p <- p + geom_segment(aes(x = 0, y = 0, xend = x1, yend = x2), 
+                        arrow = a, data = df, ...) +
+    geom_hline(yintercept = 0, size = 0.1) +
+    geom_vline(xintercept = 0, size = 0.1)
+  return(p)
+}
+
+add_vector <- function(p, x, ...) {
+  df <- data.frame(x1 = x[1], x2 = x[2])
+  dims_x <- ceiling(abs(max(x)))
+  dimx_p <- ceiling(abs(layer_scales(p)$x$range$range))
+  dimy_p <- ceiling(abs(layer_scales(p)$y$range$range))
+  dims <- max(c(dims_x, dimx_p, dimy_p))
+  a <- arrow(length = unit(0.03, "npc"))
+  p <- p + geom_segment(aes(x = 0, y = 0, xend = x1, yend = x2), 
+                        arrow = a, data = df, ...) +
+    xlim(-dims, dims) + ylim(-dims, dims)
+  return(p)
+}
+sm <- function(x) {
+  suppressMessages(x)
+}
+rotate <- function(v, theta) {
+  R <- matrix(c(cos(theta), sin(theta), 
+               -sin(theta), cos(theta)), ncol = 2)
+  return(R %*% v)
+}
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Introduction to Vectors {.smaller}
+
+::: incremental
+- Linear Algebra offers a language for manipulating n-dimensional objects
+- Vectors are the basic building block of Linear Algebra
+- A straightforward way to think about them is as a column of numbers
+- How we interpret the entries is up to us
+- Vectors are typically written in a column form:
+:::
+
+::: {.fragment}
+```{r}
+#| results: asis
+
+A <- matrix(c("a", "b", "c"), 3, 1)
+A <- as_sym(A)
+tex(A) %>% str_c("V = ", .) %>% add_align() %>% cat()
+```
+:::
+
+::: {.fragment}
+- If we want the row version, we transpose it:
+
+```{r}
+#| results: asis
+
+tex(t(A)) %>% str_c("V^T = ", .) %>% add_align() %>% cat()
+```
+:::
+
+## Introduction to Vectors {.smaller}
+
+::: incremental
+- In R, vectors, unfortunately, are neither row nor column vectors
+- R makes some assumptions when performing vector-matrix arithmetic
+- We already saw lots of vectors whenever we used `c()` function or generated random numbers with, say `runif()` function
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+set.seed(123)
+(v <- c(sample(3)))
+class(v)
+```
+:::
+
+::: {.fragment}
+- R reports the $v$ is an integer vector
+
+- You can add two vectors in a usual way, elementwise:
+
+```{r}
+#| results: asis
+
+vs <- as_sym(v)
+w <- sample(3)
+ws <- as_sym(w)
+
+str_c(tex(vs)) %>% str_c("+") %>% str_c(tex(ws)) %>%
+  str_c("=") %>% str_c(tex(vs + ws)) %>% add_align() %>% cat()
+```
+:::
+
+::: {.fragment}
+- In R:
+```{r}
+#| echo: true
+v
+w
+v + w
+```
+:::
+
+## Introduction to Vectors {.smaller}
+
+::: {.fragment}
+- You can take linear combination $av + bw$, where a and b are scalars
+
+```{r}
+#| echo: true
+
+2*v + 3*w # linear combination
+```
+:::
+
+::: {.fragment}
+- You can also take dot product: $v \cdot w$, which results in a scalar
+```{r}
+#| results: asis
+
+str_c("v \\cdot w = ") %>% str_c(tex(t(vs))) %>% str_c(tex(ws)) %>% 
+  str_c("=") %>% str_c(tex(t(vs) %*% ws)) %>% add_align() %>% cat()
+  
+```
+:::
+
+::: {.fragment}
+- In R, we multiply vectors and Matrices with `%*%`, not `*`, which will produce a component-wise multiplication, not a dot product
+
+```{r}
+#| echo: true
+
+v %*% w # dot product
+v * w   # component wise multiplication
+```
+:::
+
+::: {.fragment}
+- We write dot product this way:
+
+$$
+v^T w = v_1w_1 + v_2w_2 + \cdots + v_nw_n
+$$
+:::
+
+
+## Introduction to Vectors {.smaller}
+
+::: {.fragment}
+- When is dot product zero?
+
+```{r}
+#| echo: true
+v <- c(1, 1)
+w <- c(1, -1)
+v %*% w
+
+(3 * v) %*% (4 * w)
+```
+:::
+
+::: {.fragment}
+- These vectors are perpendicular (orthogonal)
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+
+draw_vector(v, col = 'red') %>%
+  add_vector(w, col = 'blue') %>% sm() +
+  annotate("text", x = 0.7, y = 0.8, label = "v") +
+  annotate("text", x = 0.7, y = -0.8, label = "w") + xlab("x") + ylab("y")
+
+```
+:::
+
+## Introduction to Vectors {.smaller}
+
+- A length of a vector is the square root of the dot product with itself
+
+$$
+||v|| = \sqrt{v \cdot v} = \sqrt{v_1^2 + v_2^2 + \cdots v_n^2}
+$$
+```{r}
+#| echo: true
+
+v <- c(1, 1)  
+sqrt(v %*% v) # this is sqrt of 2 
+```
+
+## Introduction to Matrices {.smaller}
+
+::: incremental
+
+- You can think of a matrix as a rectangular (or square) set of numbers
+- $m{\times}n$ matrix has m rows and n columns
+- In statistics, it is convenient to think of a matrix as n columns where each column is a variable like the price of the house, and the rows are the observations for each house
+- In Linear Algebra books, you will often see linear equations written as $Ax = b$, where we are trying to find $x$
+- In statistics, we usually write the same thing as $X\beta = y$, and we are trying to find $\beta$
+- Another source of confusion: matrix $A$ is sometimes called a coefficient matrix in Linear Algebra books. In statistics, the entries in $A$ (the $X$ matrix) have observations, and the $\beta$ vector contains coefficients estimated from A and b (X and y).
+:::
+
+## Introduction to Matrices {.smaller}
+
+::: panel-tabset
+### Basis
+
+::: incremental
+- A good way to think about the Matrices is that they act on vectors and transform them in some way (stretch or turn them)
+- You can think of this transformation as encoding the eventual locations of the basis vectors
+- Standard basis vectors in $R^2$ (two-dimensional space), are commonly called $\hat{i}$ with location $(1, 0)$, and $\hat{j}$ with location $(0, 1)$.
+- Notice their dot product is zero: $\hat{i} \cdot \hat{j} = 0$ and so they are orthogonal
+- Let's look at one simple transformation -- rotation by 90 degrees counter-clockwise
+:::
+
+### Plot of v and w
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+- Recall, vectors $v$ and $w$:
+
+$$
+v = \left[ \begin{matrix}1\\2\end{matrix} \right]
+w = \left[ \begin{matrix}3\\1\end{matrix} \right]
+$$
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+v <- c(1, 2)
+w <- c(3, 1)
+p1 <- draw_vector(v, col = 'red') %>%
+  add_vector(w, col = 'blue') %>% sm()
+
+p1 + annotate("text", x = 0.8, y = 2, label = "v") +
+  annotate("text", x = 2.5, y = 1, label = "w") 
+
+```
+:::
+
+:::
+:::
+
+
+### Transformation
+
+::: {.fragment}
+- The following matrix encodes a 90-degree, counterclockwise rotation. Why?
+
+$$
+R = 
+\begin{bmatrix}
+0 & -1 \\
+1 & 0
+\end{bmatrix}
+$$
+:::
+
+::: {.fragment}
+- Let's see how this matrix will act on vectors $v$ and $w$. That's where multiplication comes in.
+
+$$
+Rv = 
+\begin{bmatrix}
+0 & -1 \\
+1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+1 \\
+2 
+\end{bmatrix}
+=
+1 
+\begin{bmatrix}
+0 \\
+1 
+\end{bmatrix}
++
+2 
+\begin{bmatrix}
+-1 \\
+0 
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\
+1 
+\end{bmatrix}
++
+\begin{bmatrix}
+-2 \\
+0 
+\end{bmatrix}
+=
+\begin{bmatrix}
+-2 \\
+1 
+\end{bmatrix}
+$$
+:::
+
+::: {.fragment}
+- We scale the first vector, then scale the second, and then add. 
+:::
+
+### R Example
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+- The following shows the same operation you can do in one step in R.
+
+```{r}
+#| echo: true
+
+R <- matrix(c(0, 1, -1, 0), ncol = 2)
+R
+v <- c(1, 2)
+(v_prime <- R %*% v)
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+- Now let's plot $v$ and $v'$. Notice, the 90 degree rotation
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+p2 <- draw_vector(v, col = 'red') %>%
+  add_vector(v_prime, col = 'red', linetype = "dashed") %>% sm()
+
+p2 + annotate("text", x = 1, y = 1.8, label = "v") +
+  annotate("text", x = -2, y = 0.8, label = "v'") 
+```
+:::
+
+:::
+:::
+
+:::
+
+## Matrix Multiplication {.smaller}
+
+::: panel-tabset
+### Multiplication
+
+::: incremental
+- Our matrix encodes a rotation of every single vector in $R^2$.
+- In particular, it rotates every point $(x, y)$ in $R^2$ by 90 degrees
+- We can do this transformation in one go by applying the Rotation matrix to another matrix comprising our vectors $v$ and $w$
+- The number of columns in the Rotation matrix has to match the number of rows in the $K = [v, w]$ matrix
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+(K <- matrix(c(v, w), ncol = 2))
+(K_prime <- R %*% K)
+```
+:::
+
+::: incremental
+- The resulting matrix $K$, has the correctly rotated $v$ in the first column and rotated $w$ in the second column.
+
+- Another way to think about this operation is to encode two transformations in $K'$ --- the $K$ transformation followed by the $R$ transformation. We can now use the resulting $K'$ matrix and apply these two transformations in one swoop to any vector in $R^2$.
+
+- Think about why matrix multiplication, in general, does not commute --- $RK \neq KR$
+:::
+
+### Plot
+
+- Rotating red ($v = [1 \ 2]$) and blue ($w = [3 \ 1]$) vectors by 90 degrees
+
+::: {.fragment}
+```{r}
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+
+p3 <- draw_vector(v, col = 'red') %>%
+  add_vector(w, col = 'blue') %>% 
+  add_vector(K_prime[, 1], col = 'red', linetype = 'dashed') %>%
+  add_vector(K_prime[, 2], col = 'blue', linetype = 'dashed') %>% sm()
+print(p3)
+```
+:::
+
+### Your Turn
+
+::: {.fragment}
+- **Your Turn**: Come up with a 90-degree clockwise rotation matrix and show that it sends $(2, 2)$ to $(2, -2)$
+
+- Now pick three vectors in $R^2$ and rotate all three at the same time
+:::
+
+:::
+
+## Linear Independence and Determinants {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- Think of a determinant as a (signed) area scaling factor from the basis $(\hat{i}, \hat{j})$ to the transformed vectors
+- The area represented by two $R^2$ basis vectors is 1
+:::
+
+::: {.fragment}
+
+```{r}
+#| echo: true
+
+# this matrix scales the area by 12
+(X <- matrix(c(4, 0, 0, 3), ncol = 2))
+
+# compute the determinant
+det(X)
+```
+:::
+
+::: incremental
+- What happens if the columns of $X$ are linear combinations of each other?
+- Geometrically, that means that in $R^2$, they both sit on the same line
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+# the second column is the first column * 1.5
+(X <- matrix(c(2, 1, 1.5 * 2, 1.5 * 1), ncol = 2))
+
+# compute the determinant
+det(X)
+```
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+
+draw_vector(X[, 1], col = 'red') %>%
+  add_vector(X[, 2], col = 'blue', alpha = 1/2) %>% sm() 
+
+```
+:::
+
+:::
+:::
+
+
+## Example: Random Matrix {.smaller}
+
+::: incremental
+- Generate a random, say 5x5 matrix
+- Is it likely that we will get linearly dependent columns?
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+set.seed(123)
+(X <- matrix(sample(25), ncol = 5))
+det(X)
+```
+:::
+
+::: {.fragment}
+- This is a full rank matrix that encodes a transformation in $R^5$ --- 5-dimensional space
+:::
+
+## Computing Determinants
+- Don't bother doing it by hand
+
+```{r}
+#| results: asis
+
+library(caracas)
+
+A <- matrix(c("a", "b", "c", "d"), 2, 2)
+A <- as_sym(A)
+
+str_c("A = ") %>% str_c(tex(A)) %>% add_align() %>% cat()
+str_c("\\text{det}(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% cat()
+
+B <- matrix(c("a", "b", "c", "d", "e", "f", "g", "h", "i"), 3, 3)
+B <- as_sym(B)
+
+str_c("B = ") %>% str_c(tex(B)) %>% add_align() %>% cat()
+str_c("\\text{det}(B) = ") %>% str_c(tex(det(B))) %>% add_align() %>% cat()
+
+```
+
+## Linear Systems and Inverses {.smaller}
+
+::: panel-tabset
+### Linear Systems
+
+::: incremental
+- One of the key ideas from Linear Algebra that is relevant to statistics is solving linear systems
+- This is where estimating coefficients in $X\beta = y$ comes from
+- If $X$ is a square matrix, the problem is not statistical but algebraic
+- The reason is that if we have the same number of equations as we have unknowns, we can solve the system exactly unless X is not full rank
+- For example, try to solve this system:
+:::
+
+::: {.fragment}
+$$
+2x + y = 1 \\
+4x + 2y = 1 
+$$
+:::
+
+::: {.fragment}
+- Question: Geometrically, what does it mean to solve a system of equations?
+:::
+
+### No solution
+
+::: {.fragment}
+- You should now have a deeper understanding of why there is no solution
+
+```{r}
+#| echo: true
+(A <- matrix(c(2, 4, 1, 2), ncol = 2))
+det(A)
+```
+:::
+
+::: {.fragment}
+- Before we talk about overdetermined systems (more equations than unknowns) that we see in statistics, let's see how it works in the square matrix case
+:::
+
+
+### Idea of an inverse
+
+::: {.fragment}
+- To see what a matrix inverse does, let's bring back the 90-degree counterclockwise rotation matrix $A$
+
+```{r}
+#| results: asis
+
+A <- matrix(c(0, 1, -1, 0), 2, 2)
+A <- as_sym(A)
+
+str_c("A = ") %>% str_c(tex(A)) %>% add_align() %>% cat()
+```
+:::
+
+::: incremental
+- The idea of an inverse is to reverse the action of this transformation
+- In this case, we need a clockwise 90-degree rotation matrix
+- We can find that matrix by directly tracing the basis vectors
+:::
+
+::: {.fragment}
+```{r}
+#| results: asis
+
+A_inv <- matrix(c(0, -1, 1, 0), 2, 2)
+A_inv <- as_sym(A_inv)
+
+str_c("A^{-1} = ") %>% str_c(tex(A_inv)) %>% add_align() %>% cat()
+```
+:::
+
+### Inverse in R
+
+::: {.fragment}
+- Let's check our results in R. When you multiply a matrix by its inverse, you get back the identity matrix (which is like when you divide a scalar by its reciprocal, you get 1)
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+(A <- matrix(c(0, 1, -1, 0), 2, 2))
+(A_inv <- matrix(c(0, -1, 1, 0), 2, 2))
+
+A_inv %*% A
+
+# find an inverse using R's solve function
+solve(A)
+```
+
+:::
+
+### Ax = b
+
+::: {.fragment}
+- We are now ready to solve the square linear system $Ax = b$, in the case when A is full rank
+
+$$
+\begin{eqnarray}
+Ax & = & b \\
+A^{-1}Ax & = & A^{-1}b \\
+x & = & A^{-1}b
+\end{eqnarray}
+$$
+:::
+
+::: {.fragment}
+- The general solution in two-dimensional case:
+
+```{r}
+#| results: asis
+
+A <- matrix(c("a", "b", "c", "d"), 2, 2)
+A <- as_sym(A)
+b <- c("b_1", "b_2")
+b <- as_sym(b)
+
+str_c(tex(A)) %>% str_c("x = ") %>% str_c(tex(b)) %>% add_align() %>% cat()
+str_c("\\text{det}(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% cat()
+str_c("A^{-1} = ") %>% str_c(tex(inv(A))) %>% add_align() %>% cat()
+str_c("x = ") %>% str_c(tex(simplify(solve_lin(A, b)))) %>% add_align() %>% cat()
+
+```
+:::
+
+::: {.fragment}
+- In R, `solve(A)` inverts the matrix, and `solve(A, b)` solves $Ax = b$.
+
+```{r}
+#| echo: true
+(A <- matrix(sample(9), ncol = 3))
+(b <- c(1, 2, 3))
+solve(A, b) %>% round(2)
+
+# same as above
+solve(A) %*% b %>% round(2)
+```
+:::
+
+:::
+
+## Your Turn
+- Consider the following system of equations:
+
+$$
+\begin{eqnarray}
+3x + 2y + 1.5z & = & 4 \\
+7x + y & = & 2 \\
+3y + 2z & = & 1
+\end{eqnarray}
+$$
+
+- Express it in matrix form, solve it in R using the `solve()` function, and validate that the results are correct
+
+## Some Useful Rules
+
+> If you put on socks and then shoes, the first to be taken off are the ____
+
+--- Gilbert Strang (discussing the order of undoing the inverse)
+
+
+$$
+(ABC \dots)^{-1} = \dots C^{-1}B^{-1}A^{-1} \\
+(A^T)^{-1} = (A^{-1})^T \\
+(A + B)^T = A^T + B^T \\
+(ABC \dots)^T = \dots C^T B^T A^T 
+$$
+
+::: footer
+For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
+:::
+
+## Solving n > p Systems {.smaller}
+
+::: incremental
+
+- Statistical inference is concerned with "solving" overdetermined systems
+- We have lots of observations with relatively few variables. (Sometimes, we have more variables than observations, but we will not discuss it here)
+- Clearly, there is no exact solution
+- In fact, there are typically infinitely many ways in which you can draw a line through a cloud of points or a plane through n-dimensional space
+- **Optimization** based (or frequentist) inference is concerned with finding the most likely values of the unknowns giving rise to that line (or plane) and approximating their variance
+- **Integration** based (or Bayesian) inference is concerned with finding a joint PDF of the unknowns -- all plausible values weighted by their probability. Therefore, the "estimated variance" is a consequence of this PDF. (Recall our example of estimating variance from the distribution of the difference in heights.) In this sense, Bayesian inference is an uncertainty-preserving system, a very desirable quality.
+- For simple linear models, both of these methods produce similar results, so we will first show the optimized solution. 
+
+:::
+
+## Solving an Overdetermined $X\hat{\beta} = y$ {.smaller}
+
+::: incremental
+- We are switching to a more familiar (to statisticians) notation of $X \beta = y$ (instead of $Ax = b$)
+- We typically augment the $X$ matrix with the column of 1s on the left to model the intercept term, sometimes called $\beta_0$
+- This should make sense when you think about $Xb$ as the linear combination of columns of $X$
+- In this form, $X$ is usually called the design matrix or the model matrix
+- The problem is that $X$ is not invertible, even if columns of $X$ are linearly independent
+- Let's say that $X$ is a $3 \times 2$ matrix (3 rows and 2 columns), and columns are linearly independent. Note that $\beta$ is $2 \times 1$ and $y$ is $3 \times 1$.
+- $X$ and its linear combinations $X\beta$ span a plane in three-dimensional space -- there is no way for it to reach the target vector $y$ in $R^3$
+
+:::
+
+## Approximating a Solution to Overdetermined $X\hat{\beta} = y$ {.smaller}
+
+- If we can not reach $y$, we need to find a vector in the column space of $X$ that is closest (in a certain sense) to $y$
+
+- The projection of $y$ onto this plane gives us the answer
+
+![](images/orthog-boyd.png){fig-align="center"}
+
+
+::: footer
+Image from [Introduction to Linear Algebra](https://web.stanford.edu/~boyd/vmls/), Boyd and Vandenberghe
+:::
+
+## Solving an Overdetermined $X\hat{\beta} = y$ {.smaller}
+
+::: panel-tabset
+### Solution
+
+- This residual $r$ is also called the error term
+- This error, $y - X\hat{\beta}$, is the smallest when it's perpendicular to the plane
+- Another way of saying that is that:
+$$
+X^T(y - X\hat{\beta}) = 0
+$$
+
+- We can now solve this normal equation:
+
+$$
+\begin{eqnarray}
+X^T(y - X\hat{\beta}) & = & 0 \\
+X^TX\hat{\beta} & = & X^Ty \\
+(X^TX)^{-1}(X^TX)\hat{\beta} & = & (X^TX)^{-1}X^Ty \\
+\hat{\beta} & = & (X^TX)^{-1}X^Ty 
+\end{eqnarray}
+$$
+
+### Example of an $X^TX$
+- Matrix $X^TX$ is square and symmetric. It is also invertible if the columns of $X$ are linearly independent:
+
+```{r}
+#| echo: true
+
+(X <- matrix(sample(6), ncol = 2))
+(XtX <- t(X) %*% X)
+solve(XtX) %>% round(2)
+
+(X <- matrix(c(1, 2, 3, 2, 4, 6), ncol = 2))
+(XtX <- t(X) %*% X)  # will not invert
+```
+
+:::
+
+## Motion in the Straight Line {.smaller}
+
+- Recall, from lecture 1, our example of a car moving in a straight line where we have noisy measurements of its position over time
+- At the time, we assumed we were able somehow to find the intercept and slope of the equation
+- We are now in a position to solve the problem
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+
+set.seed(12)
+b0 <- 2; b1 <- 3
+x <- (0:50 * 5) / 50
+y <- b0 + b1 * x^2 + rnorm(length(x), 0, 3)
+p <- ggplot(data.frame(x, y), aes(x, y))
+p <- p + geom_point(size = 0.2) + xlab("time t (s)") + ylab("position x (m)") +
+  ggtitle("Noisy measurements of car's position")
+print(p)
+```
+
+## Motion in the Straight Line {.smaller}
+
+::: panel-tabset
+### Setup
+
+::: incremental
+- This is a quadratic function. How can we solve it using linear regression (the least squares method)?
+
+- We assumed the equation of motion was $x(t) = a + bt^2$
+
+- The unknowns are $a$ and $b$
+
+- Let's express it in the matrix notation and relabel the variables to match our system: $y = \beta_0 + \beta x^2$. Nothing changes, just the labels.
+
+- What is our design matrix $X$? We had 51 observations, so $X$ will have two columns with 51 elements each: a column of 1s and a column representing the squares measurements: $x^2$. 
+
+- Our unknown vector $\hat{\beta}$ has two elements $(\hat{\beta_0},\, \hat{\beta_1)}$
+
+- $y$ is our outcome vector of length 51, capturing the car's position at each time point $x$.
+
+- This way, $y = X\hat{\beta}$ captures our system in matrix form
+::: 
+
+### Solution
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+
+# length of x (our time vector)
+length(x)
+
+# first few elements of x
+head(x)
+
+# construct the design matrix
+X <- matrix(c(rep(1, length(x)), x^2), ncol = 2)
+head(X)
+
+# inspect the vector y
+length(y)
+head(y)
+```
+
+
+:::
+
+::: {.column width="50%"}
+- Recall, that the least squares estimate of $\beta$ is given by $\hat{\beta} =  (X^TX)^{-1}X^Ty$
+
+```{r}
+#| echo: true
+
+beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
+beta_hat %>% round(2)
+
+# compare to R's lm()
+lm(y ~ I(x^2))
+```
+
+- Warning: do not use $(X^TX)^{-1}X^Ty$ directly as above; it's computationally inefficient
+:::
+:::
+
+### Plot the Fit
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+d <- data.frame(yhat = beta_hat[1] + beta_hat[2] * x^2)
+p + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')
+```
+
+:::
+
+## Your Turn {.smaller}
+- Look at the dataset `mtcars`
+- Plot `mpg` against `wp`, treating `mpg` as the output variable $y$. (We generally don't like to use the words dependent vs. independent in this context)
+- Using the normal equations, find the intercept and slope of the best-fit line
+- Validate that it matches the output from `lm`
+- Now plot the line over the data and see if it "fits"
+
+## Homework {.smaller}
+
+- We are designing a Spam filter. Assume that 80% of email is spam. In 10% of spam emails, the word “free” is used, whereas this word is only used in 1% of non-spam emails. A new email has just arrived, which does contain the word "free." What is the probability that it is spam?
+
+- Assume male and female heights follow a normal distribution with the following parameters:
+
+```
+mu_m <- 69.1   # mean heights of US males in inches
+sigma_m <- 2.9 # standard deviation for same
+mu_w <- 63.7   # mean heights of US women in inches
+sigma_w <- 2.7 # standard deviation of the same
+```
+- Generate realizations from the distribution of differences in heights
+- Compute the P(male_h > femal_h) and compare it with the theoretical value
+- Compute the variance and standard deviation of this distribution and compare them to the theoretical value
+
+## Homework Solutions {.smaller}
+
+```{r}
+#| echo: true
+#| cache: true
+
+mu_m <- 69.1   # mean heights of US males in inches
+sigma_m <- 2.9 # standard deviation for same
+mu_w <- 63.7   # mean heights of US women in inches
+sigma_w <- 2.7 # standard deviation of the same
+
+n <- 1e5
+z <- numeric(n)
+for (i in 1:n) {
+  height_m <- rnorm(1, mu_m, sigma_m)
+  height_w <- rnorm(1, mu_w, sigma_w)
+  z[i] <- height_m - height_w
+}
+
+mean(z > 0)
+var(z)
+sd(z)
+hist(z)
+```
+
+## New Homework {.smaller}
+
+- For drawing 2-d vectors, you may find [these](https://gist.github.com/ericnovik/d07c883545f98b336f3855a2bab87421) functions helpful
+
+- Here is how you could use them:
+
+```{r}
+#| echo: true
+
+v <- c(1, 2)
+w <- c(3, 1)
+draw_vector(v, col = 'red') %>%
+  add_vector(w, col = 'blue', linetype = "dashed")
+```
+
+- Create two new vectors v = [-1, 3] and w = [2, 1]
+- Apply the clockwise rotation matrix to each and plot their original and final positions
+- Apply the counterclockwise rotation matrix to the result and convince yourself that the vectors are back at v = [-1, 3] and w = [2, 1]
+- Write the following system in matrix form
+$$
+\begin{eqnarray}
+3x + 2y + z = 1 \\
+2x + y + 4z = 2 \\
+1x + 7y + 2z = 3 \\
+\end{eqnarray}
+$$
+- Compute the determinant. Are the columns linearly independent?
+- Solve the system and report the results
+- Perform the following analysis:
+
+```{r}
+#| echo: true
+
+# install this package: install.packages('foreign')
+library(foreign)
+
+# dowlaod a dataset:
+iq <- read.dta("http://www.stat.columbia.edu/~gelman/arm/examples/child.iq/kidiq.dta")
+
+# dataset contains IQs of moms and their kids (kid_score)
+head(iq)
+```
+
+- Plot the relationship between `mom_iq` and `kid_score` (make `kid_score` the output)
+- What can you tell from the plot?
+- Now color by `mom_hs` (1 means mom completed high school). What can you tell?
+- Compute the regression line (by any method) for `kid_score ~ mom_iq`
+- Plot the regression line over the data. Does it fit?
+- Now compute the regression conditional on mom completing high school (i.e., only look at records where `mom_hs = 1`)
+- Do the same, but now for `mom_hs = 0`
+- Plot both regression lines (in different colors) over the observations. Do these regression lines make sense? 
+
+

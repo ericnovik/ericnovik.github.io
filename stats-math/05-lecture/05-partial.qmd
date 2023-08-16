@@ -1,0 +1,376 @@
+---
+title: "SMaC: Statistics, Math, and Computing"
+subtitle: "Applied Statistics for Social Science Research"
+author: "Eric Novik | Summer 2023 | Session 5"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/smac.html>
+editor: source
+always_allow_html: true
+bibliography: ../references.bib
+---
+
+## Session 5 Outline
+
+::: incremental
+-   Random variables
+-   Bernoulli, Binomial, Geometric
+-   PDF and CDF
+-   Exponential, Normal
+-   Expectations, Variance
+-   Poisson Random Variable
+-   Joint, Marginal, and Conditional
+
+:::
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(gridExtra)
+library(purrr)
+library(MASS)
+library(patchwork)
+reticulate::use_condaenv("miniconda3")
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Random Variables are Not Random {.smaller}
+
+::: panel-tabset
+### Story
+
+::: incremental
+-   It would be inconvenient to enumerate all possible events to describe a stochastic system
+
+-   A more general approach is to introduce a function that maps sample space $S$ onto the Real line
+
+-   For each possible outcome $s$, random variable $X(s)$ performs this mapping
+
+-   This mapping is deterministic. The randomness comes from the experiment, not from the random variable (RV)
+
+-   While it makes sense to talk about $\P(A)$, where $A$ is an event, it does not make sense to talk about $\P(X)$, but you can say $\P(X(s) = x)$, which we usually write as $\P(X = x)$
+
+-   Let $X$ be the number of Heads in two coin flips. You flip the coin twice, and you get $HH$. In this case, $s = {HH}$, $X(s) = 2$, while $S = \{TT, TH, HT, HH\}$
+:::
+
+### Picture
+
+-   Random variable $X$ for the number of Heads in two flips
+
+![](images/nofheads.png){fig-align="center" width="800"}
+:::
+
+## Characterising Random Variables {.smaller}
+
+::: panel-tabset
+### Introduction
+
+::: incremental
+-   Two ways of describing an RV are CDF (Cumulative Distribution Function) and PMF (Probability Mass Function) for discrete RVs and PDF (Probability Density Function) for continuous RVs. There are other ways, but we will stick with CDF and P\[D/M\]F.
+-   CDF $F_X(x)$ is a function of $x$ and is bounded between 0 and 1:
+:::
+
+::: {.fragment}
+$$
+F_X(x) = \P(X \leq x)
+$$
+:::
+
+::: {.fragment}
+-   PMF (for discrete RVs only) $f_X(x)$ is a function of $x$
+
+$$
+f_X(x) = \P(X = x)
+$$
+:::
+
+::: {.fragment}
+-   You can get from $f_X$ to $F_X$ by summing. Let's say $x = 4$. In that case:
+
+$$
+F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
+$$
+:::
+
+### R Conventions
+
+::: incremental
+
+-   In R, PMFs and PDFs start with the letter `d`. For example `dbinom()` and `dnormal()` refer to binomial PMF and normal PDF
+
+-   CDFs start with `p`, so `pbinom()` and `pnorm()`
+
+-   Inverse CDFs or quantile functions, start with `q` so `qbinom()` and so on
+
+-   Random number generators start with `r`, so `rbinom()`
+
+-   A binomial RV, which we will define later, represents the number of successes in N trials. In R, the PMF is `dbinom()` and CDF is `pbinom()`
+
+-   Here is the full function signature: `dbinom(x, size, prob, log = FALSE)`
+
+    -   `x` is the number of successes, `size` is the number of trials N, `prob` is the probability of success in each trial $\theta$, and `log` is a flag asking if we want the results on the log scale.
+
+::: 
+
+:::
+
+## Binomial RV {.smaller}
+
+::: panel-tabset
+### Binomial PMF
+
+::: incremental
+-   Bernoulli RV is one coin flip with a set probability of success (say Heads)
+
+-   If $X \sim \text{Bernoulli}(\theta)$, the PMF can be written directly as $\P(X = x) = \theta^x (1 - \theta)^{1-x}, \, x \in \{0, 1\}$
+
+-   Binomial can be thought of as the sum of $N$ independent Bernoulli trials. We can also write:
+:::
+
+::: {.fragment}
+$$
+\text{Bernoulli}(x~|~\theta) = \left\{ \begin{array}{ll} \theta &
+\text{if } x = 1, \text{ and} \\ 1 - \theta & \text{if } x = 0
+\end{array} \right.
+$$
+:::
+
+::: {.fragment}
+-   We can write the Binomial PMF, $X \sim \text{Binomial}(N, \theta)$ this way:
+
+$$
+\text{Binomial}(x~|~N,\theta) = \binom{N}{x}
+\theta^x (1 - \theta)^{N - x}
+$$
+:::
+
+### PMF and CDF Plots
+
+$\text{Binomial}(x~|~N=4,\theta = 1/2)$
+
+::: {.fragment}
+```{r}
+#| fig-align: center
+#| fig-width: 9
+#| fig-height: 4
+
+N <- 4
+
+# compute and plot the PMF
+pmf <- dbinom(x = 0:N, size = N, prob = 1/2)
+d <- data.frame(x =  0:N, y = pmf)
+p1 <- ggplot(d, aes(x, pmf))
+p1 <- p1 + geom_col(width = .2) + 
+  geom_text(aes(label = fractions(pmf)), nudge_y = 0.02) +
+  ylab("P(X = x)") + xlab("x = Number of Heads") +
+  ggtitle("X ~ Binomial(4, 1/2)",
+          subtitle = expression(PDF: p[X](x) == P(X == x)))
+
+# compute and plot the CDF
+x <- seq(-0.5, 4.5, length = 500)
+cdf <- pbinom(q = x, size = N, prob = 1/2)
+d <- data.frame(q = x, y = cdf)
+dd <- data.frame(x = seq(-0.5, 4.5, by = 1), cdf = unique(cdf), x_empty = 0:5)
+p2 <- ggplot(d, aes(x, cdf)) 
+p2 <- p2 + geom_point(size = 0.2) + 
+  geom_text(aes(x, cdf, label = fractions(cdf)), data = dd, nudge_y = 0.05) +
+  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = 'white') +
+  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, shape = 1) +
+  ggtitle("X ~ Binomial(4, 1/2)",
+          subtitle = expression(CDF: F[X](x) == P(X <= x))) +
+  ylab(expression(P(X <= x))) + xlab("x = Number of Heads")
+
+p1 + p2
+```
+:::
+
+### Code to Generate the Plots
+
+```{r}
+#| echo: true
+#| eval: false
+library(patchwork)
+library(MASS)
+
+N <- 4 # Number of successes out of x trials
+
+# compute and plot the PMF
+pmf <- dbinom(x = 0:N, size = N, prob = 1/2)
+d <- data.frame(x =  0:N, y = pmf)
+p1 <- ggplot(d, aes(x, pmf))
+p1 <- p1 + geom_col(width = .2) + 
+  geom_text(aes(label = fractions(pmf)), nudge_y = 0.02) +
+  ylab("P(X = x)") + xlab("x = Number of Heads") +
+  ggtitle("X ~ Binomial(4, 1/2)",
+          subtitle = expression(PDF: p[X](x) == P(X == x)))
+
+# compute and plot the CDF
+x <- seq(-0.5, 4.5, length = 500)
+cdf <- pbinom(q = x, size = N, prob = 1/2)
+d <- data.frame(q = x, y = cdf)
+dd <- data.frame(x = seq(-0.5, 4.5, by = 1), cdf = unique(cdf), x_empty = 0:5)
+p2 <- ggplot(d, aes(x, cdf)) 
+p2 <- p2 + geom_point(size = 0.2) + 
+  geom_text(aes(x, cdf, label = fractions(cdf)), data = dd, nudge_y = 0.05) +
+  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = 'white') +
+  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, shape = 1) +
+  ggtitle("X ~ Binomial(4, 1/2)",
+          subtitle = expression(CDF: F[X](x) == P(X <= x))) +
+  ylab(expression(P(X <= x))) + xlab("x = Number of Heads")
+
+p1 + p2
+```
+:::
+
+## Binomial in R {.smaller}
+
+```{r}
+#| echo: true
+
+# What is the probability of getting 2 Heads out of 5 fair trials?
+N <- 5; x <- 2
+dbinom(x = x, size = N, prob = 0.5) |> fractions()
+
+# What is the binomial PMF: P(X = x), for N = 5, p = 0.5?
+N <- 5; x <- -2:7 # notice we range x over any integers
+dbinom(x = x, size = N, prob = 0.5) |> fractions()
+
+# Verify that the PMF sums to 1
+sum(dbinom(x = x, size = N, prob = 0.5))
+
+# What is the probability of 3 heads or fewer
+pbinom(3, size = N, prob = 0.5) |> fractions()
+
+# compute the CDF: P(X <= x), for N = 5, p = 0.5
+pbinom(x, size = N, prob = 0.5) |> fractions()
+
+# get from the PMF to CDF; cumsum() is the cumulative sum function
+dbinom(x = x, size = N, prob = 0.5) |> cumsum() |> fractions()
+```
+
+::: incremental
+- **Your Turn**: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF.
+:::
+
+## Geometric RV {.smaller}
+
+::: panel-tabset
+### PMF
+
+::: incremental
+-   Geometric is a discrete waiting time distribution, and Exponential is its continuous analog
+-   If $X$ is the number of failures before first success  $X \sim \text{Geometric}(\theta)$, where $\theta$ is probability of success 
+-   Example: We keep flipping a coin until we get success, say Heads
+    -   Say we flip five times, which means we get the following sequence: T T T T H
+    -   The probability of this sequence is: $(\frac{1}{2})^4 (\frac{1}{2})^1$
+    -   Notice this is the only way to get this sequence
+-   If $x$ is the number of failures, the PMF is $P(X = x) = (1 - \theta)^x \theta$, where $x = 0, 1, 2, ...$
+:::
+
+### Check Convergence
+
+-   To check if this is a valid PMF we need to sum over all $x$:
+
+::: {.fragment}
+$$
+\begin{align}
+\sum_{x = 0}^{\infty} \theta (1 - \theta)^x  = 
+\theta \sum_{x = 0}^{\infty} (1 - \theta)^x \\
+\text{Let } u = 1 - \theta \\
+\theta \sum_{x = 0}^{\infty} u^x = \theta \frac{1}{1-u} = \theta \frac{1}{1-1 + \theta} = \frac{\theta}{\theta} = 1
+\end{align}
+$$
+:::
+
+::: {.fragment}
+-   The last bit comes from geometric series for $|u| < 1$
+:::
+
+### Examples
+
+-   The probability of T T T H (x = 3 failures) when $\theta = 1/2$, has to be $(1/2)^4$ or $1/16$
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+x <- 3; theta <- 1/2
+dgeom(x = x, prob = theta) |> fractions()
+```
+::: 
+
+::: {.fragment}
+-   If $\theta = 1/3$, the probability of the same sequence has to be $(2/3)^3 \cdot 1/3 = 8/81$
+
+```{r}
+#| echo: true
+
+x <- 3; theta <- 1/3
+dgeom(x = x, prob = theta) |> fractions()
+```
+:::
+
+::: {.fragment}
+-   The PMF is unbounded, but it converges to 1 as demonstrated before
+:::
+
+### PMF
+
+```{r}
+#| cache: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+
+x <-  0:15
+theta <- 1/5
+y <- dgeom(x = x, prob = theta)
+d <- data.frame(x, y)
+p <- ggplot(d, aes(x, y))
+p + geom_col(width = 0.2) +
+xlab("x = Number of failures before first success") +
+ ylab(expression(P(X == x))) +
+ggtitle("X ~ Geom(1/5)", 
+ subtitle = expression(PDF: p[X](x) == P(X == x)))
+
+```
+
+
+:::
