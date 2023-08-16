@@ -1260,158 +1260,410 @@
     "text": "Geometric RV\n\nPMFCheck ConvergenceExamplesPMF\n\n\n\n\nGeometric is a discrete waiting time distribution, and Exponential is its continuous analog\nIf \\(X\\) is the number of failures before first success \\(X \\sim \\text{Geometric}(\\theta)\\), where \\(\\theta\\) is probability of success\nExample: We keep flipping a coin until we get success, say Heads\n\nSay we flip five times, which means we get the following sequence: T T T T H\nThe probability of this sequence is: \\((\\frac{1}{2})^4 (\\frac{1}{2})^1\\)\nNotice this is the only way to get this sequence\n\nIf \\(x\\) is the number of failures, the PMF is \\(P(X = x) = (1 - \\theta)^x \\theta\\), where \\(x = 0, 1, 2, ...\\)\n\n\n\n\n\nTo check if this is a valid PMF we need to sum over all \\(x\\):\n\n\n\\[\n\\begin{align}\n\\sum_{x = 0}^{\\infty} \\theta (1 - \\theta)^x  =\n\\theta \\sum_{x = 0}^{\\infty} (1 - \\theta)^x \\\\\n\\text{Let } u = 1 - \\theta \\\\\n\\theta \\sum_{x = 0}^{\\infty} u^x = \\theta \\frac{1}{1-u} = \\theta \\frac{1}{1-1 + \\theta} = \\frac{\\theta}{\\theta} = 1\n\\end{align}\n\\]\n\n\n\nThe last bit comes from geometric series for \\(|u| &lt; 1\\)\n\n\n\n\n\nThe probability of T T T H (x = 3 failures) when \\(\\theta = 1/2\\), has to be \\((1/2)^4\\) or \\(1/16\\)\n\n\n\nx &lt;- 3; theta &lt;- 1/2\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 1/16\n\n\n\n\n\nIf \\(\\theta = 1/3\\), the probability of the same sequence has to be \\((2/3)^3 \\cdot 1/3 = 8/81\\)\n\n\nx &lt;- 3; theta &lt;- 1/3\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 8/81\n\n\n\n\n\nThe PMF is unbounded, but it converges to 1 as demonstrated before\n\n\n\n\n\n\nx &lt;-  0:15\ntheta &lt;- 1/5\ny &lt;- dgeom(x = x, prob = theta)\nd &lt;- data.frame(x, y)\np &lt;- ggplot(d, aes(x, y))\np + geom_col(width = 0.2) +\nxlab(\"x = Number of failures before first success\") +\n ylab(expression(P(X == x))) +\nggtitle(\"X ~ Geom(1/5)\", \n subtitle = expression(PDF: p[X](x) == P(X == x)))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",
-    "href": "stats-math/03-lecture/03-lecture.html#session-3-outline",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#session-2-outline",
+    "href": "stats-math/02-lecture/02-Lecture.html#session-2-outline",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Session 3 Outline",
-    "text": "Session 3 Outline\n\n\nTransforming data for plotting\nAntiderivative\nSome rules of integration\nEvaluating integrals numerically\nThe waiting time distribution\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "section": "Session 2 Outline",
+    "text": "Session 2 Outline\n\n\n\n\nLinear, exponential, and logarithmic functions\nLimits\nDefinition of the derivative\nRules of differentiation\nThe chain rule and product rules\n\n\n\n\n\n\n\n\n\n\n\nImage source: Wikipedia"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations",
-    "href": "stats-math/03-lecture/03-lecture.html#data-transformations",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#lines",
+    "href": "stats-math/02-lecture/02-Lecture.html#lines",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Data transformations",
-    "text": "Data transformations\n\n\n\n\nWe saw that continuous compounding does not make such a big difference over time\nHow would the value vary by rate?\nWe investigate with a common simulate-pivot-plot pattern"
+    "section": "Lines",
+    "text": "Lines\n\nLinesExamplesCode\n\n\n\n\nWe typically use the slope-intercept form of the line: \\(y = a + bx\\), where \\(a\\) is the intercept, and \\(b\\) is the slope (rise over run).\nFor example: \\(y = 1.5 + 0.5x\\)\n\\(1.5\\) is the value of the function when either \\(x = 0\\) or \\(b = 0\\).\nIn practice, \\(b\\) is almost never zero.\n\n\n\n\n\n\nA graph of a line with the equation \\(y = 1 + 2x\\).\n\n\n\n\n\n\nA graph of a line with the equation \\(y = 7.5 - 2x\\).\n\n\n\n\n\n\n\n\n\n\n# y = 1 + 2x\np &lt;- ggplot() + xlim(0, 5) + ylim(0, 10)\np + geom_abline(slope = 2, intercept = 1, size = 0.2)\n\n# y = 7.5 + -2x\np &lt;- ggplot() + xlim(0, 5) + ylim(0, 10)\np + geom_abline(slope = -2, intercept = 7.5, size = 0.2)\n\n# to see some other ways of plotting lines\n?geom_abline"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#map-function",
-    "href": "stats-math/03-lecture/03-lecture.html#map-function",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Map Function",
-    "text": "Map Function\n“The purrr::map* functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.”\n\n\nGenerate 10 vectors of 100 uniform random realizations, where the first vector has min = 1, second min = 2 … last vector has min = 10, and max = 15 for all\nNow compute the average value of each of the 10 vectors\n\n\n\n\nlibrary(purrr)\n\nx &lt;- 1:10\ny &lt;- x |&gt;\n  map(\\(x) runif(n = 100, min = x, max = 15))\n\ny &lt;- x |&gt;\n  map(\\(x) runif(n = 100, min = x, max = 15)) |&gt;\n  map_dbl(mean)\n\n\n\n\nRun the code and look inside y after then first function call and after the second. What do you expect to see?"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#pivot-functions",
-    "href": "stats-math/03-lecture/03-lecture.html#pivot-functions",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Pivot Functions",
-    "text": "Pivot Functions\n“pivot_longer()”lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is pivot_wider()”\n\n\nlibrary(tidyr)\nhead(iris)\n\n  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n1          5.1         3.5          1.4         0.2  setosa\n2          4.9         3.0          1.4         0.2  setosa\n3          4.7         3.2          1.3         0.2  setosa\n4          4.6         3.1          1.5         0.2  setosa\n5          5.0         3.6          1.4         0.2  setosa\n6          5.4         3.9          1.7         0.4  setosa\n\nlong &lt;- iris |&gt; pivot_longer(!Species, names_to = \"species\", values_to = \"measure\")\nhead(long)\n\n# A tibble: 6 × 3\n  Species species      measure\n  &lt;fct&gt;   &lt;chr&gt;          &lt;dbl&gt;\n1 setosa  Sepal.Length     5.1\n2 setosa  Sepal.Width      3.5\n3 setosa  Petal.Length     1.4\n4 setosa  Petal.Width      0.2\n5 setosa  Sepal.Length     4.9\n6 setosa  Sepal.Width      3"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
-    "href": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Data Transformations",
-    "text": "Data Transformations\n\nSimulateLoops and MapsPivotPlot\n\n\n\n\n\nlibrary(purrr)\nlibrary(tidyr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100 \ntime &lt;- seq(1, 50, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\nd &lt;- time |&gt;\n  map(\\(x) Pe(A = P, r = rates, t = x)) \nclass(d)\n\n[1] \"list\"\n\nd[[1]][1:4]\n\n[1] 105.1271 106.8939 108.6904 110.5171\n\nnames(d) &lt;- as.character(time)\nd &lt;- as_tibble(d)\n\n\n\n\n\n\n\n\n1\n2\n3\n\n\n\n\n105.1271\n110.5171\n116.1834\n\n\n106.8939\n114.2631\n122.1403\n\n\n108.6904\n118.1360\n128.4025\n\n\n110.5171\n122.1403\n134.9859\n\n\n112.3745\n126.2802\n141.9068\n\n\n114.2631\n130.5605\n149.1825\n\n\n116.1834\n134.9859\n156.8312\n\n\n118.1360\n139.5612\n164.8721\n\n\n120.1215\n144.2917\n173.3253\n\n\n122.1403\n149.1825\n182.2119\n\n\n\n\n\n\n\n\n\n\n\n\nModern R usage offers a lot of shortcuts but those may be confusing to beginners.\nIn particular, R loops have mostly been replaced with map() functions.\nWe recommend purrr::map() functions instead of R’s *apply().\n\n\n\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100 \ntime &lt;- seq(1, 5, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\ntime |&gt; map(\\(x) Pe(A = P, r = rates, t = x)) \n\n# above is a shortcut for\nmap(time, function(x) Pe(A = P, r = rates, t = x))\n\n# and the above is a shortcut for the following loop\nl &lt;- list()\nfor (i in seq_along(time)) {\n  l[[i]] &lt;- Pe(A = P, r = rates, t = time[i])\n}\n\n\n\n\n\n\n\nlibrary(tidyr)\n# add rates as a column\nd &lt;- d %&gt;% mutate(rate = \n            round(rates, 2) |&gt;\n              as.character())\n\n# convert from wide format to long\nd &lt;- d %&gt;% \n  pivot_longer(!rate, \n               names_to = \"year\", \n               values_to = \"value\") \n\nd$year &lt;- as.numeric(d$year)\n\nHere is a cheat sheet explaining tidyr functions.\n\n\n\n\n\n\n\nrate\nyear\nvalue\n\n\n\n\n0.05\n1\n105.1271\n\n\n0.05\n2\n110.5171\n\n\n0.05\n3\n116.1834\n\n\n0.05\n4\n122.1403\n\n\n0.05\n5\n128.4025\n\n\n0.05\n6\n134.9859\n\n\n0.05\n7\n141.9068\n\n\n0.05\n8\n149.1825\n\n\n0.05\n9\n156.8312\n\n\n0.05\n10\n164.8721\n\n\n\n\n\n\n\n\n\n\n\n\n\np &lt;- ggplot(d, aes(year, value))\np + geom_line(aes(color = rate), linewidth = 0.2) +\n  scale_y_continuous(labels = \n          scales::dollar_format()) +\n  xlab(\"Time (years)\") + \n  ylab(\"Asset value\") +\n  ggtitle(\"Growth of $100 at different interest rates\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd |&gt; group_by(rate) |&gt; \n  summarise(y50 = last(value)) |&gt;\n  knitr::kable()\n\n\n\n\nrate\ny50\n\n\n\n\n0.05\n1218.249\n\n\n0.07\n2803.162\n\n\n0.08\n6450.009\n\n\n0.1\n14841.316\n\n\n0.12\n34149.510\n\n\n0.13\n78577.199\n\n\n0.15\n180804.241\n\n\n0.17\n416026.201\n\n\n0.18\n957266.257\n\n\n0.2\n2202646.579\n\n\n\n\n\n\n\n\n\n\n\n\nRStudio cheatsheats"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn",
-    "href": "stats-math/03-lecture/03-lecture.html#your-turn",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn",
+    "href": "stats-math/02-lecture/02-Lecture.html#your-turn",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
-    "text": "Your Turn\n\nDataInstructionsOutput\n\n\n\n\n\n\n\n\n\n\nRun the following command: install.packages('HistData')\nFollowed by library(HistData)\nTale a look at the Arbuthnot dataset: ?Arbuthnot\n\n\n\n\n\n\nYear\nMales\nFemales\nPlague\nMortality\nRatio\nTotal\n\n\n\n\n1629\n5218\n4683\n0\n8771\n1.114243\n9.901\n\n\n1630\n4858\n4457\n1317\n10554\n1.089971\n9.315\n\n\n1631\n4422\n4102\n274\n8562\n1.078011\n8.524\n\n\n1632\n4994\n4590\n8\n9535\n1.088017\n9.584\n\n\n1633\n5158\n4839\n0\n8393\n1.065923\n9.997\n\n\n1634\n5035\n4820\n1\n10400\n1.044606\n9.855\n\n\n\n\n\n\n\n\nUse the tools to produce the plot the looks something like this.\nBonus: compute the ratio of female births and plot it."
+    "text": "Your Turn\n\nTurn the following code into a function called plot_line(slope, intercept)\nTest it for different values of slope and intercept\n\n\np &lt;- ggplot() + xlim(0, 5) + ylim(0, 10)\np + geom_abline(slope = 2, intercept = 1, size = 0.2)"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#integral-calculus",
-    "href": "stats-math/03-lecture/03-lecture.html#integral-calculus",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#exponential-functions",
+    "href": "stats-math/02-lecture/02-Lecture.html#exponential-functions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Integral Calculus",
-    "text": "Integral Calculus\n\n\n\n\nIntegration plays a central role in Statistics\nIt is a way to compute Expectations and Event Probabilities\nIn Bayesian Statistics, we use integration to compute posterior distributions of the unknowns\nIn Frequentist Statistics, we use derivatives to find the most likely values of the unknowns\n\n\n\n\n\n\n\n\n\n\nUnknowns are sometimes called parameters, like our \\(a\\) and \\(b\\), in the \\(x(t) = a + bt^2\\) model"
+    "section": "Exponential Functions",
+    "text": "Exponential Functions\n\n\nThe idea of an exponential function is that the rate of change of the function at time \\(t\\) is proportional to the value of the function at time \\(t\\). In other words:\n\n\n\n\\[\n\\frac{d[y(t)]}{dt} = ky(t)\n\\]\n\n\n\nThe solution to this differential equation is the exponential function.\nThink of population growth or growth of an interest-bearing asset."
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
-    "href": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#example-compound-interest",
+    "href": "stats-math/02-lecture/02-Lecture.html#example-compound-interest",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Intuition Behind Integration",
-    "text": "Intuition Behind Integration\n\n\n\n\nIntegration is a continous analog of summation\nYou can also think of an integral as undoing a derivative\nYou can also think of it as a signed area under a function \\(f\\)\nIn modern applications, integration is almost always done numerically on the computer\nBut it helps to understand what what the computer is doing\n\n\n\n\n\n\n\n\n\n\n\nImage Source: Calculus Volume 1"
+    "section": "Example: Compound Interest",
+    "text": "Example: Compound Interest\n\nAn asset that has a value \\(A\\) is invested with an annual interest rate \\(r\\). What is the balance in the account, \\(P_1\\), at the end of the first year?\n\n\n\\[\nP_1 = A + rA = A(1 + r)\n\\]\n\n\nAfter year two, the value is:\n\\[\nP_2 = P_1 + rP_1 = P_1(1 + r) = \\\\\nA(1 + r)(1 + r) = A(1 + r)^2\n\\]\n\n\nAnd after year \\(t\\), the value is:\n\\[\nP_n = A(1 + r)^t\n\\]\n\n\nWhat if we compound the interest twice per year? In that case:\n\\[\nP_1 = A \\left (1 + \\frac{r}{2} \\right)^2\n\\]\n\n\nIf we compound \\(n\\) times per year, the principal would be:\n\\[\nP_1 = A \\left (1 + \\frac{r}{n} \\right)^n\n\\]\n\n\nCombining these ideas, if we compound \\(n\\) times per year, for \\(t\\) years, we get:\n\\[\nP = A \\left (1 + \\frac{r}{n} \\right)^{nt}\n\\]\nIf we let \\(n \\to \\infty\\), we call this process exponential growth."
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#from-velocity-to-postion-functions",
-    "href": "stats-math/03-lecture/03-lecture.html#from-velocity-to-postion-functions",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#example-compound-interest-1",
+    "href": "stats-math/02-lecture/02-Lecture.html#example-compound-interest-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "From Velocity to Postion Functions",
-    "text": "From Velocity to Postion Functions\n\nAntiderivativePlot\n\n\n\n\nRecal our position function \\(x(t) = 2 + 3t^2\\)\nWe found the velocity function by differentiating and we can almost get back the position function by integrating.\n\n\n\n\\[\n\\begin{eqnarray}\nv(t) & = & \\frac{d}{dt} \\left( 2 + 3t^2 \\right) = 6t \\\\\nx(t) & = & \\int{6t\\, dt} = 3t^2 + C\n\\end{eqnarray}\n\\]\n\n\n\nWhy almost? Look at the constant \\(2\\) in \\(\\frac{d}{dt}(2 + 3t^2)\\). You can replace it with any other constant and the result will still be \\(6t\\).\nTo put it another way, to characterize the position fucntion you need to know the intial position and you can’t get that from the velocity function alone.\n\n\n\n\nThe position function for different values of initial position \\(C\\). Notice that the only thing that changes is the intercept."
+    "section": "Example: Compound Interest",
+    "text": "Example: Compound Interest\n\nCodeCompoundingGrowth over time\n\n\n\nrate &lt;- 0.05    # interest rate r\nP &lt;- 100        # pricical P\nn_comp &lt;- 1:100 # number of compoundings n\n\nPn &lt;- function(n, A, r, t) A * (1 + r/n)^(t*n)\nPe &lt;- function(A, r, t) A * exp(r * t)\n\npn &lt;- Pn(n = n_comp, A = P, r = rate, t = 50)\npe &lt;- Pe(A = P, r = rate, t = 50)\n\nd &lt;- data.frame(n_comp, pn)\np &lt;- ggplot(d, aes(n_comp, pn))\np + geom_line(size = 0.2) +\n  geom_hline(yintercept = pe, color = 'red', size = 0.2) +\n  xlab(\"Number of times the interest is compounded\") +\n  ylab(\"Value of an asset\") +\n  ggtitle(\"Value of $100 at r = 0.05 after 50 years\")"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
-    "href": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn-1",
+    "href": "stats-math/02-lecture/02-Lecture.html#your-turn-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Some Common Integrals",
-    "text": "Some Common Integrals\n\n\nOpenStax: Here is a more complete list"
+    "section": "Your Turn",
+    "text": "Your Turn\nSuppose a particular population of bacteria is known to double in size every 4 hours. If a culture starts with 1000 bacteria, what is the population after 10 hours and 24 hours?"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#techniques-of-intergration",
-    "href": "stats-math/03-lecture/03-lecture.html#techniques-of-intergration",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#the-number-e",
+    "href": "stats-math/02-lecture/02-Lecture.html#the-number-e",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Techniques of Intergration",
-    "text": "Techniques of Intergration\n\n\nIntegral, like a derivative, is a linear operator:\n\n\n\n\\[\n\\begin{eqnarray}\n\\int [f(x) + g(x)] \\, dx &=& \\int f(x) \\, dx + \\int g(x) \\, dx \\\\\n\\int [c \\cdot f(x)] \\, dx &=& c \\int f(x) \\, dx\n\\end{eqnarray}\n\\]\n\n\n\nUnlike derivatives, there are generablly no rules for finding integrals\nMost integrals do not have a closed-form, analytical solutions. This is true for almost all integrals in statistics.\nIn one or two dimentions, it is easy to evaluate most integrals numerically.\nIn higher dimentions, you need very sophisticated methods that rely on Markov Chain Monte Carlo (MCMC). We will not cover MCMC in this course.\nFor simple integrals we can somtimes find a closed-form solution by relying on u-substitution and integration by parts.\n\n\n:::"
+    "section": "The Number \\(e\\)",
+    "text": "The Number \\(e\\)\n\n\nRecall the equation for asset value after \\(t\\) years compounded \\(n\\) times:\n\n\\[\nP = A \\left (1 + \\frac{r}{n} \\right)^n = A \\left (1 + \\frac{r}{n} \\right)^{nt}\n\\]\n\n\n\nLet’s make a substituion \\(m = n/r\\) and take limit and \\(m \\to \\infty\\).\n\n\\[\nP = \\lim_{\\Delta m \\to \\infty}A \\left ( 1 + \\frac{1}{m} \\right)^{m(rt)}\n\\]"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
-    "href": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#the-number-e-1",
+    "href": "stats-math/02-lecture/02-Lecture.html#the-number-e-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Playing with Integrals",
-    "text": "Playing with Integrals\n\n\nGiven our intuition for integrals being singed areas, let’s see how to compute them analytically and numerically.\nWarning: these techniques only work in low dimentions. For high dimentional integrals you need to use MCMC.\nSuppose we want evaluate the integral \\(\\int_{1}^{3} x \\sin(x^2)\\, dx\\)"
+    "section": "The Number \\(e\\)",
+    "text": "The Number \\(e\\)\n\nPlotCode\n\n\n\n\n\n\nWe can compute the value of \\(\\left ( 1 + \\frac{1}{m} \\right)^m\\) as m increases.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe number that this limit approaches is called \\(e\\).\n\n\\[\nP = \\lim_{\\Delta m \\to \\infty}A \\left ( 1 + \\frac{1}{m} \\right)^{m(rt)} =\nA e^{rt}\n\\]\n\n\n\n\n\n\nf &lt;- function(m) (1 + 1/m)^m\nx &lt;- 0:100\ny &lt;- f(x)\np &lt;- ggplot(data.frame(x, y), aes(x, y))\np + geom_line(size = 0.2) +\n  geom_hline(yintercept = exp(1), color = 'red', size = 0.2)"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
-    "href": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#properties-of-exponents",
+    "href": "stats-math/02-lecture/02-Lecture.html#properties-of-exponents",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Constructing a Riemann Sum",
-    "text": "Constructing a Riemann Sum\n\n\n\n\n\n\n\nriemann &lt;- function(f, lower, upper, step_size) {\n  step &lt;- seq(lower, upper, by = step_size)\n  s &lt;- 0 # initialize the sum\n  for (i in 2:length(step)) {\n    # multiply base by the height of the rectangle\n    area &lt;- step_size * f(step[i]) \n    s &lt;- s + area\n  }\n  return(s)\n}\n\n\n\nNotice that the function takes a function as an argument. These are called higher order functions.\n\n\nSource: OpenStax Calculus Volume 1"
+    "section": "Properties of Exponents",
+    "text": "Properties of Exponents\n\n\n\\(a^x a^y = a^{x + y}\\)\n\n\n2^7 * 2^8 == 2^(7 + 8) \n\n[1] TRUE\n\n\n\n\n\n\\(\\frac{a^x}{a^y} = a^{x-y}\\)\n\n\n2^7 / 2^8 == 2^(7 - 8) \n\n[1] TRUE\n\n\n\n\n\n\\((a^x)^y = a^{xy}\\)\n\n\n(2^7)^8 == 2^(7*8)\n\n[1] TRUE\n\n\n\n\n\n\\((ab)^x = a^x b^x\\)\n\n\n(2*3)^7 == 2^7 * 3^7\n\n[1] TRUE\n\n\n\n\n\n\\(\\frac{a^x}{b^x} = \\left( \\frac{a}{b} \\right)^x\\)\n\n\n2^4 / 3^4 == (2/3)^4\n\n[1] FALSE\n\nall.equal(2^4 / 3^4, (2/3)^4)\n\n[1] TRUE"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
-    "href": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn-2",
+    "href": "stats-math/02-lecture/02-Lecture.html#your-turn-2",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating the Integral",
-    "text": "Evaluating the Integral\n\nf &lt;- function(x) x * sin(x^2)\nx &lt;- seq(0, pi, len = 100)\n\nriemann(f, 1, 3, 0.01)\n\n[1] 0.7275414\n\n# compute using R's integrate function\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09"
+    "section": "Your Turn",
+    "text": "Your Turn\nSuppose $750 is invested in an account at an annual interest rate of 5.5%, compounded continuously. Let \\(t\\) denote the number of years after the initial investment and \\(A(t)\\) denote the amount of money in the account at time \\(t\\). Find a formula for \\(A(t)\\). Find the amount of money in the account after 5 years, 10 years, and 50 years."
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
-    "href": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#logarithmic-functions",
+    "href": "stats-math/02-lecture/02-Lecture.html#logarithmic-functions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Integrating Analytically",
-    "text": "Integrating Analytically\n\n\nMost integrals can’t be evaluated analytically but we can do \\(\\int x \\sin(x^2)\\, dx\\).\nWe make a substitution. Let \\(u = x^2\\), then \\(du/dx = 2x\\) and \\(dx = \\frac{1}{2 \\sqrt{u}}du\\)\n\n\n\n\\[\n\\begin{eqnarray}\n\\int \\sqrt{u} \\cdot \\sin(u) \\frac{1}{2\\sqrt{u}}du  & = & \\\\\n\\frac{1}{2}\\int \\sin(u)\\, du & = & \\\\\n-\\frac{1}{2} \\cos(u) & = & -\\frac{1}{2} \\cos(x^2)  \n\\end{eqnarray}\n\\]"
+    "section": "Logarithmic functions",
+    "text": "Logarithmic functions\n\nIntroductionExample: Log-Sum-Exp\n\n\n\n\nExponential function of the form \\(f(x) = a^x\\) is one-to-one, so it has an inverse called a logarithmic function.\nIn Statistics, when we write \\(\\log\\) we mean natural log, base \\(e\\). This makes it easier to interpret the log regression coefficients as percentage changes. For example, \\(\\log(1.04) \\approx 4\\%\\).\nThe following relationship always holds: \\(a^t = e^{\\log(a)t}\\) since \\(e^{\\log(a)} = a\\)\n\\(\\log_a(uv) = \\log_a(u) + \\log_a(v)\\)\n\\(\\log_a(u/v) = \\log_a(u) - \\log_a(v)\\)\n\\(\\log_a u^n = n \\log_a u\\)\n\n\n\n\nIn statistics and Machine Learning, we often want to normalize a vector so that it adds to one. One such function is called a softmax:\n\n\\[\n\\text{softmax}(x)  = \\frac{\\exp(x)} {\\sum_{n=1}^N \\exp(x_n)}\n\\]\n\nIf \\(x\\) is a vector of size 3, the numerator is component-wise \\(\\exp\\) of size 3, the denominator is a scalar, and the function value is a vector of size 3 that adds to 1\n\n\n\n\ny &lt;- 1:3\n(numer &lt;- exp(y))\n\n[1]  2.718282  7.389056 20.085537\n\n(denom &lt;- sum(exp(y)))\n\n[1] 30.19287\n\n(softmax &lt;- numer / denom)\n\n[1] 0.09003057 0.24472847 0.66524096\n\ny &lt;- c(1e3, 1e3 + 1, 1e3 + 2)\nexp(y)\n\n[1] Inf Inf Inf\n\n\n\nThis produces overflow – the numbers are too big for the computer. Let’s compute the \\(\\log \\text{softmax}(x)\\).\n\n\n\n\\[\n    \\log\\text{softmax}(x) = x - \\log \\sum_{n=1}^N \\exp(x_n)\n\\]\n\nThe second term is the log-sum-exp or LSE for short. It has the same problem, as it will overflow or underflow.\nThe idea is that we need to reduce the magnitude of \\(x_n\\) while preserving the integrity of the LSE function.\n\n\n\n\\[\n    \\begin{eqnarray}\n    \\text{Let } c & = & \\max(x_1, x_2, x_3, ..., x_N) \\\\\n    y & = & \\log \\sum_{n=1}^N \\exp(x_n) \\\\\n    \\exp(y) & = & \\sum_{n=1}^N \\exp(x_n) \\\\\n    \\exp(y) & = & \\exp(c) \\sum_{n=1}^N \\exp(x_n - c) \\\\\n    y & = & c + \\log \\sum_{n=1}^N \\exp(x_n - c)\n    \\end{eqnarray}\n\\]\n\nBecause \\(c = \\max(x)\\), the largest exponent is zero.\n\n\n\n\nYour Turn: write a function called LSE that takes in vector \\(x\\) and implements the last equation and tests it on small and large values of \\(x\\). Now implement the softmax_log function using the LSE function. Now compute the same version of the softmax function and check that it sums to 1.\n\n\n\n\nLSE &lt;- function(x) {\n  c &lt;- max(x)\n  y &lt;- c + log(sum(exp(x - c)))\n  return(y)\n}\nsoftmax_log &lt;- function(x) {\n  x - LSE(x)\n}\nsoftmax_unsafe &lt;- function(x) exp(x) / sum(exp(x))\n\nsoftmax_unsafe(1:3)\n\n[1] 0.09003057 0.24472847 0.66524096\n\nsoftmax_log(1:3)\n\n[1] -2.407606 -1.407606 -0.407606\n\nexp(softmax_log(1:3))\n\n[1] 0.09003057 0.24472847 0.66524096\n\ny\n\n[1] 1000 1001 1002\n\nsoftmax_unsafe(y)\n\n[1] NaN NaN NaN\n\nexp(softmax_log(y))\n\n[1] 0.09003057 0.24472847 0.66524096\n\nsum(exp(softmax_log(y)))\n\n[1] 1"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
-    "href": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#limits",
+    "href": "stats-math/02-lecture/02-Lecture.html#limits",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Comparing the Results",
-    "text": "Comparing the Results\n\n\nUsing R’s integrate function:\n\n\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09\n\n\n\n\n\nUsing the analytical solution\n\n\nf1 &lt;- function(x) -1/2 * cos(x^2)\n\nf1(3) - f1(1)\n\n[1] 0.7257163\n\n\n\n\n\nThe universe is in balance!"
+    "section": "Limits",
+    "text": "Limits\nThe idea of the limit is to evaluate what the function approaches as we increase or decrease the inputs.\n\nThis demo shows what happens to the secant line as it approaches the tangent.\n\n\nSource: Calculus Volume 1"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
-    "href": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#example-motion-in-a-straight-line",
+    "href": "stats-math/02-lecture/02-Lecture.html#example-motion-in-a-straight-line",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Analytical Integration on the Computer",
-    "text": "Analytical Integration on the Computer\n\n\nWhen in doubt, you can always try WolframAlpha\nPython library SymPy through R pacakge caracas\n\n\n\nlibrary(caracas); library(stringr)\nadd_align &lt;- function(latex) {\n  str_c(\"\\\\begin{align} \", latex, \" \\\\end{align}\")\n}\nadd_int &lt;- function(latex) {\n  str_c(\"\\\\int \", latex, \"\\\\, dx\")\n}\nx &lt;- symbol('x'); f &lt;- x^2 / sqrt(x^2 + 4)\ntex(f) %&gt;% add_int() %&gt;% str_c(\" =\") %&gt;% add_align() %&gt;% cat()\n\\[\\begin{align} \\int \\frac{x^{2}}{\\sqrt{x^{2} + 4}}\\, dx = \\end{align}\\]\nint(f, x) %&gt;% tex() %&gt;% add_align() %&gt;% cat()\n\\[\\begin{align} \\frac{x \\sqrt{x^{2} + 4}}{2} - 2 \\operatorname{asinh}{\\left(\\frac{x}{2} \\right)} \\end{align}\\]"
+    "section": "Example: Motion in a Straight Line",
+    "text": "Example: Motion in a Straight Line\nSuppose you have an experiment where you can measure the position of a car moving in a straight line every \\(1/10\\) of a second for 5 seconds. When you look at the graph of time versus position, it looks like this:\n\n\n\n\n\n\n\n\n\n\n\n\nYou guess that the function is quadratic in \\(t\\). If \\(x\\) is measured in meters, and \\(t\\) is in seconds, then \\(a\\) must have units of \\(m\\) and \\(b\\) must have units \\(m/s^2\\).\n\\[\nx(t) = a + bt^2\n\\]\n\n\nThe statistical inference problem is to find plausible values of \\(a\\) and \\(b\\), given our noisy measurements and the assumption that the position function is quadratic. We will come back to how to do it later, but for now, assume that the most likely values were found to be \\(a = 2\\) and \\(b = 3\\).\n\n\n\n\n\n\n\n\n\n\n\nWe can now ask, what was the average velocity between \\(1\\) and \\(4\\) seconds? This is the same as the slope of the secant line:\n\\[\n\\bar{v} =\n\\frac{\\text{displacment} (m)}{\\text{elapsed time} (s)} =\n\\frac{\\Delta x}{\\Delta t} =  \n\\frac{x(4) - x(1)}{4-1} = \\frac{50-5}{3} = 15 \\text{ m/s} = 54 \\text{ km/h}  \n\\]\n\n\nSince we know that this is a line of the form \\(x(t) = a + 15t\\), that goes through the point \\((t_1, x_1) = (1, 5)\\), \\(5 = a + 15\\cdot1\\) or \\(a = -10\\). The equation of the secant line is, therefore:\n\\[\nx(t) = -10 + 15t\n\\]\n\n\n\np &lt;- ggplot(data.frame(t, x), aes(t, x))\np + geom_line(size = 0.2) +\n  geom_abline(slope = 15, intercept = -10, size = 0.2, color = 'red') +\n  geom_point(x = 1, y = 5, color = 'blue') +\n  geom_point(x = 4, y = 50, color = 'blue') +\n  xlab(\"time t (s)\") + ylab(\"position x (m)\") +\n  annotate(\"text\", 3.7, 55, label = \"(4, 50)\") +\n  annotate(\"text\", 1, 12, label = \"(1, 5)\") +\n  ggtitle(\"Car's position function and the secant line\")\n\n\n\n\n\n\n\n\n\n\nWhat if we wanted to know the speedometer reading at \\(4\\) seconds? In other words, we want to know the speed at that instant. This is where the limit comes in.\n\\[\nv = \\lim_{\\Delta t \\to 0} \\frac{\\Delta x}{\\Delta t} = \\frac{dx}{dt}\n\\]"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
-    "href": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#the-derivative",
+    "href": "stats-math/02-lecture/02-Lecture.html#the-derivative",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn: Waiting Time",
-    "text": "Your Turn: Waiting Time\n\nThere is s famous distribution in statistics called Exponential distribution\nIts probability density function (PDF) is given by:\n\n\\[\nf(x) = \\lambda e^{-\\lambda x}, \\, x &gt; 0, \\text{and } \\lambda &gt; 0\n\\]\n\nThis distribution is sometimes called the waiting time (to some event) distribution, where \\(\\lambda\\) is the rate of events we expect\nOne property of this distribution is that no matter how long you wait, the probability of seeing an event remains the same.\nOne of the properties of the PDF is that it must integrate to 1\nLet’s check that it’s true\n\n\\[\n\\int_{0}^{\\infty} \\lambda e^{-\\lambda x} dx =\n\\]"
+    "section": "The Derivative",
+    "text": "The Derivative\n\n\nHow do we compute this limit, which we wrote as \\(dx/dt\\)?\n\n\n\n\n\n\n\n\n\nWe re-write the secant or average velocity equation in the following way:\n\n\\[\n\\begin{eqnarray}\n\\bar v & = & \\frac{x(a + h) - x(a)}{a + h - a} = \\frac{x(a + h) - x(a)}{h} \\\\\nv & = & \\lim_{\\Delta h \\to 0} \\frac{x(a + h) - x(a)}{h} \\\\\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#ingegration-by-parts",
-    "href": "stats-math/03-lecture/03-lecture.html#ingegration-by-parts",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#the-derivative-1",
+    "href": "stats-math/02-lecture/02-Lecture.html#the-derivative-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Ingegration by Parts",
-    "text": "Ingegration by Parts\n\\[\n\\begin{eqnarray}\n(f g)' & = & f'g + g'f \\\\\n\\int (f g)' \\, dx & = & \\int f'g dx + \\int g'f \\, dx \\\\\nfg & = & \\int f'g \\, dx + \\int g'f \\, dx \\\\\n\\int f g' \\, dx & = & fg - \\int f' g \\, dx \\\\\nu & = & f(x) \\\\\nv & = & g(x) \\\\\ndu & = & f'(x) \\, dx \\\\\ndv & = & g'(x) \\, dx \\\\\n\\int u \\, dv & = & uv - \\int v \\, du\n\\end{eqnarray}\n\\]"
+    "section": "The Derivative",
+    "text": "The Derivative\n\n\nOur original problem was to find the velocity at \\(t = 4\\) given our position function \\(x(t) = 2 + 3t^2\\).\n\n\\[\n\\begin{eqnarray}\nv & = & \\lim_{\\Delta h \\to 0} \\frac{x(a + h) - x(a)}{h} =\n\\lim_{\\Delta h \\to 0} \\frac{2 + 3(t + h)^2 - 2 - 3t^2}{h} = \\\\\n& \\lim_{\\Delta h \\to 0} & \\frac{6ht + 3h^2}{h} = \\lim_{\\Delta h \\to 0} (6t + 3h) = 6t\n\\end{eqnarray}\n\\]\n\n\n\nAt \\(t = 4\\), the speedometer was reading \\(6 \\cdot 4 = 24 \\text{ m/s } = 86.4 \\text{ km/h}\\).\nThe velocity is the derivative of position with respect to time, and we can write:\n\n\\[\nv(t) = \\frac{dx}{dt} = 6t\n\\]"
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#ex-with-lambda-1",
-    "href": "stats-math/03-lecture/03-lecture.html#ex-with-lambda-1",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#the-derivative-2",
+    "href": "stats-math/02-lecture/02-Lecture.html#the-derivative-2",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "E(X) with \\(\\lambda = 1\\)",
-    "text": "E(X) with \\(\\lambda = 1\\)\n\nIf the rate of arrival is \\(\\lambda = 1\\), we have\n\n\\[\nE(X) = \\int_{0}^{\\infty} x e^{-x} dx =\n\\]"
+    "section": "The Derivative",
+    "text": "The Derivative\n\nBut what about acceleration?\n\n\n\nAcceleration is a change in velocity with respect to time or the second derivative of position:\n\n\\[\na(t) = \\frac{dv}{dt} = \\frac{d}{dt} \\left( \\frac{d x}{d t} \\right) = \\frac{d^2 x}{d t^2}\n\\]\n\n\n\nTo compute acceleration at \\(t = 4\\), we take the limit again, only this time with respect to the velocity function:\n\n\\[\na = \\frac{dv}{dt} = \\lim_{\\Delta h \\to 0} \\frac{6(t + h) - 6t}{h} = \\\\\n\\lim_{\\Delta h \\to 0} \\frac{6t + 6h - 6t}{h} = \\lim_{\\Delta h \\to 0} 6 = 6\n\\]\n\n\n\nThis function \\(a(t) = 6\\) does not depend on \\(t\\), and so acceleration is a constant \\(6 \\text{ m}/\\text{s}^2\\) at all values of \\(t\\) including \\(t = 4\\)\n\n\n\n\nIt would be cumbersome to compute derivatives this way. Fortunately, we have shortcuts."
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
-    "href": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#rules-of-differentiation",
+    "href": "stats-math/02-lecture/02-Lecture.html#rules-of-differentiation",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Exponential Growth (again)",
-    "text": "Exponential Growth (again)\nRecall, at the beginning we defined an exponential growth with the following differential equation:\n\n\\[\n\\frac{dy(t)}{dt} = k \\cdot y(t)\n\\]\n\n\nWe can now solve it:\n\\[\n\\begin{align*}\n\\frac{1}{y} \\, dy &= k \\, dt \\\\\n\\int \\frac{1}{y} \\, dy &= \\int k \\, dt \\\\\n\\log(y) &= k \\cdot t + C \\\\\ny(t) &= y_0 \\cdot e^{kt}\n\\end{align*}\n\\]"
+    "section": "Rules of Differentiation",
+    "text": "Rules of Differentiation\n\nWe will state a few rules of differentiation without deriving them\n\n\\[\n\\begin{eqnarray}\n\\frac{d}{dx}(c) & = & 0 \\\\\n\\frac{d}{dx}(x) & = & 1 \\\\\n\\frac{d}{dx}(x^n) & = & n x^{n-1} \\\\\n\\frac{d}{dx}[c f(x)] & = & c \\frac{d}{dx}[f(x)] \\\\\n\\frac{d}{dx}[f(x) + g(x)] & = & \\frac{d}{dx}f(x) + \\frac{d}{dx}g(x) \\\\\n\\frac{d}{dx}(e^x) & = & e^x \\\\                                                            \\end{eqnarray}                                                               \n\\]\n\n\nIf you are interested in why the last statement is true, see this.\nThe derivatives of trigonometric functions can be found here."
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#homework",
-    "href": "stats-math/03-lecture/03-lecture.html#homework",
+    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn-3",
+    "href": "stats-math/02-lecture/02-Lecture.html#your-turn-3",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn",
+    "text": "Your Turn\n\nSuppose we have the following equations of motion:\n\n\\[\nx(t) = 4 + 3t + 5t^2\n\\]\n\nWhat is the car’s position at time zero and time 1 second?\nWhat is the velocity at time zero?\nWhat is the velocity and acceleration at 5 seconds?"
+  },
+  {
+    "objectID": "stats-math/02-lecture/02-Lecture.html#product-rule-and-chain-rule",
+    "href": "stats-math/02-lecture/02-Lecture.html#product-rule-and-chain-rule",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Product Rule and Chain Rule",
+    "text": "Product Rule and Chain Rule\n\nProduct and chain rules help us differentiate products and compositions of functions, respectively.\nIntuition for those can be found in the Essense of Calculus video.\nWe will state them here without derivation. Product rule: Right d left, Left d right.\n\n\\[\n\\frac{d}{dx}[f(x) g(x)] = f(x) \\frac{d}{dx}[g(x)] + g(x)\\frac{d}{dx}[f(x)]\n\\]\n\nIf \\(F = f \\circ g\\), in that \\(F(x)= f(g(x))\\):\n\n\\[\nF'(x) = f'(g(x))g'(x)\n\\]"
+  },
+  {
+    "objectID": "stats-math/02-lecture/02-Lecture.html#example-of-a-product-rule",
+    "href": "stats-math/02-lecture/02-Lecture.html#example-of-a-product-rule",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example of a Product Rule",
+    "text": "Example of a Product Rule\n\nSuppose we wanted to compute the derivative of \\(x(t) = \\sin(t) \\cos(t)\\)\n\n\\[\n\\begin{eqnarray}\n\\frac{d}{dt}(\\sin(t) \\cos(t)) & = & \\\\\n\\sin(t)\\frac{d}{dt}[\\cos(t)] + \\cos(t)\\frac{d}{dt}[\\sin(t)] & = & \\\\\n\\sin(t) (-\\sin(t)) + \\cos(t)\\cos(t) & = & \\\\\n\\cos^2(t) - \\sin^2(t)\n\\end{eqnarray}\n\\]"
+  },
+  {
+    "objectID": "stats-math/02-lecture/02-Lecture.html#approximating-derivatives",
+    "href": "stats-math/02-lecture/02-Lecture.html#approximating-derivatives",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Approximating Derivatives",
+    "text": "Approximating Derivatives\n\nlibrary(ggplot2)\nlibrary(dplyr)\nn &lt;- 100\nt &lt;- seq(0, pi, length = n)\nx &lt;- sin(t) * cos(t)\ndxdt &lt;- cos(t)^2 - sin(t)^2\n\nd &lt;- tibble(t, x, dxdt)\np &lt;- ggplot(d, aes(t, x))\np + geom_line() + geom_line(aes(y = dxdt), col = 'red')\n\n\n\n\n\n\n\n# approximate the derivative\ns &lt;- pi / (n - 1)        # choose the same step s as the increment in the t sequence\nall.equal(s, diff(t)[1]) # check that the above statement is true\n\n[1] TRUE\n\nappr_dxdt &lt;- diff(x)/s   # derivative ≈ rise / run\nd &lt;- d %&gt;%\n  mutate(appr_dxdt = c(NA, appr_dxdt))\np &lt;- ggplot(d, aes(t, x))\np + geom_line() + geom_line(aes(y = dxdt), col = 'red') +\n  geom_line(aes(y = appr_dxdt), col = 'blue', size = 5, alpha = 1/5)"
+  },
+  {
+    "objectID": "stats-math/02-lecture/02-Lecture.html#examples-of-the-chain-rule",
+    "href": "stats-math/02-lecture/02-Lecture.html#examples-of-the-chain-rule",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Examples of the Chain Rule",
+    "text": "Examples of the Chain Rule\n\nWhat is the derivative of \\(\\sin(x^2)\\)? It is \\(2x \\cos(x^2)\\)\nYour turn: \\[\n\\frac{d}{dx} \\left( e^{\\cos(x) x^2} \\right ) =\n\\]"
+  },
+  {
+    "objectID": "stats-math/02-lecture/02-Lecture.html#homework",
+    "href": "stats-math/02-lecture/02-Lecture.html#homework",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Homework",
-    "text": "Homework\n\nTake a look at dataset iris (?iris)\nCompute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width\nCompute the average by each Species of flower (hint: use group_by and summarise functions from dplyr)\nProduce the plot that looks like this:\n\n\n\n\n\n\n\nProduce the plot that looks like this: (check out geom_density and facet_wrap functions)\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral (on paper) from \\(0\\) to \\(2\\pi\\) and use R’s integrate function to validate your answer.\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Homework\n\nA particle is moving in a counter-clockwise uniform circular motion according to the following equations:\n\n\\[\nx(t) = R \\cos(\\omega t) \\\\\ny(t) = R \\sin(\\omega t)\n\\] - Where \\(\\omega\\) is called angular frequency (radians per unit of time) and \\(R\\) is the radius of rotation. The full cycle is achieved when \\(T = 2 \\pi/ \\omega\\)\n\nCreate two functions that take \\(R\\), \\(t\\), and \\(\\omega\\) as parameters\nCreate a vector \\(t\\) of length 100 that achieves one full rotation\nPlot the \\(x\\) position against \\(t\\) and the \\(y\\) position against \\(t\\) on the same graph\nNow plot \\(x\\) against \\(y\\). Do the plots make sense?\nCreate 4 more functions: 2 for velocity (in x and y direction) and 2 for acceleration\nPlot the velocity against the position (say in the x direction) and the velocity against acceleration\nWhat have you learned?\n\n\n\nhttps://ericnovik.github.io/smac.html"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#course-objectives",
+    "href": "stats-math/01-lecture/01-Lecture.html#course-objectives",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Course Objectives",
+    "text": "Course Objectives\n\n\nThis course will help you to prepare for the A3SR MS Program by covering the minimal necessary foundation in computing, math, and probability.\nAfter completing the course, you will be able to write simple R programs and perform simulations, plot and manipulate data, solve basic probability problems, and understand the concept of regression\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#course-format",
+    "href": "stats-math/01-lecture/01-Lecture.html#course-format",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Course Format",
+    "text": "Course Format\n\n\nThe course will run for two weeks, five days per week, 3 hours per day\nEach day will consist of:\n\n~30-minute going over the homework questions\n~1.5-hour lecture\n~1-hour hands of exercises\n\nThe course will be computationally intensive – we will write many small programs."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#course-outline",
+    "href": "stats-math/01-lecture/01-Lecture.html#course-outline",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Course Outline",
+    "text": "Course Outline\n\n\n\n\nIntroduction to the R language, RStudio, and R Markdown.\nBasic differentiation. Meaning of the derivative. Numeric and symbolic differentiation and optimization.\nBasic integration. Riemann integral and basic rules of integration. Numeric and symbolic integration.\nReview of one-dimensional probability. Conditional probability, random variables, and expectations. Solving probability problems by simulation.\n\n\n\n\n\nDiscrete distributions like Bernoulli and Binomial and continuous distributions like Normal and Exponential\nIntroduction to Matrix Algebra. Vectors and vector arithmetic. Matrixes and matrix operations.\nManipulating and graphing data and Exploratory Data Analysis\nProgramming basics: variables, flow control, loops, functions, and writing simulations\nIntroduction to basic statistics and linear regression."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#references",
+    "href": "stats-math/01-lecture/01-Lecture.html#references",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "References",
+    "text": "References\n\nHands-On Programming with R, Grolemund (2014)\nR for Data Science 2e, Wickham, Çetinkaya-Rundel, and Grolemund (2023)\nCalculus Made Easy, Thompson (1980)\nCalculus, Herman, Strang, and OpenStax (2016)\nYouTube: Essence of Calculus, Sanderson (2018a)\nOptional: YouTube: Essense of Linear Algebra, Sanderson (2018b)\nOptional: Introduction to Linear Algebra, Boyd and Vandenberghe (2018)\nOptional: Matrix Cookbook, Petersen and Pedersen (2012)\nIntoduction to Probability, Blitzstein and Hwang (2019)"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#session-1-outline",
+    "href": "stats-math/01-lecture/01-Lecture.html#session-1-outline",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Session 1 Outline",
+    "text": "Session 1 Outline\n\n\nThe big picture – costs and benefits\nSetting up an analysis environment\nRStudio projects\nWorking with interpreted languages like R\nSome basic R syntax and elements of R style\nGenerating data with R\nSome basic R and ggplot graphics\nWriting your first Monte Carlo simulation"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-silly",
+    "href": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-silly",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Some Mistakes Are Silly",
+    "text": "Some Mistakes Are Silly"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-deadly",
+    "href": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-deadly",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Some Mistakes Are Deadly",
+    "text": "Some Mistakes Are Deadly\nOn January 28, 1986, shortly after launch, Shuttle Challenger exploded, killing all seven crew members.\n\nO-Ring DataBinomial ModelReferences\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProbability of 1 or more rings being damaged at launch is about 0.99\nProbability of all 6 rings being damaged at launch is about 0.46\n\n\n\n\n\n\nFowlkes and Hoadley (1989): Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure\nMartz and Zimmer (1992): The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.\n\n\n\n\n\nData source: UCI Machine Learning Repository"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#allan-mcdonald-dies-at-83",
+    "href": "stats-math/01-lecture/01-Lecture.html#allan-mcdonald-dies-at-83",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Allan McDonald Dies at 83",
+    "text": "Allan McDonald Dies at 83\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCommunication is part of the job — it’s worth learning how to do it well.\n\n\nSource: The New York Times, March 9, 2021"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#smac-why-bother",
+    "href": "stats-math/01-lecture/01-Lecture.html#smac-why-bother",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "SMaC: Why Bother?",
+    "text": "SMaC: Why Bother?\n\n\n\n\nProgramming: a cheap way to do experiments and a lazy way to do math\nDifferential calculus: optimize functions, compute MLEs\nIntegral calculus: compute probabilities, expectations\nLinear algebra: solve many equations at once\nProbability: the language of statistics\nStatistics: quantify uncertainty"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#example-differential-calculus",
+    "href": "stats-math/01-lecture/01-Lecture.html#example-differential-calculus",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: Differential Calculus",
+    "text": "Example: Differential Calculus\n\nRegression Line ViewLikelihood View\n\n\n\n\n\n\nDifferentiation comes up when you want to find the most likely values of parameters (unknowns) in optimization-based (sometimes called frequentist) inference\nImagine that we need to find the values of the slope and intercept such that the yellow line fits “nicely” through the cloud of points\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSuppose you have linear regression model of the form \\(y_n \\sim \\operatorname{normal}(\\alpha + \\beta x_n, \\, \\sigma)\\) and you want to learn the most likely values of \\(\\alpha\\) and \\(\\beta\\)\nThe most likely values for slope (beta) and intercept (alpha) are at the peak of this function, which can be found by using (partial) derivatives"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#example-integral-calculus",
+    "href": "stats-math/01-lecture/01-Lecture.html#example-integral-calculus",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: Integral Calculus",
+    "text": "Example: Integral Calculus\n\n\n\n\nSuppose we have a probability distribution of some parameter \\(\\theta\\), which represents the differences between the treated and control units\nFurther, suppose that \\(\\theta &gt; 0\\) favors the treatment group\nWe want to know the probability that treatment is better than control\nThis probability can be written as:\n\n\n\n\\[\n    P(\\theta &gt; 0) = \\int_{0}^{\\infty} p_{\\theta}\\, d\\theta\n\\]\n\n\n\n\n\n\nAssuming \\(\\theta\\) is normally distributed with \\(\\mu = 1\\) and \\(\\sigma = 1\\) we can evaluate the integral as an area under the normal curve from \\(0\\) to \\(\\infty\\)."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#example-linear-regression",
+    "href": "stats-math/01-lecture/01-Lecture.html#example-linear-regression",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: Linear Regression",
+    "text": "Example: Linear Regression\nNotice a Linear Algebra notation \\(X \\beta\\), which is matrix-vector multiplication. \n\ndata {\n  int&lt;lower=0&gt; N;   // number of data items\n  int&lt;lower=0&gt; K;   // number of predictors\n  matrix[N, K] X;   // predictor matrix\n  vector[N] y;      // outcome vector\n}\nparameters {\n  real alpha;           // intercept\n  vector[K] beta;       // coefficients for predictors\n  real&lt;lower=0&gt; sigma;  // error scale\n}\nmodel {\n  y ~ normal(X * beta + alpha, sigma);  // likelihood\n}\n\n\nLinear Regression in Stan. Source: Stan Manual\n\n\n\nStan is a probabilistic programming language. You write your data-generating process (model), and Stan performs inference for all the unknowns."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#example-bionomial-regression",
+    "href": "stats-math/01-lecture/01-Lecture.html#example-bionomial-regression",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: Bionomial Regression",
+    "text": "Example: Bionomial Regression\nThis is the type of model we fit to the O-Rings data.\n\n\ndata {\n  int&lt;lower=0&gt; N_rows; // number of input rows\n  int&lt;lower=0&gt; N;      // number of trials in Binom(N, p)\n  vector[N_rows] x;    // temperature for the O-Rings example\n  array[N_rows] int&lt;lower=0, upper=N&gt; y; // number of \"successes\" in Binom(N, p)\n}\nparameters {\n  real alpha;\n  real beta;\n}\nmodel {\n  alpha ~ normal(0, 5); // prior on the intercept\n  beta ~ normal(0, 1);  // prior on the slope\n  y ~ binomial_logit(N, alpha + beta * x);\n}\n\n\nSource: Stan Manual"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#example-irt-model",
+    "href": "stats-math/01-lecture/01-Lecture.html#example-irt-model",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: IRT Model",
+    "text": "Example: IRT Model\nItem-Response Theory models are popular in education research but generalize to other applications. \n\ndata {\n  int&lt;lower=1&gt; J;                     // number of students\n  int&lt;lower=1&gt; K;                     // number of questions\n  int&lt;lower=1&gt; N;                     // number of observations\n  array[N] int&lt;lower=1, upper=J&gt; jj;  // student for observation n\n  array[N] int&lt;lower=1, upper=K&gt; kk;  // question for observation n\n  array[N] int&lt;lower=0, upper=1&gt; y;   // correctness for observation n\n}\nparameters {\n  real delta;            // mean student ability\n  array[J] real alpha;   // ability of student j - mean ability\n  array[K] real beta;    // difficulty of question k\n}\nmodel {\n  alpha ~ std_normal();         // informative true prior\n  beta ~ std_normal();          // informative true prior\n  delta ~ normal(0.75, 1);      // informative true prior\n  for (n in 1:N) {\n    y[n] ~ bernoulli_logit(alpha[jj[n]] - beta[kk[n]] + delta);\n  }\n}\n\n\n1PL item-response model. Source: Stan Manual"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#analysis-environment",
+    "href": "stats-math/01-lecture/01-Lecture.html#analysis-environment",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Analysis Environment",
+    "text": "Analysis Environment\n\n\n\n\nInstall the latest version of R\nInstall the latest version of the RStudio Desktop\nCreate a directory on your hard drive and give it a simple name. Mine is called statsmath\nIn RStudio, go to File -&gt; New Project and select: “Existing Directory”\n\n\n\n\n\n\n\nDownload R, Download RStudio"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#what-is-r",
+    "href": "stats-math/01-lecture/01-Lecture.html#what-is-r",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "What is R",
+    "text": "What is R\n\n\n\n\nR is an open-source, interpreted, (somewhat) functional programming language\nR is an implementation of the S language developed at Bell Labs around 1976\nRoss Ihaka and Robert Gentleman started working on R in the early 1990s\nVersion 1.0 was released in 2000\nThere are approximately 20,000 R packages available in CRAN\nR has a large and generally friendly user community"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-very-basics",
+    "href": "stats-math/01-lecture/01-Lecture.html#hands-on-very-basics",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Hands-On: Very Basics",
+    "text": "Hands-On: Very Basics\n\n\n\n2 + 3\n\n[1] 5\n\n10^3\n\n[1] 1000\n\n10 - 5 / 2\n\n[1] 7.5\n\n(10 - 5) / 2\n\n[1] 2.5\n\n1:10\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n1:10 + 1\n\n [1]  2  3  4  5  6  7  8  9 10 11\n\nsin(pi/2) + cos(pi/2)\n\n[1] 1\n\n1i\n\n[1] 0+1i\n\nround(exp(1i * pi) + 1)\n\n[1] 0+0i\n\n(exp(1i * pi) + 1) |&gt; round()\n\n[1] 0+0i\n\n\n\n\n\n\ndie &lt;- 1:6\ndie &lt;- seq(1, 6, by = 1)\ndie\n\n[1] 1 2 3 4 5 6\n\nlength(die) \n\n[1] 6\n\nstr(die)     \n\n num [1:6] 1 2 3 4 5 6\n\nsum(die)\n\n[1] 21\n\nprod(die)\n\n[1] 720\n\nmean(die)\n\n[1] 3.5\n\nsum(die) / length(die)\n\n[1] 3.5\n\nmedian(die)\n\n[1] 3.5\n\nsd(die)\n\n[1] 1.870829"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#r-documentation",
+    "href": "stats-math/01-lecture/01-Lecture.html#r-documentation",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "R Documentation",
+    "text": "R Documentation\n\n?mean # same as help(mean)"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#your-turn",
+    "href": "stats-math/01-lecture/01-Lecture.html#your-turn",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn",
+    "text": "Your Turn\n\nCreate a variable called fib that contains the first 10 Fibonacci numbers\nThey are: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34\nCompute the length of this vector in R\nCompute the sum, the product, and the difference (diff()) between successive numbers\nWhat do you notice about the pattern in the differences?\nNow, create a vector of 100 integers from 1 to 100\nYoung Gauss was asked to sum them by hand\nHe figured out that the sum has to be \\(N (N + 1) / 2\\)\nVerify that Gauss was right (just for 100)\nNow compute the sum of the first hundred squares"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-lists",
+    "href": "stats-math/01-lecture/01-Lecture.html#hands-on-lists",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Hands-On: Lists",
+    "text": "Hands-On: Lists\n\n\nLists are collections of objects of different types and shapes\nContrast with a data frame, which we will discuss later, that contains objects of different types but is rectangular\n\n\n\n\nlist_x &lt;- list(A = pi, B = c(0, 1), C = 1:10, D = c(\"one\", \"two\"))\nlist_x\n\n$A\n[1] 3.141593\n\n$B\n[1] 0 1\n\n$C\n [1]  1  2  3  4  5  6  7  8  9 10\n\n$D\n[1] \"one\" \"two\"\n\nstr(list_x)\n\nList of 4\n $ A: num 3.14\n $ B: num [1:2] 0 1\n $ C: int [1:10] 1 2 3 4 5 6 7 8 9 10\n $ D: chr [1:2] \"one\" \"two\"\n\nlist_x$A\n\n[1] 3.141593\n\nlist_x[1]\n\n$A\n[1] 3.141593\n\nstr(list_x[1])\n\nList of 1\n $ A: num 3.14\n\nlist_x[[1]] # same as x$A\n\n[1] 3.141593"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#data-frames",
+    "href": "stats-math/01-lecture/01-Lecture.html#data-frames",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Data Frames",
+    "text": "Data Frames\n\n\nData frames are rectangular structures that are often used in data analysis\nThere is a built-in function called data.frame, but we recommend tibble, which is part of the dplyr package\nYou can look up the documentation of any R function this way: ?dplyr::tibble. If the package is loaded by using library(dplyr) you can omit dplyr:: prefix\nJohn F. W. Herschel’s data on the orbit of the Twin Stars \\(\\gamma\\) Virginis"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#data-frames-1",
+    "href": "stats-math/01-lecture/01-Lecture.html#data-frames-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Data Frames",
+    "text": "Data Frames\n\n\n\n\nlibrary(HistData)\ndata(\"Virginis.interp\")\nclass(Virginis.interp)\n\n[1] \"data.frame\"\n\nVirginis.interp |&gt; dplyr::as_tibble()\n\n# A tibble: 14 × 4\n    year posangle distance velocity\n   &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;\n 1  1720    160      17.2    -0.32 \n 2  1730    157.     16.8    -0.354\n 3  1740    153      16.3    -0.376\n 4  1750    149.     15.5    -0.416\n 5  1760    144.     14.5    -0.478\n 6  1770    140.     13.7    -0.533\n 7  1780    134.     13.5    -0.547\n 8  1790    129.     12.9    -0.597\n 9  1800    122.     12.6    -0.632\n10  1810    116.     11.2    -0.8  \n11  1815    111.     10.4    -0.929\n12  1820    106.      9.57   -1.09 \n13  1825     98.3     7.09   -1.99 \n14  1830     84.3     4.9    -4.16 \n\nVirginis.interp |&gt; dplyr::as_tibble() |&gt; class()\n\n[1] \"tbl_df\"     \"tbl\"        \"data.frame\"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe Origin and Development of the Scatterplot by M Friendly and H Wainer"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#your-turn-1",
+    "href": "stats-math/01-lecture/01-Lecture.html#your-turn-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn",
+    "text": "Your Turn\n\nSave Virginis.interp in a new tibble called virginis using as_tibble() function\nCompute average velocity in virginis\nHint: you can access columns of tibbles and data frames with an $ like this: dataframe_name$variable_name\nWe will do a lot more work with tibbles and data frames in later sessions"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#basic-plotting",
+    "href": "stats-math/01-lecture/01-Lecture.html#basic-plotting",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Basic Plotting",
+    "text": "Basic Plotting\n\nCodePlot Deaths Over TimePlot the Map\n\n\n\n\n\n\n\n\n\n\n\n\nR base plotting system is great for making quick basic graphs with relatively little typing\nWe will demonstrate with John Snow’s data from the 1854 cholera outbreak\n\n\n\n\nlibrary(HistData)\nlibrary(lubridate)\npar(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01)\nclr &lt;- ifelse(Snow.dates$date &lt; mdy(\"09/08/1854\"), \n              \"red\", \"darkgreen\")\nplot(deaths ~ date, data = Snow.dates, \n     type = \"h\", lwd = 2, col = clr, xlab = \"\")\npoints(deaths ~ date, data = Snow.dates, \n       cex = 0.5, pch = 16, col = clr)\ntext(mdy(\"09/08/1854\"), 40, \n     \"Pump handle\\nremoved Sept. 8\", pos = 4)"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-simulating-coin-flips",
+    "href": "stats-math/01-lecture/01-Lecture.html#hands-on-simulating-coin-flips",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Hands-On: Simulating Coin Flips",
+    "text": "Hands-On: Simulating Coin Flips\nWe can learn a lot through simulation. We will start with the sample() function.\nsample(x, size, replace = FALSE, prob = NULL)\n\nSampleFor LoopsSolution\n\n\n\n# simulating coin flips\ncoin &lt;- c(\"H\", \"T\")\n\n# flip a fair coin 10 times; try it with replace = FALSE\nsample(coin, 10, replace = TRUE)\n\n [1] \"H\" \"T\" \"T\" \"H\" \"T\" \"T\" \"H\" \"H\" \"H\" \"T\"\n\n# flip a coin that has P(H = 0.6) 10 times\nsample(coin, 10, replace = TRUE, prob = c(0.6, 0.4))\n\n [1] \"T\" \"H\" \"H\" \"T\" \"T\" \"H\" \"H\" \"T\" \"H\" \"H\"\n\n# it's more convenient to make H = 1 and T = 0\ncoin &lt;- c(1, 0)\nsample(coin, 10, replace = TRUE)\n\n [1] 1 0 1 1 1 0 0 1 1 1\n\n\n\n\nYour turn: flip a coin 1000 times and compute the proportion of heads\n\n\n\n\n\n\nSuppose you want to add the first 100 integers as before but without using the sum() function or the formula\nIn math notation: \\(\\sum_{i = 1}^{100}x_i, \\ x \\in \\{1, ..., 100\\}\\)\n\n\n\n\nn &lt;- 100\nx &lt;- 1:n\ns &lt;- 0\nfor (i in 1:n) {\n  s &lt;- s + x[i] \n}\n# test\ns == sum(x)\n\n[1] TRUE\n\n\n\n\n\nYour turn: modify the loop to add only even numbers in 1:100. Look up help(if) statement and modulo operator help(%%); write a test to check your work\n\n\n\n\n\n\ns &lt;- 0\nfor (i in 1:n) {\n  if (x[i] %% 2 == 0) {\n    s &lt;- s + x[i]\n  }\n}\ncat(s)\n\n2550\n\n# test \ns == sum(seq(2, 100, by = 2))\n\n[1] TRUE\n\n\n\n\n\nCongratulations, you are now Turing Complete!"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#simulate-coin-flips",
+    "href": "stats-math/01-lecture/01-Lecture.html#simulate-coin-flips",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Simulate Coin Flips",
+    "text": "Simulate Coin Flips\n\n\nIf we flip a coin more and more time, would the estimate of the proportion become better?\nIf so, what is the rate of convergence?\n\n\n\n\nset.seed(1) # why do we do this?\nn &lt;- 1e4\nest_prop &lt;- numeric(n) # allocate a vector of size n\nfor (i in 1:n) {\n  x &lt;- sample(coin, i, replace = TRUE)\n  est_prop[i] &lt;- mean(x)\n}\n\n\n\n\nYour turn: write down in plain English what the above code is doing\nAt the end of the loop, what does the variable est_prop contain?"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#introduction-to-ggplot",
+    "href": "stats-math/01-lecture/01-Lecture.html#introduction-to-ggplot",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to ggplot",
+    "text": "Introduction to ggplot\n\n\nOur task is to visualize the estimated proportion as a function of the number of coin flips\nThis can be done in base plot(), but we will do it with ggplot\n\n\n\n\n\nlibrary(ggplot2)\nlibrary(gridExtra)\n\nx &lt;- seq(0, 100, by = 5)\ny &lt;- x^2\n\nquadratic &lt;- tibble(x = x, y = y)\np1 &lt;- ggplot(data = quadratic, \n             mapping = aes(x = x, y = y))\np2 &lt;- p1 + geom_point(size = 0.5)\np3 &lt;- p1 + geom_line(linewidth = 0.2, \n                     color = 'red')\np4 &lt;- p1 + geom_point(size = 0.5) + \n  geom_line(linewidth = 0.2, color = 'red')\n\ngrid.arrange(p1, p2, p3, p4, nrow = 2)"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#law-of-large-numbers",
+    "href": "stats-math/01-lecture/01-Lecture.html#law-of-large-numbers",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Law of Large Numbers",
+    "text": "Law of Large Numbers\n\nCodePlot\n\n\n\nset.seed(1) \nn &lt;- 1e4\nest_prop &lt;- numeric(n) \nfor (i in 1:n) {\n  x &lt;- sample(coin, i, replace = TRUE)\n  est_prop[i] &lt;- mean(x)\n}\n\nlibrary(scales)\ndata &lt;- tibble(num_flips = 1:n, est_prop = est_prop)\np &lt;- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))\np + geom_line(size = 0.1) + \n  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +\n  scale_x_continuous(trans = 'log10', label = comma) +\n  xlab(\"Number of flips on Log10 scale\") +\n  ylab(\"Estimated proportion of Heads\") +\n  ggtitle(\"Error decreases with the size of the sample\")\n\n\n\nWe can see some evidence for the Law of Large Numbers."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#functions",
+    "href": "stats-math/01-lecture/01-Lecture.html#functions",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Functions",
+    "text": "Functions\n\nStructureWriting Your Own FunctionCoin Flip Example\n\n\n\n\nFunctions help you break up the code into self-contained, understandable pieces.\nFunctions take in arguments and return results. You saw functions like sum() and mean() before. Here, you will learn how to write your own.\n\n\n\n\n\n\n\n\n\n\nSource: Hands-On Programming with R\n\n\n\n\n\nWe will write a function that produces one estimate of the proportion given a fixed sample size n.\n\n\nestimate_proportion &lt;- function(n) {\n  coin &lt;- c(1, 0)\n  x &lt;- sample(coin, n, replace = TRUE)\n  est &lt;- mean(x)\n  return(est)\n}\nestimate_proportion(10)\n\n[1] 0.4\n\nx &lt;- replicate(1e3, estimate_proportion(10))\nhead(x)\n\n[1] 0.3 0.7 0.5 0.8 0.5 0.6\n\n\n\n\n\nhist(x, \n     xlab = \"Number of simulations\", \n     main = \"Distribution of Proportions of Heads\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo reproduce our earlier example, generating estimates for increasing sample sizes, use map_dbl() function from purrr package. More on that here.\n\n\n\nlibrary(purrr)\npar(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = \"#f0f1eb\")\ny &lt;- map_dbl(2:500, estimate_proportion)\n# above is the same as sapply(2:500, estimate_proportion)\nplot(2:500, y, xlab = \"\", ylab = \"\", type = 'l')"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#generating-continuous-uniform-draws",
+    "href": "stats-math/01-lecture/01-Lecture.html#generating-continuous-uniform-draws",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Generating Continuous Uniform Draws",
+    "text": "Generating Continuous Uniform Draws\n\n\nHere, we will examine a continuous version of the sample() function: runif(n, min = 0, max = 1)\nrunif generates realizations of a random variable uniformly distributed between min and max.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour turn: what is the approximate value of this line of code: mean(runif(1e3, min = -1, max = 0))? Guess before running it."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation",
+    "href": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\nThe idea is that we can approximate the ratio of the area of an inscribed circle, \\(A_c\\), to the area of the square, \\(A_s\\), by uniformly “throwing darts” at the square with the side \\(2r\\) and counting how many darts land inside the circle versus inside the square.\n\n\\[\n\\begin{align}\nA_{c}& = \\pi r^2 \\\\\nA_{s}& = (2r)^2 = 4r^2 \\\\\n\\frac{A_{c}}{A_{s}}& = \\frac{\\pi r^2}{4r^2} = \\frac{\\pi}{4} \\implies \\pi = \\frac{4A_{c}}{A_{s}}\n\\end{align}\n\\]"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-1",
+    "href": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\nTo estimate \\(\\pi\\), we perform the following simulation:\n\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\I(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\nThe numerator is a sum over an indicator function \\(\\I\\), which evaluates to \\(1\\) if the inequality holds and \\(0\\) otherwise."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-2",
+    "href": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-2",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\n\nCode and PlotEstimate\n\n\n\n\nn &lt;- 1e3\nx &lt;- runif(n, -1, 1); y &lt;- runif(n, -1, 1)\ninside &lt;- x^2 + y^2 &lt; 1\ndata &lt;- tibble(x, y, inside)\np &lt;- ggplot(aes(x = x, y = y), data = data)\np + geom_point(aes(color = inside)) + theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Estimated value of pi =\", 4*sum(inside) / n)\n\nEstimated value of pi = 3.112\n\n\n\n\n\n\n\n\nx\ny\ninside\n\n\n\n\n-0.8287282\n-0.2198830\nTRUE\n\n\n-0.9964402\n0.4200821\nFALSE\n\n\n-0.1473951\n-0.1864385\nTRUE\n\n\n0.6455366\n0.6547743\nTRUE\n\n\n0.7709646\n-0.9771841\nFALSE"
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-Lecture.html#references-2",
+    "href": "stats-math/01-lecture/01-Lecture.html#references-2",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "References",
+    "text": "References\n\n\nhttps://ericnovik.github.io/smac.html\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
   },
   {
     "objectID": "stats-math/01-lecture/01-Lecture-local.html#course-objectives",
@@ -1659,410 +1911,333 @@
     "text": "References\n\n\n \n\n\n\n\n\n\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#course-objectives",
-    "href": "stats-math/01-lecture/01-Lecture.html#course-objectives",
+    "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",
+    "href": "stats-math/03-lecture/03-lecture.html#session-3-outline",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Course Objectives",
-    "text": "Course Objectives\n\n\nThis course will help you to prepare for the A3SR MS Program by covering the minimal necessary foundation in computing, math, and probability.\nAfter completing the course, you will be able to write simple R programs and perform simulations, plot and manipulate data, solve basic probability problems, and understand the concept of regression\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "section": "Session 3 Outline",
+    "text": "Session 3 Outline\n\n\nTransforming data for plotting\nAntiderivative\nSome rules of integration\nEvaluating integrals numerically\nThe waiting time distribution\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#course-format",
-    "href": "stats-math/01-lecture/01-Lecture.html#course-format",
+    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations",
+    "href": "stats-math/03-lecture/03-lecture.html#data-transformations",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Course Format",
-    "text": "Course Format\n\n\nThe course will run for two weeks, five days per week, 3 hours per day\nEach day will consist of:\n\n~30-minute going over the homework questions\n~1.5-hour lecture\n~1-hour hands of exercises\n\nThe course will be computationally intensive – we will write many small programs."
+    "section": "Data transformations",
+    "text": "Data transformations\n\n\n\n\nWe saw that continuous compounding does not make such a big difference over time\nHow would the value vary by rate?\nWe investigate with a common simulate-pivot-plot pattern"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#course-outline",
-    "href": "stats-math/01-lecture/01-Lecture.html#course-outline",
+    "objectID": "stats-math/03-lecture/03-lecture.html#map-function",
+    "href": "stats-math/03-lecture/03-lecture.html#map-function",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Course Outline",
-    "text": "Course Outline\n\n\n\n\nIntroduction to the R language, RStudio, and R Markdown.\nBasic differentiation. Meaning of the derivative. Numeric and symbolic differentiation and optimization.\nBasic integration. Riemann integral and basic rules of integration. Numeric and symbolic integration.\nReview of one-dimensional probability. Conditional probability, random variables, and expectations. Solving probability problems by simulation.\n\n\n\n\n\nDiscrete distributions like Bernoulli and Binomial and continuous distributions like Normal and Exponential\nIntroduction to Matrix Algebra. Vectors and vector arithmetic. Matrixes and matrix operations.\nManipulating and graphing data and Exploratory Data Analysis\nProgramming basics: variables, flow control, loops, functions, and writing simulations\nIntroduction to basic statistics and linear regression."
+    "section": "Map Function",
+    "text": "Map Function\n“The purrr::map* functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.”\n\n\nGenerate 10 vectors of 100 uniform random realizations, where the first vector has min = 1, second min = 2 … last vector has min = 10, and max = 15 for all\nNow compute the average value of each of the 10 vectors\n\n\n\n\nlibrary(purrr)\n\nx &lt;- 1:10\ny &lt;- x |&gt;\n  map(\\(x) runif(n = 100, min = x, max = 15))\n\ny &lt;- x |&gt;\n  map(\\(x) runif(n = 100, min = x, max = 15)) |&gt;\n  map_dbl(mean)\n\n\n\n\nRun the code and look inside y after then first function call and after the second. What do you expect to see?"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#references",
-    "href": "stats-math/01-lecture/01-Lecture.html#references",
+    "objectID": "stats-math/03-lecture/03-lecture.html#pivot-functions",
+    "href": "stats-math/03-lecture/03-lecture.html#pivot-functions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "References",
-    "text": "References\n\nHands-On Programming with R, Grolemund (2014)\nR for Data Science 2e, Wickham, Çetinkaya-Rundel, and Grolemund (2023)\nCalculus Made Easy, Thompson (1980)\nCalculus, Herman, Strang, and OpenStax (2016)\nYouTube: Essence of Calculus, Sanderson (2018a)\nOptional: YouTube: Essense of Linear Algebra, Sanderson (2018b)\nOptional: Introduction to Linear Algebra, Boyd and Vandenberghe (2018)\nOptional: Matrix Cookbook, Petersen and Pedersen (2012)\nIntoduction to Probability, Blitzstein and Hwang (2019)"
+    "section": "Pivot Functions",
+    "text": "Pivot Functions\n“pivot_longer()”lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is pivot_wider()”\n\n\nlibrary(tidyr)\nhead(iris)\n\n  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n1          5.1         3.5          1.4         0.2  setosa\n2          4.9         3.0          1.4         0.2  setosa\n3          4.7         3.2          1.3         0.2  setosa\n4          4.6         3.1          1.5         0.2  setosa\n5          5.0         3.6          1.4         0.2  setosa\n6          5.4         3.9          1.7         0.4  setosa\n\nlong &lt;- iris |&gt; pivot_longer(!Species, names_to = \"species\", values_to = \"measure\")\nhead(long)\n\n# A tibble: 6 × 3\n  Species species      measure\n  &lt;fct&gt;   &lt;chr&gt;          &lt;dbl&gt;\n1 setosa  Sepal.Length     5.1\n2 setosa  Sepal.Width      3.5\n3 setosa  Petal.Length     1.4\n4 setosa  Petal.Width      0.2\n5 setosa  Sepal.Length     4.9\n6 setosa  Sepal.Width      3"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#session-1-outline",
-    "href": "stats-math/01-lecture/01-Lecture.html#session-1-outline",
+    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
+    "href": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Session 1 Outline",
-    "text": "Session 1 Outline\n\n\nThe big picture – costs and benefits\nSetting up an analysis environment\nRStudio projects\nWorking with interpreted languages like R\nSome basic R syntax and elements of R style\nGenerating data with R\nSome basic R and ggplot graphics\nWriting your first Monte Carlo simulation"
+    "section": "Data Transformations",
+    "text": "Data Transformations\n\nSimulateLoops and MapsPivotPlot\n\n\n\n\n\nlibrary(purrr)\nlibrary(tidyr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100 \ntime &lt;- seq(1, 50, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\nd &lt;- time |&gt;\n  map(\\(x) Pe(A = P, r = rates, t = x)) \nclass(d)\n\n[1] \"list\"\n\nd[[1]][1:4]\n\n[1] 105.1271 106.8939 108.6904 110.5171\n\nnames(d) &lt;- as.character(time)\nd &lt;- as_tibble(d)\n\n\n\n\n\n\n\n\n1\n2\n3\n\n\n\n\n105.1271\n110.5171\n116.1834\n\n\n106.8939\n114.2631\n122.1403\n\n\n108.6904\n118.1360\n128.4025\n\n\n110.5171\n122.1403\n134.9859\n\n\n112.3745\n126.2802\n141.9068\n\n\n114.2631\n130.5605\n149.1825\n\n\n116.1834\n134.9859\n156.8312\n\n\n118.1360\n139.5612\n164.8721\n\n\n120.1215\n144.2917\n173.3253\n\n\n122.1403\n149.1825\n182.2119\n\n\n\n\n\n\n\n\n\n\n\n\nModern R usage offers a lot of shortcuts but those may be confusing to beginners.\nIn particular, R loops have mostly been replaced with map() functions.\nWe recommend purrr::map() functions instead of R’s *apply().\n\n\n\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100 \ntime &lt;- seq(1, 5, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\ntime |&gt; map(\\(x) Pe(A = P, r = rates, t = x)) \n\n# above is a shortcut for\nmap(time, function(x) Pe(A = P, r = rates, t = x))\n\n# and the above is a shortcut for the following loop\nl &lt;- list()\nfor (i in seq_along(time)) {\n  l[[i]] &lt;- Pe(A = P, r = rates, t = time[i])\n}\n\n\n\n\n\n\n\nlibrary(tidyr)\n# add rates as a column\nd &lt;- d %&gt;% mutate(rate = \n            round(rates, 2) |&gt;\n              as.character())\n\n# convert from wide format to long\nd &lt;- d %&gt;% \n  pivot_longer(!rate, \n               names_to = \"year\", \n               values_to = \"value\") \n\nd$year &lt;- as.numeric(d$year)\n\nHere is a cheat sheet explaining tidyr functions.\n\n\n\n\n\n\n\nrate\nyear\nvalue\n\n\n\n\n0.05\n1\n105.1271\n\n\n0.05\n2\n110.5171\n\n\n0.05\n3\n116.1834\n\n\n0.05\n4\n122.1403\n\n\n0.05\n5\n128.4025\n\n\n0.05\n6\n134.9859\n\n\n0.05\n7\n141.9068\n\n\n0.05\n8\n149.1825\n\n\n0.05\n9\n156.8312\n\n\n0.05\n10\n164.8721\n\n\n\n\n\n\n\n\n\n\n\n\n\np &lt;- ggplot(d, aes(year, value))\np + geom_line(aes(color = rate), linewidth = 0.2) +\n  scale_y_continuous(labels = \n          scales::dollar_format()) +\n  xlab(\"Time (years)\") + \n  ylab(\"Asset value\") +\n  ggtitle(\"Growth of $100 at different interest rates\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd |&gt; group_by(rate) |&gt; \n  summarise(y50 = last(value)) |&gt;\n  knitr::kable()\n\n\n\n\nrate\ny50\n\n\n\n\n0.05\n1218.249\n\n\n0.07\n2803.162\n\n\n0.08\n6450.009\n\n\n0.1\n14841.316\n\n\n0.12\n34149.510\n\n\n0.13\n78577.199\n\n\n0.15\n180804.241\n\n\n0.17\n416026.201\n\n\n0.18\n957266.257\n\n\n0.2\n2202646.579\n\n\n\n\n\n\n\n\n\n\n\n\nRStudio cheatsheats"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-silly",
-    "href": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-silly",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Some Mistakes Are Silly",
-    "text": "Some Mistakes Are Silly"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-deadly",
-    "href": "stats-math/01-lecture/01-Lecture.html#some-mistakes-are-deadly",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Some Mistakes Are Deadly",
-    "text": "Some Mistakes Are Deadly\nOn January 28, 1986, shortly after launch, Shuttle Challenger exploded, killing all seven crew members.\n\nO-Ring DataBinomial ModelReferences\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProbability of 1 or more rings being damaged at launch is about 0.99\nProbability of all 6 rings being damaged at launch is about 0.46\n\n\n\n\n\n\nFowlkes and Hoadley (1989): Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure\nMartz and Zimmer (1992): The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.\n\n\n\n\n\nData source: UCI Machine Learning Repository"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#allan-mcdonald-dies-at-83",
-    "href": "stats-math/01-lecture/01-Lecture.html#allan-mcdonald-dies-at-83",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Allan McDonald Dies at 83",
-    "text": "Allan McDonald Dies at 83\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCommunication is part of the job — it’s worth learning how to do it well.\n\n\nSource: The New York Times, March 9, 2021"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#smac-why-bother",
-    "href": "stats-math/01-lecture/01-Lecture.html#smac-why-bother",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "SMaC: Why Bother?",
-    "text": "SMaC: Why Bother?\n\n\n\n\nProgramming: a cheap way to do experiments and a lazy way to do math\nDifferential calculus: optimize functions, compute MLEs\nIntegral calculus: compute probabilities, expectations\nLinear algebra: solve many equations at once\nProbability: the language of statistics\nStatistics: quantify uncertainty"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#example-differential-calculus",
-    "href": "stats-math/01-lecture/01-Lecture.html#example-differential-calculus",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Differential Calculus",
-    "text": "Example: Differential Calculus\n\nRegression Line ViewLikelihood View\n\n\n\n\n\n\nDifferentiation comes up when you want to find the most likely values of parameters (unknowns) in optimization-based (sometimes called frequentist) inference\nImagine that we need to find the values of the slope and intercept such that the yellow line fits “nicely” through the cloud of points\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSuppose you have linear regression model of the form \\(y_n \\sim \\operatorname{normal}(\\alpha + \\beta x_n, \\, \\sigma)\\) and you want to learn the most likely values of \\(\\alpha\\) and \\(\\beta\\)\nThe most likely values for slope (beta) and intercept (alpha) are at the peak of this function, which can be found by using (partial) derivatives"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#example-integral-calculus",
-    "href": "stats-math/01-lecture/01-Lecture.html#example-integral-calculus",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Integral Calculus",
-    "text": "Example: Integral Calculus\n\n\n\n\nSuppose we have a probability distribution of some parameter \\(\\theta\\), which represents the differences between the treated and control units\nFurther, suppose that \\(\\theta &gt; 0\\) favors the treatment group\nWe want to know the probability that treatment is better than control\nThis probability can be written as:\n\n\n\n\\[\n    P(\\theta &gt; 0) = \\int_{0}^{\\infty} p_{\\theta}\\, d\\theta\n\\]\n\n\n\n\n\n\nAssuming \\(\\theta\\) is normally distributed with \\(\\mu = 1\\) and \\(\\sigma = 1\\) we can evaluate the integral as an area under the normal curve from \\(0\\) to \\(\\infty\\)."
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#example-linear-regression",
-    "href": "stats-math/01-lecture/01-Lecture.html#example-linear-regression",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Linear Regression",
-    "text": "Example: Linear Regression\nNotice a Linear Algebra notation \\(X \\beta\\), which is matrix-vector multiplication. \n\ndata {\n  int&lt;lower=0&gt; N;   // number of data items\n  int&lt;lower=0&gt; K;   // number of predictors\n  matrix[N, K] X;   // predictor matrix\n  vector[N] y;      // outcome vector\n}\nparameters {\n  real alpha;           // intercept\n  vector[K] beta;       // coefficients for predictors\n  real&lt;lower=0&gt; sigma;  // error scale\n}\nmodel {\n  y ~ normal(X * beta + alpha, sigma);  // likelihood\n}\n\n\nLinear Regression in Stan. Source: Stan Manual\n\n\n\nStan is a probabilistic programming language. You write your data-generating process (model), and Stan performs inference for all the unknowns."
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#example-bionomial-regression",
-    "href": "stats-math/01-lecture/01-Lecture.html#example-bionomial-regression",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Bionomial Regression",
-    "text": "Example: Bionomial Regression\nThis is the type of model we fit to the O-Rings data.\n\n\ndata {\n  int&lt;lower=0&gt; N_rows; // number of input rows\n  int&lt;lower=0&gt; N;      // number of trials in Binom(N, p)\n  vector[N_rows] x;    // temperature for the O-Rings example\n  array[N_rows] int&lt;lower=0, upper=N&gt; y; // number of \"successes\" in Binom(N, p)\n}\nparameters {\n  real alpha;\n  real beta;\n}\nmodel {\n  alpha ~ normal(0, 5); // prior on the intercept\n  beta ~ normal(0, 1);  // prior on the slope\n  y ~ binomial_logit(N, alpha + beta * x);\n}\n\n\nSource: Stan Manual"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#example-irt-model",
-    "href": "stats-math/01-lecture/01-Lecture.html#example-irt-model",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: IRT Model",
-    "text": "Example: IRT Model\nItem-Response Theory models are popular in education research but generalize to other applications. \n\ndata {\n  int&lt;lower=1&gt; J;                     // number of students\n  int&lt;lower=1&gt; K;                     // number of questions\n  int&lt;lower=1&gt; N;                     // number of observations\n  array[N] int&lt;lower=1, upper=J&gt; jj;  // student for observation n\n  array[N] int&lt;lower=1, upper=K&gt; kk;  // question for observation n\n  array[N] int&lt;lower=0, upper=1&gt; y;   // correctness for observation n\n}\nparameters {\n  real delta;            // mean student ability\n  array[J] real alpha;   // ability of student j - mean ability\n  array[K] real beta;    // difficulty of question k\n}\nmodel {\n  alpha ~ std_normal();         // informative true prior\n  beta ~ std_normal();          // informative true prior\n  delta ~ normal(0.75, 1);      // informative true prior\n  for (n in 1:N) {\n    y[n] ~ bernoulli_logit(alpha[jj[n]] - beta[kk[n]] + delta);\n  }\n}\n\n\n1PL item-response model. Source: Stan Manual"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#analysis-environment",
-    "href": "stats-math/01-lecture/01-Lecture.html#analysis-environment",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Analysis Environment",
-    "text": "Analysis Environment\n\n\n\n\nInstall the latest version of R\nInstall the latest version of the RStudio Desktop\nCreate a directory on your hard drive and give it a simple name. Mine is called statsmath\nIn RStudio, go to File -&gt; New Project and select: “Existing Directory”\n\n\n\n\n\n\n\nDownload R, Download RStudio"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#what-is-r",
-    "href": "stats-math/01-lecture/01-Lecture.html#what-is-r",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "What is R",
-    "text": "What is R\n\n\n\n\nR is an open-source, interpreted, (somewhat) functional programming language\nR is an implementation of the S language developed at Bell Labs around 1976\nRoss Ihaka and Robert Gentleman started working on R in the early 1990s\nVersion 1.0 was released in 2000\nThere are approximately 20,000 R packages available in CRAN\nR has a large and generally friendly user community"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-very-basics",
-    "href": "stats-math/01-lecture/01-Lecture.html#hands-on-very-basics",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Hands-On: Very Basics",
-    "text": "Hands-On: Very Basics\n\n\n\n2 + 3\n\n[1] 5\n\n10^3\n\n[1] 1000\n\n10 - 5 / 2\n\n[1] 7.5\n\n(10 - 5) / 2\n\n[1] 2.5\n\n1:10\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n1:10 + 1\n\n [1]  2  3  4  5  6  7  8  9 10 11\n\nsin(pi/2) + cos(pi/2)\n\n[1] 1\n\n1i\n\n[1] 0+1i\n\nround(exp(1i * pi) + 1)\n\n[1] 0+0i\n\n(exp(1i * pi) + 1) |&gt; round()\n\n[1] 0+0i\n\n\n\n\n\n\ndie &lt;- 1:6\ndie &lt;- seq(1, 6, by = 1)\ndie\n\n[1] 1 2 3 4 5 6\n\nlength(die) \n\n[1] 6\n\nstr(die)     \n\n num [1:6] 1 2 3 4 5 6\n\nsum(die)\n\n[1] 21\n\nprod(die)\n\n[1] 720\n\nmean(die)\n\n[1] 3.5\n\nsum(die) / length(die)\n\n[1] 3.5\n\nmedian(die)\n\n[1] 3.5\n\nsd(die)\n\n[1] 1.870829"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#r-documentation",
-    "href": "stats-math/01-lecture/01-Lecture.html#r-documentation",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "R Documentation",
-    "text": "R Documentation\n\n?mean # same as help(mean)"
-  },
-  {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#your-turn",
-    "href": "stats-math/01-lecture/01-Lecture.html#your-turn",
+    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn",
+    "href": "stats-math/03-lecture/03-lecture.html#your-turn",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
-    "text": "Your Turn\n\nCreate a variable called fib that contains the first 10 Fibonacci numbers\nThey are: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34\nCompute the length of this vector in R\nCompute the sum, the product, and the difference (diff()) between successive numbers\nWhat do you notice about the pattern in the differences?\nNow, create a vector of 100 integers from 1 to 100\nYoung Gauss was asked to sum them by hand\nHe figured out that the sum has to be \\(N (N + 1) / 2\\)\nVerify that Gauss was right (just for 100)\nNow compute the sum of the first hundred squares"
+    "text": "Your Turn\n\nDataInstructionsOutput\n\n\n\n\n\n\n\n\n\n\nRun the following command: install.packages('HistData')\nFollowed by library(HistData)\nTale a look at the Arbuthnot dataset: ?Arbuthnot\n\n\n\n\n\n\nYear\nMales\nFemales\nPlague\nMortality\nRatio\nTotal\n\n\n\n\n1629\n5218\n4683\n0\n8771\n1.114243\n9.901\n\n\n1630\n4858\n4457\n1317\n10554\n1.089971\n9.315\n\n\n1631\n4422\n4102\n274\n8562\n1.078011\n8.524\n\n\n1632\n4994\n4590\n8\n9535\n1.088017\n9.584\n\n\n1633\n5158\n4839\n0\n8393\n1.065923\n9.997\n\n\n1634\n5035\n4820\n1\n10400\n1.044606\n9.855\n\n\n\n\n\n\n\n\nUse the tools to produce the plot the looks something like this.\nBonus: compute the ratio of female births and plot it."
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-lists",
-    "href": "stats-math/01-lecture/01-Lecture.html#hands-on-lists",
+    "objectID": "stats-math/03-lecture/03-lecture.html#integral-calculus",
+    "href": "stats-math/03-lecture/03-lecture.html#integral-calculus",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Hands-On: Lists",
-    "text": "Hands-On: Lists\n\n\nLists are collections of objects of different types and shapes\nContrast with a data frame, which we will discuss later, that contains objects of different types but is rectangular\n\n\n\n\nlist_x &lt;- list(A = pi, B = c(0, 1), C = 1:10, D = c(\"one\", \"two\"))\nlist_x\n\n$A\n[1] 3.141593\n\n$B\n[1] 0 1\n\n$C\n [1]  1  2  3  4  5  6  7  8  9 10\n\n$D\n[1] \"one\" \"two\"\n\nstr(list_x)\n\nList of 4\n $ A: num 3.14\n $ B: num [1:2] 0 1\n $ C: int [1:10] 1 2 3 4 5 6 7 8 9 10\n $ D: chr [1:2] \"one\" \"two\"\n\nlist_x$A\n\n[1] 3.141593\n\nlist_x[1]\n\n$A\n[1] 3.141593\n\nstr(list_x[1])\n\nList of 1\n $ A: num 3.14\n\nlist_x[[1]] # same as x$A\n\n[1] 3.141593"
+    "section": "Integral Calculus",
+    "text": "Integral Calculus\n\n\n\n\nIntegration plays a central role in Statistics\nIt is a way to compute Expectations and Event Probabilities\nIn Bayesian Statistics, we use integration to compute posterior distributions of the unknowns\nIn Frequentist Statistics, we use derivatives to find the most likely values of the unknowns\n\n\n\n\n\n\n\n\n\n\nUnknowns are sometimes called parameters, like our \\(a\\) and \\(b\\), in the \\(x(t) = a + bt^2\\) model"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#data-frames",
-    "href": "stats-math/01-lecture/01-Lecture.html#data-frames",
+    "objectID": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
+    "href": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Data Frames",
-    "text": "Data Frames\n\n\nData frames are rectangular structures that are often used in data analysis\nThere is a built-in function called data.frame, but we recommend tibble, which is part of the dplyr package\nYou can look up the documentation of any R function this way: ?dplyr::tibble. If the package is loaded by using library(dplyr) you can omit dplyr:: prefix\nJohn F. W. Herschel’s data on the orbit of the Twin Stars \\(\\gamma\\) Virginis"
+    "section": "Intuition Behind Integration",
+    "text": "Intuition Behind Integration\n\n\n\n\nIntegration is a continous analog of summation\nYou can also think of an integral as undoing a derivative\nYou can also think of it as a signed area under a function \\(f\\)\nIn modern applications, integration is almost always done numerically on the computer\nBut it helps to understand what what the computer is doing\n\n\n\n\n\n\n\n\n\n\n\nImage Source: Calculus Volume 1"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#data-frames-1",
-    "href": "stats-math/01-lecture/01-Lecture.html#data-frames-1",
+    "objectID": "stats-math/03-lecture/03-lecture.html#from-velocity-to-postion-functions",
+    "href": "stats-math/03-lecture/03-lecture.html#from-velocity-to-postion-functions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Data Frames",
-    "text": "Data Frames\n\n\n\n\nlibrary(HistData)\ndata(\"Virginis.interp\")\nclass(Virginis.interp)\n\n[1] \"data.frame\"\n\nVirginis.interp |&gt; dplyr::as_tibble()\n\n# A tibble: 14 × 4\n    year posangle distance velocity\n   &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;\n 1  1720    160      17.2    -0.32 \n 2  1730    157.     16.8    -0.354\n 3  1740    153      16.3    -0.376\n 4  1750    149.     15.5    -0.416\n 5  1760    144.     14.5    -0.478\n 6  1770    140.     13.7    -0.533\n 7  1780    134.     13.5    -0.547\n 8  1790    129.     12.9    -0.597\n 9  1800    122.     12.6    -0.632\n10  1810    116.     11.2    -0.8  \n11  1815    111.     10.4    -0.929\n12  1820    106.      9.57   -1.09 \n13  1825     98.3     7.09   -1.99 \n14  1830     84.3     4.9    -4.16 \n\nVirginis.interp |&gt; dplyr::as_tibble() |&gt; class()\n\n[1] \"tbl_df\"     \"tbl\"        \"data.frame\"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe Origin and Development of the Scatterplot by M Friendly and H Wainer"
+    "section": "From Velocity to Postion Functions",
+    "text": "From Velocity to Postion Functions\n\nAntiderivativePlot\n\n\n\n\nRecal our position function \\(x(t) = 2 + 3t^2\\)\nWe found the velocity function by differentiating and we can almost get back the position function by integrating.\n\n\n\n\\[\n\\begin{eqnarray}\nv(t) & = & \\frac{d}{dt} \\left( 2 + 3t^2 \\right) = 6t \\\\\nx(t) & = & \\int{6t\\, dt} = 3t^2 + C\n\\end{eqnarray}\n\\]\n\n\n\nWhy almost? Look at the constant \\(2\\) in \\(\\frac{d}{dt}(2 + 3t^2)\\). You can replace it with any other constant and the result will still be \\(6t\\).\nTo put it another way, to characterize the position fucntion you need to know the intial position and you can’t get that from the velocity function alone.\n\n\n\n\nThe position function for different values of initial position \\(C\\). Notice that the only thing that changes is the intercept."
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#your-turn-1",
-    "href": "stats-math/01-lecture/01-Lecture.html#your-turn-1",
+    "objectID": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
+    "href": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn",
-    "text": "Your Turn\n\nSave Virginis.interp in a new tibble called virginis using as_tibble() function\nCompute average velocity in virginis\nHint: you can access columns of tibbles and data frames with an $ like this: dataframe_name$variable_name\nWe will do a lot more work with tibbles and data frames in later sessions"
+    "section": "Some Common Integrals",
+    "text": "Some Common Integrals\n\n\nOpenStax: Here is a more complete list"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#basic-plotting",
-    "href": "stats-math/01-lecture/01-Lecture.html#basic-plotting",
+    "objectID": "stats-math/03-lecture/03-lecture.html#techniques-of-intergration",
+    "href": "stats-math/03-lecture/03-lecture.html#techniques-of-intergration",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Basic Plotting",
-    "text": "Basic Plotting\n\nCodePlot Deaths Over TimePlot the Map\n\n\n\n\n\n\n\n\n\n\n\n\nR base plotting system is great for making quick basic graphs with relatively little typing\nWe will demonstrate with John Snow’s data from the 1854 cholera outbreak\n\n\n\n\nlibrary(HistData)\nlibrary(lubridate)\npar(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01)\nclr &lt;- ifelse(Snow.dates$date &lt; mdy(\"09/08/1854\"), \n              \"red\", \"darkgreen\")\nplot(deaths ~ date, data = Snow.dates, \n     type = \"h\", lwd = 2, col = clr, xlab = \"\")\npoints(deaths ~ date, data = Snow.dates, \n       cex = 0.5, pch = 16, col = clr)\ntext(mdy(\"09/08/1854\"), 40, \n     \"Pump handle\\nremoved Sept. 8\", pos = 4)"
+    "section": "Techniques of Intergration",
+    "text": "Techniques of Intergration\n\n\nIntegral, like a derivative, is a linear operator:\n\n\n\n\\[\n\\begin{eqnarray}\n\\int [f(x) + g(x)] \\, dx &=& \\int f(x) \\, dx + \\int g(x) \\, dx \\\\\n\\int [c \\cdot f(x)] \\, dx &=& c \\int f(x) \\, dx\n\\end{eqnarray}\n\\]\n\n\n\nUnlike derivatives, there are generablly no rules for finding integrals\nMost integrals do not have a closed-form, analytical solutions. This is true for almost all integrals in statistics.\nIn one or two dimentions, it is easy to evaluate most integrals numerically.\nIn higher dimentions, you need very sophisticated methods that rely on Markov Chain Monte Carlo (MCMC). We will not cover MCMC in this course.\nFor simple integrals we can somtimes find a closed-form solution by relying on u-substitution and integration by parts.\n\n\n:::"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-simulating-coin-flips",
-    "href": "stats-math/01-lecture/01-Lecture.html#hands-on-simulating-coin-flips",
+    "objectID": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
+    "href": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Hands-On: Simulating Coin Flips",
-    "text": "Hands-On: Simulating Coin Flips\nWe can learn a lot through simulation. We will start with the sample() function.\nsample(x, size, replace = FALSE, prob = NULL)\n\nSampleFor LoopsSolution\n\n\n\n# simulating coin flips\ncoin &lt;- c(\"H\", \"T\")\n\n# flip a fair coin 10 times; try it with replace = FALSE\nsample(coin, 10, replace = TRUE)\n\n [1] \"H\" \"T\" \"T\" \"H\" \"T\" \"T\" \"H\" \"H\" \"H\" \"T\"\n\n# flip a coin that has P(H = 0.6) 10 times\nsample(coin, 10, replace = TRUE, prob = c(0.6, 0.4))\n\n [1] \"T\" \"H\" \"H\" \"T\" \"T\" \"H\" \"H\" \"T\" \"H\" \"H\"\n\n# it's more convenient to make H = 1 and T = 0\ncoin &lt;- c(1, 0)\nsample(coin, 10, replace = TRUE)\n\n [1] 1 0 1 1 1 0 0 1 1 1\n\n\n\n\nYour turn: flip a coin 1000 times and compute the proportion of heads\n\n\n\n\n\n\nSuppose you want to add the first 100 integers as before but without using the sum() function or the formula\nIn math notation: \\(\\sum_{i = 1}^{100}x_i, \\ x \\in \\{1, ..., 100\\}\\)\n\n\n\n\nn &lt;- 100\nx &lt;- 1:n\ns &lt;- 0\nfor (i in 1:n) {\n  s &lt;- s + x[i] \n}\n# test\ns == sum(x)\n\n[1] TRUE\n\n\n\n\n\nYour turn: modify the loop to add only even numbers in 1:100. Look up help(if) statement and modulo operator help(%%); write a test to check your work\n\n\n\n\n\n\ns &lt;- 0\nfor (i in 1:n) {\n  if (x[i] %% 2 == 0) {\n    s &lt;- s + x[i]\n  }\n}\ncat(s)\n\n2550\n\n# test \ns == sum(seq(2, 100, by = 2))\n\n[1] TRUE\n\n\n\n\n\nCongratulations, you are now Turing Complete!"
+    "section": "Playing with Integrals",
+    "text": "Playing with Integrals\n\n\nGiven our intuition for integrals being singed areas, let’s see how to compute them analytically and numerically.\nWarning: these techniques only work in low dimentions. For high dimentional integrals you need to use MCMC.\nSuppose we want evaluate the integral \\(\\int_{1}^{3} x \\sin(x^2)\\, dx\\)"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#simulate-coin-flips",
-    "href": "stats-math/01-lecture/01-Lecture.html#simulate-coin-flips",
+    "objectID": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
+    "href": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Simulate Coin Flips",
-    "text": "Simulate Coin Flips\n\n\nIf we flip a coin more and more time, would the estimate of the proportion become better?\nIf so, what is the rate of convergence?\n\n\n\n\nset.seed(1) # why do we do this?\nn &lt;- 1e4\nest_prop &lt;- numeric(n) # allocate a vector of size n\nfor (i in 1:n) {\n  x &lt;- sample(coin, i, replace = TRUE)\n  est_prop[i] &lt;- mean(x)\n}\n\n\n\n\nYour turn: write down in plain English what the above code is doing\nAt the end of the loop, what does the variable est_prop contain?"
+    "section": "Constructing a Riemann Sum",
+    "text": "Constructing a Riemann Sum\n\n\n\n\n\n\n\nriemann &lt;- function(f, lower, upper, step_size) {\n  step &lt;- seq(lower, upper, by = step_size)\n  s &lt;- 0 # initialize the sum\n  for (i in 2:length(step)) {\n    # multiply base by the height of the rectangle\n    area &lt;- step_size * f(step[i]) \n    s &lt;- s + area\n  }\n  return(s)\n}\n\n\n\nNotice that the function takes a function as an argument. These are called higher order functions.\n\n\nSource: OpenStax Calculus Volume 1"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#introduction-to-ggplot",
-    "href": "stats-math/01-lecture/01-Lecture.html#introduction-to-ggplot",
+    "objectID": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
+    "href": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Introduction to ggplot",
-    "text": "Introduction to ggplot\n\n\nOur task is to visualize the estimated proportion as a function of the number of coin flips\nThis can be done in base plot(), but we will do it with ggplot\n\n\n\n\n\nlibrary(ggplot2)\nlibrary(gridExtra)\n\nx &lt;- seq(0, 100, by = 5)\ny &lt;- x^2\n\nquadratic &lt;- tibble(x = x, y = y)\np1 &lt;- ggplot(data = quadratic, \n             mapping = aes(x = x, y = y))\np2 &lt;- p1 + geom_point(size = 0.5)\np3 &lt;- p1 + geom_line(linewidth = 0.2, \n                     color = 'red')\np4 &lt;- p1 + geom_point(size = 0.5) + \n  geom_line(linewidth = 0.2, color = 'red')\n\ngrid.arrange(p1, p2, p3, p4, nrow = 2)"
+    "section": "Evaluating the Integral",
+    "text": "Evaluating the Integral\n\nf &lt;- function(x) x * sin(x^2)\nx &lt;- seq(0, pi, len = 100)\n\nriemann(f, 1, 3, 0.01)\n\n[1] 0.7275414\n\n# compute using R's integrate function\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#law-of-large-numbers",
-    "href": "stats-math/01-lecture/01-Lecture.html#law-of-large-numbers",
+    "objectID": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
+    "href": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Law of Large Numbers",
-    "text": "Law of Large Numbers\n\nCodePlot\n\n\n\nset.seed(1) \nn &lt;- 1e4\nest_prop &lt;- numeric(n) \nfor (i in 1:n) {\n  x &lt;- sample(coin, i, replace = TRUE)\n  est_prop[i] &lt;- mean(x)\n}\n\nlibrary(scales)\ndata &lt;- tibble(num_flips = 1:n, est_prop = est_prop)\np &lt;- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))\np + geom_line(size = 0.1) + \n  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +\n  scale_x_continuous(trans = 'log10', label = comma) +\n  xlab(\"Number of flips on Log10 scale\") +\n  ylab(\"Estimated proportion of Heads\") +\n  ggtitle(\"Error decreases with the size of the sample\")\n\n\n\nWe can see some evidence for the Law of Large Numbers."
+    "section": "Integrating Analytically",
+    "text": "Integrating Analytically\n\n\nMost integrals can’t be evaluated analytically but we can do \\(\\int x \\sin(x^2)\\, dx\\).\nWe make a substitution. Let \\(u = x^2\\), then \\(du/dx = 2x\\) and \\(dx = \\frac{1}{2 \\sqrt{u}}du\\)\n\n\n\n\\[\n\\begin{eqnarray}\n\\int \\sqrt{u} \\cdot \\sin(u) \\frac{1}{2\\sqrt{u}}du  & = & \\\\\n\\frac{1}{2}\\int \\sin(u)\\, du & = & \\\\\n-\\frac{1}{2} \\cos(u) & = & -\\frac{1}{2} \\cos(x^2)  \n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#functions",
-    "href": "stats-math/01-lecture/01-Lecture.html#functions",
+    "objectID": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
+    "href": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Functions",
-    "text": "Functions\n\nStructureWriting Your Own FunctionCoin Flip Example\n\n\n\n\nFunctions help you break up the code into self-contained, understandable pieces.\nFunctions take in arguments and return results. You saw functions like sum() and mean() before. Here, you will learn how to write your own.\n\n\n\n\n\n\n\n\n\n\nSource: Hands-On Programming with R\n\n\n\n\n\nWe will write a function that produces one estimate of the proportion given a fixed sample size n.\n\n\nestimate_proportion &lt;- function(n) {\n  coin &lt;- c(1, 0)\n  x &lt;- sample(coin, n, replace = TRUE)\n  est &lt;- mean(x)\n  return(est)\n}\nestimate_proportion(10)\n\n[1] 0.4\n\nx &lt;- replicate(1e3, estimate_proportion(10))\nhead(x)\n\n[1] 0.3 0.7 0.5 0.8 0.5 0.6\n\n\n\n\n\nhist(x, \n     xlab = \"Number of simulations\", \n     main = \"Distribution of Proportions of Heads\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo reproduce our earlier example, generating estimates for increasing sample sizes, use map_dbl() function from purrr package. More on that here.\n\n\n\nlibrary(purrr)\npar(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = \"#f0f1eb\")\ny &lt;- map_dbl(2:500, estimate_proportion)\n# above is the same as sapply(2:500, estimate_proportion)\nplot(2:500, y, xlab = \"\", ylab = \"\", type = 'l')"
+    "section": "Comparing the Results",
+    "text": "Comparing the Results\n\n\nUsing R’s integrate function:\n\n\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09\n\n\n\n\n\nUsing the analytical solution\n\n\nf1 &lt;- function(x) -1/2 * cos(x^2)\n\nf1(3) - f1(1)\n\n[1] 0.7257163\n\n\n\n\n\nThe universe is in balance!"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#generating-continuous-uniform-draws",
-    "href": "stats-math/01-lecture/01-Lecture.html#generating-continuous-uniform-draws",
+    "objectID": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
+    "href": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Generating Continuous Uniform Draws",
-    "text": "Generating Continuous Uniform Draws\n\n\nHere, we will examine a continuous version of the sample() function: runif(n, min = 0, max = 1)\nrunif generates realizations of a random variable uniformly distributed between min and max.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour turn: what is the approximate value of this line of code: mean(runif(1e3, min = -1, max = 0))? Guess before running it."
+    "section": "Analytical Integration on the Computer",
+    "text": "Analytical Integration on the Computer\n\n\nWhen in doubt, you can always try WolframAlpha\nPython library SymPy through R pacakge caracas\n\n\n\nlibrary(caracas); library(stringr)\nadd_align &lt;- function(latex) {\n  str_c(\"\\\\begin{align} \", latex, \" \\\\end{align}\")\n}\nadd_int &lt;- function(latex) {\n  str_c(\"\\\\int \", latex, \"\\\\, dx\")\n}\nx &lt;- symbol('x'); f &lt;- x^2 / sqrt(x^2 + 4)\ntex(f) %&gt;% add_int() %&gt;% str_c(\" =\") %&gt;% add_align() %&gt;% cat()\n\\[\\begin{align} \\int \\frac{x^{2}}{\\sqrt{x^{2} + 4}}\\, dx = \\end{align}\\]\nint(f, x) %&gt;% tex() %&gt;% add_align() %&gt;% cat()\n\\[\\begin{align} \\frac{x \\sqrt{x^{2} + 4}}{2} - 2 \\operatorname{asinh}{\\left(\\frac{x}{2} \\right)} \\end{align}\\]"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation",
-    "href": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation",
+    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
+    "href": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Estimating \\(\\pi\\) by Simulation",
-    "text": "Estimating \\(\\pi\\) by Simulation\nThe idea is that we can approximate the ratio of the area of an inscribed circle, \\(A_c\\), to the area of the square, \\(A_s\\), by uniformly “throwing darts” at the square with the side \\(2r\\) and counting how many darts land inside the circle versus inside the square.\n\n\\[\n\\begin{align}\nA_{c}& = \\pi r^2 \\\\\nA_{s}& = (2r)^2 = 4r^2 \\\\\n\\frac{A_{c}}{A_{s}}& = \\frac{\\pi r^2}{4r^2} = \\frac{\\pi}{4} \\implies \\pi = \\frac{4A_{c}}{A_{s}}\n\\end{align}\n\\]"
+    "section": "Your Turn: Waiting Time",
+    "text": "Your Turn: Waiting Time\n\nThere is s famous distribution in statistics called Exponential distribution\nIts probability density function (PDF) is given by:\n\n\\[\nf(x) = \\lambda e^{-\\lambda x}, \\, x &gt; 0, \\text{and } \\lambda &gt; 0\n\\]\n\nThis distribution is sometimes called the waiting time (to some event) distribution, where \\(\\lambda\\) is the rate of events we expect\nOne property of this distribution is that no matter how long you wait, the probability of seeing an event remains the same.\nOne of the properties of the PDF is that it must integrate to 1\nLet’s check that it’s true\n\n\\[\n\\int_{0}^{\\infty} \\lambda e^{-\\lambda x} dx =\n\\]"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-1",
-    "href": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-1",
+    "objectID": "stats-math/03-lecture/03-lecture.html#ingegration-by-parts",
+    "href": "stats-math/03-lecture/03-lecture.html#ingegration-by-parts",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Estimating \\(\\pi\\) by Simulation",
-    "text": "Estimating \\(\\pi\\) by Simulation\nTo estimate \\(\\pi\\), we perform the following simulation:\n\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\I(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\nThe numerator is a sum over an indicator function \\(\\I\\), which evaluates to \\(1\\) if the inequality holds and \\(0\\) otherwise."
+    "section": "Ingegration by Parts",
+    "text": "Ingegration by Parts\n\\[\n\\begin{eqnarray}\n(f g)' & = & f'g + g'f \\\\\n\\int (f g)' \\, dx & = & \\int f'g dx + \\int g'f \\, dx \\\\\nfg & = & \\int f'g \\, dx + \\int g'f \\, dx \\\\\n\\int f g' \\, dx & = & fg - \\int f' g \\, dx \\\\\nu & = & f(x) \\\\\nv & = & g(x) \\\\\ndu & = & f'(x) \\, dx \\\\\ndv & = & g'(x) \\, dx \\\\\n\\int u \\, dv & = & uv - \\int v \\, du\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-2",
-    "href": "stats-math/01-lecture/01-Lecture.html#estimating-pi-by-simulation-2",
+    "objectID": "stats-math/03-lecture/03-lecture.html#ex-with-lambda-1",
+    "href": "stats-math/03-lecture/03-lecture.html#ex-with-lambda-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Estimating \\(\\pi\\) by Simulation",
-    "text": "Estimating \\(\\pi\\) by Simulation\n\nCode and PlotEstimate\n\n\n\n\nn &lt;- 1e3\nx &lt;- runif(n, -1, 1); y &lt;- runif(n, -1, 1)\ninside &lt;- x^2 + y^2 &lt; 1\ndata &lt;- tibble(x, y, inside)\np &lt;- ggplot(aes(x = x, y = y), data = data)\np + geom_point(aes(color = inside)) + theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Estimated value of pi =\", 4*sum(inside) / n)\n\nEstimated value of pi = 3.112\n\n\n\n\n\n\n\n\nx\ny\ninside\n\n\n\n\n-0.8287282\n-0.2198830\nTRUE\n\n\n-0.9964402\n0.4200821\nFALSE\n\n\n-0.1473951\n-0.1864385\nTRUE\n\n\n0.6455366\n0.6547743\nTRUE\n\n\n0.7709646\n-0.9771841\nFALSE"
+    "section": "E(X) with \\(\\lambda = 1\\)",
+    "text": "E(X) with \\(\\lambda = 1\\)\n\nIf the rate of arrival is \\(\\lambda = 1\\), we have\n\n\\[\nE(X) = \\int_{0}^{\\infty} x e^{-x} dx =\n\\]"
   },
   {
-    "objectID": "stats-math/01-lecture/01-Lecture.html#references-2",
-    "href": "stats-math/01-lecture/01-Lecture.html#references-2",
+    "objectID": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
+    "href": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "References",
-    "text": "References\n\n\nhttps://ericnovik.github.io/smac.html\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
+    "section": "Exponential Growth (again)",
+    "text": "Exponential Growth (again)\nRecall, at the beginning we defined an exponential growth with the following differential equation:\n\n\\[\n\\frac{dy(t)}{dt} = k \\cdot y(t)\n\\]\n\n\nWe can now solve it:\n\\[\n\\begin{align*}\n\\frac{1}{y} \\, dy &= k \\, dt \\\\\n\\int \\frac{1}{y} \\, dy &= \\int k \\, dt \\\\\n\\log(y) &= k \\cdot t + C \\\\\ny(t) &= y_0 \\cdot e^{kt}\n\\end{align*}\n\\]"
   },
   {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#session-2-outline",
-    "href": "stats-math/02-lecture/02-Lecture.html#session-2-outline",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Session 2 Outline",
-    "text": "Session 2 Outline\n\n\n\n\nLinear, exponential, and logarithmic functions\nLimits\nDefinition of the derivative\nRules of differentiation\nThe chain rule and product rules\n\n\n\n\n\n\n\n\n\n\n\nImage source: Wikipedia"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#lines",
-    "href": "stats-math/02-lecture/02-Lecture.html#lines",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Lines",
-    "text": "Lines\n\nLinesExamplesCode\n\n\n\n\nWe typically use the slope-intercept form of the line: \\(y = a + bx\\), where \\(a\\) is the intercept, and \\(b\\) is the slope (rise over run).\nFor example: \\(y = 1.5 + 0.5x\\)\n\\(1.5\\) is the value of the function when either \\(x = 0\\) or \\(b = 0\\).\nIn practice, \\(b\\) is almost never zero.\n\n\n\n\n\n\nA graph of a line with the equation \\(y = 1 + 2x\\).\n\n\n\n\n\n\nA graph of a line with the equation \\(y = 7.5 - 2x\\).\n\n\n\n\n\n\n\n\n\n\n# y = 1 + 2x\np &lt;- ggplot() + xlim(0, 5) + ylim(0, 10)\np + geom_abline(slope = 2, intercept = 1, size = 0.2)\n\n# y = 7.5 + -2x\np &lt;- ggplot() + xlim(0, 5) + ylim(0, 10)\np + geom_abline(slope = -2, intercept = 7.5, size = 0.2)\n\n# to see some other ways of plotting lines\n?geom_abline"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn",
-    "href": "stats-math/02-lecture/02-Lecture.html#your-turn",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn",
-    "text": "Your Turn\n\nTurn the following code into a function called plot_line(slope, intercept)\nTest it for different values of slope and intercept\n\n\np &lt;- ggplot() + xlim(0, 5) + ylim(0, 10)\np + geom_abline(slope = 2, intercept = 1, size = 0.2)"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#exponential-functions",
-    "href": "stats-math/02-lecture/02-Lecture.html#exponential-functions",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Exponential Functions",
-    "text": "Exponential Functions\n\n\nThe idea of an exponential function is that the rate of change of the function at time \\(t\\) is proportional to the value of the function at time \\(t\\). In other words:\n\n\n\n\\[\n\\frac{d[y(t)]}{dt} = ky(t)\n\\]\n\n\n\nThe solution to this differential equation is the exponential function.\nThink of population growth or growth of an interest-bearing asset."
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#example-compound-interest",
-    "href": "stats-math/02-lecture/02-Lecture.html#example-compound-interest",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Compound Interest",
-    "text": "Example: Compound Interest\n\nAn asset that has a value \\(A\\) is invested with an annual interest rate \\(r\\). What is the balance in the account, \\(P_1\\), at the end of the first year?\n\n\n\\[\nP_1 = A + rA = A(1 + r)\n\\]\n\n\nAfter year two, the value is:\n\\[\nP_2 = P_1 + rP_1 = P_1(1 + r) = \\\\\nA(1 + r)(1 + r) = A(1 + r)^2\n\\]\n\n\nAnd after year \\(t\\), the value is:\n\\[\nP_n = A(1 + r)^t\n\\]\n\n\nWhat if we compound the interest twice per year? In that case:\n\\[\nP_1 = A \\left (1 + \\frac{r}{2} \\right)^2\n\\]\n\n\nIf we compound \\(n\\) times per year, the principal would be:\n\\[\nP_1 = A \\left (1 + \\frac{r}{n} \\right)^n\n\\]\n\n\nCombining these ideas, if we compound \\(n\\) times per year, for \\(t\\) years, we get:\n\\[\nP = A \\left (1 + \\frac{r}{n} \\right)^{nt}\n\\]\nIf we let \\(n \\to \\infty\\), we call this process exponential growth."
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#example-compound-interest-1",
-    "href": "stats-math/02-lecture/02-Lecture.html#example-compound-interest-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Compound Interest",
-    "text": "Example: Compound Interest\n\nCodeCompoundingGrowth over time\n\n\n\nrate &lt;- 0.05    # interest rate r\nP &lt;- 100        # pricical P\nn_comp &lt;- 1:100 # number of compoundings n\n\nPn &lt;- function(n, A, r, t) A * (1 + r/n)^(t*n)\nPe &lt;- function(A, r, t) A * exp(r * t)\n\npn &lt;- Pn(n = n_comp, A = P, r = rate, t = 50)\npe &lt;- Pe(A = P, r = rate, t = 50)\n\nd &lt;- data.frame(n_comp, pn)\np &lt;- ggplot(d, aes(n_comp, pn))\np + geom_line(size = 0.2) +\n  geom_hline(yintercept = pe, color = 'red', size = 0.2) +\n  xlab(\"Number of times the interest is compounded\") +\n  ylab(\"Value of an asset\") +\n  ggtitle(\"Value of $100 at r = 0.05 after 50 years\")"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn-1",
-    "href": "stats-math/02-lecture/02-Lecture.html#your-turn-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn",
-    "text": "Your Turn\nSuppose a particular population of bacteria is known to double in size every 4 hours. If a culture starts with 1000 bacteria, what is the population after 10 hours and 24 hours?"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#the-number-e",
-    "href": "stats-math/02-lecture/02-Lecture.html#the-number-e",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "The Number \\(e\\)",
-    "text": "The Number \\(e\\)\n\n\nRecall the equation for asset value after \\(t\\) years compounded \\(n\\) times:\n\n\\[\nP = A \\left (1 + \\frac{r}{n} \\right)^n = A \\left (1 + \\frac{r}{n} \\right)^{nt}\n\\]\n\n\n\nLet’s make a substituion \\(m = n/r\\) and take limit and \\(m \\to \\infty\\).\n\n\\[\nP = \\lim_{\\Delta m \\to \\infty}A \\left ( 1 + \\frac{1}{m} \\right)^{m(rt)}\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#the-number-e-1",
-    "href": "stats-math/02-lecture/02-Lecture.html#the-number-e-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "The Number \\(e\\)",
-    "text": "The Number \\(e\\)\n\nPlotCode\n\n\n\n\n\n\nWe can compute the value of \\(\\left ( 1 + \\frac{1}{m} \\right)^m\\) as m increases.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe number that this limit approaches is called \\(e\\).\n\n\\[\nP = \\lim_{\\Delta m \\to \\infty}A \\left ( 1 + \\frac{1}{m} \\right)^{m(rt)} =\nA e^{rt}\n\\]\n\n\n\n\n\n\nf &lt;- function(m) (1 + 1/m)^m\nx &lt;- 0:100\ny &lt;- f(x)\np &lt;- ggplot(data.frame(x, y), aes(x, y))\np + geom_line(size = 0.2) +\n  geom_hline(yintercept = exp(1), color = 'red', size = 0.2)"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#properties-of-exponents",
-    "href": "stats-math/02-lecture/02-Lecture.html#properties-of-exponents",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Properties of Exponents",
-    "text": "Properties of Exponents\n\n\n\\(a^x a^y = a^{x + y}\\)\n\n\n2^7 * 2^8 == 2^(7 + 8) \n\n[1] TRUE\n\n\n\n\n\n\\(\\frac{a^x}{a^y} = a^{x-y}\\)\n\n\n2^7 / 2^8 == 2^(7 - 8) \n\n[1] TRUE\n\n\n\n\n\n\\((a^x)^y = a^{xy}\\)\n\n\n(2^7)^8 == 2^(7*8)\n\n[1] TRUE\n\n\n\n\n\n\\((ab)^x = a^x b^x\\)\n\n\n(2*3)^7 == 2^7 * 3^7\n\n[1] TRUE\n\n\n\n\n\n\\(\\frac{a^x}{b^x} = \\left( \\frac{a}{b} \\right)^x\\)\n\n\n2^4 / 3^4 == (2/3)^4\n\n[1] FALSE\n\nall.equal(2^4 / 3^4, (2/3)^4)\n\n[1] TRUE"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn-2",
-    "href": "stats-math/02-lecture/02-Lecture.html#your-turn-2",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn",
-    "text": "Your Turn\nSuppose $750 is invested in an account at an annual interest rate of 5.5%, compounded continuously. Let \\(t\\) denote the number of years after the initial investment and \\(A(t)\\) denote the amount of money in the account at time \\(t\\). Find a formula for \\(A(t)\\). Find the amount of money in the account after 5 years, 10 years, and 50 years."
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#logarithmic-functions",
-    "href": "stats-math/02-lecture/02-Lecture.html#logarithmic-functions",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Logarithmic functions",
-    "text": "Logarithmic functions\n\nIntroductionExample: Log-Sum-Exp\n\n\n\n\nExponential function of the form \\(f(x) = a^x\\) is one-to-one, so it has an inverse called a logarithmic function.\nIn Statistics, when we write \\(\\log\\) we mean natural log, base \\(e\\). This makes it easier to interpret the log regression coefficients as percentage changes. For example, \\(\\log(1.04) \\approx 4\\%\\).\nThe following relationship always holds: \\(a^t = e^{\\log(a)t}\\) since \\(e^{\\log(a)} = a\\)\n\\(\\log_a(uv) = \\log_a(u) + \\log_a(v)\\)\n\\(\\log_a(u/v) = \\log_a(u) - \\log_a(v)\\)\n\\(\\log_a u^n = n \\log_a u\\)\n\n\n\n\nIn statistics and Machine Learning, we often want to normalize a vector so that it adds to one. One such function is called a softmax:\n\n\\[\n\\text{softmax}(x)  = \\frac{\\exp(x)} {\\sum_{n=1}^N \\exp(x_n)}\n\\]\n\nIf \\(x\\) is a vector of size 3, the numerator is component-wise \\(\\exp\\) of size 3, the denominator is a scalar, and the function value is a vector of size 3 that adds to 1\n\n\n\n\ny &lt;- 1:3\n(numer &lt;- exp(y))\n\n[1]  2.718282  7.389056 20.085537\n\n(denom &lt;- sum(exp(y)))\n\n[1] 30.19287\n\n(softmax &lt;- numer / denom)\n\n[1] 0.09003057 0.24472847 0.66524096\n\ny &lt;- c(1e3, 1e3 + 1, 1e3 + 2)\nexp(y)\n\n[1] Inf Inf Inf\n\n\n\nThis produces overflow – the numbers are too big for the computer. Let’s compute the \\(\\log \\text{softmax}(x)\\).\n\n\n\n\\[\n    \\log\\text{softmax}(x) = x - \\log \\sum_{n=1}^N \\exp(x_n)\n\\]\n\nThe second term is the log-sum-exp or LSE for short. It has the same problem, as it will overflow or underflow.\nThe idea is that we need to reduce the magnitude of \\(x_n\\) while preserving the integrity of the LSE function.\n\n\n\n\\[\n    \\begin{eqnarray}\n    \\text{Let } c & = & \\max(x_1, x_2, x_3, ..., x_N) \\\\\n    y & = & \\log \\sum_{n=1}^N \\exp(x_n) \\\\\n    \\exp(y) & = & \\sum_{n=1}^N \\exp(x_n) \\\\\n    \\exp(y) & = & \\exp(c) \\sum_{n=1}^N \\exp(x_n - c) \\\\\n    y & = & c + \\log \\sum_{n=1}^N \\exp(x_n - c)\n    \\end{eqnarray}\n\\]\n\nBecause \\(c = \\max(x)\\), the largest exponent is zero.\n\n\n\n\nYour Turn: write a function called LSE that takes in vector \\(x\\) and implements the last equation and tests it on small and large values of \\(x\\). Now implement the softmax_log function using the LSE function. Now compute the same version of the softmax function and check that it sums to 1.\n\n\n\n\nLSE &lt;- function(x) {\n  c &lt;- max(x)\n  y &lt;- c + log(sum(exp(x - c)))\n  return(y)\n}\nsoftmax_log &lt;- function(x) {\n  x - LSE(x)\n}\nsoftmax_unsafe &lt;- function(x) exp(x) / sum(exp(x))\n\nsoftmax_unsafe(1:3)\n\n[1] 0.09003057 0.24472847 0.66524096\n\nsoftmax_log(1:3)\n\n[1] -2.407606 -1.407606 -0.407606\n\nexp(softmax_log(1:3))\n\n[1] 0.09003057 0.24472847 0.66524096\n\ny\n\n[1] 1000 1001 1002\n\nsoftmax_unsafe(y)\n\n[1] NaN NaN NaN\n\nexp(softmax_log(y))\n\n[1] 0.09003057 0.24472847 0.66524096\n\nsum(exp(softmax_log(y)))\n\n[1] 1"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#limits",
-    "href": "stats-math/02-lecture/02-Lecture.html#limits",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Limits",
-    "text": "Limits\nThe idea of the limit is to evaluate what the function approaches as we increase or decrease the inputs.\n\nThis demo shows what happens to the secant line as it approaches the tangent.\n\n\nSource: Calculus Volume 1"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#example-motion-in-a-straight-line",
-    "href": "stats-math/02-lecture/02-Lecture.html#example-motion-in-a-straight-line",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Motion in a Straight Line",
-    "text": "Example: Motion in a Straight Line\nSuppose you have an experiment where you can measure the position of a car moving in a straight line every \\(1/10\\) of a second for 5 seconds. When you look at the graph of time versus position, it looks like this:\n\n\n\n\n\n\n\n\n\n\n\n\nYou guess that the function is quadratic in \\(t\\). If \\(x\\) is measured in meters, and \\(t\\) is in seconds, then \\(a\\) must have units of \\(m\\) and \\(b\\) must have units \\(m/s^2\\).\n\\[\nx(t) = a + bt^2\n\\]\n\n\nThe statistical inference problem is to find plausible values of \\(a\\) and \\(b\\), given our noisy measurements and the assumption that the position function is quadratic. We will come back to how to do it later, but for now, assume that the most likely values were found to be \\(a = 2\\) and \\(b = 3\\).\n\n\n\n\n\n\n\n\n\n\n\nWe can now ask, what was the average velocity between \\(1\\) and \\(4\\) seconds? This is the same as the slope of the secant line:\n\\[\n\\bar{v} =\n\\frac{\\text{displacment} (m)}{\\text{elapsed time} (s)} =\n\\frac{\\Delta x}{\\Delta t} =  \n\\frac{x(4) - x(1)}{4-1} = \\frac{50-5}{3} = 15 \\text{ m/s} = 54 \\text{ km/h}  \n\\]\n\n\nSince we know that this is a line of the form \\(x(t) = a + 15t\\), that goes through the point \\((t_1, x_1) = (1, 5)\\), \\(5 = a + 15\\cdot1\\) or \\(a = -10\\). The equation of the secant line is, therefore:\n\\[\nx(t) = -10 + 15t\n\\]\n\n\n\np &lt;- ggplot(data.frame(t, x), aes(t, x))\np + geom_line(size = 0.2) +\n  geom_abline(slope = 15, intercept = -10, size = 0.2, color = 'red') +\n  geom_point(x = 1, y = 5, color = 'blue') +\n  geom_point(x = 4, y = 50, color = 'blue') +\n  xlab(\"time t (s)\") + ylab(\"position x (m)\") +\n  annotate(\"text\", 3.7, 55, label = \"(4, 50)\") +\n  annotate(\"text\", 1, 12, label = \"(1, 5)\") +\n  ggtitle(\"Car's position function and the secant line\")\n\n\n\n\n\n\n\n\n\n\nWhat if we wanted to know the speedometer reading at \\(4\\) seconds? In other words, we want to know the speed at that instant. This is where the limit comes in.\n\\[\nv = \\lim_{\\Delta t \\to 0} \\frac{\\Delta x}{\\Delta t} = \\frac{dx}{dt}\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#the-derivative",
-    "href": "stats-math/02-lecture/02-Lecture.html#the-derivative",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "The Derivative",
-    "text": "The Derivative\n\n\nHow do we compute this limit, which we wrote as \\(dx/dt\\)?\n\n\n\n\n\n\n\n\n\nWe re-write the secant or average velocity equation in the following way:\n\n\\[\n\\begin{eqnarray}\n\\bar v & = & \\frac{x(a + h) - x(a)}{a + h - a} = \\frac{x(a + h) - x(a)}{h} \\\\\nv & = & \\lim_{\\Delta h \\to 0} \\frac{x(a + h) - x(a)}{h} \\\\\n\\end{eqnarray}\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#the-derivative-1",
-    "href": "stats-math/02-lecture/02-Lecture.html#the-derivative-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "The Derivative",
-    "text": "The Derivative\n\n\nOur original problem was to find the velocity at \\(t = 4\\) given our position function \\(x(t) = 2 + 3t^2\\).\n\n\\[\n\\begin{eqnarray}\nv & = & \\lim_{\\Delta h \\to 0} \\frac{x(a + h) - x(a)}{h} =\n\\lim_{\\Delta h \\to 0} \\frac{2 + 3(t + h)^2 - 2 - 3t^2}{h} = \\\\\n& \\lim_{\\Delta h \\to 0} & \\frac{6ht + 3h^2}{h} = \\lim_{\\Delta h \\to 0} (6t + 3h) = 6t\n\\end{eqnarray}\n\\]\n\n\n\nAt \\(t = 4\\), the speedometer was reading \\(6 \\cdot 4 = 24 \\text{ m/s } = 86.4 \\text{ km/h}\\).\nThe velocity is the derivative of position with respect to time, and we can write:\n\n\\[\nv(t) = \\frac{dx}{dt} = 6t\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#the-derivative-2",
-    "href": "stats-math/02-lecture/02-Lecture.html#the-derivative-2",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "The Derivative",
-    "text": "The Derivative\n\nBut what about acceleration?\n\n\n\nAcceleration is a change in velocity with respect to time or the second derivative of position:\n\n\\[\na(t) = \\frac{dv}{dt} = \\frac{d}{dt} \\left( \\frac{d x}{d t} \\right) = \\frac{d^2 x}{d t^2}\n\\]\n\n\n\nTo compute acceleration at \\(t = 4\\), we take the limit again, only this time with respect to the velocity function:\n\n\\[\na = \\frac{dv}{dt} = \\lim_{\\Delta h \\to 0} \\frac{6(t + h) - 6t}{h} = \\\\\n\\lim_{\\Delta h \\to 0} \\frac{6t + 6h - 6t}{h} = \\lim_{\\Delta h \\to 0} 6 = 6\n\\]\n\n\n\nThis function \\(a(t) = 6\\) does not depend on \\(t\\), and so acceleration is a constant \\(6 \\text{ m}/\\text{s}^2\\) at all values of \\(t\\) including \\(t = 4\\)\n\n\n\n\nIt would be cumbersome to compute derivatives this way. Fortunately, we have shortcuts."
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#rules-of-differentiation",
-    "href": "stats-math/02-lecture/02-Lecture.html#rules-of-differentiation",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Rules of Differentiation",
-    "text": "Rules of Differentiation\n\nWe will state a few rules of differentiation without deriving them\n\n\\[\n\\begin{eqnarray}\n\\frac{d}{dx}(c) & = & 0 \\\\\n\\frac{d}{dx}(x) & = & 1 \\\\\n\\frac{d}{dx}(x^n) & = & n x^{n-1} \\\\\n\\frac{d}{dx}[c f(x)] & = & c \\frac{d}{dx}[f(x)] \\\\\n\\frac{d}{dx}[f(x) + g(x)] & = & \\frac{d}{dx}f(x) + \\frac{d}{dx}g(x) \\\\\n\\frac{d}{dx}(e^x) & = & e^x \\\\                                                            \\end{eqnarray}                                                               \n\\]\n\n\nIf you are interested in why the last statement is true, see this.\nThe derivatives of trigonometric functions can be found here."
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#your-turn-3",
-    "href": "stats-math/02-lecture/02-Lecture.html#your-turn-3",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn",
-    "text": "Your Turn\n\nSuppose we have the following equations of motion:\n\n\\[\nx(t) = 4 + 3t + 5t^2\n\\]\n\nWhat is the car’s position at time zero and time 1 second?\nWhat is the velocity at time zero?\nWhat is the velocity and acceleration at 5 seconds?"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#product-rule-and-chain-rule",
-    "href": "stats-math/02-lecture/02-Lecture.html#product-rule-and-chain-rule",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Product Rule and Chain Rule",
-    "text": "Product Rule and Chain Rule\n\nProduct and chain rules help us differentiate products and compositions of functions, respectively.\nIntuition for those can be found in the Essense of Calculus video.\nWe will state them here without derivation. Product rule: Right d left, Left d right.\n\n\\[\n\\frac{d}{dx}[f(x) g(x)] = f(x) \\frac{d}{dx}[g(x)] + g(x)\\frac{d}{dx}[f(x)]\n\\]\n\nIf \\(F = f \\circ g\\), in that \\(F(x)= f(g(x))\\):\n\n\\[\nF'(x) = f'(g(x))g'(x)\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#example-of-a-product-rule",
-    "href": "stats-math/02-lecture/02-Lecture.html#example-of-a-product-rule",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example of a Product Rule",
-    "text": "Example of a Product Rule\n\nSuppose we wanted to compute the derivative of \\(x(t) = \\sin(t) \\cos(t)\\)\n\n\\[\n\\begin{eqnarray}\n\\frac{d}{dt}(\\sin(t) \\cos(t)) & = & \\\\\n\\sin(t)\\frac{d}{dt}[\\cos(t)] + \\cos(t)\\frac{d}{dt}[\\sin(t)] & = & \\\\\n\\sin(t) (-\\sin(t)) + \\cos(t)\\cos(t) & = & \\\\\n\\cos^2(t) - \\sin^2(t)\n\\end{eqnarray}\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#approximating-derivatives",
-    "href": "stats-math/02-lecture/02-Lecture.html#approximating-derivatives",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Approximating Derivatives",
-    "text": "Approximating Derivatives\n\nlibrary(ggplot2)\nlibrary(dplyr)\nn &lt;- 100\nt &lt;- seq(0, pi, length = n)\nx &lt;- sin(t) * cos(t)\ndxdt &lt;- cos(t)^2 - sin(t)^2\n\nd &lt;- tibble(t, x, dxdt)\np &lt;- ggplot(d, aes(t, x))\np + geom_line() + geom_line(aes(y = dxdt), col = 'red')\n\n\n\n\n\n\n\n# approximate the derivative\ns &lt;- pi / (n - 1)        # choose the same step s as the increment in the t sequence\nall.equal(s, diff(t)[1]) # check that the above statement is true\n\n[1] TRUE\n\nappr_dxdt &lt;- diff(x)/s   # derivative ≈ rise / run\nd &lt;- d %&gt;%\n  mutate(appr_dxdt = c(NA, appr_dxdt))\np &lt;- ggplot(d, aes(t, x))\np + geom_line() + geom_line(aes(y = dxdt), col = 'red') +\n  geom_line(aes(y = appr_dxdt), col = 'blue', size = 5, alpha = 1/5)"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#examples-of-the-chain-rule",
-    "href": "stats-math/02-lecture/02-Lecture.html#examples-of-the-chain-rule",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Examples of the Chain Rule",
-    "text": "Examples of the Chain Rule\n\nWhat is the derivative of \\(\\sin(x^2)\\)? It is \\(2x \\cos(x^2)\\)\nYour turn: \\[\n\\frac{d}{dx} \\left( e^{\\cos(x) x^2} \\right ) =\n\\]"
-  },
-  {
-    "objectID": "stats-math/02-lecture/02-Lecture.html#homework",
-    "href": "stats-math/02-lecture/02-Lecture.html#homework",
+    "objectID": "stats-math/03-lecture/03-lecture.html#homework",
+    "href": "stats-math/03-lecture/03-lecture.html#homework",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Homework",
-    "text": "Homework\n\nA particle is moving in a counter-clockwise uniform circular motion according to the following equations:\n\n\\[\nx(t) = R \\cos(\\omega t) \\\\\ny(t) = R \\sin(\\omega t)\n\\] - Where \\(\\omega\\) is called angular frequency (radians per unit of time) and \\(R\\) is the radius of rotation. The full cycle is achieved when \\(T = 2 \\pi/ \\omega\\)\n\nCreate two functions that take \\(R\\), \\(t\\), and \\(\\omega\\) as parameters\nCreate a vector \\(t\\) of length 100 that achieves one full rotation\nPlot the \\(x\\) position against \\(t\\) and the \\(y\\) position against \\(t\\) on the same graph\nNow plot \\(x\\) against \\(y\\). Do the plots make sense?\nCreate 4 more functions: 2 for velocity (in x and y direction) and 2 for acceleration\nPlot the velocity against the position (say in the x direction) and the velocity against acceleration\nWhat have you learned?\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Homework\n\nTake a look at dataset iris (?iris)\nCompute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width\nCompute the average by each Species of flower (hint: use group_by and summarise functions from dplyr)\nProduce the plot that looks like this:\n\n\n\n\n\n\n\nProduce the plot that looks like this: (check out geom_density and facet_wrap functions)\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral (on paper) from \\(0\\) to \\(2\\pi\\) and use R’s integrate function to validate your answer.\n\n\n\nhttps://ericnovik.github.io/smac.html"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#session-6-outline",
+    "href": "stats-math/06-lecture/06-lecture.html#session-6-outline",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Session 6 Outline",
+    "text": "Session 6 Outline\n\n\nVectors and vector arithmetic\nMatrices and matrix arithmetic\nDeterminants\nMatrix inverses\nSolving linear systems\n\n\n\nInspiration for a lot of the examples came from the Essense of Linear Algebra by 3blue1brown\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Vectors",
+    "text": "Introduction to Vectors\n\n\nLinear Algebra offers a language for manipulating n-dimensional objects\nVectors are the basic building block of Linear Algebra\nA straightforward way to think about them is as a column of numbers\nHow we interpret the entries is up to us\nVectors are typically written in a column form:\n\n\n\n\\[\\begin{align} V = \\left[\\begin{matrix}a\\\\b\\\\c\\end{matrix}\\right] \\end{align}\\]\n\n\n\nIf we want the row version, we transpose it:\n\n\\[\\begin{align} V^T = \\left[\\begin{matrix}a & b & c\\end{matrix}\\right] \\end{align}\\]"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-1",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Vectors",
+    "text": "Introduction to Vectors\n\n\nIn R, vectors, unfortunately, are neither row nor column vectors\nR makes some assumptions when performing vector-matrix arithmetic\nWe already saw lots of vectors whenever we used c() function or generated random numbers with, say runif() function\n\n\n\n\nset.seed(123)\n(v &lt;- c(sample(3)))\n\n[1] 3 1 2\n\nclass(v)\n\n[1] \"integer\"\n\n\n\n\n\nR reports the \\(v\\) is an integer vector\nYou can add two vectors in a usual way, elementwise:\n\n\\[\\begin{align} \\left[\\begin{matrix}3\\\\1\\\\2\\end{matrix}\\right]+\\left[\\begin{matrix}2\\\\1\\\\3\\end{matrix}\\right]=\\left[\\begin{matrix}5\\\\2\\\\5\\end{matrix}\\right] \\end{align}\\]\n\n\n\nIn R:\n\n\nv\n\n[1] 3 1 2\n\nw\n\n[1] 2 1 3\n\nv + w\n\n[1] 5 2 5"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-2",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-2",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Vectors",
+    "text": "Introduction to Vectors\n\n\nYou can take linear combination \\(av + bw\\), where a and b are scalars\n\n\n2*v + 3*w # linear combination\n\n[1] 12  5 13\n\n\n\n\n\nYou can also take dot product: \\(v \\cdot w\\), which results in a scalar\n\n\\[\\begin{align} v \\cdot w = \\left[\\begin{matrix}3 & 1 & 2\\end{matrix}\\right]\\left[\\begin{matrix}2\\\\1\\\\3\\end{matrix}\\right]=\\left[\\begin{matrix}13\\end{matrix}\\right] \\end{align}\\]\n\n\n\nIn R, we multiply vectors and Matrices with %*%, not *, which will produce a component-wise multiplication, not a dot product\n\n\nv %*% w # dot product\n\n     [,1]\n[1,]   13\n\nv * w   # component wise multiplication\n\n[1] 6 1 6\n\n\n\n\n\nWe write dot product this way:\n\n\\[\nv^T w = v_1w_1 + v_2w_2 + \\cdots + v_nw_n\n\\]"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-3",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-3",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Vectors",
+    "text": "Introduction to Vectors\n\n\nWhen is dot product zero?\n\n\nv &lt;- c(1, 1)\nw &lt;- c(1, -1)\nv %*% w\n\n     [,1]\n[1,]    0\n\n(3 * v) %*% (4 * w)\n\n     [,1]\n[1,]    0\n\n\n\n\n\nThese vectors are perpendicular (orthogonal)"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-4",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-vectors-4",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Vectors",
+    "text": "Introduction to Vectors\n\nA length of a vector is the square root of the dot product with itself\n\n\\[\n||v|| = \\sqrt{v \\cdot v} = \\sqrt{v_1^2 + v_2^2 + \\cdots v_n^2}\n\\]\n\nv &lt;- c(1, 1)  \nsqrt(v %*% v) # this is sqrt of 2 \n\n         [,1]\n[1,] 1.414214"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-matrices",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-matrices",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Matrices",
+    "text": "Introduction to Matrices\n\n\nYou can think of a matrix as a rectangular (or square) set of numbers\n\\(m{\\times}n\\) matrix has m rows and n columns\nIn statistics, it is convenient to think of a matrix as n columns where each column is a variable like the price of the house, and the rows are the observations for each house\nIn Linear Algebra books, you will often see linear equations written as \\(Ax = b\\), where we are trying to find \\(x\\)\nIn statistics, we usually write the same thing as \\(X\\beta = y\\), and we are trying to find \\(\\beta\\)\nAnother source of confusion: matrix \\(A\\) is sometimes called a coefficient matrix in Linear Algebra books. In statistics, the entries in \\(A\\) (the \\(X\\) matrix) have observations, and the \\(\\beta\\) vector contains coefficients estimated from A and b (X and y)."
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#introduction-to-matrices-1",
+    "href": "stats-math/06-lecture/06-lecture.html#introduction-to-matrices-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Introduction to Matrices",
+    "text": "Introduction to Matrices\n\nBasisPlot of v and wTransformationR Example\n\n\n\n\nA good way to think about the Matrices is that they act on vectors and transform them in some way (stretch or turn them)\nYou can think of this transformation as encoding the eventual locations of the basis vectors\nStandard basis vectors in \\(R^2\\) (two-dimensional space), are commonly called \\(\\hat{i}\\) with location \\((1, 0)\\), and \\(\\hat{j}\\) with location \\((0, 1)\\).\nNotice their dot product is zero: \\(\\hat{i} \\cdot \\hat{j} = 0\\) and so they are orthogonal\nLet’s look at one simple transformation – rotation by 90 degrees counter-clockwise\n\n\n\n\n\n\n\n\nRecall, vectors \\(v\\) and \\(w\\):\n\n\\[\nv = \\left[ \\begin{matrix}1\\\\2\\end{matrix} \\right]\nw = \\left[ \\begin{matrix}3\\\\1\\end{matrix} \\right]\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe following matrix encodes a 90-degree, counterclockwise rotation. Why?\n\n\\[\nR =\n\\begin{bmatrix}\n0 & -1 \\\\\n1 & 0\n\\end{bmatrix}\n\\]\n\n\n\nLet’s see how this matrix will act on vectors \\(v\\) and \\(w\\). That’s where multiplication comes in.\n\n\\[\nRv =\n\\begin{bmatrix}\n0 & -1 \\\\\n1 & 0\n\\end{bmatrix}\n\\begin{bmatrix}\n1 \\\\\n2\n\\end{bmatrix}\n=\n1\n\\begin{bmatrix}\n0 \\\\\n1\n\\end{bmatrix}\n+\n2\n\\begin{bmatrix}\n-1 \\\\\n0\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n0 \\\\\n1\n\\end{bmatrix}\n+\n\\begin{bmatrix}\n-2 \\\\\n0\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n-2 \\\\\n1\n\\end{bmatrix}\n\\]\n\n\n\nWe scale the first vector, then scale the second, and then add.\n\n\n\n\n\n\n\n\nThe following shows the same operation you can do in one step in R.\n\n\nR &lt;- matrix(c(0, 1, -1, 0), ncol = 2)\nR\n\n     [,1] [,2]\n[1,]    0   -1\n[2,]    1    0\n\nv &lt;- c(1, 2)\n(v_prime &lt;- R %*% v)\n\n     [,1]\n[1,]   -2\n[2,]    1\n\n\n\n\n\n\nNow let’s plot \\(v\\) and \\(v'\\). Notice, the 90 degree rotation"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#matrix-multiplication",
+    "href": "stats-math/06-lecture/06-lecture.html#matrix-multiplication",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Matrix Multiplication",
+    "text": "Matrix Multiplication\n\nMultiplicationPlotYour Turn\n\n\n\n\nOur matrix encodes a rotation of every single vector in \\(R^2\\).\nIn particular, it rotates every point \\((x, y)\\) in \\(R^2\\) by 90 degrees\nWe can do this transformation in one go by applying the Rotation matrix to another matrix comprising our vectors \\(v\\) and \\(w\\)\nThe number of columns in the Rotation matrix has to match the number of rows in the \\(K = [v, w]\\) matrix\n\n\n\n\n(K &lt;- matrix(c(v, w), ncol = 2))\n\n     [,1] [,2]\n[1,]    1    3\n[2,]    2    1\n\n(K_prime &lt;- R %*% K)\n\n     [,1] [,2]\n[1,]   -2   -1\n[2,]    1    3\n\n\n\n\n\nThe resulting matrix \\(K\\), has the correctly rotated \\(v\\) in the first column and rotated \\(w\\) in the second column.\nAnother way to think about this operation is to encode two transformations in \\(K'\\) — the \\(K\\) transformation followed by the \\(R\\) transformation. We can now use the resulting \\(K'\\) matrix and apply these two transformations in one swoop to any vector in \\(R^2\\).\nThink about why matrix multiplication, in general, does not commute — \\(RK \\neq KR\\)\n\n\n\n\n\nRotating red (\\(v = [1 \\ 2]\\)) and blue (\\(w = [3 \\ 1]\\)) vectors by 90 degrees\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour Turn: Come up with a 90-degree clockwise rotation matrix and show that it sends \\((2, 2)\\) to \\((2, -2)\\)\nNow pick three vectors in \\(R^2\\) and rotate all three at the same time"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#linear-independence-and-determinants",
+    "href": "stats-math/06-lecture/06-lecture.html#linear-independence-and-determinants",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Linear Independence and Determinants",
+    "text": "Linear Independence and Determinants\n\n\n\n\nThink of a determinant as a (signed) area scaling factor from the basis \\((\\hat{i}, \\hat{j})\\) to the transformed vectors\nThe area represented by two \\(R^2\\) basis vectors is 1\n\n\n\n\n# this matrix scales the area by 12\n(X &lt;- matrix(c(4, 0, 0, 3), ncol = 2))\n\n     [,1] [,2]\n[1,]    4    0\n[2,]    0    3\n\n# compute the determinant\ndet(X)\n\n[1] 12\n\n\n\n\n\nWhat happens if the columns of \\(X\\) are linear combinations of each other?\nGeometrically, that means that in \\(R^2\\), they both sit on the same line\n\n\n\n\n\n# the second column is the first column * 1.5\n(X &lt;- matrix(c(2, 1, 1.5 * 2, 1.5 * 1), ncol = 2))\n\n     [,1] [,2]\n[1,]    2  3.0\n[2,]    1  1.5\n\n# compute the determinant\ndet(X)\n\n[1] 0"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#example-random-matrix",
+    "href": "stats-math/06-lecture/06-lecture.html#example-random-matrix",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: Random Matrix",
+    "text": "Example: Random Matrix\n\n\nGenerate a random, say 5x5 matrix\nIs it likely that we will get linearly dependent columns?\n\n\n\n\nset.seed(123)\n(X &lt;- matrix(sample(25), ncol = 5))\n\n     [,1] [,2] [,3] [,4] [,5]\n[1,]   15   18    9   25    2\n[2,]   19   11   21   17   16\n[3,]   14    5   24    1    7\n[4,]    3   23   20   12    8\n[5,]   10    6   22   13    4\n\ndet(X)\n\n[1] 1155943\n\n\n\n\n\nThis is a full rank matrix that encodes a transformation in \\(R^5\\) — 5-dimensional space"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#computing-determinants",
+    "href": "stats-math/06-lecture/06-lecture.html#computing-determinants",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Computing Determinants",
+    "text": "Computing Determinants\n\nDon’t bother doing it by hand\n\n\\[\\begin{align} A = \\left[\\begin{matrix}a & c\\\\b & d\\end{matrix}\\right] \\end{align}\\]\\[\\begin{align} \\text{det}(A) = a d - b c \\end{align}\\]\\[\\begin{align} B = \\left[\\begin{matrix}a & d & g\\\\b & e & h\\\\c & f & i\\end{matrix}\\right] \\end{align}\\]\\[\\begin{align} \\text{det}(B) = a e i - a f h - b d i + b f g + c d h - c e g \\end{align}\\]"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#linear-systems-and-inverses",
+    "href": "stats-math/06-lecture/06-lecture.html#linear-systems-and-inverses",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Linear Systems and Inverses",
+    "text": "Linear Systems and Inverses\n\nLinear SystemsNo solutionIdea of an inverseInverse in RAx = b\n\n\n\n\nOne of the key ideas from Linear Algebra that is relevant to statistics is solving linear systems\nThis is where estimating coefficients in \\(X\\beta = y\\) comes from\nIf \\(X\\) is a square matrix, the problem is not statistical but algebraic\nThe reason is that if we have the same number of equations as we have unknowns, we can solve the system exactly unless X is not full rank\nFor example, try to solve this system:\n\n\n\n\\[\n2x + y = 1 \\\\\n4x + 2y = 1\n\\]\n\n\n\nQuestion: Geometrically, what does it mean to solve a system of equations?\n\n\n\n\n\n\nYou should now have a deeper understanding of why there is no solution\n\n\n(A &lt;- matrix(c(2, 4, 1, 2), ncol = 2))\n\n     [,1] [,2]\n[1,]    2    1\n[2,]    4    2\n\ndet(A)\n\n[1] 0\n\n\n\n\n\nBefore we talk about overdetermined systems (more equations than unknowns) that we see in statistics, let’s see how it works in the square matrix case\n\n\n\n\n\n\nTo see what a matrix inverse does, let’s bring back the 90-degree counterclockwise rotation matrix \\(A\\)\n\n\\[\\begin{align} A = \\left[\\begin{matrix}0 & -1\\\\1 & 0\\end{matrix}\\right] \\end{align}\\]\n\n\n\nThe idea of an inverse is to reverse the action of this transformation\nIn this case, we need a clockwise 90-degree rotation matrix\nWe can find that matrix by directly tracing the basis vectors\n\n\n\n\\[\\begin{align} A^{-1} = \\left[\\begin{matrix}0 & 1\\\\-1 & 0\\end{matrix}\\right] \\end{align}\\]\n\n\n\n\n\nLet’s check our results in R. When you multiply a matrix by its inverse, you get back the identity matrix (which is like when you divide a scalar by its reciprocal, you get 1)\n\n\n\n\n(A &lt;- matrix(c(0, 1, -1, 0), 2, 2))\n\n     [,1] [,2]\n[1,]    0   -1\n[2,]    1    0\n\n(A_inv &lt;- matrix(c(0, -1, 1, 0), 2, 2))\n\n     [,1] [,2]\n[1,]    0    1\n[2,]   -1    0\n\nA_inv %*% A\n\n     [,1] [,2]\n[1,]    1    0\n[2,]    0    1\n\n# find an inverse using R's solve function\nsolve(A)\n\n     [,1] [,2]\n[1,]    0    1\n[2,]   -1    0\n\n\n\n\n\n\n\nWe are now ready to solve the square linear system \\(Ax = b\\), in the case when A is full rank\n\n\\[\n\\begin{eqnarray}\nAx & = & b \\\\\nA^{-1}Ax & = & A^{-1}b \\\\\nx & = & A^{-1}b\n\\end{eqnarray}\n\\]\n\n\n\nThe general solution in two-dimensional case:\n\n\\[\\begin{align} \\left[\\begin{matrix}a & c\\\\b & d\\end{matrix}\\right]x = \\left[\\begin{matrix}b_{1}\\\\b_{2}\\end{matrix}\\right] \\end{align}\\]\\[\\begin{align} \\text{det}(A) = a d - b c \\end{align}\\]\\[\\begin{align} A^{-1} = \\left[\\begin{matrix}\\frac{1 + \\frac{b c}{a \\left(d - \\frac{b c}{a}\\right)}}{a} & - \\frac{c}{a \\left(d - \\frac{b c}{a}\\right)}\\\\- \\frac{b}{a \\left(d - \\frac{b c}{a}\\right)} & \\frac{1}{d - \\frac{b c}{a}}\\end{matrix}\\right] \\end{align}\\]\\[\\begin{align} x = \\left[\\begin{matrix}\\frac{b_{1} d - b_{2} c}{a d - b c}\\\\\\frac{a b_{2} - b b_{1}}{a d - b c}\\end{matrix}\\right] \\end{align}\\]\n\n\n\nIn R, solve(A) inverts the matrix, and solve(A, b) solves \\(Ax = b\\).\n\n\n(A &lt;- matrix(sample(9), ncol = 3))\n\n     [,1] [,2] [,3]\n[1,]    3    1    7\n[2,]    4    9    2\n[3,]    6    5    8\n\n(b &lt;- c(1, 2, 3))\n\n[1] 1 2 3\n\nsolve(A, b) %&gt;% round(2)\n\n[1]  0.93 -0.14 -0.24\n\n# same as above\nsolve(A) %*% b %&gt;% round(2)\n\n      [,1]\n[1,]  0.93\n[2,] -0.14\n[3,] -0.24"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#your-turn-1",
+    "href": "stats-math/06-lecture/06-lecture.html#your-turn-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn",
+    "text": "Your Turn\n\nConsider the following system of equations:\n\n\\[\n\\begin{eqnarray}\n3x + 2y + 1.5z & = & 4 \\\\\n7x + y & = & 2 \\\\\n3y + 2z & = & 1\n\\end{eqnarray}\n\\]\n\nExpress it in matrix form, solve it in R using the solve() function, and validate that the results are correct"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#some-useful-rules",
+    "href": "stats-math/06-lecture/06-lecture.html#some-useful-rules",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Some Useful Rules",
+    "text": "Some Useful Rules\n\nIf you put on socks and then shoes, the first to be taken off are the ____\n\n— Gilbert Strang (discussing the order of undoing the inverse)\n\\[\n(ABC \\dots)^{-1} = \\dots C^{-1}B^{-1}A^{-1} \\\\\n(A^T)^{-1} = (A^{-1})^T \\\\\n(A + B)^T = A^T + B^T \\\\\n(ABC \\dots)^T = \\dots C^T B^T A^T\n\\]\n\nFor a complete list, see the Matrix Cookbook"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#solving-n-p-systems",
+    "href": "stats-math/06-lecture/06-lecture.html#solving-n-p-systems",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Solving n > p Systems",
+    "text": "Solving n &gt; p Systems\n\n\nStatistical inference is concerned with “solving” overdetermined systems\nWe have lots of observations with relatively few variables. (Sometimes, we have more variables than observations, but we will not discuss it here)\nClearly, there is no exact solution\nIn fact, there are typically infinitely many ways in which you can draw a line through a cloud of points or a plane through n-dimensional space\nOptimization based (or frequentist) inference is concerned with finding the most likely values of the unknowns giving rise to that line (or plane) and approximating their variance\nIntegration based (or Bayesian) inference is concerned with finding a joint PDF of the unknowns – all plausible values weighted by their probability. Therefore, the “estimated variance” is a consequence of this PDF. (Recall our example of estimating variance from the distribution of the difference in heights.) In this sense, Bayesian inference is an uncertainty-preserving system, a very desirable quality.\nFor simple linear models, both of these methods produce similar results, so we will first show the optimized solution."
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#solving-an-overdetermined-xhatbeta-y",
+    "href": "stats-math/06-lecture/06-lecture.html#solving-an-overdetermined-xhatbeta-y",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)",
+    "text": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)\n\n\nWe are switching to a more familiar (to statisticians) notation of \\(X \\beta = y\\) (instead of \\(Ax = b\\))\nWe typically augment the \\(X\\) matrix with the column of 1s on the left to model the intercept term, sometimes called \\(\\beta_0\\)\nThis should make sense when you think about \\(Xb\\) as the linear combination of columns of \\(X\\)\nIn this form, \\(X\\) is usually called the design matrix or the model matrix\nThe problem is that \\(X\\) is not invertible, even if columns of \\(X\\) are linearly independent\nLet’s say that \\(X\\) is a \\(3 \\times 2\\) matrix (3 rows and 2 columns), and columns are linearly independent. Note that \\(\\beta\\) is \\(2 \\times 1\\) and \\(y\\) is \\(3 \\times 1\\).\n\\(X\\) and its linear combinations \\(X\\beta\\) span a plane in three-dimensional space – there is no way for it to reach the target vector \\(y\\) in \\(R^3\\)"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#approximating-a-solution-to-overdetermined-xhatbeta-y",
+    "href": "stats-math/06-lecture/06-lecture.html#approximating-a-solution-to-overdetermined-xhatbeta-y",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Approximating a Solution to Overdetermined \\(X\\hat{\\beta} = y\\)",
+    "text": "Approximating a Solution to Overdetermined \\(X\\hat{\\beta} = y\\)\n\nIf we can not reach \\(y\\), we need to find a vector in the column space of \\(X\\) that is closest (in a certain sense) to \\(y\\)\nThe projection of \\(y\\) onto this plane gives us the answer\n\n\n\nImage from Introduction to Linear Algebra, Boyd and Vandenberghe"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#solving-an-overdetermined-xhatbeta-y-1",
+    "href": "stats-math/06-lecture/06-lecture.html#solving-an-overdetermined-xhatbeta-y-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)",
+    "text": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)\n\nSolutionExample of an \\(X^TX\\)\n\n\n\nThis residual \\(r\\) is also called the error term\nThis error, \\(y - X\\hat{\\beta}\\), is the smallest when it’s perpendicular to the plane\nAnother way of saying that is that: \\[\nX^T(y - X\\hat{\\beta}) = 0\n\\]\nWe can now solve this normal equation:\n\n\\[\n\\begin{eqnarray}\nX^T(y - X\\hat{\\beta}) & = & 0 \\\\\nX^TX\\hat{\\beta} & = & X^Ty \\\\\n(X^TX)^{-1}(X^TX)\\hat{\\beta} & = & (X^TX)^{-1}X^Ty \\\\\n\\hat{\\beta} & = & (X^TX)^{-1}X^Ty\n\\end{eqnarray}\n\\]\n\n\n\nMatrix \\(X^TX\\) is square and symmetric. It is also invertible if the columns of \\(X\\) are linearly independent:\n\n\n(X &lt;- matrix(sample(6), ncol = 2))\n\n     [,1] [,2]\n[1,]    2    1\n[2,]    5    4\n[3,]    3    6\n\n(XtX &lt;- t(X) %*% X)\n\n     [,1] [,2]\n[1,]   38   40\n[2,]   40   53\n\nsolve(XtX) %&gt;% round(2)\n\n      [,1]  [,2]\n[1,]  0.13 -0.10\n[2,] -0.10  0.09\n\n(X &lt;- matrix(c(1, 2, 3, 2, 4, 6), ncol = 2))\n\n     [,1] [,2]\n[1,]    1    2\n[2,]    2    4\n[3,]    3    6\n\n(XtX &lt;- t(X) %*% X)  # will not invert\n\n     [,1] [,2]\n[1,]   14   28\n[2,]   28   56"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#motion-in-the-straight-line",
+    "href": "stats-math/06-lecture/06-lecture.html#motion-in-the-straight-line",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Motion in the Straight Line",
+    "text": "Motion in the Straight Line\n\nRecall, from lecture 1, our example of a car moving in a straight line where we have noisy measurements of its position over time\nAt the time, we assumed we were able somehow to find the intercept and slope of the equation\nWe are now in a position to solve the problem"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#motion-in-the-straight-line-1",
+    "href": "stats-math/06-lecture/06-lecture.html#motion-in-the-straight-line-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Motion in the Straight Line",
+    "text": "Motion in the Straight Line\n\nSetupSolutionPlot the Fit\n\n\n\n\nThis is a quadratic function. How can we solve it using linear regression (the least squares method)?\nWe assumed the equation of motion was \\(x(t) = a + bt^2\\)\nThe unknowns are \\(a\\) and \\(b\\)\nLet’s express it in the matrix notation and relabel the variables to match our system: \\(y = \\beta_0 + \\beta x^2\\). Nothing changes, just the labels.\nWhat is our design matrix \\(X\\)? We had 51 observations, so \\(X\\) will have two columns with 51 elements each: a column of 1s and a column representing the squares measurements: \\(x^2\\).\nOur unknown vector \\(\\hat{\\beta}\\) has two elements \\((\\hat{\\beta_0},\\, \\hat{\\beta_1)}\\)\n\\(y\\) is our outcome vector of length 51, capturing the car’s position at each time point \\(x\\).\nThis way, \\(y = X\\hat{\\beta}\\) captures our system in matrix form\n\n\n\n\n\n\n\n# length of x (our time vector)\nlength(x)\n\n[1] 51\n\n# first few elements of x\nhead(x)\n\n[1] 0.0 0.1 0.2 0.3 0.4 0.5\n\n# construct the design matrix\nX &lt;- matrix(c(rep(1, length(x)), x^2), ncol = 2)\nhead(X)\n\n     [,1] [,2]\n[1,]    1 0.00\n[2,]    1 0.01\n[3,]    1 0.04\n[4,]    1 0.09\n[5,]    1 0.16\n[6,]    1 0.25\n\n# inspect the vector y\nlength(y)\n\n[1] 51\n\nhead(y)\n\n[1] -2.4417028  6.7615084 -0.7502334 -0.4900157 -3.5129263  1.9331119\n\n\n\n\nRecall, that the least squares estimate of \\(\\beta\\) is given by \\(\\hat{\\beta} = (X^TX)^{-1}X^Ty\\)\n\n\nbeta_hat &lt;- solve(t(X) %*% X) %*% t(X) %*% y\nbeta_hat %&gt;% round(2)\n\n     [,1]\n[1,] 1.46\n[2,] 3.01\n\n# compare to R's lm()\nlm(y ~ I(x^2))\n\n\nCall:\nlm(formula = y ~ I(x^2))\n\nCoefficients:\n(Intercept)       I(x^2)  \n      1.460        3.014  \n\n\n\nWarning: do not use \\((X^TX)^{-1}X^Ty\\) directly as above; it’s computationally inefficient\n\n\n\n\n\n\nd &lt;- data.frame(yhat = beta_hat[1] + beta_hat[2] * x^2)\np + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#your-turn-2",
+    "href": "stats-math/06-lecture/06-lecture.html#your-turn-2",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn",
+    "text": "Your Turn\n\nLook at the dataset mtcars\nPlot mpg against wp, treating mpg as the output variable \\(y\\). (We generally don’t like to use the words dependent vs. independent in this context)\nUsing the normal equations, find the intercept and slope of the best-fit line\nValidate that it matches the output from lm\nNow plot the line over the data and see if it “fits”"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#homework",
+    "href": "stats-math/06-lecture/06-lecture.html#homework",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Homework",
+    "text": "Homework\n\nWe are designing a Spam filter. Assume that 80% of email is spam. In 10% of spam emails, the word “free” is used, whereas this word is only used in 1% of non-spam emails. A new email has just arrived, which does contain the word “free.” What is the probability that it is spam?\nAssume male and female heights follow a normal distribution with the following parameters:\n\nmu_m &lt;- 69.1   # mean heights of US males in inches\nsigma_m &lt;- 2.9 # standard deviation for same\nmu_w &lt;- 63.7   # mean heights of US women in inches\nsigma_w &lt;- 2.7 # standard deviation of the same\n\nGenerate realizations from the distribution of differences in heights\nCompute the P(male_h &gt; femal_h) and compare it with the theoretical value\nCompute the variance and standard deviation of this distribution and compare them to the theoretical value"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#homework-solutions",
+    "href": "stats-math/06-lecture/06-lecture.html#homework-solutions",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Homework Solutions",
+    "text": "Homework Solutions\n\nmu_m &lt;- 69.1   # mean heights of US males in inches\nsigma_m &lt;- 2.9 # standard deviation for same\nmu_w &lt;- 63.7   # mean heights of US women in inches\nsigma_w &lt;- 2.7 # standard deviation of the same\n\nn &lt;- 1e5\nz &lt;- numeric(n)\nfor (i in 1:n) {\n  height_m &lt;- rnorm(1, mu_m, sigma_m)\n  height_w &lt;- rnorm(1, mu_w, sigma_w)\n  z[i] &lt;- height_m - height_w\n}\n\nmean(z &gt; 0)\n\n[1] 0.91417\n\nvar(z)\n\n[1] 15.76613\n\nsd(z)\n\n[1] 3.970658\n\nhist(z)"
+  },
+  {
+    "objectID": "stats-math/06-lecture/06-lecture.html#new-homework",
+    "href": "stats-math/06-lecture/06-lecture.html#new-homework",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "New Homework",
+    "text": "New Homework\n\nFor drawing 2-d vectors, you may find these functions helpful\nHere is how you could use them:\n\n\nv &lt;- c(1, 2)\nw &lt;- c(3, 1)\ndraw_vector(v, col = 'red') %&gt;%\n  add_vector(w, col = 'blue', linetype = \"dashed\")\n\n\n\nCreate two new vectors v = [-1, 3] and w = [2, 1]\nApply the clockwise rotation matrix to each and plot their original and final positions\nApply the counterclockwise rotation matrix to the result and convince yourself that the vectors are back at v = [-1, 3] and w = [2, 1]\nWrite the following system in matrix form \\[\n\\begin{eqnarray}\n3x + 2y + z = 1 \\\\\n2x + y + 4z = 2 \\\\\n1x + 7y + 2z = 3 \\\\\n\\end{eqnarray}\n\\]\nCompute the determinant. Are the columns linearly independent?\nSolve the system and report the results\nPerform the following analysis:\n\n\n# install this package: install.packages('foreign')\nlibrary(foreign)\n\n# dowlaod a dataset:\niq &lt;- read.dta(\"http://www.stat.columbia.edu/~gelman/arm/examples/child.iq/kidiq.dta\")\n\n# dataset contains IQs of moms and their kids (kid_score)\nhead(iq)\n\n  kid_score mom_hs    mom_iq mom_work mom_age\n1        65      1 121.11753        4      27\n2        98      1  89.36188        4      25\n3        85      1 115.44316        4      27\n4        83      1  99.44964        3      25\n5       115      1  92.74571        4      27\n6        98      0 107.90184        1      18\n\n\n\nPlot the relationship between mom_iq and kid_score (make kid_score the output)\nWhat can you tell from the plot?\nNow color by mom_hs (1 means mom completed high school). What can you tell?\nCompute the regression line (by any method) for kid_score ~ mom_iq\nPlot the regression line over the data. Does it fit?\nNow compute the regression conditional on mom completing high school (i.e., only look at records where mom_hs = 1)\nDo the same, but now for mom_hs = 0\nPlot both regression lines (in different colors) over the observations. Do these regression lines make sense?\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#session-4-outline",
@@ -2195,7 +2370,7 @@
     "href": "stats-math/05-lecture/05-lecture.html#session-5-outline",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Session 5 Outline",
-    "text": "Session 5 Outline\n\n\nRandom variables\nBernoulli, Binomial, Geometric\nPDF and CDF\nExponential, Normal\nExpectations, Variance\nPoisson Random Variable\nJoint, Marginal, and Conditional\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "text": "Session 5 Outline\n\n\nRandom variables\nBernoulli, Binomial, Geometric\nPDF and CDF\nLOTUS\nPoisson\nExpectations, Variance\nSt. Petersburg Paradox\nNormal\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#random-variables-are-not-random",
@@ -2230,7 +2405,7 @@
     "href": "stats-math/05-lecture/05-lecture.html#geometric-rv",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Geometric RV",
-    "text": "Geometric RV\n\nPMFCheck ConvergenceExamplesPMF\n\n\n\n\nGeometric is a discrete waiting time distribution, and Exponential is its continuous analog\nIf \\(X\\) is the number of failures before first success \\(X \\sim \\text{Geometric}(\\theta)\\), where \\(\\theta\\) is probability of success\nExample: We keep flipping a coin until we get success, say Heads\n\nSay we flip five times, which means we get the following sequence: T T T T H\nThe probability of this sequence is: \\((\\frac{1}{2})^4 (\\frac{1}{2})^1\\)\nNotice this is the only way to get this sequence\n\nIf \\(x\\) is the number of failures, the PMF is \\(P(X = x) = (1 - \\theta)^x \\theta\\), where \\(x = 0, 1, 2, ...\\)\n\n\n\n\n\nTo check if this is a valid PMF we need to sum over all \\(x\\):\n\n\n\\[\n\\begin{align}\n\\sum_{x = 0}^{\\infty} \\theta (1 - \\theta)^x  =\n\\theta \\sum_{x = 0}^{\\infty} (1 - \\theta)^x \\\\\n\\text{Let } u = 1 - \\theta \\\\\n\\theta \\sum_{x = 0}^{\\infty} u^x = \\theta \\frac{1}{1-u} = \\theta \\frac{1}{1-1 + \\theta} = \\frac{\\theta}{\\theta} = 1\n\\end{align}\n\\]\n\n\n\nThe last bit comes from geometric series for \\(|u| &lt; 1\\)\n\n\n\n\n\nThe probability of T T T H (x = 3 failures) when \\(\\theta = 1/2\\), has to be \\((1/2)^4\\) or \\(1/16\\)\n\n\n\nx &lt;- 3; theta &lt;- 1/2\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 1/16\n\n\n\n\n\nIf \\(\\theta = 1/3\\), the probability of the same sequence has to be \\((2/3)^3 \\cdot 1/3 = 8/81\\)\n\n\nx &lt;- 3; theta &lt;- 1/3\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 8/81\n\n\n\n\n\nThe PMF is unbounded, but it converges to 1 as demonstrated before\n\n\n\n\n\n\nx &lt;-  0:15\ntheta &lt;- 1/5\ny &lt;- dgeom(x = x, prob = theta)\nd &lt;- data.frame(x, y)\np &lt;- ggplot(d, aes(x, y))\np + geom_col(width = 0.2) +\nxlab(\"x = Number of failures before first success\") +\n ylab(expression(P(X == x))) +\nggtitle(\"X ~ Geom(1/5)\", \n subtitle = expression(PDF: p[X](x) == P(X == x)))"
+    "text": "Geometric RV\n\nPMFCheck ConvergenceExamplesPMF\n\n\n\n\nGeometric is a discrete waiting time distribution, and Exponential is its continuous analog\nIf \\(X\\) is the number of failures before first success \\(X \\sim \\text{Geometric}(\\theta)\\), where \\(\\theta\\) is probability of success\nExample: We keep flipping a coin until we get success, say Heads\n\nSay we flip five times, which means we get the following sequence: T T T T H\nThe probability of this sequence is: \\((\\frac{1}{2})^4 (\\frac{1}{2})^1\\)\nNotice this is the only way to get this sequence\n\nIf \\(x\\) is the number of failures, the PMF is \\(P(X = x) = (1 - \\theta)^x \\theta\\), where \\(x = 0, 1, 2, ...\\)\n\n\n\n\n\nTo check if this is a valid PMF, we need to sum over all \\(x\\):\n\n\n\\[\n\\begin{align}\n\\sum_{x = 0}^{\\infty} \\theta (1 - \\theta)^x  =\n\\theta \\sum_{x = 0}^{\\infty} (1 - \\theta)^x \\\\\n\\text{Let } u = 1 - \\theta \\\\\n\\theta \\sum_{x = 0}^{\\infty} u^x = \\theta \\frac{1}{1-u} = \\theta \\frac{1}{1-1 + \\theta} = \\frac{\\theta}{\\theta} = 1\n\\end{align}\n\\]\n\n\n\nThe last bit comes from geometric series for \\(|u| &lt; 1\\)\n\n\n\n\n\nThe probability of T T T H (x = 3 failures) when \\(\\theta = 1/2\\), has to be \\((1/2)^4\\) or \\(1/16\\)\n\n\n\nx &lt;- 3; theta &lt;- 1/2\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 1/16\n\n\n\n\n\nIf \\(\\theta = 1/3\\), the probability of the same sequence has to be \\((2/3)^3 \\cdot 1/3 = 8/81\\)\n\n\nx &lt;- 3; theta &lt;- 1/3\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 8/81\n\n\n\n\n\nThe PMF is unbounded, but it converges to 1 as demonstrated before\n\n\n\n\n\n\nx &lt;-  0:15\ntheta &lt;- 1/5\ny &lt;- dgeom(x = x, prob = theta)\nd &lt;- data.frame(x, y)\np &lt;- ggplot(d, aes(x, y))\np + geom_col(width = 0.2) +\nxlab(\"x = Number of failures before first success\") +\n ylab(expression(P(X == x))) +\nggtitle(\"X ~ Geom(1/5)\", \n subtitle = expression(PDF: p[X](x) == P(X == x)))"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#expectations",
@@ -2244,7 +2419,7 @@
     "href": "stats-math/05-lecture/05-lecture.html#st.-petersburg-paradox",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "St. Petersburg paradox",
-    "text": "St. Petersburg paradox\n\nFirst Success DistributionThe ParadoxExpected Utility\n\n\n\n\nThis is a slight modification to Geometric as we are counting the number of failures, including the first success vs Geometric, where we counted the failures\n\\(X \\sim \\text{FS}(\\theta)\\), if \\(\\P(X = x) = (1 - \\theta)^{x - 1} \\theta\\), for \\(x = 1, 2, 3, ...\\)\n\\(X - 1 \\sim \\text{Geom}(\\theta)\\)\nSay, \\(Y \\sim \\text{Geom}(\\theta)\\), then \\(\\E(X) = \\E(Y + 1) = \\E(Y) + 1 = \\frac{1 - \\theta}{\\theta} + \\frac{\\theta}{\\theta} = \\frac{1}{\\theta}\\)\n\n\n\n\n\n\nSuppose you are offered the following game: you flip a coin until heads appear. You get $2 if the game ends after round 1, $4 after two rounds, $8 after three, and so on.\n\n\n\n\\[\n\\E(X) = \\sum_{n=1}^{\\infty} \\frac{1}{2^n} \\cdot 2^n =  \\sum_{n=1}^{\\infty} 1 = \\infty\n\\]\n\n\n\nVote how much are you willing to pay to play this game? (you can’t lose)\nHow many rounds do we expect to play? If \\(N\\) is the number of rounds, then \\(N \\sim \\text{FS}(1/2)\\), and \\(\\E(N) = \\frac{1}{1/2} = 2\\)\nIn addition, the utility of money has been shown to be non-linear\n\n\n\n\n\n\nDaniel Bernoulli (1700 - 1782) proposed that \\(\\frac{dU}{dw} \\propto \\frac{1}{w}\\), where \\(U\\) is the utility function and \\(w\\) is the wealth\nThis gives rise to the following differential equation \\(\\frac{dU}{dw} = k \\frac{1}{w}\\), where \\(k\\) is the constant of proportionality\nIntegrating both sides: \\(\\int dU = k \\int \\frac{1}{w} dw\\) we get:\n\n\\(U(w) = k \\log(w) + C\\), where \\(C\\) is some initial wealth\n\nFor simplicity let’s take \\(k=1\\), and consider \\(\\log = \\log_2\\)\n\n\n\n\\[\n\\E(U) = \\sum_{n=1}^{\\infty} \\frac{1}{2^n} \\log_2(2^n) =  \\sum_{n=1}^{\\infty} \\frac{n}{2^n} = 2 \\neq \\infty\n\\]\n\n\n\nThe last equality comes from summing the geometric series \\(\\sum_{n=1}^{\\infty} \\frac{n}{2^n}\\) using the same methods we used for Geometric distribution"
+    "text": "St. Petersburg paradox\n\nFirst Success DistributionThe ParadoxExpected Utility\n\n\n\n\nThis is a slight modification to Geometric as we are counting the number of failures, including the first success vs. Geometric, where we counted the failures\n\\(X \\sim \\text{FS}(\\theta)\\), if \\(\\P(X = x) = (1 - \\theta)^{x - 1} \\theta\\), for \\(x = 1, 2, 3, ...\\)\n\\(X - 1 \\sim \\text{Geom}(\\theta)\\)\nSay, \\(Y \\sim \\text{Geom}(\\theta)\\), then \\(\\E(X) = \\E(Y + 1) = \\E(Y) + 1 = \\frac{1 - \\theta}{\\theta} + \\frac{\\theta}{\\theta} = \\frac{1}{\\theta}\\)\n\n\n\n\n\n\nSuppose you are offered the following game: you flip a coin until heads appear. You get $2 if the game ends after round 1, $4 after two rounds, $8 after three, and so on.\n\n\n\n\\[\n\\E(X) = \\sum_{n=1}^{\\infty} \\frac{1}{2^n} \\cdot 2^n =  \\sum_{n=1}^{\\infty} 1 = \\infty\n\\]\n\n\n\nVote how much are you willing to pay to play this game? (you can’t lose)\nHow many rounds do we expect to play? If \\(N\\) is the number of rounds, then \\(N \\sim \\text{FS}(1/2)\\), and \\(\\E(N) = \\frac{1}{1/2} = 2\\)\nIn addition, the utility of money has been shown to be non-linear\n\n\n\n\n\n\nDaniel Bernoulli (1700 - 1782) proposed that \\(\\frac{dU}{dw} \\propto \\frac{1}{w}\\), where \\(U\\) is the utility function and \\(w\\) is the wealth\nThis gives rise to the following differential equation \\(\\frac{dU}{dw} = k \\frac{1}{w}\\), where \\(k\\) is the constant of proportionality\nIntegrating both sides: \\(\\int dU = k \\int \\frac{1}{w} dw\\) we get:\n\n\\(U(w) = k \\log(w) + C\\), where \\(C\\) is some initial wealth\n\nFor simplicity let’s take \\(k=1\\), and consider \\(\\log = \\log_2\\)\n\n\n\n\\[\n\\E(U) = \\sum_{n=1}^{\\infty} \\frac{1}{2^n} \\log_2(2^n) =  \\sum_{n=1}^{\\infty} \\frac{n}{2^n} = 2 \\neq \\infty\n\\]\n\n\n\nThe last equality comes from summing the geometric series \\(\\sum_{n=1}^{\\infty} \\frac{n}{2^n}\\) using the same methods we used for Geometric distribution"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#indicator-random-variable",
@@ -2252,6 +2427,13 @@
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Indicator Random Variable",
     "text": "Indicator Random Variable\n\nRecall our \\(\\pi\\) SimulationFundamental Bridge\n\n\n\n\\[\n\\I_A(s) = \\I(s \\in A) = \\left\\{\\begin{matrix}\n1 & \\text{if } s \\in A \\\\\n0 & \\text{if } s \\notin A\n\\end{matrix}\\right.\n\\]\n\n\nRecall from Lecture 1:\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\text{I}(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\n\n\n\nThere is a link between probability and (expectations of) indicator RVs\nJoe Blitzstein calls it the fundamental bridge: \\(\\P(A) = \\E(\\I_A)\\)\n\n\n\n\n# Pr of two heads in five trials\n(P2 &lt;- dbinom(2, 5, prob = 1/2))\n\n[1] 0.3125\n\n# Let's create a realization Binom(5, 1/2)\nx &lt;- rbinom(1e6, size = 5, prob = 1/2)\nx[1:30]\n\n [1] 1 3 3 3 5 0 3 3 2 4 4 4 2 2 4 1 3 2 5 3 4 3 2 3 3 2 2 3 2 4\n\n# indicator RV: if x == 2 Ix = TRUE (1), else Ix = (0)\nI2 &lt;- (x == 2)\nI2[1:30] |&gt; as.integer()\n\n [1] 0 0 0 0 0 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 0 1 0 0 1 1 0 1 0\n\n# compute E(Ix) == P2\nmean(I2)\n\n[1] 0.311906"
+  },
+  {
+    "objectID": "stats-math/05-lecture/05-lecture.html#lotus",
+    "href": "stats-math/05-lecture/05-lecture.html#lotus",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "LOTUS",
+    "text": "LOTUS\n\n\nLOTUS stands for the Law Of The Unconscious Statistician\nIt allows us to work with PDFs of the original RV \\(X\\), even though we want to compute an expectation of the function of that RV, say \\(g(X)\\)\n\n\n\n\\[\n\\begin{eqnarray}\nE(g(X)) &=& \\int_{-\\infty}^{\\infty} g(x) f_X(x) \\, dx \\\\\nE(g(X)) &=& \\sum_{x} g(x) p_X(x)\n\\end{eqnarray}\n\\]\n\n\n\nNotice, that we don’t need to compute \\(f_{g(X)}(x)\\) or \\(p_{g(X)}(x)\\)\nThe idea is that even though the \\(x\\)s change from, say \\(x\\) to \\(x^2\\), reflecting the fact the \\(g(X) = X^2\\), that did not change their probability assignments, we can still work with \\(\\P(X = x)\\) (in case of X discrete)"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#variance",
@@ -2265,14 +2447,14 @@
     "href": "stats-math/05-lecture/05-lecture.html#poisson-random-variable",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Poisson Random Variable",
-    "text": "Poisson Random Variable"
+    "text": "Poisson Random Variable\n\n\nPoisson distributions arise when we are modeling counts\nBut not every type of counting can be modeled with Poisson, just like not every kind of waiting can be modeled by Geometric\nWe write \\(X \\sim \\text{Poisson}(\\lambda)\\)\nThe PDF of Poisson is \\(\\P(X=x) = \\frac{{\\lambda^x e^{-\\lambda}}}{{x!}}\\), where \\(x = 0, 1, 2, ...\\) and \\(\\lambda &gt; 0\\)\n\n\n\n\\[\n\\begin{eqnarray}\n\\sum_{x=0}^{\\infty} \\frac{{\\lambda^x e^{-\\lambda}}}{{x!}} = e^{-\\lambda} \\sum_{x=0}^{\\infty} \\frac{\\lambda^x}{x!} = 1\n\\end{eqnarray}\n\\]\n\n\n\nThe last equality follows, because: \\(e^{\\lambda} = \\sum_{k=0}^{\\infty} \\frac{\\lambda^k}{k!}\\), which is its Taylor Series expansion\nFor Poisson, \\(\\E(X) = \\lambda\\) and \\(\\V(X) = \\lambda\\), which is why most real count data do not follow this distribution"
   },
   {
-    "objectID": "stats-math/05-lecture/05-lecture.html#lotus",
-    "href": "stats-math/05-lecture/05-lecture.html#lotus",
+    "objectID": "stats-math/05-lecture/05-lecture.html#poisson-pmf",
+    "href": "stats-math/05-lecture/05-lecture.html#poisson-pmf",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "LOTUS",
-    "text": "LOTUS"
+    "section": "Poisson PMF",
+    "text": "Poisson PMF\n\nNotice the location of \\(\\E(X) = \\lambda\\) in each plot\n\n\np1 &lt;- dot_plot(0:10, dpois(0:10, lambda = 3)) + xlab(\"x\") + \n  ylab(expression(P(X == x))) + ggtitle(\"X ~ Poisson(3)\")\np2 &lt;- dot_plot(0:22, dpois(0:22, lambda = 10)) + xlab(\"x\") + \n  ylab(expression(P(X == x))) + ggtitle(\"X ~ Poisson(10)\")\np1 + p2"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#continuous-rvs-and-the-uniform",
@@ -2293,7 +2475,7 @@
     "href": "stats-math/05-lecture/05-lecture.html#what-we-did-not-cover",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "What We Did Not Cover",
-    "text": "What We Did Not Cover\n\nPoisson RV\nJoint, Marginal, and Conditional\nCovariance and correlation"
+    "text": "What We Did Not Cover\n\nJoint, Marginal, and Conditional\nCovariance and correlation"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#homework",
@@ -2307,7 +2489,7 @@
     "href": "stats-math/05-lecture/05-lecture.html#homework-solutions",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Homework Solutions",
-    "text": "Homework Solutions\n\nlibrary(MASS)\nlibrary(dplyr)\nlibrary(purrr) # for the map() function\n\n# question 1\npmf &lt;- dbinom(x = 0:10, size = 10, prob = 1/3)\nplot(pmf)\n\n\n\ncumsum(pmf)\n\n [1] 0.01734153 0.10404918 0.29914139 0.55926434 0.78687192 0.92343647\n [7] 0.98033836 0.99659605 0.99964436 0.99998306 1.00000000\n\npbinom(0:10, size = 10, prob = 1/3)\n\n [1] 0.01734153 0.10404918 0.29914139 0.55926434 0.78687192 0.92343647\n [7] 0.98033836 0.99659605 0.99964436 0.99998306 1.00000000\n\n# question 2\np &lt;- ggplot(mtcars, aes(hp, mpg))\np + geom_point(aes(color = as.factor(cyl)))\n\n\n\np &lt;- ggplot(mtcars, aes(wt, mpg))\np + geom_point(aes(color = as.factor(cyl)))\n\n\n\n# question 3\ndie &lt;- 1:6\nA &lt;- c(2, 4, 6)       # P(A) = 1/2\nB &lt;- c(1, 2, 3, 4)    # P(B) = 2/3\nAB &lt;- intersect(A, B) # P(AB) = 1/3\n1/2 * 2/3 |&gt; fractions() # events A and B are independent\n\n[1] 1/3\n\nroll &lt;- function(n) {\n  sample(die, size = n, prob = rep(1/6, 6), replace = TRUE)\n}\n\nn &lt;- 1e6\nx &lt;- roll(n)\n\n# check that we have the right convergence\n# should be ~ 0.16 for each number\ndie |&gt; map(~ mean(x == .x))\n\n[[1]]\n[1] 0.167108\n\n[[2]]\n[1] 0.166167\n\n[[3]]\n[1] 0.167251\n\n[[4]]\n[1] 0.166161\n\n[[5]]\n[1] 0.166297\n\n[[6]]\n[1] 0.167016\n\n# avove is the same as:\nfor (i in seq_along(die)) {\n  cat(mean(x == i))\n}\n\n0.1671080.1661670.1672510.1661610.1662970.167016\n\n# compute P(A), A = {2, 4, 6}\n(P_A &lt;- mean(x %in% A))\n\n[1] 0.499344\n\n# compute P(B), B = {1, 2, 3, 4}\n(P_B &lt;- mean(x %in% B))\n\n[1] 0.666687\n\n# compute P(AB), AB = {2, 4}\n(P_AB &lt;- mean(x %in% AB)) |&gt; round(2)\n\n[1] 0.33\n\n(P_A * P_B) |&gt; round(2)\n\n[1] 0.33\n\n# not independent: C = {1, 2, 3}, D = {3, 4, 5}\nC &lt;- c(1, 2, 3) # P(C) = 1/2\nD &lt;- c(3, 4, 5) # P(D) = 1/2\nCD &lt;- intersect(C, D) # P(CD) = 1/6 not equal to 1/2 * 1/2\n\n(P_C &lt;- mean(x %in% C))\n\n[1] 0.500526\n\n(P_D &lt;- mean(x %in% D))\n\n[1] 0.499709\n\n(P_CD &lt;- mean(x %in% CD))\n\n[1] 0.167251\n\n# P(CD) = P(D|C) * P(C)\n# We need to compute P(D|C): theoretically, it should be 1/6 * 2 = 1/3\n(P_D_given_C &lt;- P_CD / P_C)\n\n[1] 0.3341505\n\n# But we can compute P(D|C) directly from the sample:\nmean(x[x %in% C] %in% D)\n\n[1] 0.3341505\n\n\n\nWhat the last statement is saying: only look a the part of the sample space where C already happened. That means x[x %in% C] will contain only 1s, 2s, and 3s\nIn that space, tell me the proportion of times when \\(D\\) happens. (\\(D\\) happens whenever you see a 3 or 4 or 5, so only 3 is relevant here)\nBy definition this is \\(P(D | C)\\)\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Homework Solutions\n\nlibrary(MASS)\nlibrary(dplyr)\nlibrary(purrr) # for the map() function\n\n# question 1\npmf &lt;- dbinom(x = 0:10, size = 10, prob = 1/3)\nplot(pmf)\n\n\n\ncumsum(pmf)\n\n [1] 0.01734153 0.10404918 0.29914139 0.55926434 0.78687192 0.92343647\n [7] 0.98033836 0.99659605 0.99964436 0.99998306 1.00000000\n\npbinom(0:10, size = 10, prob = 1/3)\n\n [1] 0.01734153 0.10404918 0.29914139 0.55926434 0.78687192 0.92343647\n [7] 0.98033836 0.99659605 0.99964436 0.99998306 1.00000000\n\n# question 2\np &lt;- ggplot(mtcars, aes(hp, mpg))\np + geom_point(aes(color = as.factor(cyl)))\n\n\n\np &lt;- ggplot(mtcars, aes(wt, mpg))\np + geom_point(aes(color = as.factor(cyl)))\n\n\n\n# question 3\ndie &lt;- 1:6\nA &lt;- c(2, 4, 6)       # P(A) = 1/2\nB &lt;- c(1, 2, 3, 4)    # P(B) = 2/3\nAB &lt;- intersect(A, B) # P(AB) = 1/3\n1/2 * 2/3 |&gt; fractions() # events A and B are independent\n\n[1] 1/3\n\nroll &lt;- function(n) {\n  sample(die, size = n, prob = rep(1/6, 6), replace = TRUE)\n}\n\nn &lt;- 1e6\nx &lt;- roll(n)\n\n# check that we have the right convergence\n# should be ~ 0.16 for each number\ndie |&gt; map(~ mean(x == .x))\n\n[[1]]\n[1] 0.166348\n\n[[2]]\n[1] 0.167322\n\n[[3]]\n[1] 0.167084\n\n[[4]]\n[1] 0.166207\n\n[[5]]\n[1] 0.166366\n\n[[6]]\n[1] 0.166673\n\n# avove is the same as:\nfor (i in seq_along(die)) {\n  cat(mean(x == i))\n}\n\n0.1663480.1673220.1670840.1662070.1663660.166673\n\n# compute P(A), A = {2, 4, 6}\n(P_A &lt;- mean(x %in% A))\n\n[1] 0.500202\n\n# compute P(B), B = {1, 2, 3, 4}\n(P_B &lt;- mean(x %in% B))\n\n[1] 0.666961\n\n# compute P(AB), AB = {2, 4}\n(P_AB &lt;- mean(x %in% AB)) |&gt; round(2)\n\n[1] 0.33\n\n(P_A * P_B) |&gt; round(2)\n\n[1] 0.33\n\n# not independent: C = {1, 2, 3}, D = {3, 4, 5}\nC &lt;- c(1, 2, 3) # P(C) = 1/2\nD &lt;- c(3, 4, 5) # P(D) = 1/2\nCD &lt;- intersect(C, D) # P(CD) = 1/6 not equal to 1/2 * 1/2\n\n(P_C &lt;- mean(x %in% C))\n\n[1] 0.500754\n\n(P_D &lt;- mean(x %in% D))\n\n[1] 0.499657\n\n(P_CD &lt;- mean(x %in% CD))\n\n[1] 0.167084\n\n# P(CD) = P(D|C) * P(C)\n# We need to compute P(D|C): theoretically, it should be 1/6 * 2 = 1/3\n(P_D_given_C &lt;- P_CD / P_C)\n\n[1] 0.3336648\n\n# But we can compute P(D|C) directly from the sample:\nmean(x[x %in% C] %in% D)\n\n[1] 0.3336648\n\n\n\nWhat the last statement is saying: only look a the part of the sample space where C already happened. That means x[x %in% C] will contain only 1s, 2s, and 3s\nIn that space, tell me the proportion of times when \\(D\\) happens. (\\(D\\) happens whenever you see a 3 or 4 or 5, so only 3 is relevant here)\nBy definition this is \\(P(D | C)\\)\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
