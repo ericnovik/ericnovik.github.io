@@ -1144,12 +1144,20 @@ x &amp; = &amp; A^{-1}b
 </section>
 <section id="approximating-a-solution-to-overdetermined-xhatbeta-y" class="slide level2 smaller">
 <h2>Approximating a Solution to Overdetermined <span class="math inline">\(X\hat{\beta} = y\)</span></h2>
+<div>
 <ul>
-<li><p>If we can not reach <span class="math inline">\(y\)</span>, we need to find a vector in the column space of <span class="math inline">\(X\)</span> that is closest (in a certain sense) to <span class="math inline">\(y\)</span></p></li>
-<li><p>The projection of <span class="math inline">\(y\)</span> onto this plane gives us the answer</p></li>
+<li class="fragment"><p>If we can not reach <span class="math inline">\(y\)</span>, we need to find a vector in the column space of <span class="math inline">\(X\)</span> that is closest (in a certain sense) to <span class="math inline">\(y\)</span></p></li>
+<li class="fragment"><p>The projection of <span class="math inline">\(y\)</span> onto this plane gives us the answer</p></li>
 </ul>
-
-<img data-src="images/orthog-boyd.png" class="r-stretch quarto-figure-center"><div class="footer">
+</div>
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/orthog-boyd.png"></p>
+</figure>
+</div>
+</div>
+<div class="footer">
 <p>Image from <a href="https://web.stanford.edu/~boyd/vmls/">Introduction to Linear Algebra</a>, Boyd and Vandenberghe</p>
 </div>
 </section>
@@ -1159,13 +1167,21 @@ x &amp; = &amp; A^{-1}b
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Solution</a></li><li><a href="#tabset-4-2">Example of an <span class="math inline">\(X^TX\)</span></a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
+<div>
 <ul>
-<li><p>This residual <span class="math inline">\(r\)</span> is also called the error term</p></li>
-<li><p>This error, <span class="math inline">\(y - X\hat{\beta}\)</span>, is the smallest when it’s perpendicular to the plane</p></li>
-<li><p>Another way of saying that is that: <span class="math display">\[
+<li class="fragment">This residual <span class="math inline">\(r\)</span> is also called the error term</li>
+<li class="fragment">This error, <span class="math inline">\(y - X\hat{\beta}\)</span>, is the smallest when it’s perpendicular to the plane</li>
+<li class="fragment">Another way of saying that is that:</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
 X^T(y - X\hat{\beta}) = 0
-\]</span></p></li>
-<li><p>We can now solve this normal equation:</p></li>
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>We can now solve this normal equation:</li>
 </ul>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -1176,10 +1192,14 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 \end{eqnarray}
 \]</span></p>
 </div>
+</div>
 <div id="tabset-4-2">
+<div class="fragment">
 <ul>
 <li>Matrix <span class="math inline">\(X^TX\)</span> is square and symmetric. It is also invertible if the columns of <span class="math inline">\(X\)</span> are linearly independent:</li>
 </ul>
+</div>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a>(X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">6</span>), <span class="at">ncol =</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1217,16 +1237,29 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="motion-in-the-straight-line" class="slide level2 smaller">
 <h2>Motion in the Straight Line</h2>
+<div>
 <ul>
-<li>Recall, from lecture 1, our example of a car moving in a straight line where we have noisy measurements of its position over time</li>
-<li>At the time, we assumed we were able somehow to find the intercept and slope of the equation</li>
-<li>We are now in a position to solve the problem</li>
+<li class="fragment">Recall, from lecture 1, our example of a car moving in a straight line where we have noisy measurements of its position over time</li>
+<li class="fragment">At the time, we assumed we were able somehow to find the intercept and slope of the equation</li>
+<li class="fragment">We are now in a position to solve the problem</li>
 </ul>
-
-<img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-30-1.png" width="576" class="r-stretch quarto-figure-center"></section>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-30-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
 <section id="motion-in-the-straight-line-1" class="slide level2 smaller">
 <h2>Motion in the Straight Line</h2>
 <div class="panel-tabset">
@@ -1249,6 +1282,7 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <div id="tabset-5-2">
 <div class="columns">
 <div class="column" style="width:50%;">
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co"># length of x (our time vector)</span></span>
 <span id="cb73-2"><a href="#cb73-2"></a><span class="fu">length</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1282,10 +1316,14 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <pre><code>[1] -2.4417028  6.7615084 -0.7502334 -0.4900157 -3.5129263  1.9331119</code></pre>
 </div>
 </div>
+</div>
 </div><div class="column" style="width:50%;">
+<div class="fragment">
 <ul>
 <li>Recall, that the least squares estimate of <span class="math inline">\(\beta\)</span> is given by <span class="math inline">\(\hat{\beta} = (X^TX)^{-1}X^Ty\)</span></li>
 </ul>
+</div>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1"></a>beta_hat <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X) <span class="sc">%*%</span> y</span>
 <span id="cb83-2"><a href="#cb83-2"></a>beta_hat <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1306,9 +1344,12 @@ Coefficients:
       1.460        3.014  </code></pre>
 </div>
 </div>
+</div>
+<div class="fragment">
 <ul>
 <li>Warning: do not use <span class="math inline">\((X^TX)^{-1}X^Ty\)</span> directly as above; it’s computationally inefficient</li>
 </ul>
+</div>
 </div>
 </div>
 </div>
@@ -1336,112 +1377,6 @@ Coefficients:
 <li>Using the normal equations, find the intercept and slope of the best-fit line</li>
 <li>Validate that it matches the output from <code>lm</code></li>
 <li>Now plot the line over the data and see if it “fits”</li>
-</ul>
-</section>
-<section id="homework" class="slide level2 smaller">
-<h2>Homework</h2>
-<ul>
-<li><p>We are designing a Spam filter. Assume that 80% of email is spam. In 10% of spam emails, the word “free” is used, whereas this word is only used in 1% of non-spam emails. A new email has just arrived, which does contain the word “free.” What is the probability that it is spam?</p></li>
-<li><p>Assume male and female heights follow a normal distribution with the following parameters:</p></li>
-</ul>
-<pre><code>mu_m &lt;- 69.1   # mean heights of US males in inches
-sigma_m &lt;- 2.9 # standard deviation for same
-mu_w &lt;- 63.7   # mean heights of US women in inches
-sigma_w &lt;- 2.7 # standard deviation of the same</code></pre>
-<ul>
-<li>Generate realizations from the distribution of differences in heights</li>
-<li>Compute the P(male_h &gt; femal_h) and compare it with the theoretical value</li>
-<li>Compute the variance and standard deviation of this distribution and compare them to the theoretical value</li>
-</ul>
-</section>
-<section id="homework-solutions" class="slide level2 smaller">
-<h2>Homework Solutions</h2>
-<div class="cell" data-hash="06-lecture_cache/revealjs/unnamed-chunk-34_6dcd37f89f7ed8490c9f6fd4eb9b2d50">
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1"></a>mu_m <span class="ot">&lt;-</span> <span class="fl">69.1</span>   <span class="co"># mean heights of US males in inches</span></span>
-<span id="cb89-2"><a href="#cb89-2"></a>sigma_m <span class="ot">&lt;-</span> <span class="fl">2.9</span> <span class="co"># standard deviation for same</span></span>
-<span id="cb89-3"><a href="#cb89-3"></a>mu_w <span class="ot">&lt;-</span> <span class="fl">63.7</span>   <span class="co"># mean heights of US women in inches</span></span>
-<span id="cb89-4"><a href="#cb89-4"></a>sigma_w <span class="ot">&lt;-</span> <span class="fl">2.7</span> <span class="co"># standard deviation of the same</span></span>
-<span id="cb89-5"><a href="#cb89-5"></a></span>
-<span id="cb89-6"><a href="#cb89-6"></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb89-7"><a href="#cb89-7"></a>z <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
-<span id="cb89-8"><a href="#cb89-8"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
-<span id="cb89-9"><a href="#cb89-9"></a>  height_m <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_m, sigma_m)</span>
-<span id="cb89-10"><a href="#cb89-10"></a>  height_w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_w, sigma_w)</span>
-<span id="cb89-11"><a href="#cb89-11"></a>  z[i] <span class="ot">&lt;-</span> height_m <span class="sc">-</span> height_w</span>
-<span id="cb89-12"><a href="#cb89-12"></a>}</span>
-<span id="cb89-13"><a href="#cb89-13"></a></span>
-<span id="cb89-14"><a href="#cb89-14"></a><span class="fu">mean</span>(z <span class="sc">&gt;</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.91417</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1"></a><span class="fu">var</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 15.76613</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1"></a><span class="fu">sd</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 3.970658</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1"></a><span class="fu">hist</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-34-1.png" width="960" class="r-stretch"></section>
-<section id="new-homework" class="slide level2 smaller">
-<h2>New Homework</h2>
-<ul>
-<li><p>For drawing 2-d vectors, you may find <a href="https://gist.github.com/ericnovik/d07c883545f98b336f3855a2bab87421">these</a> functions helpful</p></li>
-<li><p>Here is how you could use them:</p></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1"></a>v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb96-2"><a href="#cb96-2"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>)</span>
-<span id="cb96-3"><a href="#cb96-3"></a><span class="fu">draw_vector</span>(v, <span class="at">col =</span> <span class="st">'red'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-4"><a href="#cb96-4"></a>  <span class="fu">add_vector</span>(w, <span class="at">col =</span> <span class="st">'blue'</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-35-1.png" width="960" class="r-stretch"><ul>
-<li>Create two new vectors v = [-1, 3] and w = [2, 1]</li>
-<li>Apply the clockwise rotation matrix to each and plot their original and final positions</li>
-<li>Apply the counterclockwise rotation matrix to the result and convince yourself that the vectors are back at v = [-1, 3] and w = [2, 1]</li>
-<li>Write the following system in matrix form <span class="math display">\[
-\begin{eqnarray}
-3x + 2y + z = 1 \\
-2x + y + 4z = 2 \\
-1x + 7y + 2z = 3 \\
-\end{eqnarray}
-\]</span></li>
-<li>Compute the determinant. Are the columns linearly independent?</li>
-<li>Solve the system and report the results</li>
-<li>Perform the following analysis:</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1"></a><span class="co"># install this package: install.packages('foreign')</span></span>
-<span id="cb97-2"><a href="#cb97-2"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb97-3"><a href="#cb97-3"></a></span>
-<span id="cb97-4"><a href="#cb97-4"></a><span class="co"># dowlaod a dataset:</span></span>
-<span id="cb97-5"><a href="#cb97-5"></a>iq <span class="ot">&lt;-</span> <span class="fu">read.dta</span>(<span class="st">"http://www.stat.columbia.edu/~gelman/arm/examples/child.iq/kidiq.dta"</span>)</span>
-<span id="cb97-6"><a href="#cb97-6"></a></span>
-<span id="cb97-7"><a href="#cb97-7"></a><span class="co"># dataset contains IQs of moms and their kids (kid_score)</span></span>
-<span id="cb97-8"><a href="#cb97-8"></a><span class="fu">head</span>(iq)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  kid_score mom_hs    mom_iq mom_work mom_age
-1        65      1 121.11753        4      27
-2        98      1  89.36188        4      25
-3        85      1 115.44316        4      27
-4        83      1  99.44964        3      25
-5       115      1  92.74571        4      27
-6        98      0 107.90184        1      18</code></pre>
-</div>
-</div>
-<ul>
-<li>Plot the relationship between <code>mom_iq</code> and <code>kid_score</code> (make <code>kid_score</code> the output)</li>
-<li>What can you tell from the plot?</li>
-<li>Now color by <code>mom_hs</code> (1 means mom completed high school). What can you tell?</li>
-<li>Compute the regression line (by any method) for <code>kid_score ~ mom_iq</code></li>
-<li>Plot the regression line over the data. Does it fit?</li>
-<li>Now compute the regression conditional on mom completing high school (i.e., only look at records where <code>mom_hs = 1</code>)</li>
-<li>Do the same, but now for <code>mom_hs = 0</code></li>
-<li>Plot both regression lines (in different colors) over the observations. Do these regression lines make sense?</li>
 </ul>
 
 <div class="footer footer-default">
