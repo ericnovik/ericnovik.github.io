@@ -16,7 +16,9 @@ data <- data |> dplyr::mutate(correct = ifelse(correct == "Yes", 1, 0),
                               score_jitter = score + runif(n, -0.3, 0.3))
 data
 p <- ggplot(aes(score_jitter, correct), data = data)
-p <- p + geom_point() + xlim(0, 10) + xlab("Certainty score") + ylab("Correct guess?")
+p <- p + geom_point() + xlim(0, 10) + 
+  xlab("Certainty score") + 
+  ylab("Correct guess?")
 p
 # Fit using glm
 f1 <- glm(correct ~ score,
@@ -25,8 +27,8 @@ f1 <- glm(correct ~ score,
 arm::display(f1)
 
 # Plot fitted curve
-a_hat <- coef(fit_1)["(Intercept)"]
-b_hat <- coef(fit_1)["score"]
+a_hat <- coef(f1)["(Intercept)"]
+b_hat <- coef(f1)["score"]
 scores <- seq(0, 10, len = 30)
 fitted <- data.frame(logit = arm::invlogit(a_hat + b_hat * scores),
                      scores = scores)
@@ -38,5 +40,6 @@ scores <- seq(from, to, len = 30)
 fitted <- data.frame(logit = arm::invlogit(a_hat + b_hat * scores),
                      scores = scores)
 p <- ggplot(aes(score_jitter, correct), data = data)
-p <- p + geom_point() + xlim(from, to) + xlab("Certainty score") + ylab("Correct guess?")
+p <- p + geom_point() + xlim(from, to) + 
+  xlab("Certainty score") + ylab("Correct guess?")
 p + geom_line(aes(scores, logit), linewidth = 0.2, data = fitted)
