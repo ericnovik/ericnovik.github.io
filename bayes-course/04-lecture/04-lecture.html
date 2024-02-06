@@ -8,7 +8,7 @@
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.330">
+  <meta name="generator" content="quarto-1.4.549">
 
   <meta name="author" content="Eric Novik | Spring 2023 | Lecture 4">
   <title>Eric Novik - Bayesian Inference</title>
@@ -31,7 +31,7 @@
     }
     /* CSS for syntax highlighting */
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -469,20 +469,20 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>normal_normal_post <span class="ot">&lt;-</span> <span class="cf">function</span>(y, sd, prior_mu, prior_sd) {</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co"># for the case where sd is known</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>  prior_prec <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>prior_sd<span class="sc">^</span><span class="dv">2</span> </span>
-<span id="cb1-4"><a href="#cb1-4"></a>  data_prec <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>sd<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
-<span id="cb1-6"><a href="#cb1-6"></a>  post_mu <span class="ot">&lt;-</span> (prior_prec <span class="sc">*</span> prior_mu <span class="sc">+</span> data_prec <span class="sc">*</span> n <span class="sc">*</span> <span class="fu">mean</span>(y)) <span class="sc">/</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a>             (prior_prec <span class="sc">+</span> n <span class="sc">*</span> data_prec)</span>
-<span id="cb1-8"><a href="#cb1-8"></a>  post_prec <span class="ot">&lt;-</span> prior_prec <span class="sc">+</span> n <span class="sc">*</span> data_prec</span>
-<span id="cb1-9"><a href="#cb1-9"></a>  post_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">/</span>post_prec)</span>
-<span id="cb1-10"><a href="#cb1-10"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">post_mu =</span> post_mu, <span class="at">post_sd =</span> post_sd))</span>
-<span id="cb1-11"><a href="#cb1-11"></a>}</span>
-<span id="cb1-12"><a href="#cb1-12"></a></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="fl">0.5</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a>  <span class="fu">unlist</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>normal_normal_post <span class="ot">&lt;-</span> <span class="cf">function</span>(y, sd, prior_mu, prior_sd) {</span>
+<span id="cb1-2"><a></a><span class="co"># for the case where sd is known</span></span>
+<span id="cb1-3"><a></a>  prior_prec <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>prior_sd<span class="sc">^</span><span class="dv">2</span> </span>
+<span id="cb1-4"><a></a>  data_prec <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>sd<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-5"><a></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb1-6"><a></a>  post_mu <span class="ot">&lt;-</span> (prior_prec <span class="sc">*</span> prior_mu <span class="sc">+</span> data_prec <span class="sc">*</span> n <span class="sc">*</span> <span class="fu">mean</span>(y)) <span class="sc">/</span></span>
+<span id="cb1-7"><a></a>             (prior_prec <span class="sc">+</span> n <span class="sc">*</span> data_prec)</span>
+<span id="cb1-8"><a></a>  post_prec <span class="ot">&lt;-</span> prior_prec <span class="sc">+</span> n <span class="sc">*</span> data_prec</span>
+<span id="cb1-9"><a></a>  post_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">/</span>post_prec)</span>
+<span id="cb1-10"><a></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">post_mu =</span> post_mu, <span class="at">post_sd =</span> post_sd))</span>
+<span id="cb1-11"><a></a>}</span>
+<span id="cb1-12"><a></a></span>
+<span id="cb1-13"><a></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="fl">0.5</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-14"><a></a>  <span class="fu">unlist</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>post_mu post_sd 
    4.71    0.49 </code></pre>
@@ -522,7 +522,7 @@ Eric Novik | Spring 2023 | Lecture 4
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" width="768"></p>
+<p><img data-src="04-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -530,11 +530,11 @@ Eric Novik | Spring 2023 | Lecture 4
 </div>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-4_cff0cbf2b1d3ac541bace38c67938637">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">dnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">dnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.2419707</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.2419707</code></pre>
 </div>
@@ -551,53 +551,53 @@ Eric Novik | Spring 2023 | Lecture 4
 <div class="tab-content">
 <div id="tabset-2-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="|6|7|8|9|10|11|12|14|15|17|18|19|20|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>metropolis_iteration_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
-<span id="cb7-2"><a href="#cb7-2"></a>                                   sd, prior_mean, prior_sd) {</span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># assume prior ~ N(prior_mean, prior_sd) and sd is known</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># proposal sampling distribution q = N(current_mean, proposal_scale)</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a></span>
-<span id="cb7-6"><a href="#cb7-6"></a>  proposal_mean <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale) <span class="co"># q(mu' | mu)        </span></span>
-<span id="cb7-7"><a href="#cb7-7"></a>  f_proposal    <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="co"># proposal prior, f(theta')</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>                  </span>
-<span id="cb7-9"><a href="#cb7-9"></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd) <span class="co"># proposal lik, f(y | theta')</span></span>
-<span id="cb7-10"><a href="#cb7-10"></a>  f_current     <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(current_mean, <span class="at">mean =</span> prior_mean,  <span class="co"># current prior, f(theta)</span></span>
-<span id="cb7-11"><a href="#cb7-11"></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>        </span>
-<span id="cb7-12"><a href="#cb7-12"></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd)  <span class="co"># current lik, f(y | theta)</span></span>
-<span id="cb7-13"><a href="#cb7-13"></a></span>
-<span id="cb7-14"><a href="#cb7-14"></a>  ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">/</span> f_current <span class="co"># [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]</span></span>
-<span id="cb7-15"><a href="#cb7-15"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(ratio, <span class="dv">1</span>)     </span>
-<span id="cb7-16"><a href="#cb7-16"></a>  </span>
-<span id="cb7-17"><a href="#cb7-17"></a>  <span class="cf">if</span> (alpha <span class="sc">&gt;</span> <span class="fu">runif</span>(<span class="dv">1</span>)) {         <span class="co"># this is just another way of flipping a coint</span></span>
-<span id="cb7-18"><a href="#cb7-18"></a>    next_value <span class="ot">&lt;-</span> proposal_mean  </span>
-<span id="cb7-19"><a href="#cb7-19"></a>  } <span class="cf">else</span> {</span>
-<span id="cb7-20"><a href="#cb7-20"></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
-<span id="cb7-21"><a href="#cb7-21"></a>  }</span>
-<span id="cb7-22"><a href="#cb7-22"></a>  <span class="fu">return</span>(next_value)</span>
-<span id="cb7-23"><a href="#cb7-23"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="|6|7|8|9|10|11|12|14|15|17|18|19|20|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>metropolis_iteration_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
+<span id="cb7-2"><a></a>                                   sd, prior_mean, prior_sd) {</span>
+<span id="cb7-3"><a></a><span class="co"># assume prior ~ N(prior_mean, prior_sd) and sd is known</span></span>
+<span id="cb7-4"><a></a><span class="co"># proposal sampling distribution q = N(current_mean, proposal_scale)</span></span>
+<span id="cb7-5"><a></a></span>
+<span id="cb7-6"><a></a>  proposal_mean <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale) <span class="co"># q(mu' | mu)        </span></span>
+<span id="cb7-7"><a></a>  f_proposal    <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="co"># proposal prior, f(theta')</span></span>
+<span id="cb7-8"><a></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>                  </span>
+<span id="cb7-9"><a></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd) <span class="co"># proposal lik, f(y | theta')</span></span>
+<span id="cb7-10"><a></a>  f_current     <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(current_mean, <span class="at">mean =</span> prior_mean,  <span class="co"># current prior, f(theta)</span></span>
+<span id="cb7-11"><a></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>        </span>
+<span id="cb7-12"><a></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd)  <span class="co"># current lik, f(y | theta)</span></span>
+<span id="cb7-13"><a></a></span>
+<span id="cb7-14"><a></a>  ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">/</span> f_current <span class="co"># [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]</span></span>
+<span id="cb7-15"><a></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(ratio, <span class="dv">1</span>)     </span>
+<span id="cb7-16"><a></a>  </span>
+<span id="cb7-17"><a></a>  <span class="cf">if</span> (alpha <span class="sc">&gt;</span> <span class="fu">runif</span>(<span class="dv">1</span>)) {         <span class="co"># this is just another way of flipping a coint</span></span>
+<span id="cb7-18"><a></a>    next_value <span class="ot">&lt;-</span> proposal_mean  </span>
+<span id="cb7-19"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb7-20"><a></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
+<span id="cb7-21"><a></a>  }</span>
+<span id="cb7-22"><a></a>  <span class="fu">return</span>(next_value)</span>
+<span id="cb7-23"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8" data-code-line-numbers="|8|9|11|12|18|19|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>mhr <span class="ot">&lt;-</span> <span class="cf">function</span>(y, f, N, start, ...) {</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co"># y: new observation</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># f: function that implements one MHR iteration</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># N: number of iterations</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="co"># start: initial value of the chain</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co"># ...: additional arguments to f</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a>  </span>
-<span id="cb8-8"><a href="#cb8-8"></a>  draws <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb8-9"><a href="#cb8-9"></a>  draws[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">f</span>(y, <span class="at">current_mean =</span> start, ...)</span>
-<span id="cb8-10"><a href="#cb8-10"></a>  </span>
-<span id="cb8-11"><a href="#cb8-11"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>N) {</span>
-<span id="cb8-12"><a href="#cb8-12"></a>    draws[i] <span class="ot">&lt;-</span> <span class="fu">f</span>(y, <span class="at">current_mean =</span> draws[i <span class="sc">-</span> <span class="dv">1</span>], ...)</span>
-<span id="cb8-13"><a href="#cb8-13"></a>  }</span>
-<span id="cb8-14"><a href="#cb8-14"></a>  </span>
-<span id="cb8-15"><a href="#cb8-15"></a>  <span class="fu">return</span>(draws)</span>
-<span id="cb8-16"><a href="#cb8-16"></a>}</span>
-<span id="cb8-17"><a href="#cb8-17"></a></span>
-<span id="cb8-18"><a href="#cb8-18"></a>y <span class="ot">&lt;-</span> <span class="dv">5</span>; N <span class="ot">&lt;-</span> <span class="fl">5e3</span>; start <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb8-19"><a href="#cb8-19"></a>d <span class="ot">&lt;-</span> <span class="fu">mhr</span>(y, N, <span class="at">f =</span> metropolis_iteration_1, start, <span class="at">proposal_scale =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.5</span>,  </span>
-<span id="cb8-20"><a href="#cb8-20"></a>         <span class="at">prior_mean =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8" data-code-line-numbers="|8|9|11|12|18|19|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>mhr <span class="ot">&lt;-</span> <span class="cf">function</span>(y, f, N, start, ...) {</span>
+<span id="cb8-2"><a></a><span class="co"># y: new observation</span></span>
+<span id="cb8-3"><a></a><span class="co"># f: function that implements one MHR iteration</span></span>
+<span id="cb8-4"><a></a><span class="co"># N: number of iterations</span></span>
+<span id="cb8-5"><a></a><span class="co"># start: initial value of the chain</span></span>
+<span id="cb8-6"><a></a><span class="co"># ...: additional arguments to f</span></span>
+<span id="cb8-7"><a></a>  </span>
+<span id="cb8-8"><a></a>  draws <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb8-9"><a></a>  draws[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">f</span>(y, <span class="at">current_mean =</span> start, ...)</span>
+<span id="cb8-10"><a></a>  </span>
+<span id="cb8-11"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>N) {</span>
+<span id="cb8-12"><a></a>    draws[i] <span class="ot">&lt;-</span> <span class="fu">f</span>(y, <span class="at">current_mean =</span> draws[i <span class="sc">-</span> <span class="dv">1</span>], ...)</span>
+<span id="cb8-13"><a></a>  }</span>
+<span id="cb8-14"><a></a>  </span>
+<span id="cb8-15"><a></a>  <span class="fu">return</span>(draws)</span>
+<span id="cb8-16"><a></a>}</span>
+<span id="cb8-17"><a></a></span>
+<span id="cb8-18"><a></a>y <span class="ot">&lt;-</span> <span class="dv">5</span>; N <span class="ot">&lt;-</span> <span class="fl">5e3</span>; start <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb8-19"><a></a>d <span class="ot">&lt;-</span> <span class="fu">mhr</span>(y, N, <span class="at">f =</span> metropolis_iteration_1, start, <span class="at">proposal_scale =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.5</span>,  </span>
+<span id="cb8-20"><a></a>         <span class="at">prior_mean =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -605,8 +605,8 @@ Eric Novik | Spring 2023 | Lecture 4
 </section>
 <section id="markov-chain-animation" class="slide level2 smaller">
 <h2>Markov Chain Animation</h2>
-<p><img data-src="anim/anim-0.1.gif" data-fig-align="left" height="255"> <img data-src="anim/anim-10.gif" data-fig-align="left" height="255"> <img data-src="anim/anim-2.gif" data-fig-align="left" height="255"> Autocorrelation function (ACF)</p>
-<p><img data-src="anim/anim-0.1.png" data-fig-align="left" height="255"> <img data-src="anim/anim-10.png" data-fig-align="left" height="255"> <img data-src="anim/anim-2.png" data-fig-align="left" height="255"></p>
+<p><img data-src="anim/anim-0.1.gif" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-10.gif" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-2.gif" class="quarto-figure quarto-figure-left" height="255"> Autocorrelation function (ACF)</p>
+<p><img data-src="anim/anim-0.1.png" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-10.png" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-2.png" class="quarto-figure quarto-figure-left" height="255"></p>
 </section>
 <section id="comparing-samples-to-the-true-posterior" class="slide level2 smaller">
 <h2>Comparing Samples to the True Posterior</h2>
@@ -614,31 +614,31 @@ Eric Novik | Spring 2023 | Lecture 4
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center" data-hash="04-lecture_cache/revealjs/unnamed-chunk-7_73eb2c396a6c1326a6f4e40e8d75b48c">
 <div class="column">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>np <span class="ot">&lt;-</span> <span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, </span>
-<span id="cb9-2"><a href="#cb9-2"></a>                         <span class="at">sd =</span> <span class="fl">0.5</span>, </span>
-<span id="cb9-3"><a href="#cb9-3"></a>                         <span class="at">prior_mu =</span> <span class="dv">0</span>, </span>
-<span id="cb9-4"><a href="#cb9-4"></a>                         <span class="at">prior_sd =</span> <span class="dv">2</span>)</span>
-<span id="cb9-5"><a href="#cb9-5"></a></span>
-<span id="cb9-6"><a href="#cb9-6"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(np<span class="sc">$</span>post_mu <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>np<span class="sc">$</span>post_sd, </span>
-<span id="cb9-7"><a href="#cb9-7"></a>             np<span class="sc">$</span>post_mu <span class="sc">-</span> <span class="dv">3</span><span class="sc">*</span>np<span class="sc">$</span>post_sd, </span>
-<span id="cb9-8"><a href="#cb9-8"></a>             <span class="at">len =</span> <span class="dv">100</span>)</span>
-<span id="cb9-9"><a href="#cb9-9"></a></span>
-<span id="cb9-10"><a href="#cb9-10"></a>dn <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(theta, <span class="at">mean =</span> np<span class="sc">$</span>post_mu, </span>
-<span id="cb9-11"><a href="#cb9-11"></a>                     <span class="at">sd =</span> np<span class="sc">$</span>post_sd)</span>
-<span id="cb9-12"><a href="#cb9-12"></a></span>
-<span id="cb9-13"><a href="#cb9-13"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(d), <span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">d =</span> d))</span>
-<span id="cb9-14"><a href="#cb9-14"></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), </span>
-<span id="cb9-15"><a href="#cb9-15"></a>                   <span class="at">bins =</span> <span class="dv">25</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb9-16"><a href="#cb9-16"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(theta, dn), <span class="at">linewidth =</span> <span class="fl">0.5</span>, </span>
-<span id="cb9-17"><a href="#cb9-17"></a>            <span class="at">color =</span> <span class="st">'red'</span>, </span>
-<span id="cb9-18"><a href="#cb9-18"></a>            <span class="at">data =</span> <span class="fu">tibble</span>(theta, dn)) <span class="sc">+</span> </span>
-<span id="cb9-19"><a href="#cb9-19"></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span> </span>
-<span id="cb9-20"><a href="#cb9-20"></a>  <span class="fu">ggtitle</span>(<span class="st">"MHR draws vs Normal(4.71, 0.49)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>np <span class="ot">&lt;-</span> <span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, </span>
+<span id="cb9-2"><a></a>                         <span class="at">sd =</span> <span class="fl">0.5</span>, </span>
+<span id="cb9-3"><a></a>                         <span class="at">prior_mu =</span> <span class="dv">0</span>, </span>
+<span id="cb9-4"><a></a>                         <span class="at">prior_sd =</span> <span class="dv">2</span>)</span>
+<span id="cb9-5"><a></a></span>
+<span id="cb9-6"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(np<span class="sc">$</span>post_mu <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>np<span class="sc">$</span>post_sd, </span>
+<span id="cb9-7"><a></a>             np<span class="sc">$</span>post_mu <span class="sc">-</span> <span class="dv">3</span><span class="sc">*</span>np<span class="sc">$</span>post_sd, </span>
+<span id="cb9-8"><a></a>             <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb9-9"><a></a></span>
+<span id="cb9-10"><a></a>dn <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(theta, <span class="at">mean =</span> np<span class="sc">$</span>post_mu, </span>
+<span id="cb9-11"><a></a>                     <span class="at">sd =</span> np<span class="sc">$</span>post_sd)</span>
+<span id="cb9-12"><a></a></span>
+<span id="cb9-13"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(d), <span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">d =</span> d))</span>
+<span id="cb9-14"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), </span>
+<span id="cb9-15"><a></a>                   <span class="at">bins =</span> <span class="dv">25</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb9-16"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(theta, dn), <span class="at">linewidth =</span> <span class="fl">0.5</span>, </span>
+<span id="cb9-17"><a></a>            <span class="at">color =</span> <span class="st">'red'</span>, </span>
+<span id="cb9-18"><a></a>            <span class="at">data =</span> <span class="fu">tibble</span>(theta, dn)) <span class="sc">+</span> </span>
+<span id="cb9-19"><a></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span> </span>
+<span id="cb9-20"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"MHR draws vs Normal(4.71, 0.49)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" width="384"></p>
+<p><img data-src="04-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -651,29 +651,29 @@ Eric Novik | Spring 2023 | Lecture 4
 <p><br></p>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>metropolis_iteration_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
-<span id="cb10-2"><a href="#cb10-2"></a>                                   sd, prior_mean, prior_sd) {</span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="co"># assume prior ~ N(prior_mean, prior_sd) and sd is known</span></span>
-<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># proposal sampling distribution q = N(current_mean, proposal_scale)</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a></span>
-<span id="cb10-6"><a href="#cb10-6"></a>  proposal_mean <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale) <span class="co"># q(mu' | mu)        </span></span>
-<span id="cb10-7"><a href="#cb10-7"></a>  f_proposal    <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="co"># proposal prior, f(theta')</span></span>
-<span id="cb10-8"><a href="#cb10-8"></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>                  </span>
-<span id="cb10-9"><a href="#cb10-9"></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd) <span class="co"># proposal lik, f(y | theta')</span></span>
-<span id="cb10-10"><a href="#cb10-10"></a>  f_current     <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(current_mean, <span class="at">mean =</span> prior_mean,  <span class="co"># current prior, f(theta)</span></span>
-<span id="cb10-11"><a href="#cb10-11"></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>        </span>
-<span id="cb10-12"><a href="#cb10-12"></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd)  <span class="co"># current lik, f(y | theta)</span></span>
-<span id="cb10-13"><a href="#cb10-13"></a></span>
-<span id="cb10-14"><a href="#cb10-14"></a>  ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">/</span> f_current <span class="co"># [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]</span></span>
-<span id="cb10-15"><a href="#cb10-15"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(ratio, <span class="dv">1</span>)     </span>
-<span id="cb10-16"><a href="#cb10-16"></a>  </span>
-<span id="cb10-17"><a href="#cb10-17"></a>  <span class="cf">if</span> (alpha <span class="sc">&gt;</span> <span class="fu">runif</span>(<span class="dv">1</span>)) {         <span class="co"># this is just another way of flipping a coint</span></span>
-<span id="cb10-18"><a href="#cb10-18"></a>    next_value <span class="ot">&lt;-</span> proposal_mean  </span>
-<span id="cb10-19"><a href="#cb10-19"></a>  } <span class="cf">else</span> {</span>
-<span id="cb10-20"><a href="#cb10-20"></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
-<span id="cb10-21"><a href="#cb10-21"></a>  }</span>
-<span id="cb10-22"><a href="#cb10-22"></a>  <span class="fu">return</span>(next_value)</span>
-<span id="cb10-23"><a href="#cb10-23"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>metropolis_iteration_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
+<span id="cb10-2"><a></a>                                   sd, prior_mean, prior_sd) {</span>
+<span id="cb10-3"><a></a><span class="co"># assume prior ~ N(prior_mean, prior_sd) and sd is known</span></span>
+<span id="cb10-4"><a></a><span class="co"># proposal sampling distribution q = N(current_mean, proposal_scale)</span></span>
+<span id="cb10-5"><a></a></span>
+<span id="cb10-6"><a></a>  proposal_mean <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale) <span class="co"># q(mu' | mu)        </span></span>
+<span id="cb10-7"><a></a>  f_proposal    <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="co"># proposal prior, f(theta')</span></span>
+<span id="cb10-8"><a></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>                  </span>
+<span id="cb10-9"><a></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd) <span class="co"># proposal lik, f(y | theta')</span></span>
+<span id="cb10-10"><a></a>  f_current     <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(current_mean, <span class="at">mean =</span> prior_mean,  <span class="co"># current prior, f(theta)</span></span>
+<span id="cb10-11"><a></a>                         <span class="at">sd =</span> prior_sd) <span class="sc">*</span>        </span>
+<span id="cb10-12"><a></a>                   <span class="fu">dnorm</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd)  <span class="co"># current lik, f(y | theta)</span></span>
+<span id="cb10-13"><a></a></span>
+<span id="cb10-14"><a></a>  ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">/</span> f_current <span class="co"># [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]</span></span>
+<span id="cb10-15"><a></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(ratio, <span class="dv">1</span>)     </span>
+<span id="cb10-16"><a></a>  </span>
+<span id="cb10-17"><a></a>  <span class="cf">if</span> (alpha <span class="sc">&gt;</span> <span class="fu">runif</span>(<span class="dv">1</span>)) {         <span class="co"># this is just another way of flipping a coint</span></span>
+<span id="cb10-18"><a></a>    next_value <span class="ot">&lt;-</span> proposal_mean  </span>
+<span id="cb10-19"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb10-20"><a></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
+<span id="cb10-21"><a></a>  }</span>
+<span id="cb10-22"><a></a>  <span class="fu">return</span>(next_value)</span>
+<span id="cb10-23"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
@@ -694,28 +694,28 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11" data-code-line-numbers="|6|8|10|11|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>metropolis_iteration_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, sd,</span>
-<span id="cb11-2"><a href="#cb11-2"></a>                                 prior_mean, prior_sd) {</span>
-<span id="cb11-3"><a href="#cb11-3"></a></span>
-<span id="cb11-4"><a href="#cb11-4"></a>  proposal_mean <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale)        </span>
-<span id="cb11-5"><a href="#cb11-5"></a>  f_proposal    <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd) <span class="sc">*</span> </span>
-<span id="cb11-6"><a href="#cb11-6"></a>                   <span class="fu">prod</span>(<span class="fu">dnorm</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd))   </span>
-<span id="cb11-7"><a href="#cb11-7"></a>  f_current     <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(current_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd) <span class="sc">*</span>        </span>
-<span id="cb11-8"><a href="#cb11-8"></a>                   <span class="fu">prod</span>(<span class="fu">dnorm</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd))</span>
-<span id="cb11-9"><a href="#cb11-9"></a></span>
-<span id="cb11-10"><a href="#cb11-10"></a>  <span class="cf">if</span> ((f_proposal <span class="sc">||</span> f_current) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb11-11"><a href="#cb11-11"></a>    <span class="fu">return</span>(<span class="st">"Error: underflow"</span>) <span class="co"># on my computer double.xmin = 2.225074e-308</span></span>
-<span id="cb11-12"><a href="#cb11-12"></a>  }</span>
-<span id="cb11-13"><a href="#cb11-13"></a>  ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">/</span> f_current </span>
-<span id="cb11-14"><a href="#cb11-14"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(ratio, <span class="dv">1</span>)     </span>
-<span id="cb11-15"><a href="#cb11-15"></a>  </span>
-<span id="cb11-16"><a href="#cb11-16"></a>  <span class="cf">if</span> (alpha <span class="sc">&gt;</span> <span class="fu">runif</span>(<span class="dv">1</span>)) {         <span class="co"># definitely go if f_mu_prime &gt; f_mu: alpha = 1</span></span>
-<span id="cb11-17"><a href="#cb11-17"></a>    next_value <span class="ot">&lt;-</span> proposal_mean   <span class="co"># if alpha &lt; 1, go if alpha &gt; U(0, 1)</span></span>
-<span id="cb11-18"><a href="#cb11-18"></a>  } <span class="cf">else</span> {</span>
-<span id="cb11-19"><a href="#cb11-19"></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
-<span id="cb11-20"><a href="#cb11-20"></a>  }</span>
-<span id="cb11-21"><a href="#cb11-21"></a>  <span class="fu">return</span>(next_value)</span>
-<span id="cb11-22"><a href="#cb11-22"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11" data-code-line-numbers="|6|8|10|11|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>metropolis_iteration_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, sd,</span>
+<span id="cb11-2"><a></a>                                 prior_mean, prior_sd) {</span>
+<span id="cb11-3"><a></a></span>
+<span id="cb11-4"><a></a>  proposal_mean <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale)        </span>
+<span id="cb11-5"><a></a>  f_proposal    <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd) <span class="sc">*</span> </span>
+<span id="cb11-6"><a></a>                   <span class="fu">prod</span>(<span class="fu">dnorm</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd))   </span>
+<span id="cb11-7"><a></a>  f_current     <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(current_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd) <span class="sc">*</span>        </span>
+<span id="cb11-8"><a></a>                   <span class="fu">prod</span>(<span class="fu">dnorm</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd))</span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a>  <span class="cf">if</span> ((f_proposal <span class="sc">||</span> f_current) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb11-11"><a></a>    <span class="fu">return</span>(<span class="st">"Error: underflow"</span>) <span class="co"># on my computer double.xmin = 2.225074e-308</span></span>
+<span id="cb11-12"><a></a>  }</span>
+<span id="cb11-13"><a></a>  ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">/</span> f_current </span>
+<span id="cb11-14"><a></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(ratio, <span class="dv">1</span>)     </span>
+<span id="cb11-15"><a></a>  </span>
+<span id="cb11-16"><a></a>  <span class="cf">if</span> (alpha <span class="sc">&gt;</span> <span class="fu">runif</span>(<span class="dv">1</span>)) {         <span class="co"># definitely go if f_mu_prime &gt; f_mu: alpha = 1</span></span>
+<span id="cb11-17"><a></a>    next_value <span class="ot">&lt;-</span> proposal_mean   <span class="co"># if alpha &lt; 1, go if alpha &gt; U(0, 1)</span></span>
+<span id="cb11-18"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb11-19"><a></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
+<span id="cb11-20"><a></a>  }</span>
+<span id="cb11-21"><a></a>  <span class="fu">return</span>(next_value)</span>
+<span id="cb11-22"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
@@ -723,20 +723,20 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <h2>Handling Underflow</h2>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-10_b0b220d8e6fb5b9296a243ab366f0f7b">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb12-2"><a href="#cb12-2"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>)</span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, <span class="at">sd =</span> <span class="fl">0.55</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb12-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>)</span>
+<span id="cb12-3"><a></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, <span class="at">sd =</span> <span class="fl">0.55</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>post_mu post_sd 
    2.02    0.03 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">replicate</span>(<span class="dv">20</span>, <span class="fu">metropolis_iteration_2</span>(<span class="at">y =</span> y, </span>
-<span id="cb14-2"><a href="#cb14-2"></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
-<span id="cb14-3"><a href="#cb14-3"></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
-<span id="cb14-4"><a href="#cb14-4"></a>                                     <span class="at">sd =</span> <span class="fl">0.55</span>, </span>
-<span id="cb14-5"><a href="#cb14-5"></a>                                     <span class="at">prior_mean =</span> <span class="dv">0</span>, </span>
-<span id="cb14-6"><a href="#cb14-6"></a>                                     <span class="at">prior_sd =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">replicate</span>(<span class="dv">20</span>, <span class="fu">metropolis_iteration_2</span>(<span class="at">y =</span> y, </span>
+<span id="cb14-2"><a></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
+<span id="cb14-3"><a></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
+<span id="cb14-4"><a></a>                                     <span class="at">sd =</span> <span class="fl">0.55</span>, </span>
+<span id="cb14-5"><a></a>                                     <span class="at">prior_mean =</span> <span class="dv">0</span>, </span>
+<span id="cb14-6"><a></a>                                     <span class="at">prior_sd =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "Error: underflow" "Error: underflow" "Error: underflow" "Error: underflow"
  [5] "Error: underflow" "1.66235834591796" "Error: underflow" "2.55673000751367"
@@ -761,10 +761,10 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>dnorm_log <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) {</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="co"># dropping constant terms; not needed for MCMC</span></span>
-<span id="cb16-3"><a href="#cb16-3"></a>  <span class="sc">-</span><span class="fu">log</span>(sd) <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> ((y <span class="sc">-</span> mean) <span class="sc">/</span> sd)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb16-4"><a href="#cb16-4"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>dnorm_log <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) {</span>
+<span id="cb16-2"><a></a><span class="co"># dropping constant terms; not needed for MCMC</span></span>
+<span id="cb16-3"><a></a>  <span class="sc">-</span><span class="fu">log</span>(sd) <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> ((y <span class="sc">-</span> mean) <span class="sc">/</span> sd)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb16-4"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <ul>
@@ -775,43 +775,43 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 <section id="mhr-on-the-log-scale" class="slide level2 smaller">
 <h2>MHR on the Log Scale</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>metropolis_iteration_log <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
-<span id="cb17-2"><a href="#cb17-2"></a>                                     sd, prior_mean, prior_sd) {</span>
-<span id="cb17-3"><a href="#cb17-3"></a>  </span>
-<span id="cb17-4"><a href="#cb17-4"></a>  <span class="co"># draw a proposal q(proposal_mean | current_mean)</span></span>
-<span id="cb17-5"><a href="#cb17-5"></a>  proposal_mean  <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale)           </span>
-<span id="cb17-6"><a href="#cb17-6"></a>  </span>
-<span id="cb17-7"><a href="#cb17-7"></a>  <span class="co"># construct a proposal: f(mu') * \prod f(y_i | mu') on the log scale</span></span>
-<span id="cb17-8"><a href="#cb17-8"></a>  proposal_lik   <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnorm_log</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd))</span>
-<span id="cb17-9"><a href="#cb17-9"></a>  proposal_prior <span class="ot">&lt;-</span> <span class="fu">dnorm_log</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd)</span>
-<span id="cb17-10"><a href="#cb17-10"></a>  f_proposal     <span class="ot">&lt;-</span> proposal_prior <span class="sc">+</span> proposal_lik</span>
-<span id="cb17-11"><a href="#cb17-11"></a>  </span>
-<span id="cb17-12"><a href="#cb17-12"></a>  <span class="co"># construct a current: f(mu) * \prod f(y_i | mu) on the log scale</span></span>
-<span id="cb17-13"><a href="#cb17-13"></a>  current_lik    <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnorm_log</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd))</span>
-<span id="cb17-14"><a href="#cb17-14"></a>  current_prior  <span class="ot">&lt;-</span> <span class="fu">dnorm_log</span>(current_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd)</span>
-<span id="cb17-15"><a href="#cb17-15"></a>  f_current      <span class="ot">&lt;-</span> current_prior <span class="sc">+</span> current_lik</span>
-<span id="cb17-16"><a href="#cb17-16"></a>  </span>
-<span id="cb17-17"><a href="#cb17-17"></a>  <span class="co"># ratio on the log scale = difference of the logs</span></span>
-<span id="cb17-18"><a href="#cb17-18"></a>  log_ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">-</span> f_current</span>
-<span id="cb17-19"><a href="#cb17-19"></a>  log_alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(log_ratio, <span class="dv">0</span>)     </span>
-<span id="cb17-20"><a href="#cb17-20"></a>  </span>
-<span id="cb17-21"><a href="#cb17-21"></a>  <span class="cf">if</span> (log_alpha <span class="sc">&gt;</span> <span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>))) {  </span>
-<span id="cb17-22"><a href="#cb17-22"></a>    next_value <span class="ot">&lt;-</span> proposal_mean     </span>
-<span id="cb17-23"><a href="#cb17-23"></a>  } <span class="cf">else</span> {</span>
-<span id="cb17-24"><a href="#cb17-24"></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
-<span id="cb17-25"><a href="#cb17-25"></a>  }</span>
-<span id="cb17-26"><a href="#cb17-26"></a>  <span class="fu">return</span>(next_value)</span>
-<span id="cb17-27"><a href="#cb17-27"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>metropolis_iteration_log <span class="ot">&lt;-</span> <span class="cf">function</span>(y, current_mean, proposal_scale, </span>
+<span id="cb17-2"><a></a>                                     sd, prior_mean, prior_sd) {</span>
+<span id="cb17-3"><a></a>  </span>
+<span id="cb17-4"><a></a>  <span class="co"># draw a proposal q(proposal_mean | current_mean)</span></span>
+<span id="cb17-5"><a></a>  proposal_mean  <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, current_mean,  proposal_scale)           </span>
+<span id="cb17-6"><a></a>  </span>
+<span id="cb17-7"><a></a>  <span class="co"># construct a proposal: f(mu') * \prod f(y_i | mu') on the log scale</span></span>
+<span id="cb17-8"><a></a>  proposal_lik   <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnorm_log</span>(y, <span class="at">mean =</span> proposal_mean, <span class="at">sd =</span> sd))</span>
+<span id="cb17-9"><a></a>  proposal_prior <span class="ot">&lt;-</span> <span class="fu">dnorm_log</span>(proposal_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd)</span>
+<span id="cb17-10"><a></a>  f_proposal     <span class="ot">&lt;-</span> proposal_prior <span class="sc">+</span> proposal_lik</span>
+<span id="cb17-11"><a></a>  </span>
+<span id="cb17-12"><a></a>  <span class="co"># construct a current: f(mu) * \prod f(y_i | mu) on the log scale</span></span>
+<span id="cb17-13"><a></a>  current_lik    <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnorm_log</span>(y, <span class="at">mean =</span> current_mean, <span class="at">sd =</span> sd))</span>
+<span id="cb17-14"><a></a>  current_prior  <span class="ot">&lt;-</span> <span class="fu">dnorm_log</span>(current_mean, <span class="at">mean =</span> prior_mean, <span class="at">sd =</span> prior_sd)</span>
+<span id="cb17-15"><a></a>  f_current      <span class="ot">&lt;-</span> current_prior <span class="sc">+</span> current_lik</span>
+<span id="cb17-16"><a></a>  </span>
+<span id="cb17-17"><a></a>  <span class="co"># ratio on the log scale = difference of the logs</span></span>
+<span id="cb17-18"><a></a>  log_ratio <span class="ot">&lt;-</span> f_proposal <span class="sc">-</span> f_current</span>
+<span id="cb17-19"><a></a>  log_alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(log_ratio, <span class="dv">0</span>)     </span>
+<span id="cb17-20"><a></a>  </span>
+<span id="cb17-21"><a></a>  <span class="cf">if</span> (log_alpha <span class="sc">&gt;</span> <span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>))) {  </span>
+<span id="cb17-22"><a></a>    next_value <span class="ot">&lt;-</span> proposal_mean     </span>
+<span id="cb17-23"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb17-24"><a></a>    next_value <span class="ot">&lt;-</span> current_mean</span>
+<span id="cb17-25"><a></a>  }</span>
+<span id="cb17-26"><a></a>  <span class="fu">return</span>(next_value)</span>
+<span id="cb17-27"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="checking-the-work" class="slide level2 smaller">
 <h2>Checking the Work</h2>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-13_a5cd7e9e7361e16bcbaa8859efdb1964">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb18-2"><a href="#cb18-2"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>)</span>
-<span id="cb18-3"><a href="#cb18-3"></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, <span class="at">sd =</span> <span class="fl">0.55</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
-<span id="cb18-4"><a href="#cb18-4"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb18-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>)</span>
+<span id="cb18-3"><a></a><span class="fu">normal_normal_post</span>(<span class="at">y =</span> y, <span class="at">sd =</span> <span class="fl">0.55</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>post_mu post_sd 
    2.02    0.03 </code></pre>
@@ -820,12 +820,12 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 </div>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-14_eb05eee52519a5ac296a872fbb9f2f8b">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">replicate</span>(<span class="dv">4</span>, <span class="fu">metropolis_iteration_2</span>(<span class="at">y =</span> y, </span>
-<span id="cb20-2"><a href="#cb20-2"></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
-<span id="cb20-3"><a href="#cb20-3"></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
-<span id="cb20-4"><a href="#cb20-4"></a>                                     <span class="at">sd =</span> <span class="fl">0.55</span>, </span>
-<span id="cb20-5"><a href="#cb20-5"></a>                                     <span class="at">prior_mean =</span> <span class="dv">0</span>, </span>
-<span id="cb20-6"><a href="#cb20-6"></a>                                     <span class="at">prior_sd =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">replicate</span>(<span class="dv">4</span>, <span class="fu">metropolis_iteration_2</span>(<span class="at">y =</span> y, </span>
+<span id="cb20-2"><a></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
+<span id="cb20-3"><a></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
+<span id="cb20-4"><a></a>                                     <span class="at">sd =</span> <span class="fl">0.55</span>, </span>
+<span id="cb20-5"><a></a>                                     <span class="at">prior_mean =</span> <span class="dv">0</span>, </span>
+<span id="cb20-6"><a></a>                                     <span class="at">prior_sd =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Error: underflow" "Error: underflow" "Error: underflow" "Error: underflow"</code></pre>
 </div>
@@ -833,12 +833,12 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 </div>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-15_401941bf7b84448de81327a5638e4377">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">replicate</span>(<span class="dv">4</span>, <span class="fu">metropolis_iteration_log</span>(<span class="at">y =</span> y, </span>
-<span id="cb22-2"><a href="#cb22-2"></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
-<span id="cb22-3"><a href="#cb22-3"></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
-<span id="cb22-4"><a href="#cb22-4"></a>                                     <span class="at">sd =</span> <span class="fl">0.55</span>, </span>
-<span id="cb22-5"><a href="#cb22-5"></a>                                     <span class="at">prior_mean =</span> <span class="dv">0</span>, </span>
-<span id="cb22-6"><a href="#cb22-6"></a>                                     <span class="at">prior_sd =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">replicate</span>(<span class="dv">4</span>, <span class="fu">metropolis_iteration_log</span>(<span class="at">y =</span> y, </span>
+<span id="cb22-2"><a></a>                                     <span class="at">current_mean =</span> <span class="dv">1</span>, </span>
+<span id="cb22-3"><a></a>                                     <span class="at">proposal_scale =</span> <span class="dv">2</span>, </span>
+<span id="cb22-4"><a></a>                                     <span class="at">sd =</span> <span class="fl">0.55</span>, </span>
+<span id="cb22-5"><a></a>                                     <span class="at">prior_mean =</span> <span class="dv">0</span>, </span>
+<span id="cb22-6"><a></a>                                     <span class="at">prior_sd =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.000000 1.000000 1.423961 2.379762</code></pre>
 </div>
@@ -846,19 +846,19 @@ f(\mu \mid y) &amp; \propto &amp; \text{prior} \cdot \prod_{i=1}^{n}\frac{1}{
 </div>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-16_bd6f9e80a52b0ff027f322c7f1c605cc">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>d <span class="ot">&lt;-</span> <span class="fu">mhr</span>(y, N, <span class="at">f =</span> metropolis_iteration_log, start, <span class="at">proposal_scale =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>,  <span class="at">prior_mean =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>)</span>
-<span id="cb24-2"><a href="#cb24-2"></a><span class="fu">mean</span>(d) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>d <span class="ot">&lt;-</span> <span class="fu">mhr</span>(y, N, <span class="at">f =</span> metropolis_iteration_log, start, <span class="at">proposal_scale =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.55</span>,  <span class="at">prior_mean =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">1</span>)</span>
+<span id="cb24-2"><a></a><span class="fu">mean</span>(d) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2.02</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">sd</span>(d) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">sd</span>(d) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.03</code></pre>
 </div>
 </div>
 </div>
 </section>
-<section id="why-does-the-algorithm-work" class="slide level2 smaller">
+<section id="why-does-the-algorithm-work" class="slide level2 smaller scrollable">
 <h2>Why Does the Algorithm Work</h2>
 <div>
 <ul>
@@ -946,13 +946,13 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 </div>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-17_1cb7f52b610c1929be143c7022ddfd2f">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>ppd <span class="ot">&lt;-</span> <span class="cf">function</span>(post_mu, post_sd) {</span>
-<span id="cb28-2"><a href="#cb28-2"></a>  mu <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> post_mu, <span class="at">sd =</span> post_sd)</span>
-<span id="cb28-3"><a href="#cb28-3"></a>  y  <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> mu, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
-<span id="cb28-4"><a href="#cb28-4"></a>}</span>
-<span id="cb28-5"><a href="#cb28-5"></a>pd <span class="ot">&lt;-</span> <span class="fu">normal_normal_post</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="fl">0.5</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>)</span>
-<span id="cb28-6"><a href="#cb28-6"></a>y <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e5</span>, <span class="fu">ppd</span>(pd<span class="sc">$</span>post_mu, pd<span class="sc">$</span>post_sd))</span>
-<span id="cb28-7"><a href="#cb28-7"></a><span class="fu">cat</span>(<span class="st">"y_tilde | y ~ Normal("</span>, <span class="fu">round</span>(<span class="fu">mean</span>(y), <span class="dv">2</span>), <span class="st">","</span>, <span class="fu">round</span>(<span class="fu">sd</span>(y), <span class="dv">2</span>), <span class="st">")"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>ppd <span class="ot">&lt;-</span> <span class="cf">function</span>(post_mu, post_sd) {</span>
+<span id="cb28-2"><a></a>  mu <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> post_mu, <span class="at">sd =</span> post_sd)</span>
+<span id="cb28-3"><a></a>  y  <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> mu, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-4"><a></a>}</span>
+<span id="cb28-5"><a></a>pd <span class="ot">&lt;-</span> <span class="fu">normal_normal_post</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="fl">0.5</span>, <span class="at">prior_mu =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>)</span>
+<span id="cb28-6"><a></a>y <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e5</span>, <span class="fu">ppd</span>(pd<span class="sc">$</span>post_mu, pd<span class="sc">$</span>post_sd))</span>
+<span id="cb28-7"><a></a><span class="fu">cat</span>(<span class="st">"y_tilde | y ~ Normal("</span>, <span class="fu">round</span>(<span class="fu">mean</span>(y), <span class="dv">2</span>), <span class="st">","</span>, <span class="fu">round</span>(<span class="fu">sd</span>(y), <span class="dv">2</span>), <span class="st">")"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>y_tilde | y ~ Normal(4.71,0.7)</code></pre>
 </div>
@@ -965,9 +965,9 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 </div>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-18_2a078c4def95f9c886caf140396d4df7">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>ppd_mu <span class="ot">&lt;-</span> pd<span class="sc">$</span>post_mu <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb30-2"><a href="#cb30-2"></a>ppd_sigma <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(pd<span class="sc">$</span>post_sd<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb30-3"><a href="#cb30-3"></a><span class="fu">cat</span>(<span class="st">"y_tilde | y ~ Normal("</span>, ppd_mu, <span class="st">", "</span>, ppd_sigma, <span class="st">")"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>ppd_mu <span class="ot">&lt;-</span> pd<span class="sc">$</span>post_mu <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb30-2"><a></a>ppd_sigma <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(pd<span class="sc">$</span>post_sd<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb30-3"><a></a><span class="fu">cat</span>(<span class="st">"y_tilde | y ~ Normal("</span>, ppd_mu, <span class="st">", "</span>, ppd_sigma, <span class="st">")"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>y_tilde | y ~ Normal(4.71, 0.7)</code></pre>
 </div>
@@ -985,20 +985,20 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 </div>
 <div class="fragment">
 <div class="cell" data-output.var="stan1">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb32-1"><a href="#cb32-1"></a><span class="kw">data</span> {</span>
-<span id="cb32-2"><a href="#cb32-2"></a>  <span class="dt">real</span> y;</span>
-<span id="cb32-3"><a href="#cb32-3"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
-<span id="cb32-4"><a href="#cb32-4"></a>}</span>
-<span id="cb32-5"><a href="#cb32-5"></a><span class="kw">parameters</span> {</span>
-<span id="cb32-6"><a href="#cb32-6"></a>  <span class="dt">real</span> mu;</span>
-<span id="cb32-7"><a href="#cb32-7"></a>}</span>
-<span id="cb32-8"><a href="#cb32-8"></a><span class="kw">model</span> {</span>
-<span id="cb32-9"><a href="#cb32-9"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">2</span>);</span>
-<span id="cb32-10"><a href="#cb32-10"></a>  y ~ normal(mu, sigma);</span>
-<span id="cb32-11"><a href="#cb32-11"></a>}</span>
-<span id="cb32-12"><a href="#cb32-12"></a><span class="kw">generated quantities</span> {</span>
-<span id="cb32-13"><a href="#cb32-13"></a>  <span class="dt">real</span> y_tilde = normal_rng(mu, sigma);</span>
-<span id="cb32-14"><a href="#cb32-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb32-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb32-2"><a></a>  <span class="dt">real</span> y;</span>
+<span id="cb32-3"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb32-4"><a></a>}</span>
+<span id="cb32-5"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb32-6"><a></a>  <span class="dt">real</span> mu;</span>
+<span id="cb32-7"><a></a>}</span>
+<span id="cb32-8"><a></a><span class="kw">model</span> {</span>
+<span id="cb32-9"><a></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">2</span>);</span>
+<span id="cb32-10"><a></a>  y ~ normal(mu, sigma);</span>
+<span id="cb32-11"><a></a>}</span>
+<span id="cb32-12"><a></a><span class="kw">generated quantities</span> {</span>
+<span id="cb32-13"><a></a>  <span class="dt">real</span> y_tilde = normal_rng(mu, sigma);</span>
+<span id="cb32-14"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
@@ -1006,19 +1006,19 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 <h2>Posterior Predictions in Stan</h2>
 <div class="fragment">
 <div class="cell" data-layout-align="center" data-hash="04-lecture_cache/revealjs/unnamed-chunk-20_0f0c743ddf5149124ae8bdc871cc67dc">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="fu">library</span>(cmdstanr)</span>
-<span id="cb33-2"><a href="#cb33-2"></a></span>
-<span id="cb33-3"><a href="#cb33-3"></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/normal_pred.stan"</span>) <span class="co"># compile the model</span></span>
-<span id="cb33-4"><a href="#cb33-4"></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sigma =</span> <span class="fl">0.5</span>)</span>
-<span id="cb33-5"><a href="#cb33-5"></a>f1 <span class="ot">&lt;-</span> m1<span class="sc">$</span><span class="fu">sample</span>(       <span class="co"># for other options to sample, help(sample)</span></span>
-<span id="cb33-6"><a href="#cb33-6"></a>  <span class="at">data =</span> data,         <span class="co"># pass data as a list, match the vars name to Stan</span></span>
-<span id="cb33-7"><a href="#cb33-7"></a>  <span class="at">seed =</span> <span class="dv">123</span>,          <span class="co"># to reproduce results, Stan does not rely on R's seed</span></span>
-<span id="cb33-8"><a href="#cb33-8"></a>  <span class="at">chains =</span> <span class="dv">4</span>,          <span class="co"># total chains, the more, the better</span></span>
-<span id="cb33-9"><a href="#cb33-9"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="co"># for multi-processor CPUs</span></span>
-<span id="cb33-10"><a href="#cb33-10"></a>  <span class="at">refresh =</span> <span class="dv">0</span>,         <span class="co"># number of iterations printed on the screen</span></span>
-<span id="cb33-11"><a href="#cb33-11"></a>  <span class="at">iter_warmup =</span> <span class="dv">500</span>,   <span class="co"># number of draws for warmup (per chain)</span></span>
-<span id="cb33-12"><a href="#cb33-12"></a>  <span class="at">iter_sampling =</span> <span class="dv">500</span>  <span class="co"># number of draws for samples (per chain)</span></span>
-<span id="cb33-13"><a href="#cb33-13"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb33-2"><a></a></span>
+<span id="cb33-3"><a></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/normal_pred.stan"</span>) <span class="co"># compile the model</span></span>
+<span id="cb33-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sigma =</span> <span class="fl">0.5</span>)</span>
+<span id="cb33-5"><a></a>f1 <span class="ot">&lt;-</span> m1<span class="sc">$</span><span class="fu">sample</span>(       <span class="co"># for other options to sample, help(sample)</span></span>
+<span id="cb33-6"><a></a>  <span class="at">data =</span> data,         <span class="co"># pass data as a list, match the vars name to Stan</span></span>
+<span id="cb33-7"><a></a>  <span class="at">seed =</span> <span class="dv">123</span>,          <span class="co"># to reproduce results, Stan does not rely on R's seed</span></span>
+<span id="cb33-8"><a></a>  <span class="at">chains =</span> <span class="dv">4</span>,          <span class="co"># total chains, the more, the better</span></span>
+<span id="cb33-9"><a></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="co"># for multi-processor CPUs</span></span>
+<span id="cb33-10"><a></a>  <span class="at">refresh =</span> <span class="dv">0</span>,         <span class="co"># number of iterations printed on the screen</span></span>
+<span id="cb33-11"><a></a>  <span class="at">iter_warmup =</span> <span class="dv">500</span>,   <span class="co"># number of draws for warmup (per chain)</span></span>
+<span id="cb33-12"><a></a>  <span class="at">iter_sampling =</span> <span class="dv">500</span>  <span class="co"># number of draws for samples (per chain)</span></span>
+<span id="cb33-13"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 parallel chains...
 
@@ -1031,7 +1031,7 @@ All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
 Total execution time: 0.2 seconds.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>f1<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>f1<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 10
   variable  mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
@@ -1051,36 +1051,38 @@ Total execution time: 0.2 seconds.</code></pre>
 <div id="tabset-3-1">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/prison0.png" width="650"></p>
+<p><img data-src="images/prison0.png" class="quarto-figure quarto-figure-center" width="650"></p>
 </figure>
 </div>
 </div>
 <div id="tabset-3-2">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/prison1.png" width="800"></p>
+<p><img data-src="images/prison1.png" class="quarto-figure quarto-figure-center" width="800"></p>
 </figure>
 </div>
 </div>
 <div id="tabset-3-3">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/prison3.png" width="800"></p>
+<p><img data-src="images/prison3.png" class="quarto-figure quarto-figure-center" width="800"></p>
 </figure>
 </div>
 </div>
 <div id="tabset-3-4">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/prison2.png" width="800"></p>
+<p><img data-src="images/prison2.png" class="quarto-figure quarto-figure-center" width="800"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 
+<div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
+</div>
 </div>
 </section>
     </div>

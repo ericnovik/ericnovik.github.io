@@ -8,7 +8,7 @@
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.330">
+  <meta name="generator" content="quarto-1.4.549">
 
   <meta name="author" content="Eric Novik | Summer 2023 | Session 3">
   <title>Eric Novik - SMaC: Statistics, Math, and Computing</title>
@@ -31,7 +31,7 @@
     }
     /* CSS for syntax highlighting */
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -452,15 +452,15 @@ Eric Novik | Summer 2023 | Session 3
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>y <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>  <span class="fu">map</span>(\(x) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> x, <span class="at">max =</span> <span class="dv">15</span>))</span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a>y <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>  <span class="fu">map</span>(\(x) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> x, <span class="at">max =</span> <span class="dv">15</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>  <span class="fu">map_dbl</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-2"><a></a></span>
+<span id="cb1-3"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb1-4"><a></a>y <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> x, <span class="at">max =</span> <span class="dv">15</span>))</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a>y <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> x, <span class="at">max =</span> <span class="dv">15</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-9"><a></a>  <span class="fu">map_dbl</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div>
@@ -474,8 +474,8 @@ Eric Novik | Summer 2023 | Session 3
 <p>“<code>pivot_longer()</code>”lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is <code>pivot_wider()</code>”</p>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="fu">head</span>(iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb2-2"><a></a><span class="fu">head</span>(iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 1          5.1         3.5          1.4         0.2  setosa
@@ -485,8 +485,8 @@ Eric Novik | Summer 2023 | Session 3
 5          5.0         3.6          1.4         0.2  setosa
 6          5.4         3.9          1.7         0.4  setosa</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>long <span class="ot">&lt;-</span> iris <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="sc">!</span>Species, <span class="at">names_to =</span> <span class="st">"species"</span>, <span class="at">values_to =</span> <span class="st">"measure"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="fu">head</span>(long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>long <span class="ot">&lt;-</span> iris <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="sc">!</span>Species, <span class="at">names_to =</span> <span class="st">"species"</span>, <span class="at">values_to =</span> <span class="st">"measure"</span>)</span>
+<span id="cb4-2"><a></a><span class="fu">head</span>(long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
   Species species      measure
@@ -510,28 +510,28 @@ Eric Novik | Summer 2023 | Session 3
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb6-5"><a href="#cb6-5"></a></span>
-<span id="cb6-6"><a href="#cb6-6"></a>rates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="at">length =</span> <span class="dv">10</span>)</span>
-<span id="cb6-7"><a href="#cb6-7"></a>P <span class="ot">&lt;-</span> <span class="dv">100</span> </span>
-<span id="cb6-8"><a href="#cb6-8"></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">50</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
-<span id="cb6-9"><a href="#cb6-9"></a></span>
-<span id="cb6-10"><a href="#cb6-10"></a>Pe <span class="ot">&lt;-</span> <span class="cf">function</span>(A, r, t) A <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t)</span>
-<span id="cb6-11"><a href="#cb6-11"></a>d <span class="ot">&lt;-</span> time <span class="sc">|&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a>  <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x)) </span>
-<span id="cb6-13"><a href="#cb6-13"></a><span class="fu">class</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">library</span>(purrr)</span>
+<span id="cb6-2"><a></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb6-3"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb6-4"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-5"><a></a></span>
+<span id="cb6-6"><a></a>rates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="at">length =</span> <span class="dv">10</span>)</span>
+<span id="cb6-7"><a></a>P <span class="ot">&lt;-</span> <span class="dv">100</span> </span>
+<span id="cb6-8"><a></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">50</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
+<span id="cb6-9"><a></a></span>
+<span id="cb6-10"><a></a>Pe <span class="ot">&lt;-</span> <span class="cf">function</span>(A, r, t) A <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t)</span>
+<span id="cb6-11"><a></a>d <span class="ot">&lt;-</span> time <span class="sc">|&gt;</span></span>
+<span id="cb6-12"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x)) </span>
+<span id="cb6-13"><a></a><span class="fu">class</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "list"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>d[[<span class="dv">1</span>]][<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>d[[<span class="dv">1</span>]][<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 105.1271 106.8939 108.6904 110.5171</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">names</span>(d) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(time)</span>
-<span id="cb10-2"><a href="#cb10-2"></a>d <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">names</span>(d) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(time)</span>
+<span id="cb10-2"><a></a>d <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
@@ -614,21 +614,21 @@ Eric Novik | Summer 2023 | Session 3
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>rates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="at">length =</span> <span class="dv">10</span>)</span>
-<span id="cb11-2"><a href="#cb11-2"></a>P <span class="ot">&lt;-</span> <span class="dv">100</span> </span>
-<span id="cb11-3"><a href="#cb11-3"></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
-<span id="cb11-4"><a href="#cb11-4"></a></span>
-<span id="cb11-5"><a href="#cb11-5"></a>Pe <span class="ot">&lt;-</span> <span class="cf">function</span>(A, r, t) A <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t)</span>
-<span id="cb11-6"><a href="#cb11-6"></a>time <span class="sc">|&gt;</span> <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x)) </span>
-<span id="cb11-7"><a href="#cb11-7"></a></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="co"># above is a shortcut for</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="fu">map</span>(time, <span class="cf">function</span>(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x))</span>
-<span id="cb11-10"><a href="#cb11-10"></a></span>
-<span id="cb11-11"><a href="#cb11-11"></a><span class="co"># and the above is a shortcut for the following loop</span></span>
-<span id="cb11-12"><a href="#cb11-12"></a>l <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb11-13"><a href="#cb11-13"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(time)) {</span>
-<span id="cb11-14"><a href="#cb11-14"></a>  l[[i]] <span class="ot">&lt;-</span> <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> time[i])</span>
-<span id="cb11-15"><a href="#cb11-15"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>rates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="at">length =</span> <span class="dv">10</span>)</span>
+<span id="cb11-2"><a></a>P <span class="ot">&lt;-</span> <span class="dv">100</span> </span>
+<span id="cb11-3"><a></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
+<span id="cb11-4"><a></a></span>
+<span id="cb11-5"><a></a>Pe <span class="ot">&lt;-</span> <span class="cf">function</span>(A, r, t) A <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t)</span>
+<span id="cb11-6"><a></a>time <span class="sc">|&gt;</span> <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x)) </span>
+<span id="cb11-7"><a></a></span>
+<span id="cb11-8"><a></a><span class="co"># above is a shortcut for</span></span>
+<span id="cb11-9"><a></a><span class="fu">map</span>(time, <span class="cf">function</span>(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x))</span>
+<span id="cb11-10"><a></a></span>
+<span id="cb11-11"><a></a><span class="co"># and the above is a shortcut for the following loop</span></span>
+<span id="cb11-12"><a></a>l <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb11-13"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(time)) {</span>
+<span id="cb11-14"><a></a>  l[[i]] <span class="ot">&lt;-</span> <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> time[i])</span>
+<span id="cb11-15"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -636,19 +636,19 @@ Eric Novik | Summer 2023 | Session 3
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="co"># add rates as a column</span></span>
-<span id="cb12-3"><a href="#cb12-3"></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rate =</span> </span>
-<span id="cb12-4"><a href="#cb12-4"></a>            <span class="fu">round</span>(rates, <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a>              <span class="fu">as.character</span>())</span>
-<span id="cb12-6"><a href="#cb12-6"></a></span>
-<span id="cb12-7"><a href="#cb12-7"></a><span class="co"># convert from wide format to long</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> </span>
-<span id="cb12-9"><a href="#cb12-9"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>rate, </span>
-<span id="cb12-10"><a href="#cb12-10"></a>               <span class="at">names_to =</span> <span class="st">"year"</span>, </span>
-<span id="cb12-11"><a href="#cb12-11"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>) </span>
-<span id="cb12-12"><a href="#cb12-12"></a></span>
-<span id="cb12-13"><a href="#cb12-13"></a>d<span class="sc">$</span>year <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(d<span class="sc">$</span>year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb12-2"><a></a><span class="co"># add rates as a column</span></span>
+<span id="cb12-3"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rate =</span> </span>
+<span id="cb12-4"><a></a>            <span class="fu">round</span>(rates, <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a></a>              <span class="fu">as.character</span>())</span>
+<span id="cb12-6"><a></a></span>
+<span id="cb12-7"><a></a><span class="co"># convert from wide format to long</span></span>
+<span id="cb12-8"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> </span>
+<span id="cb12-9"><a></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>rate, </span>
+<span id="cb12-10"><a></a>               <span class="at">names_to =</span> <span class="st">"year"</span>, </span>
+<span id="cb12-11"><a></a>               <span class="at">values_to =</span> <span class="st">"value"</span>) </span>
+<span id="cb12-12"><a></a></span>
+<span id="cb12-13"><a></a>d<span class="sc">$</span>year <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(d<span class="sc">$</span>year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><a href="https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf">Here</a> is a cheat sheet explaining <code>tidyr</code> functions.</p>
 </div><div class="column" style="width:50%;">
@@ -726,20 +726,20 @@ Eric Novik | Summer 2023 | Session 3
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(year, value))</span>
-<span id="cb13-2"><a href="#cb13-2"></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> rate), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> </span>
-<span id="cb13-4"><a href="#cb13-4"></a>          scales<span class="sc">::</span><span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
-<span id="cb13-5"><a href="#cb13-5"></a>  <span class="fu">xlab</span>(<span class="st">"Time (years)"</span>) <span class="sc">+</span> </span>
-<span id="cb13-6"><a href="#cb13-6"></a>  <span class="fu">ylab</span>(<span class="st">"Asset value"</span>) <span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7"></a>  <span class="fu">ggtitle</span>(<span class="st">"Growth of $100 at different interest rates"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(year, value))</span>
+<span id="cb13-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> rate), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb13-3"><a></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> </span>
+<span id="cb13-4"><a></a>          scales<span class="sc">::</span><span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
+<span id="cb13-5"><a></a>  <span class="fu">xlab</span>(<span class="st">"Time (years)"</span>) <span class="sc">+</span> </span>
+<span id="cb13-6"><a></a>  <span class="fu">ylab</span>(<span class="st">"Asset value"</span>) <span class="sc">+</span></span>
+<span id="cb13-7"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Growth of $100 at different interest rates"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" width="432"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" width="432"></p>
 </figure>
 </div>
 </div>
@@ -748,9 +748,9 @@ Eric Novik | Summer 2023 | Session 3
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>d <span class="sc">|&gt;</span> <span class="fu">group_by</span>(rate) <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2"></a>  <span class="fu">summarise</span>(<span class="at">y50 =</span> <span class="fu">last</span>(value)) <span class="sc">|&gt;</span></span>
-<span id="cb14-3"><a href="#cb14-3"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>d <span class="sc">|&gt;</span> <span class="fu">group_by</span>(rate) <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a></a>  <span class="fu">summarise</span>(<span class="at">y50 =</span> <span class="fu">last</span>(value)) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table>
 <thead>
@@ -822,7 +822,7 @@ Eric Novik | Summer 2023 | Session 3
 <div id="tabset-2-1">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/arbuthnot.png" width="672"></p>
+<p><img data-src="images/arbuthnot.png" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 </div>
@@ -915,7 +915,7 @@ Eric Novik | Summer 2023 | Session 3
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" width="576"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -939,7 +939,7 @@ Eric Novik | Summer 2023 | Session 3
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/int.jpg" width="672"></p>
+<p><img data-src="images/int.jpg" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 <div>
@@ -966,7 +966,7 @@ Eric Novik | Summer 2023 | Session 3
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/area.jpeg" width="672"></p>
+<p><img data-src="images/area.jpeg" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1009,7 +1009,7 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" width="576"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1022,7 +1022,7 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <section id="some-common-integrals" class="slide level2">
 <h2>Some Common Integrals</h2>
 
-<img data-src="images/integrals.png" class="r-stretch quarto-figure-center"><div class="footer">
+<img data-src="images/integrals.png" class="quarto-figure quarto-figure-center r-stretch"><div class="footer">
 <p>OpenStax: <a href="https://openstax.org/books/calculus-volume-1/pages/a-table-of-integrals">Here is a more complete list</a></p>
 </div>
 </section>
@@ -1066,7 +1066,7 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" width="576"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1077,21 +1077,21 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <h2>Constructing a Riemann Sum</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/right-endpoints.jpeg" width="400" height="200"></p>
+<p><img data-src="images/right-endpoints.jpeg" class="quarto-figure quarto-figure-center" width="400" height="200"></p>
 </figure>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>riemann <span class="ot">&lt;-</span> <span class="cf">function</span>(f, lower, upper, step_size) {</span>
-<span id="cb15-2"><a href="#cb15-2"></a>  step <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">by =</span> step_size)</span>
-<span id="cb15-3"><a href="#cb15-3"></a>  s <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># initialize the sum</span></span>
-<span id="cb15-4"><a href="#cb15-4"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(step)) {</span>
-<span id="cb15-5"><a href="#cb15-5"></a>    <span class="co"># multiply base by the height of the rectangle</span></span>
-<span id="cb15-6"><a href="#cb15-6"></a>    area <span class="ot">&lt;-</span> step_size <span class="sc">*</span> <span class="fu">f</span>(step[i]) </span>
-<span id="cb15-7"><a href="#cb15-7"></a>    s <span class="ot">&lt;-</span> s <span class="sc">+</span> area</span>
-<span id="cb15-8"><a href="#cb15-8"></a>  }</span>
-<span id="cb15-9"><a href="#cb15-9"></a>  <span class="fu">return</span>(s)</span>
-<span id="cb15-10"><a href="#cb15-10"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>riemann <span class="ot">&lt;-</span> <span class="cf">function</span>(f, lower, upper, step_size) {</span>
+<span id="cb15-2"><a></a>  step <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">by =</span> step_size)</span>
+<span id="cb15-3"><a></a>  s <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># initialize the sum</span></span>
+<span id="cb15-4"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(step)) {</span>
+<span id="cb15-5"><a></a>    <span class="co"># multiply base by the height of the rectangle</span></span>
+<span id="cb15-6"><a></a>    area <span class="ot">&lt;-</span> step_size <span class="sc">*</span> <span class="fu">f</span>(step[i]) </span>
+<span id="cb15-7"><a></a>    s <span class="ot">&lt;-</span> s <span class="sc">+</span> area</span>
+<span id="cb15-8"><a></a>  }</span>
+<span id="cb15-9"><a></a>  <span class="fu">return</span>(s)</span>
+<span id="cb15-10"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
@@ -1104,15 +1104,15 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <section id="evaluating-the-integral" class="slide level2">
 <h2>Evaluating the Integral</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">*</span> <span class="fu">sin</span>(x<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb16-2"><a href="#cb16-2"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, pi, <span class="at">len =</span> <span class="dv">100</span>)</span>
-<span id="cb16-3"><a href="#cb16-3"></a></span>
-<span id="cb16-4"><a href="#cb16-4"></a><span class="fu">riemann</span>(f, <span class="dv">1</span>, <span class="dv">3</span>, <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">*</span> <span class="fu">sin</span>(x<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb16-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, pi, <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb16-3"><a></a></span>
+<span id="cb16-4"><a></a><span class="fu">riemann</span>(f, <span class="dv">1</span>, <span class="dv">3</span>, <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7275414</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># compute using R's integrate function</span></span>
-<span id="cb18-2"><a href="#cb18-2"></a><span class="fu">integrate</span>(f, <span class="dv">1</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># compute using R's integrate function</span></span>
+<span id="cb18-2"><a></a><span class="fu">integrate</span>(f, <span class="dv">1</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0.7257163 with absolute error &lt; 1.3e-09</code></pre>
 </div>
@@ -1143,7 +1143,7 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <li>Using R’s <code>integrate</code> function:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">integrate</span>(f, <span class="dv">1</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">integrate</span>(f, <span class="dv">1</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0.7257163 with absolute error &lt; 1.3e-09</code></pre>
 </div>
@@ -1154,9 +1154,9 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <li>Using the analytical solution</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">cos</span>(x<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb22-2"><a href="#cb22-2"></a></span>
-<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">f1</span>(<span class="dv">3</span>) <span class="sc">-</span> <span class="fu">f1</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">cos</span>(x<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb22-2"><a></a></span>
+<span id="cb22-3"><a></a><span class="fu">f1</span>(<span class="dv">3</span>) <span class="sc">-</span> <span class="fu">f1</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7257163</code></pre>
 </div>
@@ -1177,17 +1177,17 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 </ul>
 </div>
 <div class="fragment">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">library</span>(caracas); <span class="fu">library</span>(stringr)</span>
-<span id="cb24-2"><a href="#cb24-2"></a>add_align <span class="ot">&lt;-</span> <span class="cf">function</span>(latex) {</span>
-<span id="cb24-3"><a href="#cb24-3"></a>  <span class="fu">str_c</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">begin{align} "</span>, latex, <span class="st">" </span><span class="sc">\\</span><span class="st">end{align}"</span>)</span>
-<span id="cb24-4"><a href="#cb24-4"></a>}</span>
-<span id="cb24-5"><a href="#cb24-5"></a>add_int <span class="ot">&lt;-</span> <span class="cf">function</span>(latex) {</span>
-<span id="cb24-6"><a href="#cb24-6"></a>  <span class="fu">str_c</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">int "</span>, latex, <span class="st">"</span><span class="sc">\\</span><span class="st">, dx"</span>)</span>
-<span id="cb24-7"><a href="#cb24-7"></a>}</span>
-<span id="cb24-8"><a href="#cb24-8"></a>x <span class="ot">&lt;-</span> <span class="fu">symbol</span>(<span class="st">'x'</span>); f <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">4</span>)</span>
-<span id="cb24-9"><a href="#cb24-9"></a><span class="fu">tex</span>(f) <span class="sc">%&gt;%</span> <span class="fu">add_int</span>() <span class="sc">%&gt;%</span> <span class="fu">str_c</span>(<span class="st">" ="</span>) <span class="sc">%&gt;%</span> <span class="fu">add_align</span>() <span class="sc">%&gt;%</span> <span class="fu">cat</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">library</span>(caracas); <span class="fu">library</span>(stringr)</span>
+<span id="cb24-2"><a></a>add_align <span class="ot">&lt;-</span> <span class="cf">function</span>(latex) {</span>
+<span id="cb24-3"><a></a>  <span class="fu">str_c</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">begin{align} "</span>, latex, <span class="st">" </span><span class="sc">\\</span><span class="st">end{align}"</span>)</span>
+<span id="cb24-4"><a></a>}</span>
+<span id="cb24-5"><a></a>add_int <span class="ot">&lt;-</span> <span class="cf">function</span>(latex) {</span>
+<span id="cb24-6"><a></a>  <span class="fu">str_c</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">int "</span>, latex, <span class="st">"</span><span class="sc">\\</span><span class="st">, dx"</span>)</span>
+<span id="cb24-7"><a></a>}</span>
+<span id="cb24-8"><a></a>x <span class="ot">&lt;-</span> <span class="fu">symbol</span>(<span class="st">'x'</span>); f <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">4</span>)</span>
+<span id="cb24-9"><a></a><span class="fu">tex</span>(f) <span class="sc">%&gt;%</span> <span class="fu">add_int</span>() <span class="sc">%&gt;%</span> <span class="fu">str_c</span>(<span class="st">" ="</span>) <span class="sc">%&gt;%</span> <span class="fu">add_align</span>() <span class="sc">%&gt;%</span> <span class="fu">cat</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><span class="math display">\[\begin{align} \int \frac{x^{2}}{\sqrt{x^{2} + 4}}\, dx = \end{align}\]</span></p>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">int</span>(f, x) <span class="sc">%&gt;%</span> <span class="fu">tex</span>() <span class="sc">%&gt;%</span> <span class="fu">add_align</span>() <span class="sc">%&gt;%</span> <span class="fu">cat</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">int</span>(f, x) <span class="sc">%&gt;%</span> <span class="fu">tex</span>() <span class="sc">%&gt;%</span> <span class="fu">add_align</span>() <span class="sc">%&gt;%</span> <span class="fu">cat</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><span class="math display">\[\begin{align} \frac{x \sqrt{x^{2} + 4}}{2} - 2 \operatorname{asinh}{\left(\frac{x}{2} \right)} \end{align}\]</span></p>
 </div>
 </section>
@@ -1265,7 +1265,7 @@ y(t) &amp;= y_0 \cdot e^{kt}
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/iris.png" width="500"></p>
+<p><img data-src="images/iris.png" class="quarto-figure quarto-figure-center" width="500"></p>
 </figure>
 </div>
 <ul>
@@ -1273,7 +1273,7 @@ y(t) &amp;= y_0 \cdot e^{kt}
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/iris_dens.png" width="500"></p>
+<p><img data-src="images/iris_dens.png" class="quarto-figure quarto-figure-center" width="500"></p>
 </figure>
 </div>
 <ul>
@@ -1286,8 +1286,10 @@ y(t) &amp;= y_0 \cdot e^{kt}
 <li>Evaluate this integral (on paper) from <span class="math inline">\(0\)</span> to <span class="math inline">\(2\pi\)</span> and use R’s <code>integrate</code> function to validate your answer.</li>
 </ul>
 
+<div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/smac.html" class="uri">https://ericnovik.github.io/smac.html</a></p>
+</div>
 </div>
 </section>
     </div>

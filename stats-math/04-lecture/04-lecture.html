@@ -8,7 +8,7 @@
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.330">
+  <meta name="generator" content="quarto-1.4.549">
 
   <meta name="author" content="Eric Novik | Summer 2023 | Session 4">
   <title>Eric Novik - SMaC: Statistics, Math, and Computing</title>
@@ -31,7 +31,7 @@
     }
     /* CSS for syntax highlighting */
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -441,7 +441,7 @@ Eric Novik | Summer 2023 | Session 4
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-left">
 <figure>
-<p><img data-src="images/kolmogorov.jpeg"></p>
+<p><img data-src="images/kolmogorov.jpeg" class="quarto-figure quarto-figure-left"></p>
 </figure>
 </div>
 <p>Andrei Kolmogorov (1903 — 1987)</p>
@@ -465,7 +465,7 @@ Eric Novik | Summer 2023 | Session 4
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/laplace.jpeg"></p>
+<p><img data-src="images/laplace.jpeg" class="quarto-figure quarto-figure-center"></p>
 </figure>
 </div>
 <p>Marquis Pierre Simon de Laplace (1729 — 1827)</p>
@@ -565,21 +565,21 @@ Eric Novik | Summer 2023 | Session 4
 </div>
 <div id="tabset-1-2">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-2_0fe3e4d1174e52f59c2bc4e0b0859b67">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a>n_people <span class="ot">&lt;-</span> <span class="dv">80</span> </span>
-<span id="cb1-3"><a href="#cb1-3"></a>j <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span>n_people</span>
-<span id="cb1-4"><a href="#cb1-4"></a>days <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">365</span> </span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a>find_match <span class="ot">&lt;-</span> <span class="cf">function</span>(x, d) {</span>
-<span id="cb1-7"><a href="#cb1-7"></a>  y <span class="ot">&lt;-</span> <span class="fu">sample</span>(d, x, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-8"><a href="#cb1-8"></a>  match_found <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(y)) <span class="sc">&lt;</span> <span class="fu">length</span>(y)</span>
-<span id="cb1-9"><a href="#cb1-9"></a>}</span>
-<span id="cb1-10"><a href="#cb1-10"></a></span>
-<span id="cb1-11"><a href="#cb1-11"></a>prop <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_people <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(j)) {</span>
-<span id="cb1-13"><a href="#cb1-13"></a>  matches <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n, <span class="fu">find_match</span>(i, days))</span>
-<span id="cb1-14"><a href="#cb1-14"></a>  prop[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(matches)</span>
-<span id="cb1-15"><a href="#cb1-15"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb1-2"><a></a>n_people <span class="ot">&lt;-</span> <span class="dv">80</span> </span>
+<span id="cb1-3"><a></a>j <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span>n_people</span>
+<span id="cb1-4"><a></a>days <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">365</span> </span>
+<span id="cb1-5"><a></a></span>
+<span id="cb1-6"><a></a>find_match <span class="ot">&lt;-</span> <span class="cf">function</span>(x, d) {</span>
+<span id="cb1-7"><a></a>  y <span class="ot">&lt;-</span> <span class="fu">sample</span>(d, x, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-8"><a></a>  match_found <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(y)) <span class="sc">&lt;</span> <span class="fu">length</span>(y)</span>
+<span id="cb1-9"><a></a>}</span>
+<span id="cb1-10"><a></a></span>
+<span id="cb1-11"><a></a>prop <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_people <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb1-12"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(j)) {</span>
+<span id="cb1-13"><a></a>  matches <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n, <span class="fu">find_match</span>(i, days))</span>
+<span id="cb1-14"><a></a>  prop[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(matches)</span>
+<span id="cb1-15"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-3">
@@ -587,7 +587,7 @@ Eric Novik | Summer 2023 | Session 4
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" width="576"></p>
+<p><img data-src="04-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -609,13 +609,13 @@ Eric Novik | Summer 2023 | Session 4
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>max_people <span class="ot">&lt;-</span> <span class="dv">23</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>Pr_match <span class="ot">&lt;-</span> <span class="fu">numeric</span>(max_people <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>max_people) {</span>
-<span id="cb2-4"><a href="#cb2-4"></a>  numerator <span class="ot">&lt;-</span> <span class="fu">prod</span>(<span class="fu">seq</span>(<span class="dv">365</span>, <span class="dv">365</span> <span class="sc">-</span> j <span class="sc">+</span> <span class="dv">1</span>))</span>
-<span id="cb2-5"><a href="#cb2-5"></a>  Pr_match[j <span class="sc">-</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">1</span> <span class="sc">-</span> (numerator <span class="sc">/</span> <span class="dv">365</span><span class="sc">^</span>j), <span class="dv">2</span>)</span>
-<span id="cb2-6"><a href="#cb2-6"></a>}</span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="fu">cat</span>(Pr_match, <span class="at">sep =</span> <span class="st">", "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>max_people <span class="ot">&lt;-</span> <span class="dv">23</span></span>
+<span id="cb2-2"><a></a>Pr_match <span class="ot">&lt;-</span> <span class="fu">numeric</span>(max_people <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb2-3"><a></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>max_people) {</span>
+<span id="cb2-4"><a></a>  numerator <span class="ot">&lt;-</span> <span class="fu">prod</span>(<span class="fu">seq</span>(<span class="dv">365</span>, <span class="dv">365</span> <span class="sc">-</span> j <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb2-5"><a></a>  Pr_match[j <span class="sc">-</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">1</span> <span class="sc">-</span> (numerator <span class="sc">/</span> <span class="dv">365</span><span class="sc">^</span>j), <span class="dv">2</span>)</span>
+<span id="cb2-6"><a></a>}</span>
+<span id="cb2-7"><a></a><span class="fu">cat</span>(Pr_match, <span class="at">sep =</span> <span class="st">", "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0, 0.01, 0.02, 0.03, 0.04, 0.06, 0.07, 0.09, 0.12, 0.14, 0.17, 0.19, 0.22, 0.25, 0.28, 0.32, 0.35, 0.38, 0.41, 0.44, 0.48, 0.51</code></pre>
 </div>
@@ -681,17 +681,17 @@ A \cap B = {\emptyset} &amp; \implies &amp; \P(A \cup B) = \P(A) + \P(B) \\
 <p>You flip a fair coin four times. What is the probability that you get one or more heads?</p>
 <div class="fragment">
 <div class="cell" data-hash="04-lecture_cache/revealjs/unnamed-chunk-5_645fb8e697e770e7d0f6dcb1e5b3e91d">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>one_or_more <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb4-2"><a href="#cb4-2"></a>  flips <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>), <span class="at">size =</span> <span class="dv">4</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-3"><a href="#cb4-3"></a>  <span class="cf">if</span> (<span class="fu">mean</span>(flips) <span class="sc">&gt;=</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) {</span>
-<span id="cb4-4"><a href="#cb4-4"></a>    <span class="fu">return</span>(<span class="cn">TRUE</span>)</span>
-<span id="cb4-5"><a href="#cb4-5"></a>  } <span class="cf">else</span> {</span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="fu">return</span>(<span class="cn">FALSE</span>)</span>
-<span id="cb4-7"><a href="#cb4-7"></a>  }</span>
-<span id="cb4-8"><a href="#cb4-8"></a>}</span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co"># flip the coin 10,000 times</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a>x <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e4</span>, <span class="fu">one_or_more</span>())</span>
-<span id="cb4-11"><a href="#cb4-11"></a><span class="fu">mean</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>one_or_more <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb4-2"><a></a>  flips <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>), <span class="at">size =</span> <span class="dv">4</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-3"><a></a>  <span class="cf">if</span> (<span class="fu">mean</span>(flips) <span class="sc">&gt;=</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) {</span>
+<span id="cb4-4"><a></a>    <span class="fu">return</span>(<span class="cn">TRUE</span>)</span>
+<span id="cb4-5"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb4-6"><a></a>    <span class="fu">return</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb4-7"><a></a>  }</span>
+<span id="cb4-8"><a></a>}</span>
+<span id="cb4-9"><a></a><span class="co"># flip the coin 10,000 times</span></span>
+<span id="cb4-10"><a></a>x <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e4</span>, <span class="fu">one_or_more</span>())</span>
+<span id="cb4-11"><a></a><span class="fu">mean</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9332</code></pre>
 </div>
@@ -755,7 +755,7 @@ A \cap B = {\emptyset} &amp; \implies &amp; \P(A \cup B) = \P(A) + \P(B) \\
 \]</span></p>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/LTP.png" width="400"></p>
+<p><img data-src="images/LTP.png" class="quarto-figure quarto-figure-center" width="400"></p>
 </figure>
 </div>
 </div>
@@ -828,8 +828,10 @@ P(D^+ | T^+) = \frac{P(T^+ | D^+) P(D^+)}{P(T^+)} &amp; = &amp; \\
 <h2>Example: Monte Hall</h2>
 
 
-<img data-src="images/monte.png" width="672" class="r-stretch quarto-figure-center"><div class="footer footer-default">
+<img data-src="images/monte.png" class="quarto-figure quarto-figure-center r-stretch" width="672"><div class="quarto-auto-generated-content">
+<div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/smac.html" class="uri">https://ericnovik.github.io/smac.html</a></p>
+</div>
 </div>
 </section>
     </div>

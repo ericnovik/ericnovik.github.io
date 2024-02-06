@@ -8,7 +8,7 @@
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.330">
+  <meta name="generator" content="quarto-1.4.549">
 
   <meta name="author" content="Eric Novik | Summer 2023 | Session 5">
   <title>Eric Novik - SMaC: Statistics, Math, and Computing</title>
@@ -31,7 +31,7 @@
     }
     /* CSS for syntax highlighting */
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -451,7 +451,7 @@ Eric Novik | Summer 2023 | Session 5
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/nofheads.png" width="800"></p>
+<p><img data-src="images/nofheads.png" class="quarto-figure quarto-figure-center" width="800"></p>
 </figure>
 </div>
 </div>
@@ -547,7 +547,7 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" width="864"></p>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" width="864"></p>
 </figure>
 </div>
 </div>
@@ -556,36 +556,36 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 </div>
 <div id="tabset-3-3">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>N <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># Number of successes out of x trials</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># compute and plot the PMF</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a>pmf <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span>N, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb1-8"><a href="#cb1-8"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span>  <span class="dv">0</span><span class="sc">:</span>N, <span class="at">y =</span> pmf)</span>
-<span id="cb1-9"><a href="#cb1-9"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, pmf))</span>
-<span id="cb1-10"><a href="#cb1-10"></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> .<span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb1-11"><a href="#cb1-11"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">fractions</span>(pmf)), <span class="at">nudge_y =</span> <span class="fl">0.02</span>) <span class="sc">+</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a>  <span class="fu">ylab</span>(<span class="st">"P(X = x)"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x = Number of Heads"</span>) <span class="sc">+</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Binomial(4, 1/2)"</span>,</span>
-<span id="cb1-14"><a href="#cb1-14"></a>          <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span>
-<span id="cb1-15"><a href="#cb1-15"></a></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co"># compute and plot the CDF</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="at">length =</span> <span class="dv">500</span>)</span>
-<span id="cb1-18"><a href="#cb1-18"></a>cdf <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="at">q =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb1-19"><a href="#cb1-19"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">q =</span> x, <span class="at">y =</span> cdf)</span>
-<span id="cb1-20"><a href="#cb1-20"></a>dd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="at">by =</span> <span class="dv">1</span>), <span class="at">cdf =</span> <span class="fu">unique</span>(cdf), <span class="at">x_empty =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>)</span>
-<span id="cb1-21"><a href="#cb1-21"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, cdf)) </span>
-<span id="cb1-22"><a href="#cb1-22"></a>p2 <span class="ot">&lt;-</span> p2 <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
-<span id="cb1-23"><a href="#cb1-23"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(x, cdf, <span class="at">label =</span> <span class="fu">fractions</span>(cdf)), <span class="at">data =</span> dd, <span class="at">nudge_y =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x_empty, cdf), <span class="at">data =</span> dd[<span class="sc">-</span><span class="dv">6</span>, ], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">'white'</span>) <span class="sc">+</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x_empty, cdf), <span class="at">data =</span> dd[<span class="sc">-</span><span class="dv">6</span>, ], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">shape =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb1-26"><a href="#cb1-26"></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Binomial(4, 1/2)"</span>,</span>
-<span id="cb1-27"><a href="#cb1-27"></a>          <span class="at">subtitle =</span> <span class="fu">expression</span>(CDF<span class="sc">:</span> F[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">&lt;=</span> x))) <span class="sc">+</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">&lt;=</span> x))) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x = Number of Heads"</span>)</span>
-<span id="cb1-29"><a href="#cb1-29"></a></span>
-<span id="cb1-30"><a href="#cb1-30"></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a>N <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># Number of successes out of x trials</span></span>
+<span id="cb1-5"><a></a></span>
+<span id="cb1-6"><a></a><span class="co"># compute and plot the PMF</span></span>
+<span id="cb1-7"><a></a>pmf <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span>N, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb1-8"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span>  <span class="dv">0</span><span class="sc">:</span>N, <span class="at">y =</span> pmf)</span>
+<span id="cb1-9"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, pmf))</span>
+<span id="cb1-10"><a></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> .<span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb1-11"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">fractions</span>(pmf)), <span class="at">nudge_y =</span> <span class="fl">0.02</span>) <span class="sc">+</span></span>
+<span id="cb1-12"><a></a>  <span class="fu">ylab</span>(<span class="st">"P(X = x)"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x = Number of Heads"</span>) <span class="sc">+</span></span>
+<span id="cb1-13"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Binomial(4, 1/2)"</span>,</span>
+<span id="cb1-14"><a></a>          <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span>
+<span id="cb1-15"><a></a></span>
+<span id="cb1-16"><a></a><span class="co"># compute and plot the CDF</span></span>
+<span id="cb1-17"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="at">length =</span> <span class="dv">500</span>)</span>
+<span id="cb1-18"><a></a>cdf <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="at">q =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb1-19"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">q =</span> x, <span class="at">y =</span> cdf)</span>
+<span id="cb1-20"><a></a>dd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="at">by =</span> <span class="dv">1</span>), <span class="at">cdf =</span> <span class="fu">unique</span>(cdf), <span class="at">x_empty =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb1-21"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, cdf)) </span>
+<span id="cb1-22"><a></a>p2 <span class="ot">&lt;-</span> p2 <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb1-23"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(x, cdf, <span class="at">label =</span> <span class="fu">fractions</span>(cdf)), <span class="at">data =</span> dd, <span class="at">nudge_y =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb1-24"><a></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x_empty, cdf), <span class="at">data =</span> dd[<span class="sc">-</span><span class="dv">6</span>, ], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">'white'</span>) <span class="sc">+</span></span>
+<span id="cb1-25"><a></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x_empty, cdf), <span class="at">data =</span> dd[<span class="sc">-</span><span class="dv">6</span>, ], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">shape =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-26"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Binomial(4, 1/2)"</span>,</span>
+<span id="cb1-27"><a></a>          <span class="at">subtitle =</span> <span class="fu">expression</span>(CDF<span class="sc">:</span> F[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">&lt;=</span> x))) <span class="sc">+</span></span>
+<span id="cb1-28"><a></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">&lt;=</span> x))) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x = Number of Heads"</span>)</span>
+<span id="cb1-29"><a></a></span>
+<span id="cb1-30"><a></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -594,35 +594,35 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 <section id="binomial-in-r" class="slide level2 smaller">
 <h2>Binomial in R</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># What is the probability of getting 2 Heads out of 5 fair trials?</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># What is the probability of getting 2 Heads out of 5 fair trials?</span></span>
+<span id="cb2-2"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb2-3"><a></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5/16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># What is the binomial PMF: P(X = x), for N = 5, p = 0.5?</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; x <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">7</span> <span class="co"># notice we range x over any integers</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># What is the binomial PMF: P(X = x), for N = 5, p = 0.5?</span></span>
+<span id="cb4-2"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; x <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">7</span> <span class="co"># notice we range x over any integers</span></span>
+<span id="cb4-3"><a></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]    0    0 1/32 5/32 5/16 5/16 5/32 1/32    0    0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Verify that the PMF sums to 1</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># Verify that the PMF sums to 1</span></span>
+<span id="cb6-2"><a></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># What is the probability of 3 heads or fewer</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="fu">pbinom</span>(<span class="dv">3</span>, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># What is the probability of 3 heads or fewer</span></span>
+<span id="cb8-2"><a></a><span class="fu">pbinom</span>(<span class="dv">3</span>, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 13/16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># compute the CDF: P(X &lt;= x), for N = 5, p = 0.5</span></span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="fu">pbinom</span>(x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># compute the CDF: P(X &lt;= x), for N = 5, p = 0.5</span></span>
+<span id="cb10-2"><a></a><span class="fu">pbinom</span>(x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># get from the PMF to CDF; cumsum() is the cumulative sum function</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">cumsum</span>() <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="co"># get from the PMF to CDF; cumsum() is the cumulative sum function</span></span>
+<span id="cb12-2"><a></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">cumsum</span>() <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1</code></pre>
 </div>
@@ -679,8 +679,8 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb14-2"><a></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1/16</code></pre>
 </div>
@@ -691,8 +691,8 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 <li>If <span class="math inline">\(\theta = 1/3\)</span>, the probability of the same sequence has to be <span class="math inline">\((2/3)^3 \cdot 1/3 = 8/81\)</span></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb16-2"><a></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8/81</code></pre>
 </div>
@@ -707,21 +707,21 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 <div id="tabset-4-4">
 <div class="cell columns column-output-location" data-layout-align="center" data-hash="05-lecture_cache/revealjs/unnamed-chunk-7_5b509cf01e817374938eb19e913e4db6">
 <div class="column">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>x <span class="ot">&lt;-</span>  <span class="dv">0</span><span class="sc">:</span><span class="dv">15</span></span>
-<span id="cb18-2"><a href="#cb18-2"></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
-<span id="cb18-3"><a href="#cb18-3"></a>y <span class="ot">&lt;-</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta)</span>
-<span id="cb18-4"><a href="#cb18-4"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
-<span id="cb18-5"><a href="#cb18-5"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, y))</span>
-<span id="cb18-6"><a href="#cb18-6"></a>p <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb18-7"><a href="#cb18-7"></a><span class="fu">xlab</span>(<span class="st">"x = Number of failures before first success"</span>) <span class="sc">+</span></span>
-<span id="cb18-8"><a href="#cb18-8"></a> <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span></span>
-<span id="cb18-9"><a href="#cb18-9"></a><span class="fu">ggtitle</span>(<span class="st">"X ~ Geom(1/5)"</span>, </span>
-<span id="cb18-10"><a href="#cb18-10"></a> <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>x <span class="ot">&lt;-</span>  <span class="dv">0</span><span class="sc">:</span><span class="dv">15</span></span>
+<span id="cb18-2"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb18-3"><a></a>y <span class="ot">&lt;-</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta)</span>
+<span id="cb18-4"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
+<span id="cb18-5"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, y))</span>
+<span id="cb18-6"><a></a>p <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a></a><span class="fu">xlab</span>(<span class="st">"x = Number of failures before first success"</span>) <span class="sc">+</span></span>
+<span id="cb18-8"><a></a> <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span></span>
+<span id="cb18-9"><a></a><span class="fu">ggtitle</span>(<span class="st">"X ~ Geom(1/5)"</span>, </span>
+<span id="cb18-10"><a></a> <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" width="480"></p>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -777,14 +777,14 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
-<span id="cb19-2"><a href="#cb19-2"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">100</span></span>
-<span id="cb19-3"><a href="#cb19-3"></a><span class="fu">sum</span>(x <span class="sc">*</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb19-2"><a></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">100</span></span>
+<span id="cb19-3"><a></a><span class="fu">sum</span>(x <span class="sc">*</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span></span>
-<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">sum</span>(x <span class="sc">*</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span></span>
+<span id="cb21-2"><a></a><span class="fu">sum</span>(x <span class="sc">*</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3</code></pre>
 </div>
@@ -904,25 +904,25 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 </div>
 <div class="fragment">
 <div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-9_a026bb95477d679ef71860031c56c9e7">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Pr of two heads in five trials</span></span>
-<span id="cb23-2"><a href="#cb23-2"></a>(P2 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="co"># Pr of two heads in five trials</span></span>
+<span id="cb23-2"><a></a>(P2 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3125</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># Let's create a realization Binom(5, 1/2)</span></span>
-<span id="cb25-2"><a href="#cb25-2"></a>x <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="fl">1e6</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb25-3"><a href="#cb25-3"></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Let's create a realization Binom(5, 1/2)</span></span>
+<span id="cb25-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="fl">1e6</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb25-3"><a></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] 1 3 3 3 5 0 3 3 2 4 4 4 2 2 4 1 3 2 5 3 4 3 2 3 3 2 2 3 2 4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="co"># indicator RV: if x == 2 Ix = TRUE (1), else Ix = (0)</span></span>
-<span id="cb27-2"><a href="#cb27-2"></a>I2 <span class="ot">&lt;-</span> (x <span class="sc">==</span> <span class="dv">2</span>)</span>
-<span id="cb27-3"><a href="#cb27-3"></a>I2[<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># indicator RV: if x == 2 Ix = TRUE (1), else Ix = (0)</span></span>
+<span id="cb27-2"><a></a>I2 <span class="ot">&lt;-</span> (x <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb27-3"><a></a>I2[<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] 0 0 0 0 0 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 0 1 0 0 1 1 0 1 0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># compute E(Ix) == P2</span></span>
-<span id="cb29-2"><a href="#cb29-2"></a><span class="fu">mean</span>(I2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># compute E(Ix) == P2</span></span>
+<span id="cb29-2"><a></a><span class="fu">mean</span>(I2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.311906</code></pre>
 </div>
@@ -978,35 +978,35 @@ E(g(X)) &amp;=&amp; \sum_{x} g(x) p_X(x)
 <li>For reference, the variance of the Geometric distribution is: <span class="math inline">\((1 - \theta)/\theta^2\)</span></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span>; theta1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>; theta2 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
-<span id="cb31-2"><a href="#cb31-2"></a>x <span class="ot">&lt;-</span> <span class="fu">rgeom</span>(n, <span class="at">prob =</span> theta1)</span>
-<span id="cb31-3"><a href="#cb31-3"></a><span class="fu">var</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span>; theta1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>; theta2 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb31-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rgeom</span>(n, <span class="at">prob =</span> theta1)</span>
+<span id="cb31-3"><a></a><span class="fu">var</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 29.96</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rgeom</span>(n, <span class="at">prob =</span> theta2)</span>
-<span id="cb33-2"><a href="#cb33-2"></a><span class="fu">var</span>(y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">rgeom</span>(n, <span class="at">prob =</span> theta2)</span>
+<span id="cb33-2"><a></a><span class="fu">var</span>(y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>(<span class="fu">var</span>(x) <span class="sc">+</span> <span class="fu">var</span>(y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>(<span class="fu">var</span>(x) <span class="sc">+</span> <span class="fu">var</span>(y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 35.96</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="fu">var</span>(x <span class="sc">+</span> y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">var</span>(x <span class="sc">+</span> y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 35.89</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="fu">cov</span>(x, y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="fu">cov</span>(x, y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.03</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>(<span class="fu">var</span>(x) <span class="sc">+</span> <span class="fu">var</span>(y) <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">cov</span>(x, y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>(<span class="fu">var</span>(x) <span class="sc">+</span> <span class="fu">var</span>(y) <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">cov</span>(x, y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 35.89</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="co"># compare to the analytic result</span></span>
-<span id="cb43-2"><a href="#cb43-2"></a>(<span class="dv">1</span> <span class="sc">-</span> theta1) <span class="sc">/</span> (theta1)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> theta2) <span class="sc">/</span> (theta2)<span class="sc">^</span><span class="dv">2</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co"># compare to the analytic result</span></span>
+<span id="cb43-2"><a></a>(<span class="dv">1</span> <span class="sc">-</span> theta1) <span class="sc">/</span> (theta1)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> theta2) <span class="sc">/</span> (theta2)<span class="sc">^</span><span class="dv">2</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 36</code></pre>
 </div>
@@ -1045,14 +1045,14 @@ E(g(X)) &amp;=&amp; \sum_{x} g(x) p_X(x)
 <li>Notice the location of <span class="math inline">\(\E(X) = \lambda\)</span> in each plot</li>
 </ul>
 <div class="cell" data-layout-align="center" data-hash="05-lecture_cache/revealjs/unnamed-chunk-11_da347d0fc965c8c258af9e8d4f49633b">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dot_plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">lambda =</span> <span class="dv">3</span>)) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x"</span>) <span class="sc">+</span> </span>
-<span id="cb45-2"><a href="#cb45-2"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"X ~ Poisson(3)"</span>)</span>
-<span id="cb45-3"><a href="#cb45-3"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dot_plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">22</span>, <span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">22</span>, <span class="at">lambda =</span> <span class="dv">10</span>)) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x"</span>) <span class="sc">+</span> </span>
-<span id="cb45-4"><a href="#cb45-4"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"X ~ Poisson(10)"</span>)</span>
-<span id="cb45-5"><a href="#cb45-5"></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">dot_plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">lambda =</span> <span class="dv">3</span>)) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x"</span>) <span class="sc">+</span> </span>
+<span id="cb45-2"><a></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"X ~ Poisson(3)"</span>)</span>
+<span id="cb45-3"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">dot_plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">22</span>, <span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">22</span>, <span class="at">lambda =</span> <span class="dv">10</span>)) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x"</span>) <span class="sc">+</span> </span>
+<span id="cb45-4"><a></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"X ~ Poisson(10)"</span>)</span>
+<span id="cb45-5"><a></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" width="576" class="r-stretch quarto-figure-center"></section>
+<img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="576"></section>
 <section id="continuous-rvs-and-the-uniform" class="slide level2 smaller">
 <h2>Continuous RVs and the Uniform</h2>
 <div class="panel-tabset">
@@ -1092,15 +1092,15 @@ F_X(x) &amp; = &amp; \int_{-\infty}^{x} f_X(u)\, du
 </div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="at">length =</span> <span class="dv">100</span>)</span>
-<span id="cb46-2"><a href="#cb46-2"></a>pdf_x <span class="ot">&lt;-</span> <span class="fu">dunif</span>(x, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
-<span id="cb46-3"><a href="#cb46-3"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, pdf_x), <span class="fu">aes</span>(x, pdf_x))</span>
-<span id="cb46-4"><a href="#cb46-4"></a>p <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(p[X](x))) <span class="sc">+</span></span>
-<span id="cb46-5"><a href="#cb46-5"></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Unif(0, 1)"</span>, <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="at">length =</span> <span class="dv">100</span>)</span>
+<span id="cb46-2"><a></a>pdf_x <span class="ot">&lt;-</span> <span class="fu">dunif</span>(x, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
+<span id="cb46-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, pdf_x), <span class="fu">aes</span>(x, pdf_x))</span>
+<span id="cb46-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(p[X](x))) <span class="sc">+</span></span>
+<span id="cb46-5"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Unif(0, 1)"</span>, <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" width="480"></p>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -1150,9 +1150,9 @@ y(x) = \left\{
 <li>Let’s do a quick simulation in R</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>) <span class="co"># pick a random breaking point on (0, 1)</span></span>
-<span id="cb47-2"><a href="#cb47-2"></a>y <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, x, <span class="dv">1</span> <span class="sc">-</span> x)    <span class="co"># generate y = max(x, 1-x)</span></span>
-<span id="cb47-3"><a href="#cb47-3"></a><span class="fu">mean</span>(y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)               <span class="co"># estimate the expectation E(Y)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>) <span class="co"># pick a random breaking point on (0, 1)</span></span>
+<span id="cb47-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, x, <span class="dv">1</span> <span class="sc">-</span> x)    <span class="co"># generate y = max(x, 1-x)</span></span>
+<span id="cb47-3"><a></a><span class="fu">mean</span>(y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)               <span class="co"># estimate the expectation E(Y)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.748</code></pre>
 </div>
@@ -1197,7 +1197,7 @@ y(x) = \left\{
 <div id="tabset-10-2">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/std-normal.png"></p>
+<p><img data-src="images/std-normal.png" class="quarto-figure quarto-figure-center"></p>
 </figure>
 </div>
 </div>
@@ -1211,29 +1211,29 @@ y(x) = \left\{
 </div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>mu_m <span class="ot">&lt;-</span> <span class="fl">69.1</span>   <span class="co"># mean heights of US males in inches</span></span>
-<span id="cb49-2"><a href="#cb49-2"></a>sigma_m <span class="ot">&lt;-</span> <span class="fl">2.9</span> <span class="co"># standard deviation for same</span></span>
-<span id="cb49-3"><a href="#cb49-3"></a>mu_w <span class="ot">&lt;-</span> <span class="fl">63.7</span>   <span class="co"># mean heights of US women in inches</span></span>
-<span id="cb49-4"><a href="#cb49-4"></a>sigma_w <span class="ot">&lt;-</span> <span class="fl">2.7</span> <span class="co"># standard deviation of the same</span></span>
-<span id="cb49-5"><a href="#cb49-5"></a></span>
-<span id="cb49-6"><a href="#cb49-6"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">80</span>, <span class="at">len =</span> <span class="fl">1e3</span>)</span>
-<span id="cb49-7"><a href="#cb49-7"></a>pdf_m <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu_m, <span class="at">sd =</span> sigma_m)</span>
-<span id="cb49-8"><a href="#cb49-8"></a>pdf_w <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)</span>
-<span id="cb49-9"><a href="#cb49-9"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, pdf_m, pdf_w), <span class="fu">aes</span>(x, pdf_m))</span>
-<span id="cb49-10"><a href="#cb49-10"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span> </span>
-<span id="cb49-11"><a href="#cb49-11"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pdf_w), <span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
-<span id="cb49-12"><a href="#cb49-12"></a>  <span class="fu">xlab</span>(<span class="st">"Height (in)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb49-13"><a href="#cb49-13"></a>  <span class="fu">ggtitle</span>(<span class="st">"Distribution of heights of US adults"</span>) <span class="sc">+</span></span>
-<span id="cb49-14"><a href="#cb49-14"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">73.5</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"Men"</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb49-15"><a href="#cb49-15"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">58</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"Women"</span>, <span class="at">color =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
-<span id="cb49-16"><a href="#cb49-16"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb49-17"><a href="#cb49-17"></a>        <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb49-18"><a href="#cb49-18"></a></span>
-<span id="cb49-19"><a href="#cb49-19"></a><span class="fu">print</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>mu_m <span class="ot">&lt;-</span> <span class="fl">69.1</span>   <span class="co"># mean heights of US males in inches</span></span>
+<span id="cb49-2"><a></a>sigma_m <span class="ot">&lt;-</span> <span class="fl">2.9</span> <span class="co"># standard deviation for same</span></span>
+<span id="cb49-3"><a></a>mu_w <span class="ot">&lt;-</span> <span class="fl">63.7</span>   <span class="co"># mean heights of US women in inches</span></span>
+<span id="cb49-4"><a></a>sigma_w <span class="ot">&lt;-</span> <span class="fl">2.7</span> <span class="co"># standard deviation of the same</span></span>
+<span id="cb49-5"><a></a></span>
+<span id="cb49-6"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">80</span>, <span class="at">len =</span> <span class="fl">1e3</span>)</span>
+<span id="cb49-7"><a></a>pdf_m <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu_m, <span class="at">sd =</span> sigma_m)</span>
+<span id="cb49-8"><a></a>pdf_w <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)</span>
+<span id="cb49-9"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, pdf_m, pdf_w), <span class="fu">aes</span>(x, pdf_m))</span>
+<span id="cb49-10"><a></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span> </span>
+<span id="cb49-11"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pdf_w), <span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
+<span id="cb49-12"><a></a>  <span class="fu">xlab</span>(<span class="st">"Height (in)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb49-13"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Distribution of heights of US adults"</span>) <span class="sc">+</span></span>
+<span id="cb49-14"><a></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">73.5</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"Men"</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb49-15"><a></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">58</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"Women"</span>, <span class="at">color =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
+<span id="cb49-16"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb49-17"><a></a>        <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb49-18"><a></a></span>
+<span id="cb49-19"><a></a><span class="fu">print</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" width="480"></p>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -1247,7 +1247,7 @@ y(x) = \left\{
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" width="480"></p>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -1258,9 +1258,9 @@ y(x) = \left\{
 <li>You randomly sample a man from the population. What is <span class="math inline">\(\P(\text{Height}_m &lt; 65)\)</span></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">65</span>, </span>
-<span id="cb50-2"><a href="#cb50-2"></a>          <span class="at">mean =</span> mu_m, <span class="at">sd =</span> sigma_m)<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
-<span id="cb50-3"><a href="#cb50-3"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">65</span>, </span>
+<span id="cb50-2"><a></a>          <span class="at">mean =</span> mu_m, <span class="at">sd =</span> sigma_m)<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.08</code></pre>
 </div>
@@ -1271,17 +1271,17 @@ y(x) = \left\{
 <li>You randomly sample a woman from the population. What is <span class="math inline">\(\P(60 &lt; \text{Height}_w &lt; 70)\)</span></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="dv">60</span>, <span class="at">upper =</span> <span class="dv">70</span>, </span>
-<span id="cb52-2"><a href="#cb52-2"></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
-<span id="cb52-3"><a href="#cb52-3"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="dv">60</span>, <span class="at">upper =</span> <span class="dv">70</span>, </span>
+<span id="cb52-2"><a></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a>(<span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">70</span>, </span>
-<span id="cb54-2"><a href="#cb54-2"></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value <span class="sc">-</span> </span>
-<span id="cb54-3"><a href="#cb54-3"></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">60</span>, </span>
-<span id="cb54-4"><a href="#cb54-4"></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value) <span class="sc">|&gt;</span></span>
-<span id="cb54-5"><a href="#cb54-5"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>(<span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">70</span>, </span>
+<span id="cb54-2"><a></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value <span class="sc">-</span> </span>
+<span id="cb54-3"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">60</span>, </span>
+<span id="cb54-4"><a></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value) <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9</code></pre>
 </div>
@@ -1310,9 +1310,9 @@ Z &amp; \sim &amp; \text{Normal}(5.4, 3.96)
 <li>To figure out when <span class="math inline">\(Z &gt; 0\)</span>, we can integrate the PDF from 0 to Infinity:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="cn">Inf</span>, </span>
-<span id="cb56-2"><a href="#cb56-2"></a>          <span class="at">mean =</span> <span class="fl">5.4</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="fl">15.7</span>))<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
-<span id="cb56-3"><a href="#cb56-3"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="cn">Inf</span>, </span>
+<span id="cb56-2"><a></a>          <span class="at">mean =</span> <span class="fl">5.4</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="fl">15.7</span>))<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.91</code></pre>
 </div>
@@ -1323,8 +1323,8 @@ Z &amp; \sim &amp; \text{Normal}(5.4, 3.96)
 <li>We don’t have to integrate. We can evaluate the CDF instead:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="fl">5.4</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="fl">15.7</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb58-2"><a href="#cb58-2"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="fl">5.4</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="fl">15.7</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb58-2"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.91</code></pre>
 </div>
@@ -1338,14 +1338,14 @@ Z &amp; \sim &amp; \text{Normal}(5.4, 3.96)
 </div>
 <div class="fragment">
 <div class="cell" data-hash="05-lecture_cache/revealjs/unnamed-chunk-20_15c95aa0c476bfce17d939174cb3c5e2">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb60-2"><a href="#cb60-2"></a>taller_m <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
-<span id="cb60-3"><a href="#cb60-3"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
-<span id="cb60-4"><a href="#cb60-4"></a>  height_m <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_m, sigma_m)</span>
-<span id="cb60-5"><a href="#cb60-5"></a>  height_w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_w, sigma_w)</span>
-<span id="cb60-6"><a href="#cb60-6"></a>  taller_m[i] <span class="ot">&lt;-</span> height_m <span class="sc">&gt;</span> height_w</span>
-<span id="cb60-7"><a href="#cb60-7"></a>}</span>
-<span id="cb60-8"><a href="#cb60-8"></a><span class="fu">mean</span>(taller_m) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb60-2"><a></a>taller_m <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb60-3"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb60-4"><a></a>  height_m <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_m, sigma_m)</span>
+<span id="cb60-5"><a></a>  height_w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_w, sigma_w)</span>
+<span id="cb60-6"><a></a>  taller_m[i] <span class="ot">&lt;-</span> height_m <span class="sc">&gt;</span> height_w</span>
+<span id="cb60-7"><a></a>}</span>
+<span id="cb60-8"><a></a><span class="fu">mean</span>(taller_m) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.91</code></pre>
 </div>
@@ -1368,8 +1368,10 @@ Z &amp; \sim &amp; \text{Normal}(5.4, 3.96)
 <li>Conditional Expectations</li>
 </ul>
 
+<div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 <p><a href="https://ericnovik.github.io/smac.html" class="uri">https://ericnovik.github.io/smac.html</a></p>
+</div>
 </div>
 </section>
     </div>
