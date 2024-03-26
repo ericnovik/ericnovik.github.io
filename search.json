@@ -949,7 +949,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
     "title": "Bayesian Inference",
     "section": "Obtaining Quantiles by Sampling",
-    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws &lt;- rbeta(n = 1e5, 438, 544)\np &lt;- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |&gt; round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.478 \n\ncat(\"Probability that the ratio &lt; 0.485 under uniform prior =\", mean(draws &lt; 0.485) |&gt; round(3))\n\nProbability that the ratio &lt; 0.485 under uniform prior = 0.993"
+    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws &lt;- rbeta(n = 1e5, 438, 544)\np &lt;- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |&gt; round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio &lt; 0.485 under uniform prior =\", mean(draws &lt; 0.485) |&gt; round(3))\n\nProbability that the ratio &lt; 0.485 under uniform prior = 0.993"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#population-priors",
@@ -998,21 +998,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#introductions",
     "title": "Bayesian Inference",
     "section": "Introductions",
-    "text": "Introductions\n\nWhat is the country of your birth?"
-  },
-  {
-    "objectID": "bayes-course/01-lecture/01-lecture.html#lecture-1-bayesian-workflow",
-    "href": "bayes-course/01-lecture/01-lecture.html#lecture-1-bayesian-workflow",
-    "title": "Bayesian Inference",
-    "section": "Lecture 1: Bayesian Workflow",
-    "text": "Lecture 1: Bayesian Workflow\n\n\nOverview of the Course\nTwo Truths and a Lie\nStatistics vs AI/ML\nBrief history of Bayesian inference\nReview of basic probability\nIntroduction to Bayesian workflow\nBayes’s rule for events\nBinomial model and the Bayesian Crank\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
-  },
-  {
-    "objectID": "bayes-course/01-lecture/01-lecture.html#overview-of-the-class",
-    "href": "bayes-course/01-lecture/01-lecture.html#overview-of-the-class",
-    "title": "Bayesian Inference",
-    "section": "Overview of the class",
-    "text": "Overview of the class\n\nSyllabus"
+    "text": "Introductions\n\nWhat is the city of your birth?\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#two-truths-and-a-lie1",
@@ -1027,6 +1013,13 @@
     "title": "Bayesian Inference",
     "section": "Two Truths and a Lie",
     "text": "Two Truths and a Lie\nhttps://tinyurl.com/two-truths-and\n\n\nWhat do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#lecture-1-bayesian-workflow",
+    "href": "bayes-course/01-lecture/01-lecture.html#lecture-1-bayesian-workflow",
+    "title": "Bayesian Inference",
+    "section": "Lecture 1: Bayesian Workflow",
+    "text": "Lecture 1: Bayesian Workflow\n\n\n\n\nTwo Truths and a Lie\nStatistics vs AI/ML\nBrief history of Bayesian inference\nReview of basic probability\nIntroduction to Bayesian workflow\nBayes’s rule for events\nBinomial model and the Bayesian Crank\nOverview of the Course"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#statistics-vs.-aiml",
@@ -1229,7 +1222,14 @@
     "href": "bayes-course/01-lecture/01-lecture.html#bayesian-workflow",
     "title": "Bayesian Inference",
     "section": "Bayesian Workflow",
-    "text": "Bayesian Workflow\n\n\nGelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Bayesian Workflow\n\n\nGelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#overview-of-the-class",
+    "href": "bayes-course/01-lecture/01-lecture.html#overview-of-the-class",
+    "title": "Bayesian Inference",
+    "section": "Overview of the class",
+    "text": "Overview of the class\n\nSyllabus\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
   },
   {
     "objectID": "stats-math/05-lecture/05-partial.html#session-5-outline",
