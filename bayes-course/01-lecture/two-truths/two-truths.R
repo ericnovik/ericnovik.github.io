@@ -9,6 +9,13 @@ thm <-
   )
 theme_set(thm)
 
+# Sketch what they think the scatterplot and fitted curve for the class will look like, 
+# and then we lead the class in discussion. Some possible prompts include: 
+# What do you think the range of certainty scores will look like: will there be any 0’s or 10’s? 
+# Will there be a positive relation between x and y: are guesses with higher certainty be 
+# more accurate, on average? How strong will the relation be between x and y: 
+# what will the curve look like?
+
 url <- 'https://docs.google.com/spreadsheets/d/1oyCbed2BpQzHtvpA4DynTlPbwZpxOzOePNw9tas40qU/edit#gid=186692089'
 data <- read_sheet(url)
 colnames(data) <- c('time', 'group', 'score', 'correct')
