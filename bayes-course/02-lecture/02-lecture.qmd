@@ -20,6 +20,7 @@ always_allow_html: true
 ## Conjugate models and Beta-Binomial
 
 ::: incremental
+- Bayesian workflow
 - Beta distribution
 - Great expectations
 - Tuning the prior model for the clinical trial analysis
@@ -118,10 +119,101 @@ $$
 
 - Homework review
 
-## Introduction {.smaller}
+## Bayesian Workflow {.smaller}
+
+::: columns
+::: {.column width="60%"}
+
+::: incremental
+- Statistics is like building a bridge --- we first **simulate** the conditions under which our bridge should withstand various forces, then we **build** a bridge, and once built, we **test** it before letting people drive on it. 
+
+- **Prior knowledge** (not just prior distributions) here would be strength properties of concrete, optimal shape for the length, expected wind conditions, expected load of traffic, and maybe even expected momentum (mass * velocity) of an out-of-control tanker ramming into one of the supporting columns. **The more important our “bridge,” the more testing we do**.
+
+:::
+
+
+:::
+
+::: {.column width="40%"}
+
+::: {.fragment}
+![](images/bridge.jpg){fig-align="center" width="500"}
+:::
+
+::: {.fragment}
+![](images/bridge2.jpeg){fig-align="center" width="500"}
+:::
+
+
+:::
+:::
+
+## Bayesian Inference vs Bayesian Workflow[^1] {.smaller}
 
 ::: columns
 ::: {.column width="50%"}
+
+::: incremental
+- Bayesian inference is concerned with computing $f(\theta \mid y) \propto f(\theta) f(y \mid \theta)$
+- Bayesian workflow covers all aspects of data analysis:
+    - Gather prior information
+    - Build the initial model
+    - Run an inference algorithm (Bayesian inference)
+    - Add model complexity, try a different model, perform model selection
+    - Make a decision
+:::
+
+
+:::
+
+::: {.column width="50%"}
+![](images/workflow.png){fig-align="center" width="672"}
+
+:::
+:::
+
+::: {.fragment}
+
+[^1]: Gelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., Kennedy, L., Gabry, J., Bürkner, P.-C., & Modrák, M. (2020). Bayesian Workflow. arXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808
+
+:::
+
+
+## Why do we need workflow {.smaller}
+
+::: columns
+::: {.column width="60%"}
+
+::: incremental
+- Following the principle of engineering, we start with a simple model
+- It will likely fit the data (no guarantees) and will not take too long to run
+- The simple model will likely not be very good, but now we:
+    - Have a straw man against which better models can be evaluated
+    - Can code the full cycle of data selection, model build, model test, and model diagnostics
+- We gradually add components and rerun the tests
+- If data are large, we can subsample the data to test our model
+:::
+
+
+:::
+
+::: {.column width="40%"}
+![](images/strawman.webp){fig-align="center" height="300"}
+
+::: incremental
+- We want to compare models as we add features
+- We calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong
+:::
+
+:::
+:::
+
+
+
+## On with the show... {.smaller}
+
+::: columns
+::: {.column width="60%"}
 
 ::: incremental
 - Last time, we presented the discretized version of the prior
@@ -135,9 +227,9 @@ $$
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-![](images/fractal.jpg){fig-align="right" width="672"}
+![](images/disc-prior.png){fig-align="right" width="672"}
 
 :::
 :::
@@ -148,16 +240,16 @@ $$
 - Recall that for the continuous RVs we have, the CDF is defined as
 $$
 \begin{eqnarray}
-F(x) & = & \int_{-\infty}^{x} f(t) \, dt, \, \text{and} \\
-f(x) & = & F'(x), \, \text{where } F \text{ is differentiable}
+F(x) & = & \int_{-\infty}^{x} f(t) \, \text{d}t, \, \text{and} \\
+f(x) & = & \frac{\text{d}}{\text{d}x}F(x), \, \text{where } F \text{ is differentiable}
 \end{eqnarray}
 $$
 
 - To compute event probabilities:
 $$
 \begin{eqnarray}
-\P(a \le X \leq b) & = & F(b) − F(a) = \int_{a}^{b} f(x) \, dx \\
-\P(X \in A) & = & \int_{A} f(x) \, dx
+\P(a \le X \leq b) & = & F(b) − F(a) = \int_{a}^{b} f(x) \, \text{d}x \\
+\P(X \in A) & = & \int_{A} f(x) \, \text{d}x
 \end{eqnarray}
 $$
 
@@ -165,7 +257,7 @@ $$
 $$
 \begin{eqnarray}
 f(x) \geq 0 \\ 
-\int_{-\infty}^{\infty} f(x) \, dx = 1
+\int_{-\infty}^{\infty} f(x) \, \text{d}x = 1
 \end{eqnarray}
 $$
 :::
@@ -184,25 +276,39 @@ $$
 \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta^{\alpha - 1} \, (1 -
 \theta)^{\beta - 1} \\
 \text{B}(a,b) \ & = & \ \int_0^1 u^{a - 1} (1 - u)^{b - 1} \,
-du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
+\text{d}u \ \\
+& = & \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 \Gamma(x) & = &
-\int_0^{\infty} u^{x - 1} \exp(-u) \, du
+\int_0^{\infty} u^{x - 1} \exp(-u) \, \text{d}u
 \end{eqnarray}
 $$
 :::
 :::
 
 ::: {.column width="40%"}
+
+::: {.fragment}
 ![](images/gamma.png){fig-align="right" width="250"}
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+factorial(0:9)
+gamma(1:10)
+```
+:::
+
 :::
 
 :::
 
 ::: incremental
 - For positive integrers $n$: $\, \Gamma(n+1) = n!$ and in general $\Gamma(z + 1) = z \Gamma(z)$
-- $\text{Beta}(1, 1)$ is equivalent to $\text{Unif(0, 1)}$
-- The above makes Beta a natural choice for priors on the probability scale
+- $\text{Beta}(1, 1)$ is equivalent to $\text{Unif(0, 1)}$. Why? (work it out)
 :::
+
 
 ## Visualizing Beta {.smaller}
 
@@ -237,12 +343,12 @@ grid.arrange(p[[1]], p[[2]], p[[3]],
 - Recall the definition of expectations for continuous random variables
 - We often write $\mu$ or $\mu_X$ for expected value of $X$
 $$
-\mu_X = \E(X) = \int x \cdot f(x) \, dx
+\mu_X = \E(X) = \int x \cdot f(x) \, \text{d}x
 $$
 
 - Variance is a type of expectation, which we often denote by $\sigma^2$
 $$
-\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx 
+\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, \text{d}x 
 $$
 
 - It is often more convenient to write the variance as
@@ -255,21 +361,35 @@ $$
 
 ::: incremental
 - Keeping in mind that a Gamma function is a continuous analog of the factorial:
+:::
+
+::: {.fragment}
 $$
 \begin{eqnarray}
-\E(\theta) &=& \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
-&=& \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, d\theta \\
+\E(\theta) &=& \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, \text{d}\theta \\
+&=& \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, \text{d}\theta \\
+\end{eqnarray}
+$$
+:::
+
+::: {.fragment}
+$$
+\begin{eqnarray}
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot 
  \color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)}} \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
 \frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
 \frac{a \Gamma(\alpha)}{(\alpha + \beta) \Gamma(\alpha + \beta)} \\
-&=& \frac{\alpha}{\alpha + \beta}.
+&=& \frac{\alpha}{\alpha + \beta}
 \end{eqnarray}
 $$
+:::
+
+::: incremental
 - [What is the value](https://www.polleverywhere.com/free_text_polls/Za9vryQs3rJlnSqM3Kf6L) of $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta} \, d\theta$
 :::
+
 ::: footer
 Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta$ using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5Ea+*+%281+-+x%29%5E%28b+-+1%29+dx+from+0+to+1)
 :::
@@ -305,7 +425,7 @@ $$
 - We borrow an example from BDA3: the probability of girl birth given placenta previa (PP)
 - Placenta previa is a condition when the placenta completely or partially covers the opening of the uterus
 - A PP study in Germany found that out of 980 births, 437 or $\approx 45\%$ were female
-- Sex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%[^1]
+- Sex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%[^2]
 - Our task is to assess the evidence for $\P(\text{ratio} < .485 \mid \text{PP})$
 :::
 
@@ -319,7 +439,7 @@ $$
 
 ::::
 
-[^1]: Gelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310
+[^2]: Gelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310
 
 ## Biomomial Likelihood {.smaller}
 
@@ -366,6 +486,7 @@ f(\theta \mid y) & = & \text{Beta}(\alpha + y, \,\beta + N - y)
 \end{eqnarray}
 $$
 
+- $f(\theta)$: $\alpha - 1$ prior successes and $\beta - 1$ prior failures
 - The last equality comes from matching the kernel $\theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1}$ to the normalized Beta PDF which has a normalizing constant $\frac{\Gamma (\alpha +\beta + N)}{\Gamma (\alpha + y) \Gamma (\beta + N - y)}$
 
 - Since the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial
@@ -380,18 +501,39 @@ Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N
 ::: {.fragment}
 $$
 \begin{eqnarray}
-\E(\theta \mid Y=y)  & = & \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
-\V(\theta \mid Y=y)  & = & \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
-\text{Mode}(\theta \mid Y=y) & = & \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
+\E(\theta \mid y)  & = & \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
+\V(\theta \mid y)  & = & \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
+\text{Mode}(\theta \mid y) & = & \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
 \end{eqnarray}
 $$
 :::
 
 ::: {.incremental}
-- Note tha the posterior expectation is between $y/n$ and $\frac{\alpha}{\alpha + \beta}$
-- Also note that as sample becomes very large $\E(\theta \mid Y=y) \rightarrow \frac{y}{n}$ and $\V(\theta \mid Y=y) \rightarrow 0$
-- As before, $\text{Mode}(\theta \mid Y=y) = \E(\theta \mid Y=y)$, when $\alpha = \beta$
+- Note that the posterior expectation is between $y/n$ and $\frac{\alpha}{\alpha + \beta}$
+- Also note that as sample becomes very large $\E(\theta \mid y) \rightarrow \frac{y}{n}$ and $\V(\theta \mid y) \rightarrow 0$
+- As before, $\text{Mode}(\theta \mid y) = \E(\theta \mid y)$, when $\alpha = \beta$
 :::
+
+## Variance Reduction Rate {.smaller}
+
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+#| output-location: default
+post_v <- function(a, b, y, n) {
+  ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))
+}
+n <- seq(10, 500, by = 2)
+y <- 1:246
+v <- post_v(1, 1, y = y, n = n)
+ggplot(aes(n, v), data = data.frame(n, v)) +
+  geom_line() + ylab("Var")
+  
+```
+
+
 
 ## Example: Placenta Previa {.smaller}
 ::: {.incremental}
@@ -559,7 +701,7 @@ cat("Probability that the ratio < 0.485 under population prior =", round(event_p
 ## Visualizing Bayesian Rebalancing {.smaller}
 
 ::: incremental
-- The following uses $\text{Beta}(5, 5)$ prior and N = 10:
+- The following uses $\text{Beta}(5, 5)$ prior and N = 10. Guess what color is likelihood, prior, and posterior.
 :::
 
 ::: {.fragment}
@@ -592,7 +734,6 @@ grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]],
 - This is a general result, not just for Beta Binomial (see Section 4.5)
 - In practice, when we don't have analytic posteriors, this is not so easy to do
 - Suppose we observe $y = y_1 + y_2$ and $N = N_1 + N_2$ trials all at once
-- Also assume we start with $\text{Beta}(1, 1)$ prior
 - For all at once case, the posterior is in $f(\theta \mid y) = \text{Beta}(\alpha + y, \,\beta + N - y)$ as before
 - Now, suppose we observe $y_1$ successes in $n_1$ trials first
 - The posterior is $f(\theta \mid y_1) = \text{Beta}(\alpha + y_1, \,\beta + N_1 - y_1)$ 
@@ -603,18 +744,22 @@ grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]],
 ## General Case {.smaller}
 
 ::: incremental
-- Suppose we observe data point $y_1$, and then data point $y_2$
+- Suppose we observe data point $y_1$, and then data point $y_2$[^4]
 :::
 
 ::: {.fragment}
 $$
-f(\theta \mid y_1,y_2) =  \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+\begin{eqnarray}
+f(\theta \mid y_1) &=&  \frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)} \\
+f(\theta \mid y_2) &=&  \frac{\frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)} f(y_2 \mid \theta)}{f(y_2)} \\
+&=& \frac{f(\theta)f(y_1 \mid \theta) f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+\end{eqnarray}
 $$
 :::
 
 ::: incremental
 - Observing data point $y_2$, and then data point $y_1$, will results in the same distribution
-- What if observed both points at once?
+- What if we observed both points at once?
 :::
 
 ::: {.fragment}
@@ -627,25 +772,26 @@ f(\theta \mid y_1,y_2)
 $$
 :::
 
-## Bayesian Workflow Chapter 2
+[^4]: This comes directly from Bayes Rules!: 4.5 Proving data order invariance
 
-::: columns
-::: {.column width="50%"}
+## The myth of objectivity in science {.smaller}
 
 ::: incremental
-- What do we do before fitting a model
-   - Choosing an initial model
-   - Modular construction
-   - Scaling and transforming the parameters
-   - Prior predictive checking
+
+- All of science requires choices, and those choices are, by definition, subjective
+- Neither Frequentist nor Bayesian inference imbues objectivity into your analysis
+- All priors are subjective, including no priors, which don't exist (uniform prior on the real line is not "no prior")
+- Remember that important scientific discoveries were made before Statistics became a thing
+- A better alternative to objective vs subjective debate:
+
 :::
 
+::: {.fragment}
 
-:::
+> ...objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence[^3]
 
-::: {.column width="50%"}
-![](images/workflow.png){fig-align="center" width="672"}
-:::
+[^3]: Gelman, A., & Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453
+
 :::
 
 
