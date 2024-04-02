@@ -851,7 +851,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#conjugate-models-and-beta-binomial",
     "title": "Bayesian Inference",
     "section": "Conjugate models and Beta-Binomial",
-    "text": "Conjugate models and Beta-Binomial\n\n\nBeta distribution\nGreat expectations\nTuning the prior model for the clinical trial analysis\nBinomial likelihood with continuous \\(\\theta\\)\nDeriving the conjugate posterior\nAnalysis of the sex ratio\nCompromise between priors and data model\nCoherence of Bayesian inference\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
+    "text": "Conjugate models and Beta-Binomial\n\n\nBayesian workflow\nBeta distribution\nGreat expectations\nTuning the prior model for the clinical trial analysis\nBinomial likelihood with continuous \\(\\theta\\)\nDeriving the conjugate posterior\nAnalysis of the sex ratio\nCompromise between priors and data model\nCoherence of Bayesian inference\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#homework",
@@ -861,25 +861,46 @@
     "text": "Homework\n\nHow did you find the homework?\nHomework review"
   },
   {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#introduction",
-    "href": "bayes-course/02-lecture/02-lecture.html#introduction",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
+    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
     "title": "Bayesian Inference",
-    "section": "Introduction",
-    "text": "Introduction\n\n\n\n\nLast time, we presented the discretized version of the prior\nIn practice, we are typically working in continuous space\nIn general, the prior model can be arbitrarily complex\nThere is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior\nThis is called conjugacy\nIn practice, we seldom rely on conjugate relationships\nBeta distribution is conjugate to Binomial"
+    "section": "Bayesian Workflow",
+    "text": "Bayesian Workflow\n\n\n\n\nStatistics is like building a bridge — we first simulate the conditions under which our bridge should withstand various forces, then we build a bridge, and once built, we test it before letting people drive on it.\nPrior knowledge (not just prior distributions) here would be strength properties of concrete, optimal shape for the length, expected wind conditions, expected load of traffic, and maybe even expected momentum (mass * velocity) of an out-of-control tanker ramming into one of the supporting columns. The more important our “bridge,” the more testing we do."
+  },
+  {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-inference-vs-bayesian-workflow1",
+    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-inference-vs-bayesian-workflow1",
+    "title": "Bayesian Inference",
+    "section": "Bayesian Inference vs Bayesian Workflow1",
+    "text": "Bayesian Inference vs Bayesian Workflow1\n\n\n\n\nBayesian inference is concerned with computing \\(f(\\theta \\mid y) \\propto f(\\theta) f(y \\mid \\theta)\\)\nBayesian workflow covers all aspects of data analysis:\n\nGather prior information\nBuild the initial model\nRun an inference algorithm (Bayesian inference)\nAdd model complexity, try a different model, perform model selection\nMake a decision\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nGelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., Kennedy, L., Gabry, J., Bürkner, P.-C., & Modrák, M. (2020). Bayesian Workflow. arXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
+  },
+  {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#why-do-we-need-workflow",
+    "href": "bayes-course/02-lecture/02-lecture.html#why-do-we-need-workflow",
+    "title": "Bayesian Inference",
+    "section": "Why do we need workflow",
+    "text": "Why do we need workflow\n\n\n\n\nFollowing the principle of engineering, we start with a simple model\nIt will likely fit the data (no guarantees) and will not take too long to run\nThe simple model will likely not be very good, but now we:\n\nHave a straw man against which better models can be evaluated\nCan code the full cycle of data selection, model build, model test, and model diagnostics\n\nWe gradually add components and rerun the tests\nIf data are large, we can subsample the data to test our model\n\n\n\n\n\n\n\n\n\n\nWe want to compare models as we add features\nWe calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong"
+  },
+  {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#on-with-the-show",
+    "href": "bayes-course/02-lecture/02-lecture.html#on-with-the-show",
+    "title": "Bayesian Inference",
+    "section": "On with the show…",
+    "text": "On with the show…\n\n\n\n\nLast time, we presented the discretized version of the prior\nIn practice, we are typically working in continuous space\nIn general, the prior model can be arbitrarily complex\nThere is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior\nThis is called conjugacy\nIn practice, we seldom rely on conjugate relationships\nBeta distribution is conjugate to Binomial"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#continous-probability-distributions",
     "href": "bayes-course/02-lecture/02-lecture.html#continous-probability-distributions",
     "title": "Bayesian Inference",
     "section": "Continous Probability Distributions",
-    "text": "Continous Probability Distributions\n\n\nRecall that for the continuous RVs we have, the CDF is defined as \\[\n\\begin{eqnarray}\nF(x) & = & \\int_{-\\infty}^{x} f(t) \\, dt, \\, \\text{and} \\\\\nf(x) & = & F'(x), \\, \\text{where } F \\text{ is differentiable}\n\\end{eqnarray}\n\\]\nTo compute event probabilities: \\[\n\\begin{eqnarray}\n\\P(a \\le X \\leq b) & = & F(b) − F(a) = \\int_{a}^{b} f(x) \\, dx \\\\\n\\P(X \\in A) & = & \\int_{A} f(x) \\, dx\n\\end{eqnarray}\n\\]\nAs in the case of PMFs: \\[\n\\begin{eqnarray}\nf(x) \\geq 0 \\\\\n\\int_{-\\infty}^{\\infty} f(x) \\, dx = 1\n\\end{eqnarray}\n\\]"
+    "text": "Continous Probability Distributions\n\n\nRecall that for the continuous RVs we have, the CDF is defined as \\[\n\\begin{eqnarray}\nF(x) & = & \\int_{-\\infty}^{x} f(t) \\, \\text{d}t, \\, \\text{and} \\\\\nf(x) & = & \\frac{\\text{d}}{\\text{d}x}F(x), \\, \\text{where } F \\text{ is differentiable}\n\\end{eqnarray}\n\\]\nTo compute event probabilities: \\[\n\\begin{eqnarray}\n\\P(a \\le X \\leq b) & = & F(b) − F(a) = \\int_{a}^{b} f(x) \\, \\text{d}x \\\\\n\\P(X \\in A) & = & \\int_{A} f(x) \\, \\text{d}x\n\\end{eqnarray}\n\\]\nAs in the case of PMFs: \\[\n\\begin{eqnarray}\nf(x) \\geq 0 \\\\\n\\int_{-\\infty}^{\\infty} f(x) \\, \\text{d}x = 1\n\\end{eqnarray}\n\\]"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "href": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "title": "Bayesian Inference",
     "section": "Introducing Beta",
-    "text": "Introducing Beta\n\n\n\n\nBeta distribution has the following functional form for \\(\\alpha &gt; 0, \\, \\beta &gt; 0, \\, \\theta \\in (0, 1)\\) \\[\n\\begin{eqnarray}\n\\text{Beta}(\\theta \\mid \\alpha,\\beta) & = &\n\\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta^{\\alpha - 1} \\, (1 -\n\\theta)^{\\beta - 1} \\\\\n\\text{B}(a,b) \\ & = & \\ \\int_0^1 u^{a - 1} (1 - u)^{b - 1} \\,\ndu \\ = \\ \\frac{\\Gamma(a) \\, \\Gamma(b)}{\\Gamma(a+b)} \\\\\n\\Gamma(x) & = &\n\\int_0^{\\infty} u^{x - 1} \\exp(-u) \\, du\n\\end{eqnarray}\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nFor positive integrers \\(n\\): \\(\\, \\Gamma(n+1) = n!\\) and in general \\(\\Gamma(z + 1) = z \\Gamma(z)\\)\n\\(\\text{Beta}(1, 1)\\) is equivalent to \\(\\text{Unif(0, 1)}\\)\nThe above makes Beta a natural choice for priors on the probability scale"
+    "text": "Introducing Beta\n\n\n\n\nBeta distribution has the following functional form for \\(\\alpha &gt; 0, \\, \\beta &gt; 0, \\, \\theta \\in (0, 1)\\) \\[\n\\begin{eqnarray}\n\\text{Beta}(\\theta \\mid \\alpha,\\beta) & = &\n\\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta^{\\alpha - 1} \\, (1 -\n\\theta)^{\\beta - 1} \\\\\n\\text{B}(a,b) \\ & = & \\ \\int_0^1 u^{a - 1} (1 - u)^{b - 1} \\,\n\\text{d}u \\ \\\\\n& = & \\ \\frac{\\Gamma(a) \\, \\Gamma(b)}{\\Gamma(a+b)} \\\\\n\\Gamma(x) & = &\n\\int_0^{\\infty} u^{x - 1} \\exp(-u) \\, \\text{d}u\n\\end{eqnarray}\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nfactorial(0:9)\n\n [1]      1      1      2      6     24    120    720   5040  40320 362880\n\ngamma(1:10)\n\n [1]      1      1      2      6     24    120    720   5040  40320 362880\n\n\n\n\n\n\n\nFor positive integrers \\(n\\): \\(\\, \\Gamma(n+1) = n!\\) and in general \\(\\Gamma(z + 1) = z \\Gamma(z)\\)\n\\(\\text{Beta}(1, 1)\\) is equivalent to \\(\\text{Unif(0, 1)}\\). Why? (work it out)"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
@@ -893,14 +914,14 @@
     "href": "bayes-course/02-lecture/02-lecture.html#expectations",
     "title": "Bayesian Inference",
     "section": "Expectations",
-    "text": "Expectations\n\n\nRecall the definition of expectations for continuous random variables\nWe often write \\(\\mu\\) or \\(\\mu_X\\) for expected value of \\(X\\) \\[\n\\mu_X = \\E(X) = \\int x \\cdot f(x) \\, dx\n\\]\nVariance is a type of expectation, which we often denote by \\(\\sigma^2\\) \\[\n\\sigma_X = \\V(X) = \\E(X - \\mu)^2 = \\int (X - \\mu)^2 f(x) \\, dx\n\\]\nIt is often more convenient to write the variance as \\[\n\\V(X) = \\E(X^2) - \\mu^2\n\\]"
+    "text": "Expectations\n\n\nRecall the definition of expectations for continuous random variables\nWe often write \\(\\mu\\) or \\(\\mu_X\\) for expected value of \\(X\\) \\[\n\\mu_X = \\E(X) = \\int x \\cdot f(x) \\, \\text{d}x\n\\]\nVariance is a type of expectation, which we often denote by \\(\\sigma^2\\) \\[\n\\sigma_X = \\V(X) = \\E(X - \\mu)^2 = \\int (X - \\mu)^2 f(x) \\, \\text{d}x\n\\]\nIt is often more convenient to write the variance as \\[\n\\V(X) = \\E(X^2) - \\mu^2\n\\]"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
     "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
     "title": "Bayesian Inference",
     "section": "What to expect from Beta",
-    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial: \\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, d\\theta \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}.\n\\end{eqnarray}\n\\]\nWhat is the value of \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
+    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial:\n\n\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, \\text{d}\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, \\text{d}\\theta \\\\\n\\end{eqnarray}\n\\]\n\n\n\\[\n\\begin{eqnarray}\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}\n\\end{eqnarray}\n\\]\n\n\n\nWhat is the value of \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
@@ -928,14 +949,21 @@
     "href": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
     "title": "Bayesian Inference",
     "section": "Deriving the Posterior Distribution",
-    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
+    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\n\\(f(\\theta)\\): \\(\\alpha - 1\\) prior successes and \\(\\beta - 1\\) prior failures\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
     "href": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
     "title": "Bayesian Inference",
     "section": "Posterior Expectations",
-    "text": "Posterior Expectations\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid Y=y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid Y=y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid Y=y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\n\nNote tha the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid Y=y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid Y=y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid Y=y) = \\E(\\theta \\mid Y=y)\\), when \\(\\alpha = \\beta\\)"
+    "text": "Posterior Expectations\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\n\nNote that the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid y) = \\E(\\theta \\mid y)\\), when \\(\\alpha = \\beta\\)"
+  },
+  {
+    "objectID": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate",
+    "href": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate",
+    "title": "Bayesian Inference",
+    "section": "Variance Reduction Rate",
+    "text": "Variance Reduction Rate\n\npost_v &lt;- function(a, b, y, n) {\n  ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))\n}\nn &lt;- seq(10, 500, by = 2)\ny &lt;- 1:246\nv &lt;- post_v(1, 1, y = y, n = n)\nggplot(aes(n, v), data = data.frame(n, v)) +\n  geom_line() + ylab(\"Var\")"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
@@ -970,28 +998,28 @@
     "href": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
     "title": "Bayesian Inference",
     "section": "Visualizing Bayesian Rebalancing",
-    "text": "Visualizing Bayesian Rebalancing\n\n\nThe following uses \\(\\text{Beta}(5, 5)\\) prior and N = 10:"
+    "text": "Visualizing Bayesian Rebalancing\n\n\nThe following uses \\(\\text{Beta}(5, 5)\\) prior and N = 10. Guess what color is likelihood, prior, and posterior."
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
     "href": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
     "title": "Bayesian Inference",
     "section": "Data Order and Batch Invariance",
-    "text": "Data Order and Batch Invariance\n\n\nIn Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)\nThis is a general result, not just for Beta Binomial (see Section 4.5)\nIn practice, when we don’t have analytic posteriors, this is not so easy to do\nSuppose we observe \\(y = y_1 + y_2\\) and \\(N = N_1 + N_2\\) trials all at once\nAlso assume we start with \\(\\text{Beta}(1, 1)\\) prior\nFor all at once case, the posterior is in \\(f(\\theta \\mid y) = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\) as before\nNow, suppose we observe \\(y_1\\) successes in \\(n_1\\) trials first\nThe posterior is \\(f(\\theta \\mid y_1) = \\text{Beta}(\\alpha + y_1, \\,\\beta + N_1 - y_1)\\)\nWe now observe, \\(y_2\\) successes in \\(n_2\\) trials. The posterior is \\(f(\\theta \\mid y= y_1 + y_2) = \\text{Beta}(\\alpha + y_1 + y_2, \\,\\beta + N_1 - y_1 + N_2 - y_2)\\\\ = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\)"
+    "text": "Data Order and Batch Invariance\n\n\nIn Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)\nThis is a general result, not just for Beta Binomial (see Section 4.5)\nIn practice, when we don’t have analytic posteriors, this is not so easy to do\nSuppose we observe \\(y = y_1 + y_2\\) and \\(N = N_1 + N_2\\) trials all at once\nFor all at once case, the posterior is in \\(f(\\theta \\mid y) = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\) as before\nNow, suppose we observe \\(y_1\\) successes in \\(n_1\\) trials first\nThe posterior is \\(f(\\theta \\mid y_1) = \\text{Beta}(\\alpha + y_1, \\,\\beta + N_1 - y_1)\\)\nWe now observe, \\(y_2\\) successes in \\(n_2\\) trials. The posterior is \\(f(\\theta \\mid y= y_1 + y_2) = \\text{Beta}(\\alpha + y_1 + y_2, \\,\\beta + N_1 - y_1 + N_2 - y_2)\\\\ = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\)"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#general-case",
     "href": "bayes-course/02-lecture/02-lecture.html#general-case",
     "title": "Bayesian Inference",
     "section": "General Case",
-    "text": "General Case\n\n\nSuppose we observe data point \\(y_1\\), and then data point \\(y_2\\)\n\n\n\n\\[\nf(\\theta \\mid y_1,y_2) =  \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\]\n\n\n\nObserving data point \\(y_2\\), and then data point \\(y_1\\), will results in the same distribution\nWhat if observed both points at once?\n\n\n\n\\[\n\\begin{split}\nf(\\theta \\mid y_1,y_2)\n& = \\frac{f(\\theta)f(y_1,y_2 \\mid \\theta)}{f(y_1)f(y_2)} \\\\\n& = \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{split}\n\\]"
+    "text": "General Case\n\n\nSuppose we observe data point \\(y_1\\), and then data point \\(y_2\\)1\n\n\n\n\\[\n\\begin{eqnarray}\nf(\\theta \\mid y_1) &=&  \\frac{f(\\theta)f(y_1 \\mid \\theta)}{f(y_1)} \\\\\nf(\\theta \\mid y_2) &=&  \\frac{\\frac{f(\\theta)f(y_1 \\mid \\theta)}{f(y_1)} f(y_2 \\mid \\theta)}{f(y_2)} \\\\\n&=& \\frac{f(\\theta)f(y_1 \\mid \\theta) f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{eqnarray}\n\\]\n\n\n\nObserving data point \\(y_2\\), and then data point \\(y_1\\), will results in the same distribution\nWhat if we observed both points at once?\n\n\n\n\\[\n\\begin{split}\nf(\\theta \\mid y_1,y_2)\n& = \\frac{f(\\theta)f(y_1,y_2 \\mid \\theta)}{f(y_1)f(y_2)} \\\\\n& = \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{split}\n\\]\n\nThis comes directly from Bayes Rules!: 4.5 Proving data order invariance"
   },
   {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow-chapter-2",
-    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow-chapter-2",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
+    "href": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
     "title": "Bayesian Inference",
-    "section": "Bayesian Workflow Chapter 2",
-    "text": "Bayesian Workflow Chapter 2\n\n\n\n\nWhat do we do before fitting a model\n\nChoosing an initial model\nModular construction\nScaling and transforming the parameters\nPrior predictive checking\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "section": "The myth of objectivity in science",
+    "text": "The myth of objectivity in science\n\n\nAll of science requires choices, and those choices are, by definition, subjective\nNeither Frequentist nor Bayesian inference imbues objectivity into your analysis\nAll priors are subjective, including no priors, which don’t exist (uniform prior on the real line is not “no prior”)\nRemember that important scientific discoveries were made before Statistics became a thing\nA better alternative to objective vs subjective debate:\n\n\n\n\n…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence1\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html\n\n\nGelman, A., & Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#introductions",
@@ -1131,7 +1159,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#law-of-total-probability-lotp",
     "title": "Bayesian Inference",
     "section": "Law of Total Probability (LOTP)",
-    "text": "Law of Total Probability (LOTP)\n\\[\n\\P(B) = \\sum_{i=1}^{n} \\P(B \\cap A_i) = \\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)\n\\]\n\n\nImage from Blitzstein and Hwang (2019), Page 55"
+    "text": "Law of Total Probability (LOTP)\nLet \\(A\\) be a partition of \\(\\Omega\\), so that each \\(A_i\\) is disjoint, \\(\\P(A_i &gt;0)\\), and \\(\\cup A_i = \\Omega\\). \\[\n\\P(B) = \\sum_{i=1}^{n} \\P(B \\cap A_i) = \\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)\n\\]\n\n\nImage from Blitzstein and Hwang (2019), Page 55"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#bayess-rule-for-events",

@@ -10,7 +10,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.4.549">
 
-  <meta name="author" content="Eric Novik | Spring 2023 | Lecture 2">
+  <meta name="author" content="Eric Novik | Spring 2024 | Lecture 2">
   <title>Eric Novik - Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -400,7 +400,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Spring 2023 | Lecture 2 
+Eric Novik | Spring 2024 | Lecture 2 
 </div>
 </div>
 </div>
@@ -410,6 +410,7 @@ Eric Novik | Spring 2023 | Lecture 2
 <h2>Conjugate models and Beta-Binomial</h2>
 <div>
 <ul>
+<li class="fragment">Bayesian workflow</li>
 <li class="fragment">Beta distribution</li>
 <li class="fragment">Great expectations</li>
 <li class="fragment">Tuning the prior model for the clinical trial analysis</li>
@@ -437,10 +438,99 @@ Eric Novik | Spring 2023 | Lecture 2
 <li><p>Homework review</p></li>
 </ul>
 </section>
-<section id="introduction" class="slide level2 smaller">
-<h2>Introduction</h2>
+<section id="bayesian-workflow" class="slide level2 smaller">
+<h2>Bayesian Workflow</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div>
+<ul>
+<li class="fragment"><p>Statistics is like building a bridge — we first <strong>simulate</strong> the conditions under which our bridge should withstand various forces, then we <strong>build</strong> a bridge, and once built, we <strong>test</strong> it before letting people drive on it.</p></li>
+<li class="fragment"><p><strong>Prior knowledge</strong> (not just prior distributions) here would be strength properties of concrete, optimal shape for the length, expected wind conditions, expected load of traffic, and maybe even expected momentum (mass * velocity) of an out-of-control tanker ramming into one of the supporting columns. <strong>The more important our “bridge,” the more testing we do</strong>.</p></li>
+</ul>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/bridge.jpg" class="quarto-figure quarto-figure-center" width="500"></p>
+</figure>
+</div>
+</div>
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/bridge2.jpeg" class="quarto-figure quarto-figure-center" width="500"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="bayesian-inference-vs-bayesian-workflow1" class="slide level2 smaller scrollable">
+<h2>Bayesian Inference vs Bayesian Workflow<sup>1</sup></h2>
 <div class="columns">
 <div class="column" style="width:50%;">
+<div>
+<ul>
+<li class="fragment">Bayesian inference is concerned with computing <span class="math inline">\(f(\theta \mid y) \propto f(\theta) f(y \mid \theta)\)</span></li>
+<li class="fragment">Bayesian workflow covers all aspects of data analysis:
+<ul>
+<li class="fragment">Gather prior information</li>
+<li class="fragment">Build the initial model</li>
+<li class="fragment">Run an inference algorithm (Bayesian inference)</li>
+<li class="fragment">Add model complexity, try a different model, perform model selection</li>
+<li class="fragment">Make a decision</li>
+</ul></li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/workflow.png" class="quarto-figure quarto-figure-center" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Gelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., Kennedy, L., Gabry, J., Bürkner, P.-C., &amp; Modrák, M. (2020). Bayesian Workflow. arXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808</p></li></ol></aside></section>
+<section id="why-do-we-need-workflow" class="slide level2 smaller">
+<h2>Why do we need workflow</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div>
+<ul>
+<li class="fragment">Following the principle of engineering, we start with a simple model</li>
+<li class="fragment">It will likely fit the data (no guarantees) and will not take too long to run</li>
+<li class="fragment">The simple model will likely not be very good, but now we:
+<ul>
+<li class="fragment">Have a straw man against which better models can be evaluated</li>
+<li class="fragment">Can code the full cycle of data selection, model build, model test, and model diagnostics</li>
+</ul></li>
+<li class="fragment">We gradually add components and rerun the tests</li>
+<li class="fragment">If data are large, we can subsample the data to test our model</li>
+</ul>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/strawman.webp" class="quarto-figure quarto-figure-center" height="300"></p>
+</figure>
+</div>
+<div>
+<ul>
+<li class="fragment">We want to compare models as we add features</li>
+<li class="fragment">We calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="on-with-the-show" class="slide level2 smaller">
+<h2>On with the show…</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <div>
 <ul>
 <li class="fragment">Last time, we presented the discretized version of the prior</li>
@@ -452,10 +542,10 @@ Eric Novik | Spring 2023 | Lecture 2
 <li class="fragment">Beta distribution is conjugate to Binomial</li>
 </ul>
 </div>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-right">
 <figure>
-<p><img data-src="images/fractal.jpg" class="quarto-figure quarto-figure-right" width="672"></p>
+<p><img data-src="images/disc-prior.png" class="quarto-figure quarto-figure-right" width="672"></p>
 </figure>
 </div>
 </div>
@@ -467,20 +557,20 @@ Eric Novik | Spring 2023 | Lecture 2
 <ul>
 <li class="fragment"><p>Recall that for the continuous RVs we have, the CDF is defined as <span class="math display">\[
 \begin{eqnarray}
-F(x) &amp; = &amp; \int_{-\infty}^{x} f(t) \, dt, \, \text{and} \\
-f(x) &amp; = &amp; F'(x), \, \text{where } F \text{ is differentiable}
+F(x) &amp; = &amp; \int_{-\infty}^{x} f(t) \, \text{d}t, \, \text{and} \\
+f(x) &amp; = &amp; \frac{\text{d}}{\text{d}x}F(x), \, \text{where } F \text{ is differentiable}
 \end{eqnarray}
 \]</span></p></li>
 <li class="fragment"><p>To compute event probabilities: <span class="math display">\[
 \begin{eqnarray}
-\P(a \le X \leq b) &amp; = &amp; F(b) − F(a) = \int_{a}^{b} f(x) \, dx \\
-\P(X \in A) &amp; = &amp; \int_{A} f(x) \, dx
+\P(a \le X \leq b) &amp; = &amp; F(b) − F(a) = \int_{a}^{b} f(x) \, \text{d}x \\
+\P(X \in A) &amp; = &amp; \int_{A} f(x) \, \text{d}x
 \end{eqnarray}
 \]</span></p></li>
 <li class="fragment"><p>As in the case of PMFs: <span class="math display">\[
 \begin{eqnarray}
 f(x) \geq 0 \\
-\int_{-\infty}^{\infty} f(x) \, dx = 1
+\int_{-\infty}^{\infty} f(x) \, \text{d}x = 1
 \end{eqnarray}
 \]</span></p></li>
 </ul>
@@ -498,26 +588,40 @@ f(x) \geq 0 \\
 \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta^{\alpha - 1} \, (1 -
 \theta)^{\beta - 1} \\
 \text{B}(a,b) \ &amp; = &amp; \ \int_0^1 u^{a - 1} (1 - u)^{b - 1} \,
-du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
+\text{d}u \ \\
+&amp; = &amp; \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 \Gamma(x) &amp; = &amp;
-\int_0^{\infty} u^{x - 1} \exp(-u) \, du
+\int_0^{\infty} u^{x - 1} \exp(-u) \, \text{d}u
 \end{eqnarray}
 \]</span></li>
 </ul>
 </div>
 </div><div class="column" style="width:40%;">
+<div class="fragment">
 <div class="quarto-figure quarto-figure-right">
 <figure>
 <p><img data-src="images/gamma.png" class="quarto-figure quarto-figure-right" width="250"></p>
 </figure>
 </div>
 </div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">factorial</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]      1      1      2      6     24    120    720   5040  40320 362880</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">gamma</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]      1      1      2      6     24    120    720   5040  40320 362880</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div>
 <ul>
 <li class="fragment">For positive integrers <span class="math inline">\(n\)</span>: <span class="math inline">\(\, \Gamma(n+1) = n!\)</span> and in general <span class="math inline">\(\Gamma(z + 1) = z \Gamma(z)\)</span></li>
-<li class="fragment"><span class="math inline">\(\text{Beta}(1, 1)\)</span> is equivalent to <span class="math inline">\(\text{Unif(0, 1)}\)</span></li>
-<li class="fragment">The above makes Beta a natural choice for priors on the probability scale</li>
+<li class="fragment"><span class="math inline">\(\text{Beta}(1, 1)\)</span> is equivalent to <span class="math inline">\(\text{Unif(0, 1)}\)</span>. Why? (work it out)</li>
 </ul>
 </div>
 </section>
@@ -533,7 +637,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -546,10 +650,10 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <ul>
 <li class="fragment"><p>Recall the definition of expectations for continuous random variables</p></li>
 <li class="fragment"><p>We often write <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\mu_X\)</span> for expected value of <span class="math inline">\(X\)</span> <span class="math display">\[
-\mu_X = \E(X) = \int x \cdot f(x) \, dx
+\mu_X = \E(X) = \int x \cdot f(x) \, \text{d}x
 \]</span></p></li>
 <li class="fragment"><p>Variance is a type of expectation, which we often denote by <span class="math inline">\(\sigma^2\)</span> <span class="math display">\[
-\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, dx
+\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, \text{d}x
 \]</span></p></li>
 <li class="fragment"><p>It is often more convenient to write the variance as <span class="math display">\[
 \V(X) = \E(X^2) - \mu^2
@@ -561,19 +665,32 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <h2>What to expect from Beta</h2>
 <div>
 <ul>
-<li class="fragment">Keeping in mind that a Gamma function is a continuous analog of the factorial: <span class="math display">\[
+<li class="fragment">Keeping in mind that a Gamma function is a continuous analog of the factorial:</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
 \begin{eqnarray}
-\E(\theta) &amp;=&amp; \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, d\theta \\
-&amp;=&amp; \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, d\theta \\
+\E(\theta) &amp;=&amp; \int_{0}^{1} \frac{1}{\mathrm{B}(\alpha,\beta)} \, \theta \cdot \theta^{\alpha - 1} \, (1 - \theta)^{\beta - 1} \, \text{d}\theta \\
+&amp;=&amp; \frac{1}{\mathrm{B}(\alpha,\beta)}\int_{0}^{1}  \color{red}{\theta^\alpha \, (1 - \theta)^{\beta - 1}} \, \text{d}\theta \\
+\end{eqnarray}
+\]</span></p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
 &amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot
 \color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)}} \\
 &amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot
 \frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
 &amp;=&amp; \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot
 \frac{a \Gamma(\alpha)}{(\alpha + \beta) \Gamma(\alpha + \beta)} \\
-&amp;=&amp; \frac{\alpha}{\alpha + \beta}.
+&amp;=&amp; \frac{\alpha}{\alpha + \beta}
 \end{eqnarray}
-\]</span></li>
+\]</span></p>
+</div>
+<div>
+<ul>
 <li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/Za9vryQs3rJlnSqM3Kf6L">What is the value</a> of <span class="math inline">\(\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta} \, d\theta\)</span></li>
 </ul>
 </div>
@@ -621,7 +738,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 </div>
 </div>
 </div>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Gelman, A., &amp; Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310</p></li></ol></aside></section>
+<aside><ol class="aside-footnotes"><li id="fn2"><p>Gelman, A., &amp; Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310</p></li></ol></aside></section>
 <section id="biomomial-likelihood" class="slide level2 smaller">
 <h2>Biomomial Likelihood</h2>
 <div>
@@ -638,7 +755,7 @@ du \ = \ \frac{\Gamma(a) \, \Gamma(b)}{\Gamma(a+b)} \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -659,6 +776,7 @@ f(\theta \mid y) &amp; \propto &amp; f(y \mid \theta) f(\theta) \\
 f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 \end{eqnarray}
 \]</span></p></li>
+<li class="fragment"><p><span class="math inline">\(f(\theta)\)</span>: <span class="math inline">\(\alpha - 1\)</span> prior successes and <span class="math inline">\(\beta - 1\)</span> prior failures</p></li>
 <li class="fragment"><p>The last equality comes from matching the kernel <span class="math inline">\(\theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1}\)</span> to the normalized Beta PDF which has a normalizing constant <span class="math inline">\(\frac{\Gamma (\alpha +\beta + N)}{\Gamma (\alpha + y) \Gamma (\beta + N - y)}\)</span></p></li>
 <li class="fragment"><p>Since the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial</p></li>
 </ul>
@@ -672,20 +790,34 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray}
-\E(\theta \mid Y=y)  &amp; = &amp; \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
-\V(\theta \mid Y=y)  &amp; = &amp; \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
-\text{Mode}(\theta \mid Y=y) &amp; = &amp; \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
+\E(\theta \mid y)  &amp; = &amp; \frac{\alpha + y}{\alpha + \beta + n} = \frac{\alpha + \beta}{\alpha + \beta + n}\cdot \E(\theta) + \frac{n}{\alpha + \beta + n}\cdot\frac{y}{n} \\
+\V(\theta \mid y)  &amp; = &amp; \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2(\alpha + \beta + n + 1)} \\
+\text{Mode}(\theta \mid y) &amp; = &amp; \frac{\alpha + y - 1}{\alpha + \beta + n - 2} = \frac{\alpha + \beta - 2}{\alpha + \beta + n - 2} \cdot\text{Mode}(\theta) + \frac{n}{\alpha + \beta + n - 2} \cdot\frac{y}{n}
 \end{eqnarray}
 \]</span></p>
 </div>
 <div>
 <ul>
-<li class="fragment">Note tha the posterior expectation is between <span class="math inline">\(y/n\)</span> and <span class="math inline">\(\frac{\alpha}{\alpha + \beta}\)</span></li>
-<li class="fragment">Also note that as sample becomes very large <span class="math inline">\(\E(\theta \mid Y=y) \rightarrow \frac{y}{n}\)</span> and <span class="math inline">\(\V(\theta \mid Y=y) \rightarrow 0\)</span></li>
-<li class="fragment">As before, <span class="math inline">\(\text{Mode}(\theta \mid Y=y) = \E(\theta \mid Y=y)\)</span>, when <span class="math inline">\(\alpha = \beta\)</span></li>
+<li class="fragment">Note that the posterior expectation is between <span class="math inline">\(y/n\)</span> and <span class="math inline">\(\frac{\alpha}{\alpha + \beta}\)</span></li>
+<li class="fragment">Also note that as sample becomes very large <span class="math inline">\(\E(\theta \mid y) \rightarrow \frac{y}{n}\)</span> and <span class="math inline">\(\V(\theta \mid y) \rightarrow 0\)</span></li>
+<li class="fragment">As before, <span class="math inline">\(\text{Mode}(\theta \mid y) = \E(\theta \mid y)\)</span>, when <span class="math inline">\(\alpha = \beta\)</span></li>
 </ul>
 </div>
 </section>
+<section id="variance-reduction-rate" class="slide level2 smaller">
+<h2>Variance Reduction Rate</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>post_v <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, y, n) {</span>
+<span id="cb5-2"><a></a>  ((a <span class="sc">+</span> y) <span class="sc">*</span> (b <span class="sc">+</span> n <span class="sc">-</span> y)) <span class="sc">/</span> ((a <span class="sc">+</span> b <span class="sc">+</span> n)<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (a <span class="sc">+</span> b <span class="sc">+</span> n <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb5-3"><a></a>}</span>
+<span id="cb5-4"><a></a>n <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">500</span>, <span class="at">by =</span> <span class="dv">2</span>)</span>
+<span id="cb5-5"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">246</span></span>
+<span id="cb5-6"><a></a>v <span class="ot">&lt;-</span> <span class="fu">post_v</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="at">y =</span> y, <span class="at">n =</span> n)</span>
+<span id="cb5-7"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(n, v), <span class="at">data =</span> <span class="fu">data.frame</span>(n, v)) <span class="sc">+</span></span>
+<span id="cb5-8"><a></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Var"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="432"></section>
 <section id="example-placenta-previa-1" class="slide level2 smaller">
 <h2>Example: Placenta Previa</h2>
 <div>
@@ -699,19 +831,19 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
-<span id="cb1-2"><a></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb1-3"><a></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb1-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
+<span id="cb6-2"><a></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb6-3"><a></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb6-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>95% posterior interval is [0.415, 0.477]</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">integrate</span>(dbeta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb3-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">integrate</span>(dbeta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb8-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probability that the ratio &lt; 0.485 under uniform prior = 0.993</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.993</code></pre>
 </div>
@@ -729,19 +861,19 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="fl">1e5</span>, <span class="dv">438</span>, <span class="dv">544</span>)</span>
-<span id="cb7-2"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(draws), <span class="at">data =</span> <span class="fu">data.frame</span>(draws))</span>
-<span id="cb7-3"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb7-4"><a></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.485</span>, </span>
-<span id="cb7-5"><a></a>             <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb7-6"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Draws from Beta(438, 544)"</span>) <span class="sc">+</span> </span>
-<span id="cb7-7"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span> </span>
-<span id="cb7-8"><a></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="fl">1e5</span>, <span class="dv">438</span>, <span class="dv">544</span>)</span>
+<span id="cb12-2"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(draws), <span class="at">data =</span> <span class="fu">data.frame</span>(draws))</span>
+<span id="cb12-3"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.485</span>, </span>
+<span id="cb12-5"><a></a>             <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Draws from Beta(438, 544)"</span>) <span class="sc">+</span> </span>
+<span id="cb12-7"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span> </span>
+<span id="cb12-8"><a></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" width="336"></p>
+<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="336"></p>
 </figure>
 </div>
 </div>
@@ -755,12 +887,12 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">quantile</span>(draws, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">quantile</span>(draws, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> 2.5%   50% 97.5% 
 0.415 0.446 0.477 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">mean</span>(draws <span class="sc">&lt;</span> <span class="fl">0.485</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">mean</span>(draws <span class="sc">&lt;</span> <span class="fl">0.485</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probability that the ratio &lt; 0.485 under uniform prior = 0.993</code></pre>
 </div>
@@ -801,12 +933,12 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">1211</span>, <span class="dv">1286</span>)</span>
-<span id="cb12-2"><a></a><span class="fu">mean</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">1211</span>, <span class="dv">1286</span>)</span>
+<span id="cb17-2"><a></a><span class="fu">mean</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.485</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">sd</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">sd</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.01</code></pre>
 </div>
@@ -836,8 +968,8 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">library</span>(bayesrules)</span>
-<span id="cb16-2"><a></a><span class="fu">summarize_beta_binomial</span>(<span class="at">alpha =</span> <span class="dv">1211</span>, <span class="at">beta =</span> <span class="dv">1286</span>, <span class="at">y =</span> <span class="dv">437</span>, <span class="at">n =</span> <span class="dv">980</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">library</span>(bayesrules)</span>
+<span id="cb21-2"><a></a><span class="fu">summarize_beta_binomial</span>(<span class="at">alpha =</span> <span class="dv">1211</span>, <span class="at">beta =</span> <span class="dv">1286</span>, <span class="at">y =</span> <span class="dv">437</span>, <span class="at">n =</span> <span class="dv">980</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      model alpha beta      mean      mode          var          sd
 1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489
@@ -847,10 +979,10 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
-<span id="cb18-2"><a></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb18-3"><a></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb18-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
+<span id="cb23-2"><a></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb23-3"><a></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb23-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>95% posterior interval is [0.457, 0.491]</code></pre>
 </div>
@@ -858,8 +990,8 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">1648</span>, <span class="at">shape2 =</span> <span class="dv">1829</span>)</span>
-<span id="cb20-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under population prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">1648</span>, <span class="at">shape2 =</span> <span class="dv">1829</span>)</span>
+<span id="cb25-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under population prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probability that the ratio &lt; 0.485 under population prior = 0.904</code></pre>
 </div>
@@ -875,7 +1007,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <h2>Visualizing Bayesian Rebalancing</h2>
 <div>
 <ul>
-<li class="fragment">The following uses <span class="math inline">\(\text{Beta}(5, 5)\)</span> prior and N = 10:</li>
+<li class="fragment">The following uses <span class="math inline">\(\text{Beta}(5, 5)\)</span> prior and N = 10. Guess what color is likelihood, prior, and posterior.</li>
 </ul>
 </div>
 <div class="fragment">
@@ -883,7 +1015,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -898,7 +1030,6 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <li class="fragment">This is a general result, not just for Beta Binomial (see Section 4.5)</li>
 <li class="fragment">In practice, when we don’t have analytic posteriors, this is not so easy to do</li>
 <li class="fragment">Suppose we observe <span class="math inline">\(y = y_1 + y_2\)</span> and <span class="math inline">\(N = N_1 + N_2\)</span> trials all at once</li>
-<li class="fragment">Also assume we start with <span class="math inline">\(\text{Beta}(1, 1)\)</span> prior</li>
 <li class="fragment">For all at once case, the posterior is in <span class="math inline">\(f(\theta \mid y) = \text{Beta}(\alpha + y, \,\beta + N - y)\)</span> as before</li>
 <li class="fragment">Now, suppose we observe <span class="math inline">\(y_1\)</span> successes in <span class="math inline">\(n_1\)</span> trials first</li>
 <li class="fragment">The posterior is <span class="math inline">\(f(\theta \mid y_1) = \text{Beta}(\alpha + y_1, \,\beta + N_1 - y_1)\)</span></li>
@@ -906,22 +1037,26 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </ul>
 </div>
 </section>
-<section id="general-case" class="slide level2 smaller">
+<section id="general-case" class="slide level2 smaller scrollable">
 <h2>General Case</h2>
 <div>
 <ul>
-<li class="fragment">Suppose we observe data point <span class="math inline">\(y_1\)</span>, and then data point <span class="math inline">\(y_2\)</span></li>
+<li class="fragment">Suppose we observe data point <span class="math inline">\(y_1\)</span>, and then data point <span class="math inline">\(y_2\)</span><sup>1</sup></li>
 </ul>
 </div>
 <div class="fragment">
 <p><span class="math display">\[
-f(\theta \mid y_1,y_2) =  \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+\begin{eqnarray}
+f(\theta \mid y_1) &amp;=&amp;  \frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)} \\
+f(\theta \mid y_2) &amp;=&amp;  \frac{\frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)} f(y_2 \mid \theta)}{f(y_2)} \\
+&amp;=&amp; \frac{f(\theta)f(y_1 \mid \theta) f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+\end{eqnarray}
 \]</span></p>
 </div>
 <div>
 <ul>
 <li class="fragment">Observing data point <span class="math inline">\(y_2\)</span>, and then data point <span class="math inline">\(y_1\)</span>, will results in the same distribution</li>
-<li class="fragment">What if observed both points at once?</li>
+<li class="fragment">What if we observed both points at once?</li>
 </ul>
 </div>
 <div class="fragment">
@@ -933,29 +1068,22 @@ f(\theta \mid y_1,y_2)
 \end{split}
 \]</span></p>
 </div>
-</section>
-<section id="bayesian-workflow-chapter-2" class="slide level2">
-<h2>Bayesian Workflow Chapter 2</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
+<aside><ol class="aside-footnotes"><li id="fn3"><p>This comes directly from Bayes Rules!: 4.5 Proving data order invariance</p></li></ol></aside></section>
+<section id="the-myth-of-objectivity-in-science" class="slide level2 smaller scrollable">
+<h2>The myth of objectivity in science</h2>
 <div>
 <ul>
-<li class="fragment">What do we do before fitting a model
-<ul>
-<li class="fragment">Choosing an initial model</li>
-<li class="fragment">Modular construction</li>
-<li class="fragment">Scaling and transforming the parameters</li>
-<li class="fragment">Prior predictive checking</li>
-</ul></li>
+<li class="fragment">All of science requires choices, and those choices are, by definition, subjective</li>
+<li class="fragment">Neither Frequentist nor Bayesian inference imbues objectivity into your analysis</li>
+<li class="fragment">All priors are subjective, including no priors, which don’t exist (uniform prior on the real line is not “no prior”)</li>
+<li class="fragment">Remember that important scientific discoveries were made before Statistics became a thing</li>
+<li class="fragment">A better alternative to objective vs subjective debate:</li>
 </ul>
 </div>
-</div><div class="column" style="width:50%;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/workflow.png" class="quarto-figure quarto-figure-center" width="672"></p>
-</figure>
-</div>
-</div>
+<div class="fragment">
+<blockquote>
+<p>…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence<sup>1</sup></p>
+</blockquote>
 </div>
 
 <div class="quarto-auto-generated-content">
@@ -963,7 +1091,7 @@ f(\theta \mid y_1,y_2)
 <p><a href="https://ericnovik.github.io/bayes-course.html" class="uri">https://ericnovik.github.io/bayes-course.html</a></p>
 </div>
 </div>
-</section>
+<aside><ol class="aside-footnotes"><li id="fn4"><p>Gelman, A., &amp; Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453</p></li></ol></aside></section>
 
     </div>
   </div>
