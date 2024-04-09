@@ -1,7 +1,7 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2023 | Lecture 3"
+author: "Eric Novik | Spring 2024 | Lecture 3"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -173,14 +173,15 @@ $$
 #| echo: false
 
 N <- 6
-y <- round(seq(1, 15, len = N))
-lambda <- y
+y <- 1:20
+lambda <- round(seq(1, 10, len = N))
 
 p <- list()
 for (i in 1:N) {
   titl <- paste("λ =", lambda[i])
   p[[i]] <- dot_plot(y, dpois(y, lambda[i])) + xlab(expression(y)) + 
-    ylab(expression(f(y))) + ggtitle(titl)
+    ylab(expression(f(y))) + ggtitle(titl) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 grid.arrange(p[[1]], p[[2]], p[[3]], 
              p[[4]], p[[5]], p[[6]],
@@ -188,7 +189,7 @@ grid.arrange(p[[1]], p[[2]], p[[3]],
 ```
 :::
 
-## Motivating Example {.smaller}
+## Example: Hourse Kicks {.smaller}
 
 ::: incremental
 - Serving in Prussian cavalry in the 1800s was a perilous affair
@@ -235,7 +236,7 @@ $$
 ## Conjugate Prior for Poisson {.smaller}
 
 ::: {.incremental}
-- The likelihood has a form of $\lambda^{x} e^{-y\lambda}$ so we expect the conjugate prior to be of the same form
+- The likelihood has a form of $\lambda^{a} e^{-b\lambda}$ so we expect the conjugate prior to be of the same form
 
 - Gamma PDF satisfied this condition: $f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}$
 
@@ -252,7 +253,7 @@ $$
 \end{equation}
 $$
 
-- When $\alpha = 1$, $\lambda \sim \text{Exp}(\beta)$
+- When $\alpha = 1$, $\lambda \sim \text{Dist}(\beta)$. What is $\text{Dist}$? Work in pairs.
 :::
 
 ## Visualizing Gamma {.smaller}
@@ -295,20 +296,34 @@ f(\lambda \mid y) & = & \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, \, \beta
 \end{eqnarray}
 $$
 
-- As before, we can guess the Gamma kernel without doing the integration
+- As before, we can match the Gamma kernel without doing the integration
 :::
 
 ## Checking the Constant
 
 ::: {.incremental}
 - Gamma prior integration constant: $\frac{\beta^{\alpha}}{\Gamma(\alpha)}$
-- The posterior kernel integration constant must be: $\frac{\Gamma(\alpha + \sum y_i)}{(\beta + n)^{\alpha + \sum y_i}}$
+- The posterior kernel integration constant is the reciprocal of: $\frac{\Gamma(\alpha + \sum y_i)}{(\beta + n)^{\alpha + \sum y_i}}$. Why?
 - We can sanity check this in Mathematica where $t = \sum y_i$
 :::
 
 ::: {.fragment}
 ![](images/gamma.png){fig-align="center"}
 :::
+
+## Posterior Mean and Variance
+
+Posterior mean and variance follow from the updated prior mean and variance:
+
+::: {.fragment}
+$$
+\begin{eqnarray}
+\E(\lambda \mid y) &=& \frac{\alpha'}{\beta'} = \frac{\alpha + \sum_{i=1}^{n} y_i}{\beta + n} \\
+\V(\lambda \mid y) &=& \frac{\alpha'}{(\beta')^2} = \frac{\alpha + \sum_{i=1}^{n} y_i}{(\beta + n)^2}
+\end{eqnarray}
+$$
+:::
+
 
 ## Prussian Army Hourse Kicks {.smaller}
 
@@ -420,9 +435,9 @@ plot_gamma_poisson(1, 1, sum_y = sum_yi, n = N) +
 ::: {.fragment}
 ```{r}
 #| echo: true
-map <- (1 + sum_yi - 1) / (1 + N) 
+mean_post <- (1 + sum_yi) / (1 + N) 
 sd_post <- sqrt((1 + sum_yi) / (1 + N)^2) 
-cat("Mode or MAP =", map |> round(3))
+cat("Posterior mean =", mean_post |> round(2))
 cat("Average rate =", y_bar)
 cat("Posterior sd =", sd_post |> round(2))
 ```
@@ -434,15 +449,15 @@ cat("Posterior sd =", sd_post |> round(2))
 ## Checking the Fit {.smaller}
 
 ::: incremental
-- We can plug the MAP estimate for $\lambda$ into the Poisson PMF
+- We can plug the posterior mean for $\lambda$ into the Poisson PMF
 :::
 
 ::: {.fragment}
 ```{r}
 #| echo: true
-map <- (1 + sum_yi - 1) / (1 + N)
+mean_post <- (1 + sum_yi) / (1 + N)
 deaths <- 0:4
-pred <- dpois(deaths, lambda = map)
+pred <- dpois(deaths, lambda = mean_post)
 actual <- as.numeric(table(dd) / N)
 ```
 :::
@@ -476,7 +491,7 @@ grid.arrange(p1, p2, nrow = 1)
 
 ::: {.incremental}
 - Poisson likelihood seems to work well for these data
-- It is likely that each of the 14 corps had about the same number of soldier-horses, a common military practice
+- It is likely that each of the 16 corps had about the same number of soldier-horses, a common military practice
 - Suppose each corps has a different number of cavalrymen
 - We need to introduce an exposure variable $x_i$ for each corps unit
 $$
@@ -614,7 +629,7 @@ $$
 - For one observation:
 $$
 \begin{eqnarray}
-f(\mu \mid y) &\propto& \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \mu_1 \right)^2    \right) \\ 
+f(\mu \mid y) &\propto& \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \mu_1 \right)^2    \right) \text{ i.e. } \mu \mid y \sim \text{Normal}(\mu_1, \tau_1) \\ 
 \mu_1 &=& \frac{\frac{1}{\tau^2} \theta + \frac{1}{\sigma^2} y}{\frac{1}{\tau^2} + \frac{1}{\sigma^2}} \\
 \frac{1}{\tau_1^2} &=& \frac{1}{\tau^2} + \frac{1}{\sigma^2}
 \end{eqnarray}
@@ -658,7 +673,7 @@ $$
 :::
 
 ::: {.column width="50%"}
-![](images/grid.png){fig-align="center"}
+![](images/ball-on-a-grid.webp){fig-align="center"}
 :::
 
 ::::
@@ -673,6 +688,7 @@ $$
   1. For each point on the grid, compute the product $f(y|\theta)f(\theta)$
   1. Normalize the product to sum to 1
   1. Sample from the resulting distribution in proportion to the posterior probability
+- Here, $\theta$ is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the clinical trial example.
 - What are some limitations of this approach?
 :::
 
@@ -904,30 +920,6 @@ model {
 :::
 ::::
 
-## Homework 1 {.smaller}
-
-1. Modify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2)
-1. Modify the program to account for an arbitrary Beta(a, b) distribution
-1. Verify that you got the right result by comparing Stan's posterior means and posterior standard deviations to the means and standard deviations under the conjugate model. You can also modify the R code to get a third point of comparison.
-
-- Hint: Pass parameters a and b in the data block
-
-```{stan, output.var = 'stan3', eval = FALSE, echo = TRUE}
-data {
-  int<lower=0> N;
-  array[N] int<lower=0, upper=1> y;
-}
-parameters {
-  real<lower=0, upper=1> theta;
-}
-model {
-  for (i in 1:N) {
-    target += log(theta * y[i] + 
-              log(1 - theta) * (1 - y[i]);
-  }
-}
-```
-
 
 ## Running Stan {.smaller}
 
@@ -1036,8 +1028,10 @@ p + geom_histogram(aes(y = after_stat(density)),
 
 ::::
 
-## Good Chain Bad Chain {.smaller}
+## Good Chain Bad Chain
 
+::: panel-tabset
+## Code
 ::: {.fragment}
 ```{r}
 #| cache: true
@@ -1045,6 +1039,7 @@ p + geom_histogram(aes(y = after_stat(density)),
 #| fig-height: 6
 #| fig-align: center
 #| echo: true
+#| eval: false
 
 library(bayesplot)
 draws <- f1$draws("theta")
@@ -1058,6 +1053,31 @@ p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(theta)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 :::
+
+## Plot
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 8
+#| fig-height: 6
+#| fig-align: center
+#| echo: false
+
+library(bayesplot)
+draws <- f1$draws("theta")
+color_scheme_set("viridis")
+p1 <- mcmc_trace(draws, pars = "theta") + ylab(expression(theta)) +
+  ggtitle("Good Chain")
+bad_post <- readRDS("data/bad_post.rds")
+bad_draws <- bad_post$draws("mu")
+p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(theta)) +
+  ggtitle("Bad Chain")
+grid.arrange(p1, p2, nrow = 2)
+```
+:::
+
+:::
+
 
 ## Effective Sample Size and Autocorrelation {.smaller}
 

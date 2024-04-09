@@ -109,3 +109,29 @@ Lecture links
 -   Lecture 05: [Linear Regression and Model Evaluation](bayes-course/05-lecture/05-lecture.html)
 -   Lecture 06: [Expanding the linear model and modeling counts](bayes-course/06-lecture/06-lecture.html)
 -   Lecture 07: [Logistic regression and introduction to hierarchical models](bayes-course/07-lecture/07-lecture.html)
+
+## Homework 1 {.smaller}
+
+1. Modify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2)
+1. Modify the program to account for an arbitrary Beta(a, b) distribution
+1. Verify that you got the right result by comparing Stan's posterior means and posterior standard deviations to the means and standard deviations under the conjugate model. You can also modify the R code to get a third point of comparison.
+
+- Hint: Pass parameters a and b in the data block
+
+```{stan, output.var = 'stan3', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  array[N] int<lower=0, upper=1> y;
+}
+parameters {
+  real<lower=0, upper=1> theta;
+}
+model {
+  for (i in 1:N) {
+    target += log(theta * y[i] + 
+              log(1 - theta) * (1 - y[i]);
+  }
+}
+```
+
+
