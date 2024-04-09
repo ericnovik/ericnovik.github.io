@@ -2073,6 +2073,32 @@ Total execution time: 0.2 seconds.</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="stan-homework" class="slide level2 smaller scrollable">
+<h2>Stan Homework</h2>
+<ol type="1">
+<li>Modify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e.&nbsp;using target +=)</li>
+<li>Modify the program to account for an arbitrary Beta(a, b) distribution</li>
+<li>Verify that you got the right result in #1 by a) comparing Stan’s posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown <a href="https://ericnovik.github.io/bayes-course/03-lecture/03-lecture.html#/introduction-to-stan">here</a>; c) modifying the <a href="https://ericnovik.github.io/bayes-course/03-lecture/03-lecture.html#/early-clinical-trial-example">R code</a> to get a third point of comparison.</li>
+</ol>
+<ul>
+<li>Hint: For #3, pass parameters a and b in the data block</li>
+</ul>
+<div class="cell" data-output.var="stan3">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb53-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb53-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb53-3"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
+<span id="cb53-4"><a></a>}</span>
+<span id="cb53-5"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb53-6"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
+<span id="cb53-7"><a></a>}</span>
+<span id="cb53-8"><a></a><span class="kw">model</span> {</span>
+<span id="cb53-9"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb53-10"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
+<span id="cb53-11"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
+<span id="cb53-12"><a></a>  }</span>
+<span id="cb53-13"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">

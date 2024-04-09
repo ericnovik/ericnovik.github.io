@@ -2699,7 +2699,14 @@
     "href": "bayes-course/03-lecture/03-lecture.html#computing-r-hat",
     "title": "Bayesian Inference",
     "section": "Computing R-Hat",
-    "text": "Computing R-Hat\n\n\nAutocorrelation assesses the quality of a single chain\nSplit R-Hat estimates the extent to which the chains are consistent with one another\nIt does it by assessing the mixing of chains by comparing variances within and between chains (technically sequences, as chains are split up) \\[\n\\begin{eqnarray}\n\\hat{R} = \\sqrt{\\frac{\\frac{n-1}{n}\\V_W + \\frac{1}{n}\\V_B}{\\V_W}} = \\sqrt{\\frac{\\V_{\\text{total}}}{\\V_{W}}}\n\\end{eqnarray}\n\\]\n\\(\\V_W\\) is within chain variance and \\(\\V_B\\) is between chain variance\nWe don’t like to see R-hats greater than 1.02 and really don’t like them greater than 1.05\n\n\n\n\nbayesplot::rhat(f1, pars = \"theta\") |&gt; round(3)\n\ntheta \n1.002 \n\nbayesplot::rhat(bad_post, pars = \"sigma\")  |&gt; round(3)\n\nsigma \n1.043 \n\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Computing R-Hat\n\n\nAutocorrelation assesses the quality of a single chain\nSplit R-Hat estimates the extent to which the chains are consistent with one another\nIt does it by assessing the mixing of chains by comparing variances within and between chains (technically sequences, as chains are split up) \\[\n\\begin{eqnarray}\n\\hat{R} = \\sqrt{\\frac{\\frac{n-1}{n}\\V_W + \\frac{1}{n}\\V_B}{\\V_W}} = \\sqrt{\\frac{\\V_{\\text{total}}}{\\V_{W}}}\n\\end{eqnarray}\n\\]\n\\(\\V_W\\) is within chain variance and \\(\\V_B\\) is between chain variance\nWe don’t like to see R-hats greater than 1.02 and really don’t like them greater than 1.05\n\n\n\n\nbayesplot::rhat(f1, pars = \"theta\") |&gt; round(3)\n\ntheta \n1.002 \n\nbayesplot::rhat(bad_post, pars = \"sigma\")  |&gt; round(3)\n\nsigma \n1.043"
+  },
+  {
+    "objectID": "bayes-course/03-lecture/03-lecture.html#stan-homework",
+    "href": "bayes-course/03-lecture/03-lecture.html#stan-homework",
+    "title": "Bayesian Inference",
+    "section": "Stan Homework",
+    "text": "Stan Homework\n\nModify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e. using target +=)\nModify the program to account for an arbitrary Beta(a, b) distribution\nVerify that you got the right result in #1 by a) comparing Stan’s posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown here; c) modifying the R code to get a third point of comparison.\n\n\nHint: For #3, pass parameters a and b in the data block\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
   },
   {
     "objectID": "bayes-course/quarto-help.html#homework-1",
