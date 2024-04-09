@@ -1147,3 +1147,26 @@ bayesplot::rhat(bad_post, pars = "sigma")  |> round(3)
 ```
 :::
 
+## Stan Homework {.smaller}
+
+1. Modify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e. using target +=)
+1. Modify the program to account for an arbitrary Beta(a, b) distribution
+1. Verify that you got the right result in #1 by a) comparing Stan's posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown [here](https://ericnovik.github.io/bayes-course/03-lecture/03-lecture.html#/introduction-to-stan); c) modifying the [R code](https://ericnovik.github.io/bayes-course/03-lecture/03-lecture.html#/early-clinical-trial-example) to get a third point of comparison.
+
+- Hint: For #2, pass parameters a and b in the data block
+
+```{stan, output.var = 'stan3', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  array[N] int<lower=0, upper=1> y;
+}
+parameters {
+  real<lower=0, upper=1> theta;
+}
+model {
+  for (i in 1:N) {
+    target += log(theta * y[i] + 
+              log(1 - theta) * (1 - y[i]);
+  }
+}
+```
