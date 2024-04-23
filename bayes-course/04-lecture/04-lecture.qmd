@@ -1,7 +1,7 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2023 | Lecture 4"
+author: "Eric Novik | Spring 2024 | Lecture 4"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -167,7 +167,7 @@ $$
 - Pick a random starting point at $i=1$ with $\theta^{(1)}$
 - **Propose** a next possible value of $\theta$, call it  $\theta'$ from an (easy) proposal distribution
 - Evaluate if you should **accept or reject** the proposal
-- If accepted, go to $\theta^{'(2)}$, otherwise stay at $\theta^{(2)}$
+- If accepted, go to $\theta^{'(2)}$, otherwise stay at $\theta^{(2)} = \theta^{(1)}$
 - Rinse and repeat
 :::
 
@@ -192,7 +192,7 @@ $$
 - Let $y \sim \text{Normal}(\mu, 0.5)$
 - Let the prior $\mu \sim \text{Normal}(0, 2)$
 - Let's say we observe $y = 5$
-- We can immediately compute the posterior $\mu | y \sim \text{Normal}(4.71, 0.49)$
+- We can immediately compute the posterior $\mu \mid y \sim \text{Normal}(4.71, 0.49)$
 :::
 
 ::: {.fragment}
@@ -222,10 +222,10 @@ normal_normal_post(y = 5, sd = 0.5, prior_mu = 0, prior_sd = 2) |>
 ::: {.incremental}
 - We are trying to generate draws: $\left( \theta^{(1)}, \theta^{(2)}, ..., \theta^{(N)}\right)$ implied by the target density $f$  
 - Pick the first value of $\theta$ randomly or deterministically
-- Draw $\theta'$ from a proposal distribution $q(\theta'|\theta)$
-- Compute the unnormalized $f(\theta'|y) \propto f(y|\theta') f(\theta') = f_{\text{prop}}$
-- Compute the unnormalized $f(\theta|y) \propto f(y|\theta) f(\theta) = f_{\text{current}}$
-- Compute $\text{ratio}_f = \frac{f_{\text{prop}}}{f_{\text{current}}}$ and $\text{ratio}_q = \frac{q(\theta|\theta')}{q(\theta'|\theta)}$
+- Draw $\theta'$ from a proposal distribution $q(\theta'\mid\theta)$
+- Compute the unnormalized $f(\theta'\mid y) \propto f(y \mid \theta') f(\theta') = f_{\text{prop}}$
+- Compute the unnormalized $f(\theta \mid y) \propto f(y \mid \theta) f(\theta) = f_{\text{current}}$
+- Compute $\text{ratio}_f = \frac{f_{\text{prop}}}{f_{\text{current}}}$ and $\text{ratio}_q = \frac{q(\theta\mid\theta')}{q(\theta'\mid\theta)}$
 - Asseptance probability $\alpha = \min\left\lbrace 1, \text{ratio}_f \cdot \text{ratio}_q \right\rbrace$
 - If $q$ is symmetric, we can drop $\text{ratio}_q$, in which case $\alpha = \min\left\lbrace 1, \text{ratio}_f \right\rbrace$
 - If $\text{ratio} \geq 1$, accept $\theta'$, else flip a coin with $\text{Pr}(X=1) = \alpha$ and accept $\theta'$ if $X=1$, stay with current $\theta$, if $X=0$
@@ -234,7 +234,7 @@ normal_normal_post(y = 5, sd = 0.5, prior_mu = 0, prior_sd = 2) |>
 ## Normal Symmetry
 
 ::: incremental
-- Why in case of normals, $q(\theta'|\theta) = q(\theta|\theta')$
+- Why in case of normals, $q(\theta'\mid\theta) = q(\theta\mid\theta')$
 :::
 
 ::: {.fragment}
@@ -291,7 +291,7 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
 # assume prior ~ N(prior_mean, prior_sd) and sd is known
 # proposal sampling distribution q = N(current_mean, proposal_scale)
 
-  proposal_mean <- rnorm(1, current_mean,  proposal_scale) # q(mu' | mu)        
+  proposal_mean <- rnorm(n = 1, mean = current_mean,  sd = proposal_scale) # q(mu' | mu)  
   f_proposal    <- dnorm(proposal_mean, mean = prior_mean, # proposal prior, f(theta')
                          sd = prior_sd) *                  
                    dnorm(y, mean = proposal_mean, sd = sd) # proposal lik, f(y | theta')
@@ -600,12 +600,12 @@ sd(d) |> round(2)
 ```
 :::
 
-## Why Does the Algorithm Work {.smaller}
+## Why Does the Algorithm Work
 
 ::: {.incremental}
 - To show why the algorithm works, we need to show:
   (a) The chain has stationary distribution and it is unique
-  (b) The stationary distribution is our target distribution $f\theta | y)$
+  (b) The stationary distribution is our target distribution $f(\theta \mid y)$
 - Condition (a) requires some theory of Markov Chains, but the conditions are mild and are generally satisfied in practice. (See Chapters 11 and 12 in Blitzstein and Hwang for more)
   - We will show an outline of the proof for (b)
 :::
@@ -614,7 +614,7 @@ sd(d) |> round(2)
 
 ::: {.incremental}
 - We will only consider the case of symmetric q
-- Suppose you sample two points from the PMF $f(\theta | y)$, $\theta_a$ and $\theta_b$ and assume we are at time $t-1$
+- Suppose you sample two points from the PMF $f(\theta \mid y)$, $\theta_a$ and $\theta_b$ and assume we are at time $t-1$
 - Let the probability of going from $\theta_a$ to $\theta_b$ be: $\P(\theta^t = \theta_b) \mid \theta^{t-1} = \theta_a) := p_{a b}$ and the reverse jump: $\P(\theta^t = \theta_a) \mid \theta^{t-1} = \theta_b) := p_{b a}$
 - We want to show:
 $$
@@ -755,13 +755,13 @@ f1 <- m1$sample(       # for other options to sample, help(sample)
   parallel_chains = 4, # for multi-processor CPUs
   refresh = 0,         # number of iterations printed on the screen
   iter_warmup = 500,   # number of draws for warmup (per chain)
-  iter_sampling = 500  # number of draws for samples (per chain)
+  iter_sampling = 2000 # number of draws for samples (per chain)
 )
 f1$summary()
 ```
 :::
 
-## Extra Credit Homework
+## Breaking Codes with MCMC
 
 ::: panel-tabset
 ## Dianconis

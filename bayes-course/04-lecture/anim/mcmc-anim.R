@@ -1,3 +1,7 @@
+library(latex2exp)
+library(glue)
+library(gganimate)
+
 metropolis_iteration <- function(y, current_mean, proposal_scale, sd,
                                      prior_mean, prior_sd) {
   # assume prior ~ N(pm, psd)
@@ -52,9 +56,27 @@ make_anim <- function(proposal, accepted, yscale_l, yscale_h, ...) {
   return(anim)
 }
 
-library(latex2exp)
-library(glue)
+library(ggplot2)
 library(gganimate)
+
+make_anim_2 <- function(proposal, accepted, yscale_l, yscale_h, ...) {
+  # Convert accepted to a factor to control color changes
+  accepted <- as.factor(accepted)
+  
+  # Create a data frame for plotting
+  iter <- 1:length(proposal)
+  data <- data.frame(iter, proposal, accepted)
+  
+  # Build the ggplot
+  anim <- ggplot(data, aes(x = iter, y = proposal, group = 1)) +
+    geom_path(aes(color = accepted), size = 1) +  # Draw a single path that changes color
+    scale_color_manual(values = c("1" = "red", "2" = "green")) +  # Color coding
+    ylim(yscale_l, yscale_h) +  # Set y-axis limits
+    xlab("Iteration") + ylab(expression(mu)) +  # Set axis labels
+    transition_reveal(iter)  # Animate the path revealing over iterations
+  
+  return(anim)
+}
 
 y <- 5
 N <- 500
@@ -87,6 +109,14 @@ save_anim <- function(d, ps, ysl, ysh) {
   acf(d[, 1], ylab = "", main = "")
   dev.off()
 }
+
+str <- glue("Proposal distribution q: $Normal(\\mu' | \\mu, \\sigma = {ps})$")
+anim <- make_anim_2(d1[, 'proposal'],
+                  d1[, 'accepted'], 2.5, 6) + ggtitle(TeX(str))
+animate(anim, fps = 5, detail = 3, height = 600, width = 800, res = 150)
+anim_save('anin_test.png', animation = last_animation())
+str <- glue("$Normal(\\mu' | \\mu, \\sigma = {ps})$")
+
 
 save_anim(d1, ps = 0.1, ysl = 2.5, ysh = 6)
 save_anim(d2, ps = 10, ysl = -10, ysh = 20)

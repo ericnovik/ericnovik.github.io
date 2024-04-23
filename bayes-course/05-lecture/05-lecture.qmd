@@ -1,7 +1,7 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2023 | Lecture 5"
+author: "Eric Novik | Spring 2024 | Lecture 5"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -21,9 +21,9 @@ always_allow_html: true
 ![](images/scared.avif){fig-align="center" width="672"}
 
 
-[How was Homework 4?](https://www.polleverywhere.com/multiple_choice_polls/tW6UTzV6VKtaUk8yKO6jx)
+[How was Homework 4?](https://www.polleverywhere.com/multiple_choice_polls/XRXD5GmcXM8v0XyE7tgIT)
 
-##      
+## Bayesian linear regression and model evaluation
 
 ::: columns
 ::: {.column width="60%"}
@@ -34,7 +34,7 @@ always_allow_html: true
 - Example of linear regression in Stan
 - Evaluating the quality of the draws
 - Posterior predictions
-- Cross validation, ELPD, and LOO
+- Cross-validation, ELPD, and LOO
 :::
 :::
 
@@ -163,7 +163,7 @@ p + geom_point(aes(color = as.factor(male)), size = 0.2) +
 
 ::: incremental
 -   Notice a non-linearity
--   Thinking about why should this be, can give you an insight into how to model these data
+-   Thinking about why this should be, can give you an insight into how to model these data
 :::
 
 :::
@@ -192,14 +192,14 @@ p + geom_point(size = 0.2) +
 ```
 :::
 
-## General Aproach {.smaller}
+## General Approach {.smaller}
 ::: incremental
 1. Assess the scope of the inferences that you will get with this model
-1. In the case of linear regression, there is likely no causal mechanism and the coefficients should be interpreted as comparisons (RAOS, Page 84)
+1. Unless you are doing causal inference, you should interpret your coefficients as comparisons (RAOS, Page 84)
 1. Set up reasonable priors and likelihood
-1. (*) For more complex models: perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See [this](https://www.generable.com/post/fitting-a-basic-sir-model-in-stan) example for a standard epidemiological model.
+1. For more complex models, perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See [this](https://www.generable.com/post/fitting-a-basic-sir-model-in-stan) example for a standard epidemiological model.
 1. Perform a prior predictive simulation
-1. Adjust your priors
+1. Possibly adjust your priors
 1. Fit the model to data
 1. Assess the quality of the inference and the quality of the model
 1. Improve or fix your model and go back to #3
@@ -221,6 +221,7 @@ $$
 - We have to specify $\alpha_{l}$ and $\alpha_s$, where l and s signify location and scale, and r, the rate of the exponential
 - If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha: it corresponds to the weight of the person with zero height
 - This can be fixed by subtracting the average height from $x$
+- Why is $\text{Exp}(r)$ is a reasonable prior for $\sigma$?
 :::
 
 ## Howell Regression {.smaller}
@@ -228,7 +229,7 @@ $$
 - We define a new variable, the centered version of $x$: $x^c_i = x_i - \bar{x}$
 - Now $\alpha$ corresponds to the weight of an average person
 - Checking [Wikipedia](https://en.wikipedia.org/wiki/Human_body_weight) reveals that the average weight of a person in Africa is about 60 kg
-- They don't state the standard deviation but it is unlikely that an African adult would weigh less than 30 kg and more than 120 kg and so we will set the prior sd = 10
+- They don't state the standard deviation, but it is unlikely that an African adult would weigh less than 30 kg and more than 120 kg so we will set the prior sd = 10
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
@@ -246,7 +247,7 @@ $$
 ::: incremental
 - In this dataset, the units of $\beta$ are $\frac{kg}{cm}$, since the units of height are $cm$
 - First thing, $\beta$ should be positive. Why?
-- Second, $beta$ is likely less than 1. Why?
+- Second, $\beta$ is likely less than 1. Why?
 - We can consult [height-weight tables](http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html) for the expected value and variance
 - In the dataset, $\E(\beta) = 0.55$ with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more
 $$
@@ -263,9 +264,9 @@ $$
 
 ## Howell Regression {.smaller}
 ::: incremental
-- We know that $\sigma$ must be positive and so a possible choice for a the prior is $\text{Normal}^+$, Exponential, etc.
+- We know that $\sigma$ must be positive, so a possible choice for the prior is $\text{Normal}^+$, Exponential, etc.
 - At this stage, the key is to rule out implausible values, not to get something precise, particularly since we have enough data (> 340 observations)
-- From the background data, the residual standard error was 4.6, which implies the exponential rate parameter is 0.2
+- From the background data, the residual standard error was 4.6, which implies the exponential rate parameter of about 1/5
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
@@ -332,12 +333,28 @@ round(pr_p[1:12, 1:8], 2)
 :::
 :::
 
+## Prior Predictive Simulation {.smaller}
+
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| output-location: default
+#| echo: true
+data_mean <- mean(d$weight)
+mean_dist <- colMeans(pr_p)
+ggplot(data.frame(data_mean, mean_dist), aes(mean_dist)) +
+  geom_histogram() +
+  geom_vline(xintercept = data_mean, color = 'red') +
+  xlab("Distribution of Weight means (kg) under the prior") + ylab("") +
+  theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())
+```
 
 
 ## Prior Predictive Simulation {.smaller}
 
 ::: incremental
-- To get a sense for the possible regression lines implied by the prior, we fit a linear model to each simulation draw and plot the lines over observations
+- To get a sense for the possible regression lines implied by the prior, we can fit a linear model to each simulation draw, and plot the lines over observations
 :::
 
 ::: {.fragment}
@@ -577,7 +594,7 @@ draws |> mean_qi(.width = 0.90) |> knitr::kable() # also see ?median_qi(), etc
 :::
 
 ::: incremental
-- From the above table: $\E(y|x^c) = 45 (\text{kg}) + 0.62 (\text{kg/cm})x^c (\text{cm})$
+- From the above table: $\E(y \mid x^c) (\text{kg}) = 45 (\text{kg}) + 0.62 (\text{kg/cm}) \cdot x^c (\text{cm})$
 :::
 
 ## Variability in Parameter Inferences {.smaller}
@@ -762,8 +779,9 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
    - How were the data collected? 
    - People will likely interpret the results causally, even if not appropriate
    - How will the model be used?
+   - Example: Correctional Offender Management Profiling for Alternative Sanctions ([COMPAS](https://en.wikipedia.org/wiki/COMPAS_(software)))
 - Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well
-- Model performance is assessed on how well it can make predictions for the types of questions that you are interested in
+- Model performance is assessed on how well it can make predictions, minimize costs and/or maximize benefits. Predictive accuracy is a common way of evaluating model performance.
 :::
 
 
@@ -772,7 +790,7 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 
 ::: incremental
 - Once we are satisfied that the draws are statistically well-behaved, we can focus on evaluating predictive performance
-- We typically evaluate predictive performance in-sample and out-of-sample
+- We typically care about predictive performance out-of-sample
 - In general, a good model is well-calibrated and makes sharp predictions (Gneiting et al. 2007)[^1]
 - For in-sample assessment, we perform Posterior Predictive Checks or PPCs
 - To assess out-of-sample performance, we rely on cross-validation or its approximations
@@ -939,7 +957,7 @@ bayesplot::ppc_intervals(
 - The model is clearly doing a poor job of capturing observed data, particularly in the lower quantiles of the predictive distribution
 - In a situation like this, we would typically proceed to model improvements
 - Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit[^2]
-- We do this, so we can assess the relative performance of the next set of models
+- We do this so we can assess the relative performance of the next set of models
 :::
 
 
@@ -960,10 +978,10 @@ bayesplot::ppc_intervals(
 
 ::: incremental
 - One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
-   - $\text{MSE} = \frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2$
-   - Or its scaled version which divides the summand by $\V(y_i | \theta)$
+   - $\text{RMSE} = \sqrt{\frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2}$
+   - Or its scaled version, which divides the summand by $\V(y_i | \theta)$
 - These measures do not work well for non-normal models 
-- On the plus side, it is intuitive and computation is easy
+- On the plus side, it is intuitive (why?) and computation is easy
 - Note that if we just average the errors, we will get zero by definition
 :::
 
@@ -974,8 +992,8 @@ bayesplot::ppc_intervals(
 # avarage error
 mean(d$weight - colMeans(yrep)) |> round(2)
 
-# mean square error
-mean((d$weight - colMeans(yrep))^2) |> round(2)
+# root mean square error
+mean((d$weight - colMeans(yrep))^2) |> sqrt() |> round(2)
 
 # your book reports median absolute error
 median(abs(d$weight - colMeans(yrep)))
@@ -985,7 +1003,7 @@ median(abs(d$weight - colMeans(yrep)))
 ## Quantifying Model Accuracy {.smaller}
 
 ::: incremental
-- In a probabilistic prediction, we are able to assess model calibration
+- In a probabilistic prediction, we can assess model calibration
 - Calibration says that, for example, 50% intervals contain approximately 50% of the observations, and so on
 - A well-calibrated model may still be a bad model (see below) as the uncertainty may be too wide; for two models with the same calibration, we prefer the one with lower uncertainty
 :::
@@ -1014,7 +1032,7 @@ calib(yrep, d$weight, 0.90)
 
 ::: incremental
 - A popular "proper" scoring rule for probabilistic prediction is log score
-- This is equivalent to the log predictive density $\log f(y | \theta)$
+- This is equivalent to the log predictive density $\log f(y \mid \theta)$
 - We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data-generating process
 - This quantity is approximated by log-pointwise-predictive-density
 $$
@@ -1038,5 +1056,8 @@ lm2 <- loo(m2)
 lm2
 plot(lm2)
 ```
+
+
+
 
 
