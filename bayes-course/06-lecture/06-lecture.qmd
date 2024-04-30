@@ -1,7 +1,7 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2023 | Lecture 6"
+author: "Eric Novik | Spring 2024 | Lecture 6"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -97,11 +97,11 @@ $$
 
 ## Motivating Example {.smaller}
 ::: incremental
-- At the end of the last lecture we saw that the linear model did not capture the relationship between height and weight very well
+- At the end of the last lecture, we saw that the linear model did not capture the relationship between height and weight very well
 - That's not surprising: the process can't be linear as it has a natural lower and upper bound
 - To remedy this situation, we have to think generatively: either biologically or geometrically/physically
 - The biology of growth is very complex -- we would have to think about what causes primate (or animal) growth and how growth translates into height and weight, which is likely affected by genetic and environmental factors
-- Fortunately, there is a more straightforward, geometrical approach
+- Fortunately, there is a more straightforward geometrical approach
 - Richard McElreath has a nice presentation in Chapter 16 of his book (2nd edition) -- we reproduce a simplified version here
 :::
 
@@ -122,7 +122,7 @@ $$
 :::
 
 ::: {.column width="40%"}
-![](images/man-in-cylinder.png){fig-align="center" weight="500"}
+![Keenan Crane; GIF by username:Nepluno - https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/#spot](images/Spot_the_cow.gif){fig-align="center" weight="500"}
 
 :::
 :::
@@ -133,7 +133,7 @@ $$
 
 ::: incremental
 
-- We can therefore write the model in the following way:
+- We can write the model in the following way:
 $$
 \begin{eqnarray}
 w_i & \sim & \text{LogNormal}(\mu_i, \sigma)  \\
@@ -142,7 +142,7 @@ w_i & \sim & \text{LogNormal}(\mu_i, \sigma)  \\
 \sigma & \sim & \text{Exponetial}(1)
 \end{eqnarray}
 $$
-- Weight is a positive quantity and we give it a LogNormal distribution
+- Weight is a positive quantity, and we give it a LogNormal distribution
 - $\exp(\mu_i)$ is the median of a LogNormal, which is where we specify our cubic relationship between weight and height
 - Notice that the model for the conditional median is $\mu_i = \log(\theta) + 3 \log(h_i)$, in other words, we do not need to estimate the coefficient on height, we only need the intercept
 - In `RStanArm`, we can estimate a similar model as a linear regression of log weight on log height; (in Stan, we can write this model directly)
@@ -151,7 +151,7 @@ $$
 ## Choosing Priors {.smaller}
 
 ::: incremental
--   In our log-log linear regression we have an intercept and coefficient on log height, which we said was 3
+-   In our log-log linear regression, we have an intercept and coefficient on log height, which we said was 3
 -   Instead of fixing it at 3, we will estimate it and give it an informative prior, where most of the mass is between 2 and 4
 - The implies something like $\beta \sim \text{Normal}(3, 0.3)$
 - We will leave our $\sigma \sim \text{Exponetial}(1)$
@@ -183,7 +183,7 @@ d <- d |>
 :::
 
 ::: incremental
-- Run prior predictive simulation:
+- Run prior predictive simulation in RStanARM. You should write the R code directly.
 :::
 
 ::: {.fragment}
@@ -198,7 +198,7 @@ m3 <- stan_glm(
   prior = normal(3, 0.3),
   prior_aux = exponential(1),
   prior_intercept = normal(0, 5),
-  prior_PD = 1,  # don't evaluate the likelyhood
+  prior_PD = 1,  # don't evaluate the likelihood
   seed = 1234,
   chains = 4,
   iter = 600
@@ -418,9 +418,9 @@ grid.arrange(p1, p2, nrow = 2)
 ## Example: Quality of Wine {.smaller}
 
 ::: incremental
-- As before, we will center the predictors, but this time we will also divide by standard deviation 
+- As before, we will center the predictors, but this time, we will also divide by standard deviation 
 - This will make the coefficients comparable
-- If you have binary inputs, it may make sense to divide by 2 standard deviations (Page 186 in Regresion and Other Stories)
+- If you have binary inputs, it may make sense to divide by two standard deviations (Page 186 in Regresion and Other Stories)
 - We will also center the quality score
 :::
 
@@ -812,11 +812,11 @@ loo_compare(loo1, loo2)
 -   Modeling count data is typically part of a general GLM framework
 -   The general setup is that we have:
     - Response vector $y$, and predictor matrix $X$
-    - Linear predictor: $\eta = \alpha + X\beta$
-    - $\E(y | X) = g^{-1}(\eta)$, where $g$ is the link function that maps the linear predictor onto the observational scale
+    - Linear predictor: $\eta = X\beta$, where $X$ is $N\text{x}P$ and $\beta$ is $P\text{x}1$. What are the dimensions of $\eta$?
+    - $\E(y \mid X) = g^{-1}(\eta)$, where $g$ is the link function that maps the linear predictor onto the observational scale
     - For linear regression, $g$ is the identity function (i.e., no transformation)
     - The Poisson data model is $y_i \sim \text{Poisson}(\lambda_i)$, where $\lambda_i = \exp(X_i\beta)$, and so our link function $g(x) = \log(x)$
-    - As stated before, for one observation $y$, $f(y|\lambda) = \frac{1}{y!} \lambda^y e^{-\lambda}$
+    - As stated before, for one observation $y$, $f(y \mid \lambda) = \frac{1}{y!} \lambda^y e^{-\lambda}$
 :::
 
 ## Poisson Posterior {.smaller}
@@ -829,7 +829,7 @@ f\left(\alpha,\beta \mid y,X\right) & \propto &
   f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot
   \prod_{i=1}^N {\frac{g^{-1}(\eta_i)^{y_i}}{y_i!} e^{-g^{-1}(\eta_i)}} \\
   & \propto & f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot 
-  \prod_{i=1}^N {\frac{\exp(\alpha + x_i^\top\beta)^{y_i}}{y_i!} e^{-\exp(\alpha + x_i^\top\beta)}}
+  \prod_{i=1}^N {\frac{\exp(\alpha + X_i\beta)^{y_i}}{y_i!} e^{-\exp(\alpha + X_i\beta)}}
 \end{eqnarray}
 $$
 - When the rate is observed at different time scales or unit scales, we introduce an exposure $u_i$, which multiplies the rate $\lambda_i$
@@ -1093,7 +1093,7 @@ head(roaches)
 ## Example: Trapping Roaches {.smaller}
 
 ::: incremental
-- Our model has three inputs and an intercepts term
+- Our model has three inputs and an intercept term
 - Since the traps were set for a different number of days, we will include an exposure offset $u_i$
 - $b_t$ is the treatment coefficient, $b_r$ is the baseline roach level, and $b_s$ is the senior coefficient
 - We need to consider reasonable priors on all those
@@ -1112,9 +1112,9 @@ $$
 
 ::: incremental
 - If we look at the exposure, the average number of days that the traps were set was about 1
-- How many roaches do we expect to trap during a whole day? Hundreds would probably be on the high side, so our prior model should not be predicting say 10s of thousands
+- How many roaches do we expect to trap during a whole day? Hundreds would probably be on the high side, so our prior model should not be predicting, say 10s of thousands
 - What is the interpretation of the intercept in this regression?
-- There is no way (to my knowledge) to put a half-normal or exponential distribution on the intercept in `rstanarm` and if we put `Normal(3, 1)`, it's unlikely to be negative and the number of roaches can be as high as `Exp(5) ~ 150`
+- There is no way (to my knowledge) to put a half-normal or exponential distribution on the intercept in `rstanarm`, and if we put `Normal(3, 1)`, it's unlikely to be negative, and the number of roaches can be as high as `Exp(5) ~ 150`
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Poisson}(u_i\lambda_i)\\
@@ -1172,7 +1172,7 @@ summary(colMeans(yrep_m6))
 :::
 
 ::: incremental
-- The median is not unreasonable but we would not expect the max (of the average!) to be 52,000
+- The median is not unreasonable, but we would not expect the max (of the average!) to be 52,000
 - The numbers or not in another universe, however, so we will go with it
 - Try to do what people usually do, which is put the scale on the intercept at 10 or more and scale of the betas at 5 or more, and see what you get
 :::
@@ -1277,7 +1277,7 @@ summary(m8)
 
 ::: incremental
 - How good is this model?
-- Let's look a the basic posterior predictive check
+- Let's look at the basic posterior predictive check
 :::
 
 ::: {.fragment}
@@ -1334,6 +1334,7 @@ plot(loo_nb, main = "NegBi PSIS diagnostic plot")
 par(mfrow = c(1, 1)) 
 ```
 :::
+
 
 
 
