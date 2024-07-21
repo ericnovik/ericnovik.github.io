@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 1"
+author: "Eric Novik | Summer 2024 | Session 1"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -87,7 +87,7 @@ $$
 
 -   Basic **differentiation**. Meaning of the derivative. Numeric and symbolic differentiation and optimization.
 
--   Basic **integration**. Riemann integral and basic rules of integration. Numeric and symbolic integration.
+-   Basic **integration**. Riemann integral and basic rules of integration. 
 
 -   Review of **one-dimensional** **probability**. Conditional probability, random variables, and expectations. Solving probability problems by simulation.
 :::
@@ -99,11 +99,11 @@ $$
 
 -   Introduction to **Matrix Algebra**. Vectors and vector arithmetic. Matrixes and matrix operations.
 
-- Manipulating and graphing data and **Exploratory Data Analysis**
+-   Manipulating and graphing data and **Exploratory Data Analysis**
 
-- Programming basics: **variables, flow control, loops, functions**, and writing **simulations**
+-   Programming basics: **variables, flow control, loops, functions**, and writing **simulations**
 
-- Introduction to basic **statistics and linear regression**.
+-   Introduction to basic **statistics and linear regression**.
 :::
 :::
 :::
@@ -151,15 +151,24 @@ $$
 ## Some Mistakes Are Silly
 
 ::: columns
-::: {.column width="50%"}
-::: {.fragment}
+::: {.column width="33%"}
+::: fragment
+\
 ![](images/nikki-haley.jpg){width="386"}
 :::
 :::
 
-::: {.column width="50%"}
-::: {.fragment}
+::: {.column width="33%"}
+::: fragment
+\
 ![](images/bill-gates-sharks.png){width="557"}
+:::
+:::
+
+::: {.column width="34%"}
+::: fragment
+\
+{{< video src="images/huberman-probability.mp4" >}}
 :::
 :::
 :::
@@ -301,19 +310,19 @@ Data source: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/da
 
 ::: columns
 ::: {.column width="50%"}
-::: {.fragment}
+::: fragment
 ![](images/mcdonald.png){fig-align="left"}
 :::
 :::
 
 ::: {.column width="50%"}
-::: {.fragment}
+::: fragment
 ![](images/hearing.png){fig-align="right" width="1300"}
 :::
 :::
 :::
 
-::: {.fragment}
+::: fragment
 Communication is part of the job --- it's worth learning how to do it well.
 :::
 
@@ -380,7 +389,6 @@ p + geom_point() + geom_smooth(method = "lm", size = 0.3,
 
 ::: columns
 ::: {.column width="50%"}
-
 ::: incremental
 -   Suppose you have linear regression model of the form $y_n \sim \operatorname{normal}(\alpha + \beta x_n, \, \sigma)$ and you want to learn the most likely values of $\alpha$ and $\beta$
 
@@ -424,15 +432,12 @@ scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
 ```
 :::
 :::
-
-
 :::
 
 ## Example: Integral Calculus {style="font-size: 75%;"}
 
 ::: columns
 ::: {.column width="47.5%"}
-
 ::: incremental
 -   Suppose we have a probability distribution of some parameter $\theta$, which represents the differences between the treated and control units
 
@@ -443,24 +448,22 @@ scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
 -   This probability can be written as:
 :::
 
-::: {.fragment}
+::: fragment
 $$
     P(\theta > 0) = \int_{0}^{\infty} p_{\theta}\, d\theta
 $$
 :::
-
 :::
 
 ::: {.column width="5%"}
 :::
 
 ::: {.column width="47.5%"}
-
 ::: incremental
 -   Assuming $\theta$ is normally distributed with $\mu = 1$ and $\sigma = 1$ we can evaluate the integral as an area under the normal curve from $0$ to $\infty$.
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| fig-width: 5
 #| fig-height: 3.5
@@ -482,7 +485,6 @@ nd %>%
 
 ```
 :::
-
 :::
 :::
 
@@ -527,21 +529,30 @@ This is the type of model we fit to the O-Rings data.
 #| echo: true
 #| eval: false
 data {
-  int<lower=0> N_rows; // number of input rows
-  int<lower=0> N;      // number of trials in Binom(N, p)
+  int<lower=0> N_rows; // number of rows in data
+  int<lower=0> N;      // number of possible "successes" in Binom(N, p)
   vector[N_rows] x;    // temperature for the O-Rings example
-  array[N_rows] int<lower=0, upper=N> y; // number of "successes" in Binom(N, p)
+  array[N_rows] int<lower=0, upper=N> y; // number of "successes" in y ~ Binom(N, p)
 }
 parameters {
-  real alpha;
-  real beta;
+  real alpha; 
+  real beta;  
 }
 model {
-  alpha ~ normal(0, 5); // prior on the intercept
-  beta ~ normal(0, 1);  // prior on the slope
-  y ~ binomial_logit(N, alpha + beta * x);
+  alpha ~ normal(0, 2.5); // we can encode what we know about plausible values
+  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the date
+  y ~ binomial_logit(N, alpha + beta * x); // likehood (conditioned on x)
 }
 ```
+
+$$
+\begin{eqnarray*}
+\text{BinomialLogit}(y~|~N,\theta) & = &
+\text{Binomial}(y~|~N,\text{logit}^{-1}(\theta)) \\[6pt] & = &
+\binom{N}{y} \left( \text{logit}^{-1}(\theta) \right)^{y}  \left( 1 -
+\text{logit}^{-1}(\theta) \right)^{N - y}  
+\end{eqnarray*}
+$$
 
 ::: footer
 Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/QR-reparameterization.html)
@@ -675,6 +686,7 @@ sd(die)
 :::
 
 ## R Documentation
+
 ```{r}
 #| echo: true
 #| eval: false
@@ -686,17 +698,16 @@ sd(die)
 
 ## Your Turn {.smaller}
 
-- Create a variable called `fib` that contains the first 10 Fibonacci numbers
-- They are: `0, 1, 1, 2, 3, 5, 8, 13, 21, 34`
-- Compute the length of this vector in R
-- Compute the sum, the product, and the difference (`diff()`) between successive numbers
-- What do you notice about the pattern in the differences?
-- Now, create a vector of 100 integers from 1 to 100
-- Young Gauss was asked to sum them by hand
-- He figured out that the sum has to be $N (N + 1) / 2$
-- Verify that Gauss was right (just for 100)
-- Now compute the sum of the first hundred squares
-
+-   Create a variable called `fib` that contains the first 10 Fibonacci numbers
+-   They are: `0, 1, 1, 2, 3, 5, 8, 13, 21, 34`
+-   Compute the length of this vector in R
+-   Compute the sum, the product, and the difference (`diff()`) between successive numbers
+-   What do you notice about the pattern in the differences?
+-   Now, create a vector of 100 integers from 1 to 100
+-   Young Gauss was asked to sum them by hand
+-   He figured out that the sum has to be $N (N + 1) / 2$
+-   Verify that Gauss was right (just for 100)
+-   Now compute the sum of the first hundred squares
 
 ## Hands-On: Lists {.smaller}
 
@@ -705,7 +716,7 @@ sd(die)
 -   Contrast with a data frame, which we will discuss later, that contains objects of different types but is rectangular
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 list_x <- list(A = pi, B = c(0, 1), C = 1:10, D = c("one", "two"))
@@ -717,7 +728,6 @@ str(list_x[1])
 list_x[[1]] # same as x$A
 ```
 :::
-
 
 ## Data Frames {.smaller}
 
@@ -731,7 +741,7 @@ list_x[[1]] # same as x$A
 -   John F. W. Herschel's data on the orbit of the Twin Stars $\gamma$ Virginis
 :::
 
-::: {.fragment}
+::: fragment
 ![](images/gamma-virginis.png){fig-align="center" width="672"}
 :::
 
@@ -739,8 +749,7 @@ list_x[[1]] # same as x$A
 
 ::: columns
 ::: {.column width="50%"}
-
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 library(HistData)
@@ -750,16 +759,12 @@ Virginis.interp |> dplyr::as_tibble()
 Virginis.interp |> dplyr::as_tibble() |> class()
 ```
 :::
-
 :::
 
 ::: {.column width="50%"}
-
-::: {.fragment}
+::: fragment
 ![](images/herschel.png){fig-align="center" width="672"}
-
 :::
-
 :::
 :::
 
@@ -769,10 +774,10 @@ Virginis.interp |> dplyr::as_tibble() |> class()
 
 ## Your Turn
 
-- Save `Virginis.interp` in a new tibble called `virginis` using `as_tibble()` function
-- Compute average velocity in `virginis`
-- Hint: you can access columns of tibbles and data frames with an `$` like this: `dataframe_name$variable_name`
-- We will do a lot more work with tibbles and data frames in later sessions
+-   Save `Virginis.interp` in a new tibble called `virginis` using `as_tibble()` function
+-   Compute average velocity in `virginis`
+-   Hint: you can access columns of tibbles and data frames with an `$` like this: `dataframe_name$variable_name`
+-   We will do a lot more work with tibbles and data frames in later sessions
 
 ## Basic Plotting {.smaller}
 
@@ -780,22 +785,18 @@ Virginis.interp |> dplyr::as_tibble() |> class()
 ### Code
 
 ::: columns
-
 ::: {.column width="50%"}
-
 ![](images/cholera.png){fig-align="center" width="672"}
-
 :::
 
 ::: {.column width="50%"}
-
 ::: incremental
 -   R base plotting system is great for making quick basic graphs with relatively little typing
 
 -   We will demonstrate with John Snow's data from the 1854 cholera outbreak
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 #| eval: false
@@ -812,12 +813,8 @@ text(mdy("09/08/1854"), 40,
      "Pump handle\nremoved Sept. 8", pos = 4)
 ```
 :::
-
 :::
-
-
 :::
-
 
 ### Plot Deaths Over Time
 
@@ -897,7 +894,7 @@ sample(coin, 10, replace = TRUE)
 -   In math notation: $\sum_{i = 1}^{100}x_i, \ x \in \{1, ..., 100\}$
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 n <- 100
@@ -917,7 +914,7 @@ s == sum(x)
 
 ### Solution
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 
@@ -936,8 +933,6 @@ s == sum(seq(2, 100, by = 2))
 ::: incremental
 -   Congratulations, you are now [Turing Complete](https://youtu.be/RPQD7-AOjMI)!
 :::
-
-
 :::
 
 ## Simulate Coin Flips {.smaller}
@@ -947,8 +942,7 @@ s == sum(seq(2, 100, by = 2))
 -   If so, what is the rate of convergence?
 :::
 
-
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 #| eval: false
@@ -964,21 +958,18 @@ for (i in 1:n) {
 :::
 
 ::: incremental
-- Your turn: write down in plain English what the above code is doing
-- At the end of the loop, what does the variable `est_prop` contain?
+-   Your turn: write down in plain English what the above code is doing
+-   At the end of the loop, what does the variable `est_prop` contain?
 :::
-
-
-
 
 ## Introduction to ggplot {.smaller}
 
 ::: incremental
-- Our task is to visualize the estimated proportion as a function of the number of coin flips
-- This can be done in base `plot()`, but we will do it with `ggplot`
+-   Our task is to visualize the estimated proportion as a function of the number of coin flips
+-   This can be done in base `plot()`, but we will do it with `ggplot`
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| cache: true
 #| fig-width: 6
@@ -1005,11 +996,11 @@ grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 :::
 
-## Law of Large Numbers 
+## Law of Large Numbers
 
 ::: panel-tabset
-
 ## Code
+
 ```{r}
 #| fig-width: 7
 #| fig-height: 3.5
@@ -1066,7 +1057,6 @@ p + geom_line(size = 0.1) +
 ```
 :::
 
-
 ## Functions {.smaller}
 
 ::: panel-tabset
@@ -1078,7 +1068,7 @@ p + geom_line(size = 0.1) +
 -   Functions take in arguments and return results. You saw functions like `sum()` and `mean()` before. Here, you will learn how to write your own.
 :::
 
-::: {.fragment}
+::: fragment
 ![](images/function.png){fig-align="center"}
 :::
 
@@ -1092,7 +1082,7 @@ Source: [Hands-On Programming with R](https://rstudio-education.github.io/hopr/b
 ::: {.column width="50%"}
 We will write a function that produces one estimate of the proportion given a fixed sample size `n`.
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 
@@ -1108,7 +1098,7 @@ head(x)
 ```
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| eval: false
 #| echo: true
@@ -1117,12 +1107,10 @@ hist(x,
      main = "Distribution of Proportions of Heads")
 ```
 :::
-
 :::
 
 ::: {.column width="50%"}
-
-::: {.fragment}
+::: fragment
 ```{r}
 #| fig-width: 4
 #| fig-height: 4
@@ -1137,17 +1125,16 @@ par(
 hist(x, xlab = "Number of simulations", main = "Distribution of Proportions of Heads")
 ```
 :::
-
 :::
 :::
 
 ### Coin Flip Example
 
-::: {.fragment}
+::: fragment
 To reproduce our earlier example, generating estimates for increasing sample sizes, use `map_dbl()` function from `purrr` package. More on that [here](https://adv-r.hadley.nz/functionals.html).
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| fig-width: 8
 #| fig-height: 3.5
@@ -1162,7 +1149,6 @@ y <- map_dbl(2:500, estimate_proportion)
 plot(2:500, y, xlab = "", ylab = "", type = 'l')
 ```
 :::
-
 :::
 
 ## Generating Continuous Uniform Draws {.smaller}
@@ -1172,7 +1158,7 @@ plot(2:500, y, xlab = "", ylab = "", type = 'l')
 -   `runif` generates realizations of a random variable uniformly distributed between `min` and `max`.
 :::
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| fig-width: 4
 #| fig-height: 3
@@ -1187,12 +1173,11 @@ hist(runif(1e3))
 -   Your turn: what is the approximate value of this line of code: `mean(runif(1e3, min = -1, max = 0))`? Guess before running it.
 :::
 
-
 ## Estimating $\pi$ by Simulation
 
 The idea is that we can approximate the ratio of the area of an inscribed circle, $A_c$, to the area of the square, $A_s$, by uniformly "throwing darts" at the square with the side $2r$ and counting how many darts land inside the circle versus inside the square.
 
-::: {.fragment}
+::: fragment
 $$
 \begin{align}
 A_{c}& = \pi r^2 \\
@@ -1206,7 +1191,7 @@ $$
 
 To estimate $\pi$, we perform the following simulation:
 
-::: {.fragment}
+::: fragment
 $$
 \begin{align}
 X& \sim \text{Uniform}(-1, 1) \\
@@ -1216,7 +1201,7 @@ Y& \sim \text{Uniform}(-1, 1) \\
 $$
 :::
 
-::: {.fragment}
+::: fragment
 The numerator is a sum over an indicator function $\I$, which evaluates to $1$ if the inequality holds and $0$ otherwise.
 :::
 
@@ -1225,7 +1210,7 @@ The numerator is a sum over an indicator function $\I$, which evaluates to $1$ i
 ::: panel-tabset
 ### Code and Plot
 
-::: {.fragment}
+::: fragment
 ```{r}
 #| echo: true
 #| fig-width: 3
@@ -1247,15 +1232,11 @@ p + geom_point(aes(color = inside)) + theme(legend.position = "none")
 cat("Estimated value of pi =", 4*sum(inside) / n)
 ```
 
-::: {.fragment}
+::: fragment
 ```{r}
 knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
 ```
 :::
-
 :::
 
-
 ## References
-
-

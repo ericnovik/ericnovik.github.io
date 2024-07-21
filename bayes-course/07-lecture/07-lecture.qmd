@@ -1,7 +1,7 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2023 | Lecture 7"
+author: "Eric Novik | Spring 2024 | Lecture 7"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -77,16 +77,16 @@ $$
 - In R, you can set `logit <- qlogis` and `invlogit <- plogis`
 :::
 
-## GLMs and Models 0/1 Outcomes {.smaller}
+## GLMs and Models For 0/1 Outcomes {.smaller}
 
 ::: incremental
 -   Modeling a probability of an event can be framed in the GLM context (just like with counts)
 -   The general setup is that we have:
     - Response vector $y$ consisting of zeros and ones
     - The data model is $y_i \sim \text{Bernoulli}(p_i)$
-    - Linear predictor: $\eta = \alpha + X\beta$, where $X$ is a matrix
-    - In general: $\E(y | X) = g^{-1}(\eta)$, where $g^{-1}$is the inverse link function that maps the linear predictor onto the observational scale
-    - In particular: $\E(y_i | x_i) = \text{logit}^{-1}(\alpha + x_i^{\top}\beta) = p_i$
+    - Linear predictor: $\eta_i = \alpha + X_i\beta$, where $X$ is a matrix
+    - In general: $\E(y \mid X) = g^{-1}(\eta)$, where $g^{-1}$is the inverse link function that maps the linear predictor onto the observational scale
+    - In particular: $\E(y_i \mid X_i) = \text{logit}^{-1}(\alpha + X_i\beta) = p_i = \P(y_i = 1)$
        - $\text{logit}(p_i) = \eta_i$ and $p_i = \text{logit}^{-1}(\eta_i)$
 :::
 
@@ -94,15 +94,15 @@ $$
 
 ::: incremental
 - To derive the posterior distribution for Poisson, we consider K regression inputs and independent priors on all $K + 1$ unknowns: $\alpha$ and $\beta_1, \beta_2, ..., \beta_k$
-- Bernoulli likelihood is: $f(y | p) = p^y (1 - p)^{1-y}$ with $y \in \{0, 1\}$
-- And each $p_i = \text{logit}^{-1}(\alpha + x_i^\top\beta)$
+- Bernoulli likelihood is: $f(y \mid p) = p^y (1 - p)^{1-y}$ with $y \in \{0, 1\}$
+- And each $p_i = \text{logit}^{-1}(\alpha + X_i\beta)$
 $$
 f\left(\alpha,\beta \mid y,X\right) \propto
 f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) \cdot \\
-\prod_{i=1}^N \left(\text{logit}^{-1}(\alpha + x_i^\top\beta) \right)^{y_i} \left(1 - \text{logit}^{-1}(\alpha + x_i^\top\beta)\right)^{1-y_i}
+\prod_{i=1}^N \left(\text{logit}^{-1}(\alpha + X_i\beta) \right)^{y_i} \left(1 - \text{logit}^{-1}(\alpha + X_i\beta)\right)^{1-y_i}
 $$
 
-- In Stan, the likelihood term can be written on a log scale as `y ~ bernoulli_logit_glm(x, alpha, beta)` or `bernoulli_logit_glm_lupmf(y | x, alpha, beta)`
+- [In Stan](https://mc-stan.org/docs/functions-reference/binary_distributions.html#bernoulli-logit-glm), the likelihood term can be written on a log scale as `y ~ bernoulli_logit_glm(x, alpha, beta)` or `bernoulli_logit_glm_lupmf(y | x, alpha, beta)`
 :::
 
 ## Logistic Simulation {.smaller}
@@ -271,7 +271,7 @@ knitr::kable(head(pima))
 
 ::: incremental
 - This dataset contains missing values
-- People typically either delete them or replace them with average values of something like that
+- People typically either delete them or replace them with average values, or something like that
 - None of these are good approaches
 - In R, we recommend a combination of the `mice` package and `brms`, [which works nicely](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html) with `mice`
 - From a Bayesian perspective, a missing value is just another unknown parameter in the model, which can be modeled
@@ -389,19 +389,19 @@ head(d)
 ## Example: Diabetes {.smaller}
 
 ::: incremental
-- We will be fitting the following statistical model, where $x_1$ is the BMI and $\bar x_1$ is the average BMI in the sample
+- We will be fitting the following statistical model, where $x$ is the BMI and $\bar x$ is the average BMI in the sample
 - We divide by ten so that a unit increase in BMI is a meaningful change
-- We need to pick priors on $\alpha$, and $\beta_1$
+- We need to pick priors on $\alpha$, and $\beta$
 :::
 
 ::: {.fragment}
 $$
 \begin{eqnarray}
 y_i &\sim& \text{Bernoulli}(p_i) \\
-\eta_i &=& \alpha + \beta_1 \left( \frac{x_{1i} - \bar x_1}{10} \right) \\
+\eta_i &=& \alpha + \beta \left( \frac{x_{i} - \bar x}{10} \right) \\
 p_i &=& \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 \alpha &\sim& \text{Normal}(\mu_\alpha ,\ \sigma_\alpha) \\
-\beta_1 &\sim& \text{Normal}(\mu_\beta , \ \sigma_\beta) 
+\beta &\sim& \text{Normal}(\mu_\beta , \ \sigma_\beta) 
 \end{eqnarray}
 $$
 :::
@@ -411,18 +411,18 @@ $$
 
 ::: incremental
 - The prior on the intercept corresponds to the log odds of developing diabetes when a person has an average BMI, which is about 29 in the US (which is considered high-risk)
-- It is likely that the probability is between 20% and 80%, and so a weakly informative prior can be expressed as $\text{Normal}(0, 0.5)$
-- Suppose, we also put a weakly informative $\text{Normal}(0, 1)$ pior on $\beta_1$
+- It is likely that the probability is between 20% and 80%, and so a weakly informative prior can be expressed as $\text{Normal}(0, 0.5)$, since `invlogit(c(-1.5, 1.5)) = [0.18, 0.82]`
+- Suppose, we also put a weakly informative $\text{Normal}(0, 1)$ pior on $\beta$
 :::
 
 ::: {.fragment}
 $$
 \begin{eqnarray}
 y_i &\sim& \text{Bernoulli}(p_i) \\
-\eta_i &=& \alpha + \beta_1 \left( \frac{x_{1i} - \bar x_1}{10} \right) \\
+\eta_i &=& \alpha + \beta \left( \frac{x_{i} - \bar x}{10} \right) \\
 p_i &=& \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 \alpha &\sim& \text{Normal}(0 ,\ 0.5) \\
-\beta_1 &\sim& \text{Normal}(0 , \ 1) 
+\beta &\sim& \text{Normal}(0 , \ 1) 
 \end{eqnarray}
 $$
 :::
@@ -480,7 +480,7 @@ d |>
 ::: incremental
 - The negative associations are implausible given everything we know about diabetes
 - Suppose the risk of diabetes doubles for every 10 $kg/m^2$ (unverified)
-- That would imply average $\beta_1 \approx 0.7$, since the multiplicative change in odds is $e^{0.7} \approx 2$
+- That would imply average $\beta \approx 0.7$, since the multiplicative change in odds is $e^{0.7} \approx 2$
 - We will set the standard deviation to 0.2 to avoid negative effects and allow the odds to be as high as 3.5
 :::
 
@@ -488,10 +488,10 @@ d |>
 $$
 \begin{eqnarray}
 y_i &\sim& \text{Bernoulli}(p_i) \\
-\eta_i &=& \alpha + \beta_1 \left( \frac{x_{1i} - \bar x_1}{10} \right) \\
+\eta_i &=& \alpha + \beta_1 \left( \frac{x_{i} - \bar x}{10} \right) \\
 p_i &=& \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 \alpha &\sim& \text{Normal}(0 ,\ 0.5) \\
-\beta_1 &\sim& \text{Normal}(0.7 , \ 0.2) 
+\beta &\sim& \text{Normal}(0.7 , \ 0.2) 
 \end{eqnarray}
 $$
 :::
@@ -872,7 +872,7 @@ plot(graph, layout = layout, vertex.size = 30, vertex.label = names,
 ## Partial Pooling Compromise {.smaller}
 
 ::: incremental
-- Posterior $f(\theta | y)$ is is a compromise between prior $f(\theta)$ and likelihood $f(y | \theta)$
+- Posterior $f(\theta \mid y)$ is is a compromise between prior $f(\theta)$ and likelihood $f(y \mid \theta)$
 - In the same spirit, the pooled parameter $\theta_j$ (say reaction time for subject $j$) is a compromise between within-subject parameters, and among-subject parameters
 :::
 
@@ -1254,4 +1254,6 @@ new_subj |>
 ```
 :::
 
+## Course Evaluations {.smaller}
 
+![](images/course-eval.png){fig-align="center"}
