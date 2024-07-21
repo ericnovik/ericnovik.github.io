@@ -8,10 +8,10 @@
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.549">
+  <meta name="generator" content="quarto-1.5.54">
 
   <meta name="author" content="Eric Novik | Spring 2024 | Lecture 2">
-  <title>Eric Novik - Bayesian Inference</title>
+  <title>Eric Novik – Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -42,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -70,7 +70,7 @@
     code span.at { color: #657422; } /* Attribute */
     code span.bn { color: #ad0000; } /* BaseN */
     code span.bu { } /* BuiltIn */
-    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
     code span.ch { color: #20794d; } /* Char */
     code span.cn { color: #8f5902; } /* Constant */
     code span.co { color: #5e5e5e; } /* Comment */
@@ -84,7 +84,7 @@
     code span.fu { color: #4758ab; } /* Function */
     code span.im { color: #00769e; } /* Import */
     code span.in { color: #5e5e5e; } /* Information */
-    code span.kw { color: #003b4f; } /* Keyword */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
     code span.op { color: #5e5e5e; } /* Operator */
     code span.ot { color: #003b4f; } /* Other */
     code span.pp { color: #ad0000; } /* Preprocessor */
@@ -463,8 +463,7 @@ Eric Novik | Spring 2024 | Lecture 2
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="bayesian-inference-vs-bayesian-workflow1" class="slide level2 smaller scrollable">
 <h2>Bayesian Inference vs Bayesian Workflow<sup>1</sup></h2>
@@ -489,8 +488,7 @@ Eric Novik | Spring 2024 | Lecture 2
 <p><img data-src="images/workflow.png" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
-</div>
-</div>
+</div></div>
 <div class="fragment">
 
 </div>
@@ -524,8 +522,7 @@ Eric Novik | Spring 2024 | Lecture 2
 <li class="fragment">We calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong</li>
 </ul>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="on-with-the-show" class="slide level2 smaller">
 <h2>On with the show…</h2>
@@ -548,8 +545,7 @@ Eric Novik | Spring 2024 | Lecture 2
 <p><img data-src="images/disc-prior.png" class="quarto-figure quarto-figure-right" width="672"></p>
 </figure>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="continous-probability-distributions" class="slide level2 smaller">
 <h2>Continous Probability Distributions</h2>
@@ -616,8 +612,7 @@ f(x) \geq 0 \\
 </div>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 <div>
 <ul>
 <li class="fragment">For positive integrers <span class="math inline">\(n\)</span>: <span class="math inline">\(\, \Gamma(n+1) = n!\)</span> and in general <span class="math inline">\(\Gamma(z + 1) = z \Gamma(z)\)</span></li>
@@ -736,8 +731,7 @@ f(x) \geq 0 \\
 <p><img data-src="images/placenta-previa.jpeg" class="quarto-figure quarto-figure-right" width="500"></p>
 </figure>
 </div>
-</div>
-</div>
+</div></div>
 <aside><ol class="aside-footnotes"><li id="fn2"><p>Gelman, A., &amp; Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310</p></li></ol></aside></section>
 <section id="biomomial-likelihood" class="slide level2 smaller">
 <h2>Biomomial Likelihood</h2>
@@ -877,8 +871,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div>
 <ul>
@@ -956,8 +949,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="posterior-with-population-priors" class="slide level2 smaller">
 <h2>Posterior with Population Priors</h2>
@@ -1375,18 +1367,7 @@ f(\theta \mid y_1,y_2)
         }
         return false;
       }
-      const clipboard = new window.ClipboardJS('.code-copy-button', {
-        text: function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
-            }
-          }
-          return codeEl.innerText;
-        }
-      });
-      clipboard.on('success', function(e) {
+      const onCopySuccess = function(e) {
         // button target
         const button = e.trigger;
         // don't keep focus
@@ -1418,7 +1399,47 @@ f(\theta \mid y_1,y_2)
         }, 1000);
         // clear code selection
         e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
       });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        // For code content inside modals, clipBoardJS needs to be initialized with a container option
+        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
       function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
         const config = {
           allowHTML: true,
@@ -1455,7 +1476,11 @@ f(\theta \mid y_1,y_2)
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
-          return note.innerHTML;
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
         });
       }
       const findCites = (el) => {

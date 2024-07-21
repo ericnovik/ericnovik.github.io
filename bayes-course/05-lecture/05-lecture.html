@@ -8,10 +8,10 @@
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.549">
+  <meta name="generator" content="quarto-1.5.54">
 
   <meta name="author" content="Eric Novik | Spring 2024 | Lecture 5">
-  <title>Eric Novik - Bayesian Inference</title>
+  <title>Eric Novik – Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -42,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -70,7 +70,7 @@
     code span.at { color: #657422; } /* Attribute */
     code span.bn { color: #ad0000; } /* BaseN */
     code span.bu { } /* BuiltIn */
-    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
     code span.ch { color: #20794d; } /* Char */
     code span.cn { color: #8f5902; } /* Constant */
     code span.co { color: #5e5e5e; } /* Comment */
@@ -84,7 +84,7 @@
     code span.fu { color: #4758ab; } /* Function */
     code span.im { color: #00769e; } /* Import */
     code span.in { color: #5e5e5e; } /* Information */
-    code span.kw { color: #003b4f; } /* Keyword */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
     code span.op { color: #5e5e5e; } /* Operator */
     code span.ot { color: #003b4f; } /* Other */
     code span.pp { color: #ad0000; } /* Preprocessor */
@@ -432,8 +432,7 @@ Eric Novik | Spring 2024 | Lecture 5
 <p><img data-src="images/stan.png" class="quarto-figure quarto-figure-center" height="500"></p>
 </figure>
 </div>
-</div>
-</div>
+</div></div>
 <p><span class="math display">\[
 \DeclareMathOperator{\E}{\mathbb{E}}
 \DeclareMathOperator{\P}{\mathbb{P}}
@@ -461,8 +460,7 @@ Eric Novik | Spring 2024 | Lecture 5
 <p><img data-src="images/kalahari.png" class="quarto-figure quarto-figure-right"></p>
 </figure>
 </div>
-</div>
-</div>
+</div></div>
 <div class="footer">
 <p><a href="https://tspace.library.utoronto.ca/handle/1807/10395">Univercity of Toronto Data Sets</a></p>
 </div>
@@ -477,7 +475,7 @@ Eric Novik | Spring 2024 | Lecture 5
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<table>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: right;">height</th>
@@ -555,8 +553,7 @@ Eric Novik | Spring 2024 | Lecture 5
 <li class="fragment">Thinking about why this should be, can give you an insight into how to model these data</li>
 </ul>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="howell-dataset-1" class="slide level2 smaller">
 <h2>Howell Dataset</h2>
@@ -747,8 +744,7 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 </div>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="prior-predictive-simulation-1" class="slide level2 smaller">
 <h2>Prior Predictive Simulation</h2>
@@ -801,8 +797,7 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div>
 <ul>
@@ -1014,7 +1009,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb22-3"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">spread_draws</span>(m1, <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, height_c, sigma)</span>
 <span id="cb22-4"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(<span class="fu">round</span>(draws, <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: right;">.chain</th>
@@ -1094,7 +1089,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb23-2"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">gather_draws</span>(m1, <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, height_c, sigma)</span>
 <span id="cb23-3"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">tail</span>(draws, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: right;">.chain</th>
@@ -1142,7 +1137,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>draws <span class="sc">|&gt;</span> <span class="fu">mean_qi</span>(<span class="at">.width =</span> <span class="fl">0.90</span>) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="co"># also see ?median_qi(), etc</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: left;">.variable</th>
@@ -1236,8 +1231,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="posterior-predictions" class="slide level2 smaller">
@@ -1318,8 +1312,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="rstanarm-prediction-functions" class="slide level2">
 <h2>RStanArm Prediction Functions</h2>
@@ -1536,8 +1529,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="visual-posterior-predictive-checks-1" class="slide level2 smaller">
@@ -1605,8 +1597,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="quantifying-model-accuracy" class="slide level2 smaller scrollable">
@@ -1630,8 +1621,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 <aside><ol class="aside-footnotes"><li id="fn2"><p>Vehtari, A., Gelman, A., &amp; Gabry, J. (2017). <a href="https://mc-stan.org/loo/index.html">Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</a>. Statistics and Computing, 27(5), 1413–1432. https://doi.org/10.1007/s11222-016-9696-4</p></li></ol></aside></section>
 <section id="quantifying-model-accuracy-1" class="slide level2 smaller">
 <h2>Quantifying Model Accuracy</h2>
@@ -2030,18 +2020,7 @@ See help('pareto-k-diagnostic') for details.</code></pre>
         }
         return false;
       }
-      const clipboard = new window.ClipboardJS('.code-copy-button', {
-        text: function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
-            }
-          }
-          return codeEl.innerText;
-        }
-      });
-      clipboard.on('success', function(e) {
+      const onCopySuccess = function(e) {
         // button target
         const button = e.trigger;
         // don't keep focus
@@ -2073,7 +2052,47 @@ See help('pareto-k-diagnostic') for details.</code></pre>
         }, 1000);
         // clear code selection
         e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
       });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        // For code content inside modals, clipBoardJS needs to be initialized with a container option
+        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
       function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
         const config = {
           allowHTML: true,
@@ -2110,7 +2129,11 @@ See help('pareto-k-diagnostic') for details.</code></pre>
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
-          return note.innerHTML;
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
         });
       }
       const findCites = (el) => {
