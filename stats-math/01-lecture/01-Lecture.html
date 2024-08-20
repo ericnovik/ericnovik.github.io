@@ -1103,7 +1103,7 @@ $D
 <section id="basic-plotting" class="slide level2 smaller">
 <h2>Basic Plotting</h2>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Code</a></li><li><a href="#tabset-3-2">Plot Deaths Over Time</a></li><li><a href="#tabset-3-3">Plot the Map</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">John Snow</a></li><li><a href="#tabset-3-2">Deaths Over Time</a></li><li><a href="#tabset-3-3">Map of Cholera in London</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1">
 <div class="columns">
@@ -1116,44 +1116,46 @@ $D
 </div><div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment"><p>R base plotting system is great for making quick basic graphs with relatively little typing</p></li>
+<li class="fragment"><p>R base plotting system is great for making quick graphs with relatively little typing</p></li>
+<li class="fragment"><p>In base plot, you add elements to the plot directly, as opposed to describing how the graph is constructed</p></li>
 <li class="fragment"><p>We will demonstrate with John Snow’s data from the 1854 cholera outbreak</p></li>
 </ul>
-</div>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a><span class="fu">library</span>(HistData)</span>
-<span id="cb61-2"><a></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb61-3"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">mgp =</span> <span class="fu">c</span>(<span class="dv">2</span>, .<span class="dv">7</span>, <span class="dv">0</span>), <span class="at">tck =</span> <span class="sc">-</span>.<span class="dv">01</span>)</span>
-<span id="cb61-4"><a></a>clr <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Snow.dates<span class="sc">$</span>date <span class="sc">&lt;</span> <span class="fu">mdy</span>(<span class="st">"09/08/1854"</span>), </span>
-<span id="cb61-5"><a></a>              <span class="st">"red"</span>, <span class="st">"darkgreen"</span>)</span>
-<span id="cb61-6"><a></a><span class="fu">plot</span>(deaths <span class="sc">~</span> date, <span class="at">data =</span> Snow.dates, </span>
-<span id="cb61-7"><a></a>     <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> clr, <span class="at">xlab =</span> <span class="st">""</span>)</span>
-<span id="cb61-8"><a></a><span class="fu">points</span>(deaths <span class="sc">~</span> date, <span class="at">data =</span> Snow.dates, </span>
-<span id="cb61-9"><a></a>       <span class="at">cex =</span> <span class="fl">0.5</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> clr)</span>
-<span id="cb61-10"><a></a><span class="fu">text</span>(<span class="fu">mdy</span>(<span class="st">"09/08/1854"</span>), <span class="dv">40</span>, </span>
-<span id="cb61-11"><a></a>     <span class="st">"Pump handle</span><span class="sc">\n</span><span class="st">removed Sept. 8"</span>, <span class="at">pos =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </div>
 </div></div>
 </div>
 <div id="tabset-3-2">
-<div class="cell" data-layout-align="center">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a><span class="fu">library</span>(HistData)</span>
+<span id="cb61-2"><a></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb61-3"><a></a></span>
+<span id="cb61-4"><a></a><span class="co"># set up the plotting area so it looks nice</span></span>
+<span id="cb61-5"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">mgp =</span> <span class="fu">c</span>(<span class="dv">2</span>, .<span class="dv">7</span>, <span class="dv">0</span>), </span>
+<span id="cb61-6"><a></a>    <span class="at">tck =</span> <span class="sc">-</span>.<span class="dv">01</span>, <span class="at">bg =</span> <span class="st">"#f0f1eb"</span>)</span>
+<span id="cb61-7"><a></a>clr <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Snow.dates<span class="sc">$</span>date <span class="sc">&lt;</span> <span class="fu">mdy</span>(<span class="st">"09/08/1854"</span>), </span>
+<span id="cb61-8"><a></a>              <span class="st">"red"</span>, <span class="st">"darkgreen"</span>)</span>
+<span id="cb61-9"><a></a><span class="fu">plot</span>(deaths <span class="sc">~</span> date, <span class="at">data =</span> Snow.dates, </span>
+<span id="cb61-10"><a></a>     <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> clr, <span class="at">xlab =</span> <span class="st">""</span>)</span>
+<span id="cb61-11"><a></a><span class="fu">points</span>(deaths <span class="sc">~</span> date, <span class="at">data =</span> Snow.dates, </span>
+<span id="cb61-12"><a></a>       <span class="at">cex =</span> <span class="fl">0.5</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> clr)</span>
+<span id="cb61-13"><a></a><span class="fu">text</span>(<span class="fu">mdy</span>(<span class="st">"09/08/1854"</span>), <span class="dv">40</span>, </span>
+<span id="cb61-14"><a></a>     <span class="st">"Pump handle</span><span class="sc">\n</span><span class="st">removed Sept. 8"</span>, <span class="at">pos =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
-</div>
+</div></div>
 </div>
 <div id="tabset-3-3">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1166,10 +1168,6 @@ $D
 <h2>Hands-On: Simulating Coin Flips</h2>
 <p>We can learn a lot through simulation. We will start with the <code>sample()</code> function.</p>
 <p><code>sample(x, size, replace = FALSE, prob = NULL)</code></p>
-<div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Sample</a></li><li><a href="#tabset-4-2">For Loops</a></li><li><a href="#tabset-4-3">Solution</a></li></ul>
-<div class="tab-content">
-<div id="tabset-4-1">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a><span class="co"># simulating coin flips</span></span>
 <span id="cb62-2"><a></a>coin <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"H"</span>, <span class="st">"T"</span>)</span>
@@ -1196,8 +1194,13 @@ $D
 <li class="fragment">Your turn: flip a coin 1000 times and compute the proportion of heads</li>
 </ul>
 </div>
-</div>
-<div id="tabset-4-2">
+</section>
+<section id="for-loops" class="slide level2">
+<h2>For Loops</h2>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">For Loops</a></li><li><a href="#tabset-4-2">Solution</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
 <div>
 <ul>
 <li class="fragment">Suppose you want to add the first 100 integers as before but without using the <code>sum()</code> function or the formula</li>
@@ -1225,7 +1228,7 @@ $D
 </ul>
 </div>
 </div>
-<div id="tabset-4-3">
+<div id="tabset-4-2">
 <div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a></a>s <span class="ot">&lt;-</span> <span class="dv">0</span></span>
@@ -1311,14 +1314,14 @@ $D
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div></div>
 </div>
 </section>
-<section id="law-of-large-numbers" class="slide level2">
+<section id="law-of-large-numbers" class="slide level2 smaller">
 <h2>Law of Large Numbers</h2>
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Code</a></li><li><a href="#tabset-5-2">Plot</a></li></ul>
@@ -1350,11 +1353,12 @@ $D
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>WLLN: <span class="math inline">\(\lim_{n \to \infty} \mathbb{P}\left( \left| \overline{X}_n - \mu \right| \geq \epsilon \right) = 0\)</span></p>
 </div>
 </div>
 </div>
@@ -1408,7 +1412,7 @@ $D
 <div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="fu">hist</span>(x, </span>
-<span id="cb81-2"><a></a>     <span class="at">xlab =</span> <span class="st">"Number of simulations"</span>, </span>
+<span id="cb81-2"><a></a>     <span class="at">xlab =</span> <span class="st">""</span>, </span>
 <span id="cb81-3"><a></a>     <span class="at">main =</span> <span class="st">"Distribution of Proportions of Heads"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
@@ -1418,7 +1422,7 @@ $D
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1440,7 +1444,7 @@ $D
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1463,7 +1467,7 @@ $D
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-29-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1521,7 +1525,7 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="01-Lecture_files/figure-revealjs/unnamed-chunk-29-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
