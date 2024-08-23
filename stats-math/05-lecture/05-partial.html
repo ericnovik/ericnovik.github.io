@@ -10,7 +10,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.54">
 
-  <meta name="author" content="Eric Novik | Summer 2023 | Session 5">
+  <meta name="author" content="Eric Novik | Summer 2024 | Session 5">
   <title>Eric Novik – SMaC: Statistics, Math, and Computing</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -400,7 +400,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Summer 2023 | Session 5 
+Eric Novik | Summer 2024 | Session 5 
 </div>
 </div>
 </div>
@@ -413,10 +413,11 @@ Eric Novik | Summer 2023 | Session 5
 <li class="fragment">Random variables</li>
 <li class="fragment">Bernoulli, Binomial, Geometric</li>
 <li class="fragment">PDF and CDF</li>
-<li class="fragment">Exponential, Normal</li>
+<li class="fragment">LOTUS</li>
+<li class="fragment">Poisson</li>
 <li class="fragment">Expectations, Variance</li>
-<li class="fragment">Poisson Random Variable</li>
-<li class="fragment">Joint, Marginal, and Conditional</li>
+<li class="fragment">St.&nbsp;Petersburg Paradox</li>
+<li class="fragment">Normal</li>
 </ul>
 </div>
 <p><span class="math display">\[
@@ -630,103 +631,6 @@ F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
 <ul>
 <li class="fragment"><strong>Your Turn</strong>: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF.</li>
 </ul>
-</div>
-</section>
-<section id="geometric-rv" class="slide level2 smaller">
-<h2>Geometric RV</h2>
-<div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">PMF</a></li><li><a href="#tabset-4-2">Check Convergence</a></li><li><a href="#tabset-4-3">Examples</a></li><li><a href="#tabset-4-4">PMF</a></li></ul>
-<div class="tab-content">
-<div id="tabset-4-1">
-<div>
-<ul>
-<li class="fragment">Geometric is a discrete waiting time distribution, and Exponential is its continuous analog</li>
-<li class="fragment">If <span class="math inline">\(X\)</span> is the number of failures before first success <span class="math inline">\(X \sim \text{Geometric}(\theta)\)</span>, where <span class="math inline">\(\theta\)</span> is probability of success</li>
-<li class="fragment">Example: We keep flipping a coin until we get success, say Heads
-<ul>
-<li class="fragment">Say we flip five times, which means we get the following sequence: T T T T H</li>
-<li class="fragment">The probability of this sequence is: <span class="math inline">\((\frac{1}{2})^4 (\frac{1}{2})^1\)</span></li>
-<li class="fragment">Notice this is the only way to get this sequence</li>
-</ul></li>
-<li class="fragment">If <span class="math inline">\(x\)</span> is the number of failures, the PMF is <span class="math inline">\(P(X = x) = (1 - \theta)^x \theta\)</span>, where <span class="math inline">\(x = 0, 1, 2, ...\)</span></li>
-</ul>
-</div>
-</div>
-<div id="tabset-4-2">
-<ul>
-<li>To check if this is a valid PMF we need to sum over all <span class="math inline">\(x\)</span>:</li>
-</ul>
-<div class="fragment">
-<p><span class="math display">\[
-\begin{align}
-\sum_{x = 0}^{\infty} \theta (1 - \theta)^x  =
-\theta \sum_{x = 0}^{\infty} (1 - \theta)^x \\
-\text{Let } u = 1 - \theta \\
-\theta \sum_{x = 0}^{\infty} u^x = \theta \frac{1}{1-u} = \theta \frac{1}{1-1 + \theta} = \frac{\theta}{\theta} = 1
-\end{align}
-\]</span></p>
-</div>
-<div class="fragment">
-<ul>
-<li>The last bit comes from geometric series for <span class="math inline">\(|u| &lt; 1\)</span></li>
-</ul>
-</div>
-</div>
-<div id="tabset-4-3">
-<ul>
-<li>The probability of T T T H (x = 3 failures) when <span class="math inline">\(\theta = 1/2\)</span>, has to be <span class="math inline">\((1/2)^4\)</span> or <span class="math inline">\(1/16\)</span></li>
-</ul>
-<div class="fragment">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb14-2"><a></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1/16</code></pre>
-</div>
-</div>
-</div>
-<div class="fragment">
-<ul>
-<li>If <span class="math inline">\(\theta = 1/3\)</span>, the probability of the same sequence has to be <span class="math inline">\((2/3)^3 \cdot 1/3 = 8/81\)</span></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
-<span id="cb16-2"><a></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 8/81</code></pre>
-</div>
-</div>
-</div>
-<div class="fragment">
-<ul>
-<li>The PMF is unbounded, but it converges to 1 as demonstrated before</li>
-</ul>
-</div>
-</div>
-<div id="tabset-4-4">
-<div class="cell columns column-output-location" data-layout-align="center" data-hash="05-partial_cache/revealjs/unnamed-chunk-7_90d36b46a09b35740c7351d7b922a699">
-<div class="column">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>x <span class="ot">&lt;-</span>  <span class="dv">0</span><span class="sc">:</span><span class="dv">15</span></span>
-<span id="cb18-2"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
-<span id="cb18-3"><a></a>y <span class="ot">&lt;-</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta)</span>
-<span id="cb18-4"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
-<span id="cb18-5"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, y))</span>
-<span id="cb18-6"><a></a>p <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb18-7"><a></a><span class="fu">xlab</span>(<span class="st">"x = Number of failures before first success"</span>) <span class="sc">+</span></span>
-<span id="cb18-8"><a></a> <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span></span>
-<span id="cb18-9"><a></a><span class="fu">ggtitle</span>(<span class="st">"X ~ Geom(1/5)"</span>, </span>
-<span id="cb18-10"><a></a> <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div><div class="column">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="05-partial_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div></div>
-</div>
-</div>
 </div>
 
 <div class="quarto-auto-generated-content">
