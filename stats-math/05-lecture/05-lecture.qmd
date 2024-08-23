@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 5"
+author: "Eric Novik | Summer 2024 | Session 5"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -373,6 +373,53 @@ ggtitle("X ~ Geom(1/5)",
 
 ```
 
+### Summing the Geometric
+
+Let's consider the infinite geometric series:
+
+$$
+S = \sum_{x=0}^{\infty} u^x = u^0 + u^1 + u^2 + u^3 + \dots
+$$
+This can be written explicitly as:
+$$
+S = 1 + u + u^2 + u^3 + \dots
+$$
+
+Next, multiply the entire series by $u$:
+
+$$
+uS = u \cdot (1 + u + u^2 + u^3 + \dots)
+$$
+
+This results in:
+$$
+uS = u + u^2 + u^3 + u^4 + \dots
+$$
+
+Now, subtract the equation for $uS$ from the equation for $S$:
+
+$$
+S - uS = (1 + u + u^2 + u^3 + \dots) - (u + u^2 + u^3 + u^4 + \dots)
+$$
+
+Notice that all terms on the right-hand side except the first term (which is 1) cancel out:
+
+$$
+S - uS = 1
+$$
+
+Factor the left-hand side:
+
+$$
+S(1 - u) = 1
+$$
+
+Finally, solve for $S$:
+
+$$
+S = \frac{1}{1 - u}
+$$
+
 
 :::
 
@@ -408,7 +455,7 @@ $$
 ::: incremental
 - In particular, for $X \sim \text{Geom}(1/5)$, what is the expected number of failures before the first success?
 
--   The answer is $4 = (1 - 1/5) / 1/5$
+-   The answer is $4 = \frac{(1 - \frac{1}{5})}{\frac{1}{5}}$
 :::
 
 ### R Code

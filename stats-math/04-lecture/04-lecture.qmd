@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 4"
+author: "Eric Novik | Summer 2024 | Session 4"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -147,7 +147,7 @@ Marquis Pierre Simon de Laplace (1729 --- 1827)
 - What is the probability of rolling an even number on a six-sided die?
   - $\P(\text{Even Number}) = \frac{3}{6} = \frac{1}{2}$
 - What is the probability of rolling a prime number?
-  - $\P(\text{Prime Numner}) =$
+  - $\P(\text{Prime Number}) =$
   
 :::
 
@@ -155,7 +155,7 @@ Marquis Pierre Simon de Laplace (1729 --- 1827)
 
 ::: incremental
 
-- Your mom feels probabilistic, so she asks you to flip a coin. If it lands heads, you get pizza for dinner, and if lands tails, you get broccoli. You flip again for dessert. If it lands heads, you get ice cream, and if it lands heads, you get a grasshopper cookie. Assume you are not a fan of veggies and insects. What is the probability of having a completely disappointing meal? What is the probability of being partly disappointed?
+- Your mom feels probabilistic, so she asks you to flip a coin. If it lands heads, you get pizza for dinner, and if lands tails, you get broccoli. You flip again for dessert. If it lands heads, you get ice cream, and if it lands tails, you get a cricket cookie. Assume you are not a fan of veggies and insects. What is the probability of having a completely disappointing meal? What is the probability of being partly disappointed?
 
 - From Blitzstein and Chen (2015): Suppose that 10 people are running a race. Assume that ties are not possible and that all 10 will complete the race, so there will be well-defined first place, second place, and third place winners. How many possibilities are there for the first, second, and third place winners?
 
@@ -166,12 +166,12 @@ Marquis Pierre Simon de Laplace (1729 --- 1827)
 ::: incremental
 
 - How many permutations of $n$ object are there?
-- Sampling with replacement (order matters): how many ways are there to select $k$ elements from $n$ objects?
-- Sampling without replacement (order matters): how many ways are there to select $k$ elements from $n$ objects?
+- Sampling with replacement (order matters): you select one object from $n$ total objects, $k$ times (and put it back each time). 
+- Sampling without replacement (order matters): same as above, but you don't put them back
 
 :::
 
-## Binomial coefficient
+## Binomial coefficient  {.smaller}
 
 ::: {.fragment}
 - How many ways are there to choose a number of subsets from a set; e.g., how many two-person teams can be formed from five people? (here, John and Jane is the same set as Jane and John)
@@ -185,6 +185,7 @@ $$
 
 ::: {.fragment}
 - What is the probability of the full house in poker? (3 cards of the same rank and 2 cards of the other rank)
+- How many unique shuffles are there in one deck of 52 cards?
 :::
 
 ## Birthday Problem {.smaller}
@@ -236,7 +237,9 @@ p + geom_line(size = 0.3) +
   ggtitle("Estimate of a probability of 2 people having the same birthday")
 ```
 
-### Analysis {.smaller}
+:::
+
+## Birthday Analysis {.smaller}
 
 ::: incremental
 -   Let's say we have $j$ people. There are 365 ways in which the first person can get a birthday, 365 for the second, and so on, assuming no twins. So the denominator is $365^j$
@@ -245,27 +248,33 @@ p + geom_line(size = 0.3) +
 :::
 
 ::: {.fragment}
+
 $$
 \P(\text{At least one match}) = 1 - P(\text{No match}) = \\
 1 - \frac{\prod_{i = 0}^{j-1} (365-i)}{365^j} = 1 - 
 \frac{365 \cdot 364 \cdot 363 \cdot \,... \, \cdot (365 - j + 1)}{365^j}
 $$ 
+
+:::
+
+::: incremental
+-   (Number of People, Probability of a match):
 :::
 
 ::: {.fragment}
 ```{r}
-#| echo: true
+#| echo: false
 max_people <- 23
 Pr_match <- numeric(max_people - 1)
 for (j in 2:max_people) {
   numerator <- prod(seq(365, 365 - j + 1))
   Pr_match[j - 1] <- round(1 - (numerator / 365^j), 2)
 }
-cat(Pr_match, sep = ", ")
+result <- paste("(", 2:23, ", ", Pr_match, ")", sep = "")
+cat(result, sep = "; ")
 ```
 :::
 
-:::
 
 ## Probability
 

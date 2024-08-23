@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 5"
+author: "Eric Novik | Summer 2024 | Session 5"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -23,10 +23,11 @@ bibliography: ../references.bib
 -   Random variables
 -   Bernoulli, Binomial, Geometric
 -   PDF and CDF
--   Exponential, Normal
+-   LOTUS
+-   Poisson
 -   Expectations, Variance
--   Poisson Random Variable
--   Joint, Marginal, and Conditional
+-   St. Petersburg Paradox
+-   Normal
 
 :::
 
@@ -287,90 +288,6 @@ dbinom(x = x, size = N, prob = 0.5) |> cumsum() |> fractions()
 - **Your Turn**: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF.
 :::
 
-## Geometric RV {.smaller}
-
-::: panel-tabset
-### PMF
-
-::: incremental
--   Geometric is a discrete waiting time distribution, and Exponential is its continuous analog
--   If $X$ is the number of failures before first success  $X \sim \text{Geometric}(\theta)$, where $\theta$ is probability of success 
--   Example: We keep flipping a coin until we get success, say Heads
-    -   Say we flip five times, which means we get the following sequence: T T T T H
-    -   The probability of this sequence is: $(\frac{1}{2})^4 (\frac{1}{2})^1$
-    -   Notice this is the only way to get this sequence
--   If $x$ is the number of failures, the PMF is $P(X = x) = (1 - \theta)^x \theta$, where $x = 0, 1, 2, ...$
-:::
-
-### Check Convergence
-
--   To check if this is a valid PMF we need to sum over all $x$:
-
-::: {.fragment}
-$$
-\begin{align}
-\sum_{x = 0}^{\infty} \theta (1 - \theta)^x  = 
-\theta \sum_{x = 0}^{\infty} (1 - \theta)^x \\
-\text{Let } u = 1 - \theta \\
-\theta \sum_{x = 0}^{\infty} u^x = \theta \frac{1}{1-u} = \theta \frac{1}{1-1 + \theta} = \frac{\theta}{\theta} = 1
-\end{align}
-$$
-:::
-
-::: {.fragment}
--   The last bit comes from geometric series for $|u| < 1$
-:::
-
-### Examples
-
--   The probability of T T T H (x = 3 failures) when $\theta = 1/2$, has to be $(1/2)^4$ or $1/16$
-
-::: {.fragment}
-```{r}
-#| echo: true
-
-x <- 3; theta <- 1/2
-dgeom(x = x, prob = theta) |> fractions()
-```
-::: 
-
-::: {.fragment}
--   If $\theta = 1/3$, the probability of the same sequence has to be $(2/3)^3 \cdot 1/3 = 8/81$
-
-```{r}
-#| echo: true
-
-x <- 3; theta <- 1/3
-dgeom(x = x, prob = theta) |> fractions()
-```
-:::
-
-::: {.fragment}
--   The PMF is unbounded, but it converges to 1 as demonstrated before
-:::
-
-### PMF
-
-```{r}
-#| cache: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-#| echo: true
-#| output-location: column
-
-x <-  0:15
-theta <- 1/5
-y <- dgeom(x = x, prob = theta)
-d <- data.frame(x, y)
-p <- ggplot(d, aes(x, y))
-p + geom_col(width = 0.2) +
-xlab("x = Number of failures before first success") +
- ylab(expression(P(X == x))) +
-ggtitle("X ~ Geom(1/5)", 
- subtitle = expression(PDF: p[X](x) == P(X == x)))
-
-```
 
 
-:::
+

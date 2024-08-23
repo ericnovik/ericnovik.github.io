@@ -15,8 +15,8 @@ data {
   array[N_rows] int<lower=0, upper=N> y; // number of "successes" in y ~ Binom(N, p)
 }
 parameters {
-  real<lower=0> alpha; // at zero temp, Pr(failure) > 0.5
-  real<upper=0> beta;  // lower temp -> more failures
+  real alpha;
+  real beta; 
 }
 model {
   alpha ~ normal(0, 2.5);

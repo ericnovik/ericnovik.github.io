@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 2"
+author: "Eric Novik | Summer 2024 | Session 2"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -319,7 +319,7 @@ $$
 -   Let's make a substituion $m = n/r$ and take limit and $m \to \infty$.
 
 $$
-P = \lim_{\Delta m \to \infty}A \left ( 1 + \frac{1}{m} \right)^{m(rt)}
+P = \lim_{m \to \infty}A \left ( 1 + \frac{1}{m} \right)^{m(rt)}
 $$
 :::
 
@@ -356,7 +356,7 @@ p + geom_line(size = 0.2) +
 -   The number that this limit approaches is called $e$.
 
 $$
-P = \lim_{\Delta m \to \infty}A \left ( 1 + \frac{1}{m} \right)^{m(rt)} = 
+P = \lim_{ m \to \infty}A \left ( 1 + \frac{1}{m} \right)^{m(rt)} = 
 A e^{rt} 
 $$
 :::
@@ -547,7 +547,7 @@ Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/1
 
 ## Example: Motion in a Straight Line {.smaller}
 
-Suppose you have an experiment where you can measure the position of a car moving in a straight line every $1/10$ of a second for 5 seconds. When you look at the graph of time versus position, it looks like this:
+Suppose you have an experiment where you can measure the position of an object moving in a straight line every $1/10$ of a second for 5 seconds. When you look at the graph of time versus position, it looks like this:
 
 ::: {.fragment}
 ```{r}
@@ -561,7 +561,7 @@ t <- (0:50 * 5) / 50
 x <- a + b * t^2 + rnorm(length(t), 0, 3)
 p <- ggplot(data.frame(t, x), aes(t, x))
 p <- p + geom_point(size = 0.2) + xlab("time t (s)") + ylab("position x (m)") +
-  ggtitle("Noisy measurements of car's position")
+  ggtitle("Noisy measurements of object's position")
 print(p)
 ```
 :::
@@ -622,7 +622,7 @@ p + geom_line(size = 0.2) +
   xlab("time t (s)") + ylab("position x (m)") +
   annotate("text", 3.7, 55, label = "(4, 50)") +
   annotate("text", 1, 12, label = "(1, 5)") +
-  ggtitle("Car's position function and the secant line")
+  ggtitle("object's position function and the secant line")
 ```
 :::
 
@@ -735,7 +735,7 @@ $$
 x(t) = 4 + 3t + 5t^2
 $$
 
-- What is the car's position at time zero and time 1 second?
+- What is the object's position at time zero and time 1 second?
 
 - What is the velocity at time zero?
 
@@ -817,8 +817,8 @@ $$
 x(t) = R \cos(\omega t) \\
 y(t) = R \sin(\omega t)
 $$
-- Where $\omega$ is called angular frequency (radians per unit of time) and $R$ is the radius of rotation. The full cycle is achieved when $T = 2 \pi/ \omega$
 
+- Where $\omega$ is called angular frequency (radians per unit of time) and $R$ is the radius of rotation. The full cycle is achieved when $T = 2 \pi/ \omega$
 - Create two functions that take $R$, $t$, and $\omega$ as parameters 
 - Create a vector $t$ of length 100 that achieves one full rotation
 - Plot the $x$ position against $t$ and the $y$ position against $t$ on the same graph

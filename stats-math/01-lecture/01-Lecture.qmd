@@ -78,6 +78,7 @@ $$
 -   The course will be computationally intensive -- we will write many small programs.
 :::
 
+
 ## Course Outline {.smaller}
 
 ::: columns
@@ -127,6 +128,10 @@ $$
 -   Optional: [Matrix Cookbook](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf), @petersen2012
 
 -   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), @blitzstein2019
+
+## Where are you from?
+
+![](images/where-are-you-from.png){fig-align="center" width="670"}
 
 ## Session 1 Outline
 
@@ -218,10 +223,11 @@ p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
 
 library(dplyr)
 library(readr)
-# library(rstanarm)
-# d <- d %>%
-#   mutate(not_in_distress = n_rings - n_distress)
-# 
+
+library(rstanarm)
+d <- d %>%
+  mutate(not_in_distress = n_rings - n_distress)
+
 # $$
 # \begin{eqnarray*}
 # \text{BinomialLogit}(n~|~N,\alpha) & = &
@@ -230,41 +236,50 @@ library(readr)
 # \text{logit}^{-1}(\alpha) \right)^{N - n}
 # \end{eqnarray*}
 # $$
+
 # or_model <- stan_glm(
 #   cbind(n_distress, not_in_distress) ~ temp,
 #   data = d,
 #   family = binomial(link = "logit"),
 #   cores = 4
 # )
+# temps <- seq(30, 81, len = 100)
 # newdata <-
 #   tibble(
-#     temp = 30:81,
-#     n_distress = rep(0, 52),
-#     not_in_distress = rep(6, 52)
+#     temp = temps,
+#     n_distress = rep(0, 100),
+#     not_in_distress = rep(6, 100)
 # )
-# y_pred <- posterior_pred(or_model, newdata)
-# write_rds(y_pred, file = "stats-math/01-lecture/data/oring_epred.rds")
-# y_pred <- read_rds("stats-math/01-lecture/data/oring_pred.rds")
-y_pred <- read_rds("data/oring_pred.rds") 
-mean_fail <- colMeans(y_pred)
-pred <- tibble(mean_fail, temp = 30:81)
+# y_epred <- posterior_epred(or_model, newdata)
+# write_rds(y_epred, file = "data/oring_epred.rds")
+
+y_pred <- read_rds("data/oring_pred.rds")
+y_epred <- read_rds("data/oring_epred.rds")
+
+temps <- seq(30, 81, len = 100)
+y_expected <- y_epred * 6 # expectation of the binomial Np, N=6
+mean_failures <- colMeans(y_expected)
+pred <- tibble(mean_failures, temp = temps)
 temp_at_launch <- 36
-expected_fails_at_launch <-
-  pred |> filter(temp == temp_at_launch) |> select(mean_fail) |> as.numeric()
-p <- ggplot(d, aes(temp, n_distress))
-p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
+idx <- which.min(abs(pred$temp - 36))
+expected_fails_at_launch <- pred$mean_failures[idx]
+
+p <- ggplot(pred, aes(temp, n_distress))
+p + xlab("Temperature at launch (F)") + ylab("") +
   geom_line(
-    data = pred,
-    aes(x = temp, y = mean_fail),
+    aes(x = temp, y = mean_failures),
     linewidth = 0.2,
     color = 'red'
   ) +
   geom_point(
-    data = pred,
     x = temp_at_launch,
     y = expected_fails_at_launch,
     color = 'blue',
     size = 2
+  ) +
+  geom_point(
+    data = d,
+    aes(x = temp, y = n_distress)
   ) +
   annotate("segment", x = temp_at_launch + 10, xend = temp_at_launch + 1,
              y = expected_fails_at_launch, yend = expected_fails_at_launch,
@@ -277,13 +292,6 @@ p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
            size = 3, color = 'blue') +
   ggtitle("Challenger Space Shuttle O-Ring Data",
           subtitle = "Number of O-rings experiencing thermal distress")
-
-# library(tidybayes)
-# newdata |>
-#   add_predicted_draws(or_model, ndraws = 1000) |>
-#   ggplot(aes(temp, n_distress)) +
-#   stat_lineribbon(aes(y = .prediction), .width = c(0.9, .5), alpha = 0.25) +
-#   geom_point(data = d) + xlab("Temperature at launch (F)") + ylab("") 
 
 ```
 :::
@@ -450,7 +458,7 @@ scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
 
 ::: fragment
 $$
-    P(\theta > 0) = \int_{0}^{\infty} p_{\theta}\, d\theta
+    \P(\theta > 0) = \int_{0}^{\infty} p_{\theta}\, \text{d}\theta
 $$
 :::
 :::
@@ -598,13 +606,13 @@ model {
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
+
+-   [Instructions](https://rstudio-education.github.io/hopr/starting.html) for installing R and RStudio
 -   Install the latest version of R
-
 -   Install the latest version of the RStudio Desktop
-
 -   Create a directory on your hard drive and give it a simple name. Mine is called `statsmath`
-
 -   In RStudio, go to File -\> New Project and select: "Existing Directory"
+-   How many of you have not used RStudio?
 :::
 :::
 
@@ -764,6 +772,7 @@ Virginis.interp |> dplyr::as_tibble() |> class()
 ::: {.column width="50%"}
 ::: fragment
 ![](images/herschel.png){fig-align="center" width="672"}
+Code for generated the above plot can be found [here](https://friendly.github.io/HistDataVis/fig-code/06_9-herschel.R).
 :::
 :::
 :::
@@ -782,7 +791,7 @@ Virginis.interp |> dplyr::as_tibble() |> class()
 ## Basic Plotting {.smaller}
 
 ::: panel-tabset
-### Code
+### John Snow
 
 ::: columns
 ::: {.column width="50%"}
@@ -791,18 +800,29 @@ Virginis.interp |> dplyr::as_tibble() |> class()
 
 ::: {.column width="50%"}
 ::: incremental
--   R base plotting system is great for making quick basic graphs with relatively little typing
+-   R base plotting system is great for making quick graphs with relatively little typing
+
+- In base plot, you add elements to the plot directly, as opposed to describing how the graph is constructed
 
 -   We will demonstrate with John Snow's data from the 1854 cholera outbreak
 :::
+:::
+:::
 
-::: fragment
+### Deaths Over Time
+
 ```{r}
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
 #| echo: true
-#| eval: false
+#| output-location: column
 library(HistData)
 library(lubridate)
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01)
+
+# set up the plotting area so it looks nice
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), 
+    tck = -.01, bg = "#f0f1eb")
 clr <- ifelse(Snow.dates$date < mdy("09/08/1854"), 
               "red", "darkgreen")
 plot(deaths ~ date, data = Snow.dates, 
@@ -812,30 +832,8 @@ points(deaths ~ date, data = Snow.dates,
 text(mdy("09/08/1854"), 40, 
      "Pump handle\nremoved Sept. 8", pos = 4)
 ```
-:::
-:::
-:::
 
-### Plot Deaths Over Time
-
-```{r}
-#| fig-width: 8
-#| fig-height: 5
-#| fig-align: center
-library(HistData)
-require(lubridate)
-
-# set up the plotting area so it looks nice
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
-clr <- ifelse(Snow.dates$date < mdy("09/08/1854"), "red", "darkgreen")
-plot(deaths ~ date, data = Snow.dates, 
-     type = "h", lwd = 2, col = clr, xlab = "")
-points(deaths ~ date, data = Snow.dates, 
-       cex = 0.5, pch = 16, col = clr)
-text(mdy("09/08/1854"), 40, "Pump handle\nremoved Sept. 8", pos = 4)
-```
-
-### Plot the Map
+### Map of Cholera in London
 
 ```{r}
 #| fig-width: 8
@@ -863,9 +861,6 @@ We can learn a lot through simulation. We will start with the `sample()` functio
 
 `sample(x, size, replace = FALSE, prob = NULL)`
 
-::: panel-tabset
-### Sample
-
 ```{r}
 #| echo: true
 
@@ -886,6 +881,11 @@ sample(coin, 10, replace = TRUE)
 ::: incremental
 -   Your turn: flip a coin 1000 times and compute the proportion of heads
 :::
+
+
+## For Loops
+
+::: panel-tabset
 
 ### For Loops
 
@@ -935,10 +935,11 @@ s == sum(seq(2, 100, by = 2))
 :::
 :::
 
+
 ## Simulate Coin Flips {.smaller}
 
 ::: incremental
--   If we flip a coin more and more time, would the estimate of the proportion become better?
+-   If we flip a coin more and more times, would the estimate of the proportion become better?
 -   If so, what is the rate of convergence?
 :::
 
@@ -996,7 +997,7 @@ grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 :::
 
-## Law of Large Numbers
+## Law of Large Numbers {.smaller}
 
 ::: panel-tabset
 ## Code
@@ -1055,6 +1056,8 @@ p + geom_line(size = 0.1) +
   ylab("Estimated proportion of Heads") +
   ggtitle("Error decreases with the size of the sample")
 ```
+WLLN: $\lim_{n \to \infty} \mathbb{P}\left( \left| \overline{X}_n - \mu \right| \geq \epsilon \right) = 0$
+
 :::
 
 ## Functions {.smaller}
@@ -1103,7 +1106,7 @@ head(x)
 #| eval: false
 #| echo: true
 hist(x, 
-     xlab = "Number of simulations", 
+     xlab = "", 
      main = "Distribution of Proportions of Heads")
 ```
 :::
@@ -1122,7 +1125,7 @@ par(
   tck = -.01,
   bg = "#f0f1eb"
 )
-hist(x, xlab = "Number of simulations", main = "Distribution of Proportions of Heads")
+hist(x, xlab = "", main = "Distribution of Proportions of Heads")
 ```
 :::
 :::
@@ -1238,5 +1241,6 @@ knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
 ```
 :::
 :::
+
 
 ## References
