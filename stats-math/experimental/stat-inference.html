@@ -10,7 +10,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.54">
 
-  <meta name="author" content="Eric Novik | Summer 2024 | Session X">
+  <meta name="author" content="Eric Novik | Summer 2024 | Session 7">
   <title>Eric Novik – SMaC: Statistics, Math, and Computing</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -400,18 +400,23 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Summer 2024 | Session X 
+Eric Novik | Summer 2024 | Session 7 
 </div>
 </div>
 </div>
 
 </section>
-<section id="session-x-outline" class="slide level2">
-<h2>Session X Outline</h2>
+<section id="session-7-outline" class="slide level2">
+<h2>Session 7 Outline</h2>
 <div>
 <ul>
-<li class="fragment">TBD</li>
-<li class="fragment">TBD</li>
+<li class="fragment">Statistical inference</li>
+<li class="fragment">Sampling distribution</li>
+<li class="fragment">Standard errors</li>
+<li class="fragment">Confidence intervals</li>
+<li class="fragment">Degrees of freedom and t distribution</li>
+<li class="fragment">Bias and uncertainty</li>
+<li class="fragment">Statistical significance</li>
 </ul>
 </div>
 <div class="footer">
@@ -431,7 +436,7 @@ Eric Novik | Summer 2024 | Session X
 <div class="column" style="width:50%;">
 <ul>
 <li><strong>Statistical Inference:</strong> A process of learning from noisy measurements</li>
-<li><strong>Key Challanges:</strong>
+<li><strong>Key Challenges:</strong>
 <ul>
 <li>Generalizing from a sample to the population of interest</li>
 <li>Learning what would have happened under different treatment</li>
@@ -451,7 +456,7 @@ Eric Novik | Summer 2024 | Session X
 <h2>Measurement Error Models</h2>
 <div>
 <ul>
-<li class="fragment">We are trying to estimate the parameters of some data generating process</li>
+<li class="fragment">We are trying to estimate the parameters of some data-generating process</li>
 <li class="fragment">For our car example, we assumed that the car position data are coming from the following model:</li>
 </ul>
 <div class="fragment">
@@ -460,186 +465,320 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 \]</span></p>
 </div>
 <ul>
-<li class="fragment">We also assumed that time <span class="math inline">\(t\)</span> was observed precicely, but we can also have error in t</li>
+<li class="fragment">We also assumed that time <span class="math inline">\(t\)</span> was observed precisely, but we can also have an error in <span class="math inline">\(t\)</span></li>
 <li class="fragment">Errors may be multiplicative, not just additive</li>
 </ul>
 </div>
 </section>
-<section id="generative-models" class="slide level2">
-<h2>Generative Models</h2>
+<section id="sampling-distribution" class="slide level2 smaller">
+<h2>Sampling Distribution</h2>
+<div>
 <ul>
-<li><strong>Definition:</strong> Models that define a process to generate the observed data.</li>
-<li><strong>Use:</strong> Helpful for understanding the distribution of data and making predictions.</li>
-<li><strong>Example:</strong>
+<li class="fragment"><strong>Generative model</strong> for our data: given the generative model, we can create replicas of the dataset</li>
+<li class="fragment">Sampling distribution is typically unknown and depends on the data collection, how subjects are assigned to treatment conditions, sampling process</li>
+<li class="fragment"><strong>Examples</strong>
 <ul>
-<li>A generative model for heights might assume a normal distribution with specific mean and variance.</li>
+<li class="fragment">Simple random sample of size <span class="math inline">\(n\)</span> from the population of size <span class="math inline">\(N\)</span>. Here, each person has the same probability of being selected</li>
+<li class="fragment">Our constant acceleration model <span class="math inline">\(x_i(t) = a + bt_i^2 + \epsilon_i\)</span>, where we fix <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>, and <span class="math inline">\(t\)</span>, and draw <span class="math inline">\(\epsilon\)</span> from an error distribition, such as <span class="math inline">\(\text{Normal}(0, 1)\)</span></li>
+<li class="fragment">We can write some code to generate observations according to this process (which is what I did for the car example)</li>
 </ul></li>
 </ul>
+</div>
 </section>
-<section id="parameters-estimands-and-estimates" class="slide level2">
-<h2>Parameters, Estimands, and Estimates</h2>
-<ul>
-<li><strong>Parameters:</strong> The true values in the population (e.g., mean, variance).</li>
-<li><strong>Estimands:</strong> The quantity we aim to estimate (e.g., the population mean).</li>
-<li><strong>Estimates:</strong> The value calculated from the sample data (e.g., sample mean).</li>
-</ul>
-</section>
-<section id="standard-errors" class="slide level2">
+<section id="standard-errors" class="slide level2 smaller">
 <h2>Standard Errors</h2>
+<div>
 <ul>
-<li><p><strong>Definition:</strong> The standard deviation of the sampling distribution of a statistic.</p></li>
-<li><p><strong>Significance:</strong> Provides a measure of uncertainty around the estimate.</p></li>
-<li><p><strong>Example:</strong></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>estimate <span class="ot">&lt;-</span> y<span class="sc">/</span>n</span>
-<span id="cb1-2"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(estimate<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>estimate)<span class="sc">/</span>n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li class="fragment"><strong>Standard error</strong> is the estimated standard deviation of the estimate</li>
+<li class="fragment">It provides a <strong>measure of uncertainty</strong> around the estimate</li>
+<li class="fragment">Standard error decreases as the sample size increases</li>
+<li class="fragment">To estimate the SE of the mean from a large population with sd = <span class="math inline">\(\sigma\)</span>: <span class="math inline">\(\frac{\sigma}{\sqrt{n}}\)</span></li>
 </ul>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">100</span>; mu <span class="ot">&lt;-</span> <span class="dv">5</span>; sigma <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb1-3"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> mu, <span class="at">sd =</span> sigma)</span>
+<span id="cb1-4"><a></a>x_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x); <span class="fu">round</span>(x_bar, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>(se <span class="ot">&lt;-</span> sigma<span class="sc">/</span><span class="fu">sqrt</span>(n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.15</code></pre>
+</div>
+</div>
+</div>
+<ul>
+<li class="fragment">If <span class="math inline">\(\sigma\)</span> is unknown, we can estimate it from the sample: <span class="math inline">\(s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">var</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.815215</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">sum</span>((x <span class="sc">-</span> x_bar)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.815215</code></pre>
+</div>
+</div>
+</div>
 </section>
-<section id="confidence-intervals" class="slide level2">
+<section id="confidence-intervals" class="slide level2 smaller">
 <h2>Confidence Intervals</h2>
+<div>
 <ul>
-<li><strong>Concept:</strong> A range of values around an estimate that likely contains the true parameter.</li>
-<li><strong>Interpretation:</strong> A 95% confidence interval means we are 95% confident the true parameter lies within this range.</li>
+<li class="fragment">For a given sampling distribution, confidence interval provides a range of parameter values consistent with the data</li>
+<li class="fragment">For example, for a normal sampling distribution, an estimate <span class="math inline">\(\hat{\theta}\)</span> will fall in <span class="math inline">\(\hat{\theta} \pm 2\cdot\text{se}\)</span> about 95% of the time</li>
 </ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="stat-inference_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
 </section>
-<section id="confidence-intervals-for-means-and-proportions" class="slide level2">
-<h2>Confidence Intervals for Means and Proportions</h2>
+<section id="confidence-intervals-for-proportions" class="slide level2 smaller scrollable">
+<h2>Confidence Intervals for Proportions</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div>
 <ul>
-<li><p><strong>Calculation:</strong></p>
-<ul>
-<li>For means: CI = estimate ± 2 * SE</li>
-<li>For proportions: Similar formula but for binary data</li>
-</ul></li>
-<li><p><strong>Practical Example:</strong></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>int_95 <span class="ot">&lt;-</span> estimate <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))<span class="sc">*</span>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li class="fragment">In surveys, we are often interested in estimating the standard error of the proportion</li>
+<li class="fragment">Suppose we want to estimate the proportion of the US population that supports same-sex marriage</li>
+<li class="fragment">Say you randomly survey <span class="math inline">\(n = 500\)</span> from the population, and <span class="math inline">\(y = 355\)</span> people respond yes<sup>1</sup></li>
+<li class="fragment">The estimate of the proportion is <span class="math inline">\(\hat{\theta} = y/n\)</span> with the <span class="math inline">\(\text{se} = \sqrt{\hat{\theta}(1 -\hat{\theta})/n }\)</span></li>
 </ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb9-2"><a></a>y <span class="ot">&lt;-</span> <span class="dv">355</span></span>
+<span id="cb9-3"><a></a>theta_hat <span class="ot">&lt;-</span> y<span class="sc">/</span>n</span>
+<span id="cb9-4"><a></a>theta_hat <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.71</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(theta_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta_hat) <span class="sc">/</span> n)</span>
+<span id="cb11-2"><a></a>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.75</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.67</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>ci_95 <span class="ot">&lt;-</span> theta_hat <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">*</span> se</span>
+<span id="cb17-2"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.67 0.75</code></pre>
+</div>
+</div>
+</div>
+</div></div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>The most recent Gallup poll from May 2023 found that 71% of Americans think same-sex marriage should be legally recognized</p></li></ol></aside></section>
+<section id="your-turn" class="slide level2">
+<h2>Your Turn</h2>
+<p>In a national survey of <span class="math inline">\(n\)</span> people, how large does <span class="math inline">\(n\)</span> have to be so that you can estimate presidential approval to within a standard error of ±3 percentage points, ±1 percentage points?</p>
 </section>
 <section id="standard-error-for-differences" class="slide level2">
 <h2>Standard Error for Differences</h2>
+<div>
 <ul>
-<li><p><strong>Formula:</strong> [ SE_{ ext{difference}} = ]</p></li>
-<li><p><strong>Example Calculation:</strong></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>se_diff <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(se1<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> se2<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li class="fragment">We already saw an example of how to add variances from two independent RVs</li>
 </ul>
+<div class="fragment">
+<p><span class="math display">\[
+\text{se}_{\text{diff}} = \sqrt{\text{se}_1^2 + \text{se}_2^2}
+\]</span></p>
+</div>
+<ul>
+<li class="fragment">Your turn: How large does <span class="math inline">\(n\)</span> have to be so that you can estimate the gender gap in approval to within a standard error of ±3 percentage points?</li>
+</ul>
+</div>
 </section>
-<section id="sampling-distributions-of-mean-and-standard-deviation" class="slide level2">
-<h2>Sampling Distributions of Mean and Standard Deviation</h2>
+<section id="computer-demo-computing-cis" class="slide level2 smaller">
+<h2>Computer Demo: Computing CIs</h2>
 <ul>
-<li><strong>Normal Distribution:</strong>
-<ul>
-<li>The sample mean ( ar{y} ) is normally distributed with mean ( ) and standard deviation ( / ).</li>
-</ul></li>
-<li><strong>χ² Distribution:</strong>
-<ul>
-<li>The sample variance has a chi-square distribution with ( n-1 ) degrees of freedom.</li>
-</ul></li>
+<li>These demos are taken from the book <a href="https://avehtari.github.io/ActiveStatistics/">Active Statistics</a> by Gelman and Vehtari</li>
 </ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="co"># Generate fake data</span></span>
+<span id="cb19-2"><a></a>p <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb19-3"><a></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb19-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, n, p)</span>
+<span id="cb19-5"><a></a><span class="fu">print</span>(data)</span>
+<span id="cb19-6"><a></a></span>
+<span id="cb19-7"><a></a><span class="co"># Estimate proportion and calculate confidence interval</span></span>
+<span id="cb19-8"><a></a>p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
+<span id="cb19-9"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
+<span id="cb19-10"><a></a>ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
+<span id="cb19-11"><a></a><span class="fu">print</span>(ci) </span>
+<span id="cb19-12"><a></a></span>
+<span id="cb19-13"><a></a><span class="co"># Put it in a loop</span></span>
+<span id="cb19-14"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb19-15"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>reps) {</span>
+<span id="cb19-16"><a></a>  data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, n, p)</span>
+<span id="cb19-17"><a></a>  p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
+<span id="cb19-18"><a></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
+<span id="cb19-19"><a></a>  ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
+<span id="cb19-20"><a></a>  <span class="fu">print</span>(ci) </span>
+<span id="cb19-21"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="computer-demo-proportions-means-and-differences-of-means" class="slide level2 smaller">
+<h2>Computer Demo: Proportions, Means, and Differences of Means</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># Read data from here:  https://github.com/avehtari/ROS-Examples</span></span>
+<span id="cb20-2"><a></a><span class="fu">library</span>(<span class="st">"foreign"</span>)</span>
+<span id="cb20-3"><a></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb20-4"><a></a>pew_pre <span class="ot">&lt;-</span> <span class="fu">read.dta</span>(</span>
+<span id="cb20-5"><a></a>  <span class="fu">paste0</span>(</span>
+<span id="cb20-6"><a></a>    <span class="st">"https://raw.githubusercontent.com/avehtari/"</span>,</span>
+<span id="cb20-7"><a></a>    <span class="st">"ROS-Examples/master/Pew/data/"</span>,</span>
+<span id="cb20-8"><a></a>    <span class="st">"pew_research_center_june_elect_wknd_data.dta"</span></span>
+<span id="cb20-9"><a></a>  )</span>
+<span id="cb20-10"><a></a>)</span>
+<span id="cb20-11"><a></a>pew_pre <span class="ot">&lt;-</span> pew_pre <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"regicert"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-12"><a></a>  <span class="fu">na.omit</span>() <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">!=</span> <span class="dv">99</span>)</span>
+<span id="cb20-13"><a></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(pew_pre)</span>
+<span id="cb20-14"><a></a></span>
+<span id="cb20-15"><a></a><span class="co"># Estimate a proportion (certain to have registered for voting?)</span></span>
+<span id="cb20-16"><a></a>registered <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pew_pre<span class="sc">$</span>regicert <span class="sc">==</span> <span class="st">"absolutely certain"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb20-17"><a></a>p_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(registered)</span>
+<span id="cb20-18"><a></a>se_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat)) <span class="sc">/</span> n)</span>
+<span id="cb20-19"><a></a><span class="fu">round</span>(p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_hat, <span class="dv">4</span>) <span class="co"># ci</span></span>
+<span id="cb20-20"><a></a></span>
+<span id="cb20-21"><a></a><span class="co"># Estimate an average (mean age)</span></span>
+<span id="cb20-22"><a></a>age <span class="ot">&lt;-</span> pew_pre<span class="sc">$</span>age</span>
+<span id="cb20-23"><a></a>y_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age)</span>
+<span id="cb20-24"><a></a>se_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age) <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span>
+<span id="cb20-25"><a></a><span class="fu">round</span>(y_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_hat, <span class="dv">4</span>) <span class="co"># ci</span></span>
+<span id="cb20-26"><a></a></span>
+<span id="cb20-27"><a></a><span class="co"># Estimate a difference of means</span></span>
+<span id="cb20-28"><a></a>age2 <span class="ot">&lt;-</span> age[registered <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb20-29"><a></a>age1 <span class="ot">&lt;-</span> age[registered <span class="sc">==</span> <span class="dv">0</span>]</span>
+<span id="cb20-30"><a></a>y_2_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age2)</span>
+<span id="cb20-31"><a></a>se_2_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age2) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(age2))</span>
+<span id="cb20-32"><a></a>y_1_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age1)</span>
+<span id="cb20-33"><a></a>se_1_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age1) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(age1))</span>
+<span id="cb20-34"><a></a>diff_hat <span class="ot">&lt;-</span> y_2_hat <span class="sc">-</span> y_1_hat</span>
+<span id="cb20-35"><a></a>se_diff_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(se_1_hat <span class="sc">^</span> <span class="dv">2</span> <span class="sc">+</span> se_2_hat <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb20-36"><a></a><span class="fu">round</span>(diff_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_diff_hat, <span class="dv">4</span>) <span class="co"># ci</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="degrees-of-freedom" class="slide level2">
 <h2>Degrees of Freedom</h2>
+<div>
 <ul>
-<li><strong>Definition:</strong> The number of independent values that can vary in an analysis.</li>
-<li><strong>Role:</strong> Corrects for overfitting in models; often appears in the calculation of standard errors.</li>
+<li class="fragment">Some distributions rely on the concept of degrees of freedom</li>
+<li class="fragment">Degrees of freedom balance the need for accurate estimation against the amount of data available; it’s a way to correct for overfitting</li>
+<li class="fragment">The more parameters you estimate, the fewer degrees of freedom you have left for other calculations</li>
+<li class="fragment">The data will give us <span class="math inline">\(n\)</span> (sample size) degrees of freedom, and <span class="math inline">\(p\)</span> number of parameters will be used up during the estimation</li>
 </ul>
+</div>
 </section>
-<section id="confidence-intervals-from-the-t-distribution" class="slide level2">
+<section id="normal-and-t-distribution" class="slide level2">
+<h2>Normal and t Distribution</h2>
+<ul>
+<li>t distribution has a degrees freedom parameter, and with a low number of degrees of freedom, it has heavier tails than the Normal</li>
+</ul>
+
+<img data-src="stat-inference_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="576"></section>
+<section id="confidence-intervals-from-the-t-distribution" class="slide level2 smaller">
 <h2>Confidence Intervals from the t Distribution</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<div>
 <ul>
-<li><p><strong>Use in Small Samples:</strong> When sample size is small, the t-distribution is used instead of the normal distribution.</p></li>
-<li><p><strong>Example:</strong></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
-<span id="cb4-2"><a></a>estimate <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
-<span id="cb4-3"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sd</span>(y)<span class="sc">/</span><span class="fu">sqrt</span>(n)</span>
-<span id="cb4-4"><a></a>int_50 <span class="ot">&lt;-</span> estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), n<span class="dv">-1</span>)<span class="sc">*</span>se</span>
-<span id="cb4-5"><a></a>int_95 <span class="ot">&lt;-</span> estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), n<span class="dv">-1</span>)<span class="sc">*</span>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li class="fragment">t distribution has location and scale parameters and is symmetric like the Normal</li>
+<li class="fragment">Standard error would have <span class="math inline">\(n-1\)</span> degrees of freedom as one will be estimated to compute the mean</li>
+<li class="fragment">Suppose you threw 5 darts and the distance from bull’s eye was as follows (standard dart board radius is about 23 cm)</li>
 </ul>
-</section>
-<section id="inference-for-discrete-data" class="slide level2">
-<h2>Inference for Discrete Data</h2>
-<ul>
-<li><p><strong>Standard Errors and Confidence Intervals:</strong></p>
-<ul>
-<li>Similar to continuous data but tailored for binary or count data.</li>
-</ul></li>
-<li><p><strong>Example:</strong></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="fu">c</span>(<span class="dv">600</span>,<span class="dv">300</span>,<span class="dv">50</span>,<span class="dv">30</span>,<span class="dv">20</span>))</span>
-<span id="cb5-2"><a></a>mean_y <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
-<span id="cb5-3"><a></a>se_y <span class="ot">&lt;-</span> <span class="fu">sd</span>(y)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
+</div>
+</div><div class="column" style="width:60%;">
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="co"># Distance from the bull's eye in cm</span></span>
+<span id="cb21-2"><a></a>data <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">18</span>)</span>
+<span id="cb21-3"><a></a></span>
+<span id="cb21-4"><a></a><span class="co"># Calculate the sample mean</span></span>
+<span id="cb21-5"><a></a>mean_data <span class="ot">&lt;-</span> <span class="fu">mean</span>(data)</span>
+<span id="cb21-6"><a></a></span>
+<span id="cb21-7"><a></a><span class="co"># Calculate the standard error of the mean</span></span>
+<span id="cb21-8"><a></a>se_mean <span class="ot">&lt;-</span> <span class="fu">sd</span>(data) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(data))</span>
+<span id="cb21-9"><a></a></span>
+<span id="cb21-10"><a></a><span class="co"># Degrees of freedom</span></span>
+<span id="cb21-11"><a></a>df <span class="ot">&lt;-</span> <span class="fu">length</span>(data) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb21-12"><a></a></span>
+<span id="cb21-13"><a></a><span class="co"># Calculate the 95% and 50% confidence interval </span></span>
+<span id="cb21-14"><a></a>ci_95 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), df) <span class="sc">*</span> se_mean</span>
+<span id="cb21-15"><a></a>ci_50 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), df) <span class="sc">*</span> se_mean</span>
+<span id="cb21-16"><a></a></span>
+<span id="cb21-17"><a></a><span class="co"># Output the results</span></span>
+<span id="cb21-18"><a></a>mean_data <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9.4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>se_mean <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.32</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2.97 15.83</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>ci_50 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  7.69 11.11</code></pre>
+</div>
+</div>
+</div>
+</div></div>
 </section>
 <section id="bias-and-uncertainty" class="slide level2">
 <h2>Bias and Uncertainty</h2>
 <ul>
-<li><strong>Bias:</strong> Systematic error that leads to incorrect estimates.</li>
-<li><strong>Uncertainty:</strong> Quantified by standard errors, often increased to account for bias.</li>
+<li>There is a lot more to it than what is in following standard picture</li>
+<li>Discuss among yourselves what are the potential sources of bias</li>
 </ul>
-</section>
+
+<img data-src="images/bias-var.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
 <section id="statistical-significance" class="slide level2">
 <h2>Statistical Significance</h2>
+<div>
 <ul>
-<li><strong>Definition:</strong> A result is statistically significant if it is unlikely to have occurred by chance.</li>
-<li><strong>Common Misunderstandings:</strong> Statistical significance does not imply practical significance.</li>
-<li><strong>Example:</strong>
-<ul>
-<li>Comparing the effects of two drugs might show statistical significance even if the practical difference is small.</li>
-</ul></li>
+<li class="fragment">Comes up in NHST: Null Hypothesis Significance Testing</li>
+<li class="fragment">Bad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise</li>
+<li class="fragment">Often, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic</li>
+<li class="fragment">You flip a coin 10 times and observe 7 heads. Is there evidence of coin bias?</li>
+<li class="fragment">What about if you got 70 heads out of 100?</li>
 </ul>
+</div>
 </section>
-<section id="hypothesis-testing" class="slide level2">
-<h2>Hypothesis Testing</h2>
+<section id="some-problems-with-statistical-significance" class="slide level2">
+<h2>Some Problems with Statistical Significance</h2>
+<div>
 <ul>
-<li><p><strong>Null Hypothesis (H0):</strong> Assumes no effect or no difference.</p></li>
-<li><p><strong>Alternative Hypothesis (H1):</strong> Assumes some effect or difference.</p></li>
-<li><p><strong>p-values:</strong> The probability of obtaining the observed results assuming H0 is true.</p></li>
-<li><p><strong>Example:</strong></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>p_value <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pt</span>(<span class="fu">abs</span>(theta_hat)<span class="sc">/</span>se_theta, df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li class="fragment">Statistical significance does not mean practical (or in the case of Biostats clinical) significance</li>
+<li class="fragment">No significance does not mean there is no effect</li>
+<li class="fragment">The difference between “significant” and “not significant” is not itself statistically significant</li>
+<li class="fragment">Researcher degrees of freedom, p-hacking</li>
 </ul>
-</section>
-<section id="type-1-and-type-2-errors" class="slide level2">
-<h2>Type 1 and Type 2 Errors</h2>
-<ul>
-<li><strong>Type 1 Error (α):</strong> Rejecting H0 when it is true (false positive).</li>
-<li><strong>Type 2 Error (β):</strong> Failing to reject H0 when it is false (false negative).</li>
-<li><strong>Limitation:</strong> In practice, we rarely know the true state of the null hypothesis.</li>
-</ul>
-</section>
-<section id="type-m-and-type-s-errors" class="slide level2">
-<h2>Type M and Type S Errors</h2>
-<ul>
-<li><strong>Type M Error (Magnitude):</strong> Overestimation of the effect size.</li>
-<li><strong>Type S Error (Sign):</strong> Incorrectly estimating the direction of an effect.</li>
-<li><strong>Importance:</strong> Helps in understanding the reliability of significant findings.</li>
-</ul>
-</section>
-<section id="problems-with-statistical-significance" class="slide level2">
-<h2>Problems with Statistical Significance</h2>
-<ul>
-<li><strong>Pitfalls:</strong> Over-reliance on p-values can lead to:
-<ul>
-<li>Overestimation of effect sizes.</li>
-<li>Ignoring practical significance.</li>
-</ul></li>
-<li><strong>Alternatives:</strong> Use confidence intervals and effect sizes as more informative metrics.</li>
-</ul>
-</section>
-<section id="forking-paths-and-p-hacking" class="slide level2">
-<h2>Forking Paths and p-Hacking</h2>
-<ul>
-<li><strong>Explanation:</strong> Manipulating data analysis until a statistically significant result is found.</li>
-<li><strong>Risks:</strong> Leads to false discoveries and unreliable research.</li>
-<li><strong>Example:</strong> Multiple comparisons in a single study can increase the chance of finding false positives.</li>
-</ul>
-</section>
-<section id="summary-and-conclusion" class="slide level2">
-<h2>Summary and Conclusion</h2>
-<ul>
-<li><strong>Key Takeaways:</strong>
-<ul>
-<li>Statistical inference provides tools to make sense of data.</li>
-<li>Understanding and correctly applying concepts like bias, uncertainty, and significance is crucial.</li>
-<li>Beware of common pitfalls such as over-reliance on p-values and the risks of p-hacking.</li>
-</ul></li>
-<li><strong>Importance:</strong> Proper statistical inference leads to more reliable and valid conclusions in research.</li>
-</ul>
+</div>
 
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
@@ -647,6 +786,7 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 </div>
 </div>
 </section>
+
     </div>
   </div>
 
@@ -986,7 +1126,7 @@ x_i(t) = a + bt_i^2 + \epsilon_i
       }
         var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
         var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+          var filterRegex = new RegExp('/' + window.location.host + '/');
         var isInternal = (href) => {
             return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }

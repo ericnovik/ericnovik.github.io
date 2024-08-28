@@ -4,7 +4,7 @@
     "href": "smac.html",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "",
-    "text": "This is the home for SMaC: Statistics, Math, and Computing Bootcamp offered by NYU PRIISM, the Center for Practice and Research at the Intersection of Information, Society, and Methodology. Registered students will be given access to Brightspace, where we will host an online forum.\nSMaC aims to prepare students for the Applied Statistics for Social Science Research program at NYU. We will cover basic programming using the R language, including data manipulation and graphical displays; some key ideas from Calculus, including differentiation and integration; basic matrix algebra, including vector and matrix arithmetic; some core concepts in Probability, including random variables, discrete and continuous distributions, and expectations; and a few simple regression examples.\nThis is the current version of the syllabus, which is subject to change, so please check the date to make sure you have the most recent version.\n\nSession 01: The Big Picture and Introduction to R\nSession 02: Plotting, Exponentials, Logs, and Derivatives\nSession 03: Reshaping Data, Loops, and Maps; Introduction to Integration\nSession 04: Introduction to Probability 1\nSession 05: Introduction to Probability 2\nSession 06: Introduction to Linear Algebra\nSession 07: Introduction to Inference and Regression\nSession 08: Review, Discussion, and Q&A"
+    "text": "This is the home for SMaC: Statistics, Math, and Computing Bootcamp offered by NYU PRIISM, the Center for Practice and Research at the Intersection of Information, Society, and Methodology. Registered students will be given access to Brightspace, where we will host an online forum.\nSMaC aims to prepare students for the Applied Statistics for Social Science Research program at NYU. We will cover basic programming using the R language, including data manipulation and graphical displays; some key ideas from Calculus, including differentiation and integration; basic matrix algebra, including vector and matrix arithmetic; some core concepts in Probability, including random variables, discrete and continuous distributions, and expectations; and a few simple regression examples.\nThis is the current version of the syllabus, which is subject to change, so please check the date to make sure you have the most recent version.\n\nSession 01: The Big Picture and Introduction to R\nSession 02: Plotting, Exponentials, Logs, and Derivatives\nSession 03: Reshaping Data, Loops, and Maps; Introduction to Integration\nSession 04: Introduction to Probability 1\nSession 05: Introduction to Probability 2\nSession 06: Introduction to Linear Algebra\nSession 07: Statistical Inference\nSession 08: [Analysis Workflow and Regression]\nSession 09: Review, Discussion, and Q&A"
   },
   {
     "objectID": "bayes-course.html",
@@ -1131,7 +1131,7 @@
     "href": "stats-math/06-lecture/06-lecture.html#solving-an-overdetermined-xhatbeta-y",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)",
-    "text": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)\n\n\nWe are switching to a more familiar (to statisticians) notation of \\(X \\beta = y\\) (instead of \\(Ax = b\\))\nWe typically augment the \\(X\\) matrix with the column of 1s on the left to model the intercept term, sometimes called \\(\\beta_0\\)\nThis should make sense when you think about \\(Xb\\) as the linear combination of columns of \\(X\\)\nIn this form, \\(X\\) is usually called the design matrix or the model matrix\nThe problem is that \\(X\\) is not invertible, even if columns of \\(X\\) are linearly independent\nLet’s say that \\(X\\) is a \\(3 \\times 2\\) matrix (3 rows and 2 columns), and columns are linearly independent. Note that \\(\\beta\\) is \\(2 \\times 1\\) and \\(y\\) is \\(3 \\times 1\\).\n\\(X\\) and its linear combinations \\(X\\beta\\) span a plane in three-dimensional space – there is no way for it to reach the target vector \\(y\\) in \\(R^3\\)"
+    "text": "Solving an Overdetermined \\(X\\hat{\\beta} = y\\)\n\n\nWe are switching to a more familiar (to statisticians) notation of \\(X \\beta = y\\) (instead of \\(Ax = b\\))\nWe typically augment the \\(X\\) matrix with the column of 1s on the left to model the intercept term, sometimes called \\(\\beta_0\\)\nThis should make sense when you think about \\(X \\beta\\) as the linear combination of columns of \\(X\\)\nIn this form, \\(X\\) is usually called the design matrix or the model matrix\nThe problem is that \\(X\\) is not invertible, even if columns of \\(X\\) are linearly independent\nLet’s say that \\(X\\) is a \\(3 \\times 2\\) matrix (3 rows and 2 columns), and columns are linearly independent. Note that \\(\\beta\\) is \\(2 \\times 1\\) and \\(y\\) is \\(3 \\times 1\\).\n\\(X\\) and its linear combinations \\(X\\beta\\) span a plane in three-dimensional space – there is no way for it to reach the target vector \\(y\\) in \\(R^3\\)"
   },
   {
     "objectID": "stats-math/06-lecture/06-lecture.html#approximating-a-solution-to-overdetermined-xhatbeta-y",
@@ -1159,14 +1159,14 @@
     "href": "stats-math/06-lecture/06-lecture.html#motion-in-the-straight-line-1",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Motion in the Straight Line",
-    "text": "Motion in the Straight Line\n\nSetupSolutionPlot the Fit\n\n\n\n\nThis is a quadratic function. How can we solve it using linear regression (the least squares method)?\nWe assumed the equation of motion was \\(x(t) = a + bt^2\\)\nThe unknowns are \\(a\\) and \\(b\\)\nLet’s express it in the matrix notation and relabel the variables to match our system: \\(y = \\beta_0 + \\beta x^2\\). Nothing changes, just the labels.\nWhat is our design matrix \\(X\\)? We had 51 observations, so \\(X\\) will have two columns with 51 elements each: a column of 1s and a column representing the squares measurements: \\(x^2\\).\nOur unknown vector \\(\\hat{\\beta}\\) has two elements \\((\\hat{\\beta_0},\\, \\hat{\\beta_1)}\\)\n\\(y\\) is our outcome vector of length 51, capturing the car’s position at each time point \\(x\\).\nThis way, \\(y = X\\hat{\\beta}\\) captures our system in matrix form\n\n\n\n\n\n\n\n\n# length of x (our time vector)\nlength(x)\n\n[1] 51\n\n# first few elements of x\nhead(x)\n\n[1] 0.0 0.1 0.2 0.3 0.4 0.5\n\n# construct the design matrix\nX &lt;- matrix(c(rep(1, length(x)), x^2), ncol = 2)\nhead(X)\n\n     [,1] [,2]\n[1,]    1 0.00\n[2,]    1 0.01\n[3,]    1 0.04\n[4,]    1 0.09\n[5,]    1 0.16\n[6,]    1 0.25\n\n# inspect the vector y\nlength(y)\n\n[1] 51\n\nhead(y)\n\n[1] -2.4417028  6.7615084 -0.7502334 -0.4900157 -3.5129263  1.9331119\n\n\n\n\n\n\nRecall, that the least squares estimate of \\(\\beta\\) is given by \\(\\hat{\\beta} =  (X^TX)^{-1}X^Ty\\)\n\n\n\n\nbeta_hat &lt;- solve(t(X) %*% X) %*% t(X) %*% y\nbeta_hat %&gt;% round(2)\n\n     [,1]\n[1,] 1.46\n[2,] 3.01\n\n# compare to R's lm()\nlm(y ~ I(x^2))\n\n\nCall:\nlm(formula = y ~ I(x^2))\n\nCoefficients:\n(Intercept)       I(x^2)  \n      1.460        3.014  \n\n\n\n\n\nWarning: do not use \\((X^TX)^{-1}X^Ty\\) directly as above; it’s computationally inefficient\n\n\n\n\n\n\nd &lt;- data.frame(yhat = beta_hat[1] + beta_hat[2] * x^2)\np + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')"
+    "text": "Motion in the Straight Line\n\nSetupSolutionPlot the Fit\n\n\n\n\nThis is a quadratic function. How can we solve it using linear regression (the least squares method)?\nWe assumed the equation of motion was \\(x(t) = a + bt^2\\), which we will write as \\(y(t) = \\beta_0 + \\beta_1 t^2\\)\nThe unknowns are \\(\\beta_0\\) and \\(\\beta_1\\)\nLet’s express it in the matrix notation\nWhat is our design matrix \\(X\\)? We have 51 observations, so \\(X\\) will have two columns and 51 rows: a column of 1s for the intercept and a column of times squared \\(t^2\\)\nOur unknown vector \\(\\hat{\\beta}\\) has two elements \\((\\hat{\\beta_0},\\, \\hat{\\beta_1)}\\)\n\\(y\\) is our outcome vector of length 51, capturing the car’s position at each time point \\(t\\)\n\\(y = X\\hat{\\beta}\\) captures our system in matrix form\n\n\n\n\n\n\n\n\n# length of t (our time vector)\nlength(t)\n\n[1] 51\n\n# first few elements of t\nhead(t)\n\n[1] 0.0 0.1 0.2 0.3 0.4 0.5\n\n# construct the design matrix\nX &lt;- matrix(c(rep(1, length(t)), t^2), ncol = 2)\nhead(X)\n\n     [,1] [,2]\n[1,]    1 0.00\n[2,]    1 0.01\n[3,]    1 0.04\n[4,]    1 0.09\n[5,]    1 0.16\n[6,]    1 0.25\n\n# inspect the vector y\nlength(y)\n\n[1] 51\n\nhead(y)\n\n[1] -2.4417028  6.7615084 -0.7502334 -0.4900157 -3.5129263  1.9331119\n\n\n\n\n\n\nRecall, that the least squares estimate of \\(\\beta\\) is given by \\(\\hat{\\beta} =  (X^TX)^{-1}X^Ty\\)\n\n\n\n\nbeta_hat &lt;- solve(t(X) %*% X) %*% t(X) %*% y\nbeta_hat %&gt;% round(2)\n\n     [,1]\n[1,] 1.46\n[2,] 3.01\n\ndata &lt;- data.frame(y = y, t_squared = t^2)\n# compare to R's lm()\nfit &lt;- lm(y ~ t_squared, data = data)\narm::display(fit)\n\nlm(formula = y ~ t_squared, data = data)\n            coef.est coef.se\n(Intercept) 1.46     0.54   \nt_squared   3.01     0.05   \n---\nn = 51, k = 2\nresidual sd = 2.60, R-Squared = 0.99\n\n\n\n\n\nWarning: do not use \\((X^TX)^{-1}X^Ty\\) directly as above; it’s computationally inefficient\n\n\n\n\n\n\nd &lt;- data.frame(yhat = beta_hat[1] + beta_hat[2] * x^2)\np + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')"
   },
   {
     "objectID": "stats-math/06-lecture/06-lecture.html#your-turn-2",
     "href": "stats-math/06-lecture/06-lecture.html#your-turn-2",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
-    "text": "Your Turn\n\nLook at the dataset mtcars\nPlot mpg against wp, treating mpg as the output variable \\(y\\). (We generally don’t like to use the words dependent vs. independent in this context)\nUsing the normal equations, find the intercept and slope of the best-fit line\nValidate that it matches the output from lm\nNow plot the line over the data and see if it “fits”\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Your Turn\n\nLook at the dataset mtcars\nPlot mpg against wt, treating mpg as the output variable \\(y\\). (We generally don’t like to use the words dependent vs. independent in this context)\nUsing the normal equations, find the intercept and slope of the best-fit line\nValidate that it matches the output from lm\nNow plot the line over the data and see if it “fits”\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "stats-math/02-lecture/02-Lecture.html#session-2-outline",
@@ -1589,151 +1589,200 @@
     "text": "References\n\n\n\nhttps://ericnovik.github.io/smac.html\n\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#session-x-outline",
-    "href": "stats-math/experimental/stat-inference.html#session-x-outline",
+    "objectID": "stats-math/08-lecture/07-lecture.html#session-8-outline",
+    "href": "stats-math/08-lecture/07-lecture.html#session-8-outline",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Session X Outline",
-    "text": "Session X Outline\n\n\nTBD\nTBD\n\n\n\nThe material for this session is based on Chapter 4 of the Regression and Other Stories by Gelman et al.\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "section": "Session 8 Outline",
+    "text": "Session 8 Outline\n\n\nStatistical analysis workflow\nIntroduction to the rstanarm package\nSetting up a linear regression\nModel evaluation\nModel expansion\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#introduction-to-statistical-inference",
-    "href": "stats-math/experimental/stat-inference.html#introduction-to-statistical-inference",
+    "objectID": "stats-math/08-lecture/07-lecture.html#analysis-workflow",
+    "href": "stats-math/08-lecture/07-lecture.html#analysis-workflow",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Introduction to Statistical Inference",
-    "text": "Introduction to Statistical Inference\n\n\n\nStatistical Inference: A process of learning from noisy measurements\nKey Challanges:\n\nGeneralizing from a sample to the population of interest\nLearning what would have happened under different treatment\nUnderstanding the relationship between the measurement and the estimand\n\n\n\n\n\n\n\n\nImage source: https://diff.healthpolicydatascience.org/"
+    "section": "Analysis Workflow",
+    "text": "Analysis Workflow\n\nFollowing is a high-level, end-to-end view from “R for Data Science” by Wickham and Grolemund"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#measurement-error-models",
-    "href": "stats-math/experimental/stat-inference.html#measurement-error-models",
+    "objectID": "stats-math/08-lecture/07-lecture.html#analysis-workflow-1",
+    "href": "stats-math/08-lecture/07-lecture.html#analysis-workflow-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Measurement Error Models",
-    "text": "Measurement Error Models\n\n\nWe are trying to estimate the parameters of some data generating process\nFor our car example, we assumed that the car position data are coming from the following model:\n\n\n\\[\nx_i(t) = a + bt_i^2 + \\epsilon_i\n\\]\n\n\nWe also assumed that time \\(t\\) was observed precicely, but we can also have error in t\nErrors may be multiplicative, not just additive"
+    "section": "Analysis Workflow",
+    "text": "Analysis Workflow\n\n\n\nA more comprehensive “Bayesian Workflow” by Gelman at al."
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#generative-models",
-    "href": "stats-math/experimental/stat-inference.html#generative-models",
+    "objectID": "stats-math/08-lecture/07-lecture.html#some-notation",
+    "href": "stats-math/08-lecture/07-lecture.html#some-notation",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Generative Models",
-    "text": "Generative Models\n\nDefinition: Models that define a process to generate the observed data.\nUse: Helpful for understanding the distribution of data and making predictions.\nExample:\n\nA generative model for heights might assume a normal distribution with specific mean and variance."
+    "section": "Some Notation",
+    "text": "Some Notation\n\n\nObserved data \\(y\\)\nUnobserved but observable data \\(\\widetilde{y}\\)\nUnobservable parameters \\(\\theta\\)\nCovariates \\(X\\)\nPrior distribution \\(f(\\theta)\\)\nLikelihood (as a function of \\(\\theta\\)), \\(f(y | \\theta, X)\\)\nPosterior distribution \\(f(\\theta | y, X)\\) (for Bayesian inference only)"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#parameters-estimands-and-estimates",
-    "href": "stats-math/experimental/stat-inference.html#parameters-estimands-and-estimates",
+    "objectID": "stats-math/08-lecture/07-lecture.html#bayes-vs-frequentist-inference",
+    "href": "stats-math/08-lecture/07-lecture.html#bayes-vs-frequentist-inference",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Parameters, Estimands, and Estimates",
-    "text": "Parameters, Estimands, and Estimates\n\nParameters: The true values in the population (e.g., mean, variance).\nEstimands: The quantity we aim to estimate (e.g., the population mean).\nEstimates: The value calculated from the sample data (e.g., sample mean)."
+    "section": "Bayes vs Frequentist Inference",
+    "text": "Bayes vs Frequentist Inference\n\n\n\n\nEstimation is the process of figuring out the unknowns, i.e., unobserved quantities\nIn frequentist inference, the problem is framed in terms of the most likely value(s) of \\(\\theta\\)\nBayesians want to characterize the whole distribution, a much more ambitious goal\n\n\n\n\n\nSuppose we want to characterize the following function, which represents some distribution of the unknown parameter:"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#standard-errors",
-    "href": "stats-math/experimental/stat-inference.html#standard-errors",
+    "objectID": "stats-math/08-lecture/07-lecture.html#wine-dataset",
+    "href": "stats-math/08-lecture/07-lecture.html#wine-dataset",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Standard Errors",
-    "text": "Standard Errors\n\nDefinition: The standard deviation of the sampling distribution of a statistic.\nSignificance: Provides a measure of uncertainty around the estimate.\nExample:\nestimate &lt;- y/n\nse &lt;- sqrt(estimate*(1-estimate)/n)"
+    "section": "Wine Dataset",
+    "text": "Wine Dataset"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#confidence-intervals",
-    "href": "stats-math/experimental/stat-inference.html#confidence-intervals",
+    "objectID": "stats-math/08-lecture/07-lecture.html#wine-dataset-1",
+    "href": "stats-math/08-lecture/07-lecture.html#wine-dataset-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Confidence Intervals",
-    "text": "Confidence Intervals\n\nConcept: A range of values around an estimate that likely contains the true parameter.\nInterpretation: A 95% confidence interval means we are 95% confident the true parameter lies within this range."
+    "section": "Wine Dataset",
+    "text": "Wine Dataset\n\nd &lt;- read.delim(\"data/winequality-red.csv\", sep = \";\")\ndim(d)\n\n[1] 1599   12\n\nd &lt;- d[!duplicated(d), ] # remove the duplicates\ndim(d)\n\n[1] 1359   12\n\nknitr::kable(head(d))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n7.4\n0.70\n0.00\n1.9\n0.076\n11\n34\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n2\n7.8\n0.88\n0.00\n2.6\n0.098\n25\n67\n0.9968\n3.20\n0.68\n9.8\n5\n\n\n3\n7.8\n0.76\n0.04\n2.3\n0.092\n15\n54\n0.9970\n3.26\n0.65\n9.8\n5\n\n\n4\n11.2\n0.28\n0.56\n1.9\n0.075\n17\n60\n0.9980\n3.16\n0.58\n9.8\n6\n\n\n6\n7.4\n0.66\n0.00\n1.8\n0.075\n13\n40\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n7\n7.9\n0.60\n0.06\n1.6\n0.069\n15\n59\n0.9964\n3.30\n0.46\n9.4\n5"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#confidence-intervals-for-means-and-proportions",
-    "href": "stats-math/experimental/stat-inference.html#confidence-intervals-for-means-and-proportions",
+    "objectID": "stats-math/08-lecture/07-lecture.html#scaling-the-data",
+    "href": "stats-math/08-lecture/07-lecture.html#scaling-the-data",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Confidence Intervals for Means and Proportions",
-    "text": "Confidence Intervals for Means and Proportions\n\nCalculation:\n\nFor means: CI = estimate ± 2 * SE\nFor proportions: Similar formula but for binary data\n\nPractical Example:\nint_95 &lt;- estimate + qnorm(c(0.025, 0.975))*se"
+    "section": "Scaling the Data",
+    "text": "Scaling the Data\n\nds &lt;- scale(d) # subtract the mean and divide by sd\nknitr::kable(head(ds) %&gt;% round(2))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n-0.52\n0.93\n-1.39\n-0.46\n-0.25\n-0.47\n-0.38\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n2\n-0.29\n1.92\n-1.39\n0.06\n0.20\n0.87\n0.60\n0.05\n-0.71\n0.12\n-0.58\n-0.76\n\n\n3\n-0.29\n1.26\n-1.19\n-0.17\n0.08\n-0.09\n0.21\n0.16\n-0.32\n-0.05\n-0.58\n-0.76\n\n\n4\n1.66\n-1.36\n1.47\n-0.46\n-0.27\n0.11\n0.39\n0.69\n-0.97\n-0.46\n-0.58\n0.46\n\n\n6\n-0.52\n0.71\n-1.39\n-0.53\n-0.27\n-0.28\n-0.20\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n7\n-0.24\n0.39\n-1.09\n-0.68\n-0.39\n-0.09\n0.36\n-0.17\n-0.06\n-1.16\n-0.95\n-0.76\n\n\n\n\ncheck &lt;- apply(ds, 2, function(x) c(mean = mean(x), sd = sd(x))) %&gt;% round(2)\nknitr::kable(check)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\nmean\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\nsd\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n\n\n\n\nclass(ds); ds &lt;- as_tibble(ds)\n\n[1] \"matrix\" \"array\""
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#standard-error-for-differences",
-    "href": "stats-math/experimental/stat-inference.html#standard-error-for-differences",
+    "objectID": "stats-math/08-lecture/07-lecture.html#quality-rating-of-red-wine",
+    "href": "stats-math/08-lecture/07-lecture.html#quality-rating-of-red-wine",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Standard Error for Differences",
-    "text": "Standard Error for Differences\n\nFormula: [ SE_{ ext{difference}} = ]\nExample Calculation:\nse_diff &lt;- sqrt(se1^2 + se2^2)"
+    "section": "Quality Rating of Red Wine",
+    "text": "Quality Rating of Red Wine\n\n\n\nUnscaled Quality\n\n\nqplot(d$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")\n\n\n\n\n\n\n\n\n\n\nScaled Quality\n\n\nqplot(ds$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#sampling-distributions-of-mean-and-standard-deviation",
-    "href": "stats-math/experimental/stat-inference.html#sampling-distributions-of-mean-and-standard-deviation",
+    "objectID": "stats-math/08-lecture/07-lecture.html#alcohol",
+    "href": "stats-math/08-lecture/07-lecture.html#alcohol",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Sampling Distributions of Mean and Standard Deviation",
-    "text": "Sampling Distributions of Mean and Standard Deviation\n\nNormal Distribution:\n\nThe sample mean ( \bar{y} ) is normally distributed with mean ( ) and standard deviation ( / ).\n\nχ² Distribution:\n\nThe sample variance has a chi-square distribution with ( n-1 ) degrees of freedom."
+    "section": "Alcohol",
+    "text": "Alcohol\n\np &lt;- ggplot(ds, aes(alcohol, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Alcohol\") + ylab(\"Quality (Jittered)\")"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#degrees-of-freedom",
-    "href": "stats-math/experimental/stat-inference.html#degrees-of-freedom",
+    "objectID": "stats-math/08-lecture/07-lecture.html#volatile-acidity",
+    "href": "stats-math/08-lecture/07-lecture.html#volatile-acidity",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Degrees of Freedom",
-    "text": "Degrees of Freedom\n\nDefinition: The number of independent values that can vary in an analysis.\nRole: Corrects for overfitting in models; often appears in the calculation of standard errors."
+    "section": "Volatile Acidity",
+    "text": "Volatile Acidity\n\np &lt;- ggplot(ds, aes(volatile.acidity, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Volatile Acidity\") + ylab(\"Quality (Jittered)\")"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#confidence-intervals-from-the-t-distribution",
-    "href": "stats-math/experimental/stat-inference.html#confidence-intervals-from-the-t-distribution",
+    "objectID": "stats-math/08-lecture/07-lecture.html#correlations",
+    "href": "stats-math/08-lecture/07-lecture.html#correlations",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Confidence Intervals from the t Distribution",
-    "text": "Confidence Intervals from the t Distribution\n\nUse in Small Samples: When sample size is small, the t-distribution is used instead of the normal distribution.\nExample:\nn &lt;- length(y)\nestimate &lt;- mean(y)\nse &lt;- sd(y)/sqrt(n)\nint_50 &lt;- estimate + qt(c(0.25, 0.75), n-1)*se\nint_95 &lt;- estimate + qt(c(0.025, 0.975), n-1)*se"
+    "section": "Correlations",
+    "text": "Correlations\n\nlibrary(corrplot)\nM &lt;- cor(ds)\ncorrplot(M, method = 'ellipse', order = 'AOE', type = 'upper')"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#inference-for-discrete-data",
-    "href": "stats-math/experimental/stat-inference.html#inference-for-discrete-data",
+    "objectID": "stats-math/08-lecture/07-lecture.html#linear-regression",
+    "href": "stats-math/08-lecture/07-lecture.html#linear-regression",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Inference for Discrete Data",
-    "text": "Inference for Discrete Data\n\nStandard Errors and Confidence Intervals:\n\nSimilar to continuous data but tailored for binary or count data.\n\nExample:\ny &lt;- rep(c(0,1,2,3,4), c(600,300,50,30,20))\nmean_y &lt;- mean(y)\nse_y &lt;- sd(y)/sqrt(length(y))"
+    "section": "Linear Regression",
+    "text": "Linear Regression\n\n\nWe will fit a linear regression to the scaled wine dataset\nThe priors come from (sensible) defaults in rstanarm\nLinear regression can be specified in the following way, where \\(X\\) is the design matrix with one or more scaled predictors and \\(y\\) is the scaled quality score\n\n\n\n\\[\n\\begin{aligned}\ny &\\sim \\mathrm{Normal}(\\alpha + X \\beta, \\ \\sigma) \\\\\n\\alpha &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\beta &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\sigma &\\sim \\mathrm{Exp}(1)\n\\end{aligned}\n\\]"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#bias-and-uncertainty",
-    "href": "stats-math/experimental/stat-inference.html#bias-and-uncertainty",
+    "objectID": "stats-math/08-lecture/07-lecture.html#estimation-using-rs-lm",
+    "href": "stats-math/08-lecture/07-lecture.html#estimation-using-rs-lm",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Bias and Uncertainty",
-    "text": "Bias and Uncertainty\n\nBias: Systematic error that leads to incorrect estimates.\nUncertainty: Quantified by standard errors, often increased to account for bias."
+    "section": "Estimation using R’s lm()",
+    "text": "Estimation using R’s lm()\n\n\nWe will start by comparing alcohol content to quality ratings\nIn R’s lm() priors are not specified – they are uniform\n\n\n\n\nfit1_freq &lt;- lm(quality ~ alcohol, data = ds)\narm::display(fit1_freq)\n\nlm(formula = quality ~ alcohol, data = ds)\n            coef.est coef.se\n(Intercept) 0.00     0.02   \nalcohol     0.48     0.02   \n---\nn = 1359, k = 2\nresidual sd = 0.88, R-Squared = 0.23\n\n# avoid R's summary() function\nsummary(fit1_freq)\n\n\nCall:\nlm(formula = quality ~ alcohol, data = ds)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-3.4372 -0.4761 -0.2097  0.6494  3.1666 \n\nCoefficients:\n              Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -7.310e-15  2.380e-02    0.00        1    \nalcohol      4.803e-01  2.381e-02   20.17   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 0.8774 on 1357 degrees of freedom\nMultiple R-squared:  0.2307,    Adjusted R-squared:  0.2302 \nF-statistic:   407 on 1 and 1357 DF,  p-value: &lt; 2.2e-16"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#statistical-significance",
-    "href": "stats-math/experimental/stat-inference.html#statistical-significance",
+    "objectID": "stats-math/08-lecture/07-lecture.html#running-the-regression-in-rstanarm",
+    "href": "stats-math/08-lecture/07-lecture.html#running-the-regression-in-rstanarm",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Statistical Significance",
-    "text": "Statistical Significance\n\nDefinition: A result is statistically significant if it is unlikely to have occurred by chance.\nCommon Misunderstandings: Statistical significance does not imply practical significance.\nExample:\n\nComparing the effects of two drugs might show statistical significance even if the practical difference is small."
+    "section": "Running the Regression in rstanarm",
+    "text": "Running the Regression in rstanarm\n\nlibrary(rstanarm)\noptions(mc.cores = parallel::detectCores())\nfit1 &lt;- stan_glm(quality ~ alcohol, data = ds, refresh = 0)\nsummary(fit1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      quality ~ alcohol\n algorithm:    sampling\n sample:       4000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 1359\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 0.0    0.0  0.0   0.0   0.0  \nalcohol     0.5    0.0  0.5   0.5   0.5  \nsigma       0.9    0.0  0.9   0.9   0.9  \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 0.0    0.0  0.0   0.0   0.0  \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  3891 \nalcohol       0.0  1.0  3912 \nsigma         0.0  1.0  3943 \nmean_PPD      0.0  1.0  3919 \nlog-posterior 0.0  1.0  1832 \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#hypothesis-testing",
-    "href": "stats-math/experimental/stat-inference.html#hypothesis-testing",
+    "objectID": "stats-math/08-lecture/07-lecture.html#plotting",
+    "href": "stats-math/08-lecture/07-lecture.html#plotting",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Hypothesis Testing",
-    "text": "Hypothesis Testing\n\nNull Hypothesis (H0): Assumes no effect or no difference.\nAlternative Hypothesis (H1): Assumes some effect or difference.\np-values: The probability of obtaining the observed results assuming H0 is true.\nExample:\np_value &lt;- 2*(1 - pt(abs(theta_hat)/se_theta, df))"
+    "section": "Plotting",
+    "text": "Plotting\n\n\n\nplot(fit1, plotfun = \"areas\", prob = 0.9)\n\n\n\n\n\n\n\n\n\n\nposterior_vs_prior(fit1)"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#type-1-and-type-2-errors",
-    "href": "stats-math/experimental/stat-inference.html#type-1-and-type-2-errors",
+    "objectID": "stats-math/08-lecture/07-lecture.html#evaluating-the-model",
+    "href": "stats-math/08-lecture/07-lecture.html#evaluating-the-model",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Type 1 and Type 2 Errors",
-    "text": "Type 1 and Type 2 Errors\n\nType 1 Error (α): Rejecting H0 when it is true (false positive).\nType 2 Error (β): Failing to reject H0 when it is false (false negative).\nLimitation: In practice, we rarely know the true state of the null hypothesis."
+    "section": "Evaluating the Model",
+    "text": "Evaluating the Model\n\nHow good is this model?\n\n\np1 &lt;- pp_check(fit1, plotfun = \"ppc_dens_overlay\"); p2 &lt;- pp_check(fit1, plotfun = \"ppc_ecdf_overlay\")\np3 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"mean\"); p4 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"sd\")\np1 + p2 + p3 + p4"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#type-m-and-type-s-errors",
-    "href": "stats-math/experimental/stat-inference.html#type-m-and-type-s-errors",
+    "objectID": "stats-math/08-lecture/07-lecture.html#evaluating-the-model-1",
+    "href": "stats-math/08-lecture/07-lecture.html#evaluating-the-model-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Type M and Type S Errors",
-    "text": "Type M and Type S Errors\n\nType M Error (Magnitude): Overestimation of the effect size.\nType S Error (Sign): Incorrectly estimating the direction of an effect.\nImportance: Helps in understanding the reliability of significant findings."
+    "section": "Evaluating the Model",
+    "text": "Evaluating the Model\n\nHow good is this model?\n\n\nyrep1 &lt;- posterior_predict(fit1)\ndim(yrep1)\n\n[1] 4000 1359\n\ns &lt;- sample(1:nrow(ds), size = 50) # select 50 random records\np1 &lt;- ppc_intervals(ds$quality[s], yrep1[, s]); p1"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#problems-with-statistical-significance",
-    "href": "stats-math/experimental/stat-inference.html#problems-with-statistical-significance",
+    "objectID": "stats-math/08-lecture/07-lecture.html#we-can-add-other-predictors",
+    "href": "stats-math/08-lecture/07-lecture.html#we-can-add-other-predictors",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Problems with Statistical Significance",
-    "text": "Problems with Statistical Significance\n\nPitfalls: Over-reliance on p-values can lead to:\n\nOverestimation of effect sizes.\nIgnoring practical significance.\n\nAlternatives: Use confidence intervals and effect sizes as more informative metrics."
+    "section": "We Can Add Other Predictors",
+    "text": "We Can Add Other Predictors\n\nfit2 &lt;- stan_glm(quality ~ ., data = ds, refresh = 0)\nplot(fit2, plotfun = \"areas\", prob = 0.9, params = \"alcohol\")"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#forking-paths-and-p-hacking",
-    "href": "stats-math/experimental/stat-inference.html#forking-paths-and-p-hacking",
+    "objectID": "stats-math/08-lecture/07-lecture.html#have-we-improved-the-model",
+    "href": "stats-math/08-lecture/07-lecture.html#have-we-improved-the-model",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Forking Paths and p-Hacking",
-    "text": "Forking Paths and p-Hacking\n\nExplanation: Manipulating data analysis until a statistically significant result is found.\nRisks: Leads to false discoveries and unreliable research.\nExample: Multiple comparisons in a single study can increase the chance of finding false positives."
+    "section": "Have We Improved the Model",
+    "text": "Have We Improved the Model\n\nyrep2 &lt;- posterior_predict(fit2)\np1 &lt;- p1 + ggtitle(\"Model 1 predictions\")\np2 &lt;- ppc_intervals(ds$quality[s], yrep2[, s]) + ggtitle(\"Model 2 predictions\")\np1 + p2 + plot_layout(nrow = 2, byrow = FALSE)"
   },
   {
-    "objectID": "stats-math/experimental/stat-inference.html#summary-and-conclusion",
-    "href": "stats-math/experimental/stat-inference.html#summary-and-conclusion",
+    "objectID": "stats-math/08-lecture/07-lecture.html#have-we-improved-the-model-1",
+    "href": "stats-math/08-lecture/07-lecture.html#have-we-improved-the-model-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Summary and Conclusion",
-    "text": "Summary and Conclusion\n\nKey Takeaways:\n\nStatistical inference provides tools to make sense of data.\nUnderstanding and correctly applying concepts like bias, uncertainty, and significance is crucial.\nBeware of common pitfalls such as over-reliance on p-values and the risks of p-hacking.\n\nImportance: Proper statistical inference leads to more reliable and valid conclusions in research.\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "section": "Have We Improved the Model",
+    "text": "Have We Improved the Model\n\n# Mean Square Error for Model 1\nmean((colMeans(yrep1) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.77\n\n# Mean Square Error for Model 2\nmean((colMeans(yrep2) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.64\n\nwidth &lt;- function(yrep, q1, q2) {\n  q &lt;- apply(yrep, 2, function (x) quantile(x, probs = c(q1, q2)))\n  width &lt;- apply(q, 2, diff)\n  return(mean(width))\n}\nwidth(yrep1, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.18\n\nwidth(yrep2, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.09"
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#comparing-out-of-sample-performance",
+    "href": "stats-math/08-lecture/07-lecture.html#comparing-out-of-sample-performance",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Comparing Out of Sample Performance",
+    "text": "Comparing Out of Sample Performance\n\nloo1 &lt;- loo(fit1, cores = 4)\nloo2 &lt;- loo(fit2, cores = 4)\nloo_compare(loo1, loo2)\n\n     elpd_diff se_diff\nfit2    0.0       0.0 \nfit1 -117.5      17.8 \n\n\nVehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint."
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#can-we-still-improve-the-model",
+    "href": "stats-math/08-lecture/07-lecture.html#can-we-still-improve-the-model",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Can We Still Improve the Model",
+    "text": "Can We Still Improve the Model\n\n\nQuality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal\nFor more information, see ordered logistic distribution in the Stan manual\nWe are going to use the following parameterization available in Stan:\n\n\n\n\\[\n\\text{OrderedLogistic}(k~|~\\eta,c) = \\left\\{ \\begin{array}{ll} 1 -\n\\text{logit}^{-1}(\\eta - c_1)  &  \\text{if } k = 1, \\\\[4pt]\n\\text{logit}^{-1}(\\eta - c_{k-1}) - \\text{logit}^{-1}(\\eta - c_{k})  &\n\\text{if } 1 &lt; k &lt; K, \\text{and} \\\\[4pt] \\text{logit}^{-1}(\\eta -\nc_{K-1}) - 0  &  \\text{if } k = K \\end{array} \\right.\n\\]\n\n\n\nA similar model can fit with frequentist methods using MASS::polr() function"
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#fitting-ordered-logistic",
+    "href": "stats-math/08-lecture/07-lecture.html#fitting-ordered-logistic",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Fitting Ordered Logistic",
+    "text": "Fitting Ordered Logistic\n\nds$quality &lt;- d$quality - 2          # quality vector is now 1:6\nds$quality &lt;- as.factor(ds$quality)  # it has to be treated as factor (category)\nfit3 &lt;- stan_polr(quality ~ ., prior = R2(0.25), # the prior is on explained variance\n                  prior_counts = dirichlet(1), \n                  data = ds, iter = 1000, refresh = 0)\nyrep3 &lt;- posterior_predict(fit3)\nyrep3[1:5, 1:5]\n\n     1   2   3   4   5  \n[1,] \"4\" \"3\" \"3\" \"3\" \"3\"\n[2,] \"3\" \"3\" \"4\" \"3\" \"1\"\n[3,] \"3\" \"2\" \"3\" \"3\" \"3\"\n[4,] \"4\" \"2\" \"3\" \"4\" \"4\"\n[5,] \"3\" \"3\" \"3\" \"3\" \"3\"\n\nyrep3 &lt;- apply(yrep3, 2, as.numeric)\nyrep3[1:5, 1:5]\n\n     1 2 3 4 5\n[1,] 4 3 3 3 3\n[2,] 3 3 4 3 1\n[3,] 3 2 3 3 3\n[4,] 4 2 3 4 4\n[5,] 3 3 3 3 3"
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#evaluating-model-fit",
+    "href": "stats-math/08-lecture/07-lecture.html#evaluating-model-fit",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Evaluating Model Fit",
+    "text": "Evaluating Model Fit\n\n\n\npp_check(fit2, plotfun = \"ppc_dens_overlay\")\n\n\n\n\n\n\n\n\n\n\npp_check(fit3, plotfun = \"ppc_dens_overlay\")"
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#evaluating-model-fit-1",
+    "href": "stats-math/08-lecture/07-lecture.html#evaluating-model-fit-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Evaluating Model Fit",
+    "text": "Evaluating Model Fit\n\nPlotsMetrics\n\n\n\np3 &lt;- ppc_intervals(as.numeric(ds$quality[s]), yrep3[, s]) + ggtitle(\"Model 3 predictions\")\np2 + p3 + plot_layout(nrow = 2, byrow = FALSE)\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Mean Square Error for Model 2:\", mean((colMeans(yrep2) - scale(d$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 2: 0.64\n\ncat(\"Mean Square Error for Model 3:\", mean((colMeans(yrep3) - as.numeric(ds$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 3: 0.43\n\ncat(\"Width of the 50% interval for Model 2:\", width(yrep2, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 2: 1.09\n\ncat(\"Width of the 50% interval for Model 3:\", width(yrep3, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 3: 0.73"
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#quick-tips-to-improve-your-regression-modeling",
+    "href": "stats-math/08-lecture/07-lecture.html#quick-tips-to-improve-your-regression-modeling",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "10+ quick tips to improve your regression modeling",
+    "text": "10+ quick tips to improve your regression modeling\nThis advice comes from “Regression and Other Stories” by Gelman and Hill\n\n\nThink generatively (+)\nThink about what you are measuring (+)\nThink about variation, replication\nForget about statistical significance\nGraph the relevant and not the irrelevant\nInterpret regression coefficients as comparisons\nUnderstand statistical methods using fake-data simulation\nFit many models\nSet up a computational workflow\nUse transformations\nDo causal inference in a targeted way, not as a byproduct of a large regression\nLearn methods through live examples"
+  },
+  {
+    "objectID": "stats-math/08-lecture/07-lecture.html#so-long-and-thanks-for-all-the-fish",
+    "href": "stats-math/08-lecture/07-lecture.html#so-long-and-thanks-for-all-the-fish",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "So Long (and Thanks for All the Fish)",
+    "text": "So Long (and Thanks for All the Fish)\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nTwitter: @ericnovik\nhttps://www.linkedin.com/in/enovik/\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",
@@ -1883,200 +1932,123 @@
     "text": "Homework\n\nTake a look at dataset iris (?iris)\nCompute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width\nCompute the average by each Species of flower (hint: use group_by and summarise functions from dplyr)\nProduce the plot that looks like this:\n\n\n\n\n\n\n\nProduce the plot that looks like this: (check out geom_density and facet_wrap functions)\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral (on paper) from \\(0\\) to \\(2\\pi\\) and use R’s integrate function to validate your answer.\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#session-8-outline",
-    "href": "stats-math/07-lecture/07-lecture.html#session-8-outline",
+    "objectID": "stats-math/07-lecture/07-lecture.html#session-7-outline",
+    "href": "stats-math/07-lecture/07-lecture.html#session-7-outline",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Session 8 Outline",
-    "text": "Session 8 Outline\n\n\nStatistical analysis workflow\nIntroduction to the rstanarm package\nSetting up a linear regression\nModel evaluation\nModel expansion\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "section": "Session 7 Outline",
+    "text": "Session 7 Outline\n\n\nStatistical inference\nSampling distribution\nStandard errors\nConfidence intervals\nDegrees of freedom and t distribution\nBias and uncertainty\nStatistical significance\n\n\n\nThe material for this session is based on Chapter 4 of the Regression and Other Stories by Gelman et al.\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#analysis-workflow",
-    "href": "stats-math/07-lecture/07-lecture.html#analysis-workflow",
+    "objectID": "stats-math/07-lecture/07-lecture.html#introduction-to-statistical-inference",
+    "href": "stats-math/07-lecture/07-lecture.html#introduction-to-statistical-inference",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Analysis Workflow",
-    "text": "Analysis Workflow\n\nFollowing is a high-level, end-to-end view from “R for Data Science” by Wickham and Grolemund"
+    "section": "Introduction to Statistical Inference",
+    "text": "Introduction to Statistical Inference\n\n\n\nStatistical Inference: A process of learning from noisy measurements\nKey Challenges:\n\nGeneralizing from a sample to the population of interest\nLearning what would have happened under different treatment\nUnderstanding the relationship between the measurement and the estimand\n\n\n\n\n\n\n\n\nImage source: https://diff.healthpolicydatascience.org/"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#analysis-workflow-1",
-    "href": "stats-math/07-lecture/07-lecture.html#analysis-workflow-1",
+    "objectID": "stats-math/07-lecture/07-lecture.html#measurement-error-models",
+    "href": "stats-math/07-lecture/07-lecture.html#measurement-error-models",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Analysis Workflow",
-    "text": "Analysis Workflow\n\n\n\nA more comprehensive “Bayesian Workflow” by Gelman at al."
+    "section": "Measurement Error Models",
+    "text": "Measurement Error Models\n\n\nWe are trying to estimate the parameters of some data-generating process\nFor our car example, we assumed that the car position data are coming from the following model:\n\n\n\\[\nx_i(t) = a + bt_i^2 + \\epsilon_i\n\\]\n\n\nWe also assumed that time \\(t\\) was observed precisely, but we can also have an error in \\(t\\)\nErrors may be multiplicative, not just additive"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#some-notation",
-    "href": "stats-math/07-lecture/07-lecture.html#some-notation",
+    "objectID": "stats-math/07-lecture/07-lecture.html#sampling-distribution",
+    "href": "stats-math/07-lecture/07-lecture.html#sampling-distribution",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Some Notation",
-    "text": "Some Notation\n\n\nObserved data \\(y\\)\nUnobserved but observable data \\(\\widetilde{y}\\)\nUnobservable parameters \\(\\theta\\)\nCovariates \\(X\\)\nPrior distribution \\(f(\\theta)\\)\nLikelihood (as a function of \\(\\theta\\)), \\(f(y | \\theta, X)\\)\nPosterior distribution \\(f(\\theta | y, X)\\) (for Bayesian inference only)"
+    "section": "Sampling Distribution",
+    "text": "Sampling Distribution\n\n\nGenerative model for our data: given the generative model, we can create replicas of the dataset\nSampling distribution is typically unknown and depends on the data collection, how subjects are assigned to treatment conditions, sampling process\nExamples\n\nSimple random sample of size \\(n\\) from the population of size \\(N\\). Here, each person has the same probability of being selected\nOur constant acceleration model \\(x_i(t) = a + bt_i^2 + \\epsilon_i\\), where we fix \\(a\\) and \\(b\\), and \\(t\\), and draw \\(\\epsilon\\) from an error distribition, such as \\(\\text{Normal}(0, 1)\\)\nWe can write some code to generate observations according to this process (which is what I did for the car example)"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#bayes-vs-frequentist-inference",
-    "href": "stats-math/07-lecture/07-lecture.html#bayes-vs-frequentist-inference",
+    "objectID": "stats-math/07-lecture/07-lecture.html#standard-errors",
+    "href": "stats-math/07-lecture/07-lecture.html#standard-errors",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Bayes vs Frequentist Inference",
-    "text": "Bayes vs Frequentist Inference\n\n\n\n\nEstimation is the process of figuring out the unknowns, i.e., unobserved quantities\nIn frequentist inference, the problem is framed in terms of the most likely value(s) of \\(\\theta\\)\nBayesians want to characterize the whole distribution, a much more ambitious goal\n\n\n\n\n\nSuppose we want to characterize the following function, which represents some distribution of the unknown parameter:"
+    "section": "Standard Errors",
+    "text": "Standard Errors\n\n\nStandard error is the estimated standard deviation of the estimate\nIt provides a measure of uncertainty around the estimate\nStandard error decreases as the sample size increases\nTo estimate the SE of the mean from a large population with sd = \\(\\sigma\\): \\(\\frac{\\sigma}{\\sqrt{n}}\\)\n\n\n\nset.seed(1)\nn &lt;- 100; mu &lt;- 5; sigma &lt;- 1.5\nx &lt;- rnorm(n, mean = mu, sd = sigma)\nx_bar &lt;- mean(x); round(x_bar, 2)\n\n[1] 5.16\n\n(se &lt;- sigma/sqrt(n))\n\n[1] 0.15\n\n\n\n\nIf \\(\\sigma\\) is unknown, we can estimate it from the sample: \\(s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}\\)\n\n\n\n\nvar(x)\n\n[1] 1.815215\n\nsum((x - x_bar)^2) / (n - 1)\n\n[1] 1.815215"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#wine-dataset",
-    "href": "stats-math/07-lecture/07-lecture.html#wine-dataset",
+    "objectID": "stats-math/07-lecture/07-lecture.html#confidence-intervals",
+    "href": "stats-math/07-lecture/07-lecture.html#confidence-intervals",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Wine Dataset",
-    "text": "Wine Dataset"
+    "section": "Confidence Intervals",
+    "text": "Confidence Intervals\n\n\nFor a given sampling distribution, confidence interval provides a range of parameter values consistent with the data\nFor example, for a normal sampling distribution, an estimate \\(\\hat{\\theta}\\) will fall in \\(\\hat{\\theta} \\pm 2\\cdot\\text{se}\\) about 95% of the time"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#wine-dataset-1",
-    "href": "stats-math/07-lecture/07-lecture.html#wine-dataset-1",
+    "objectID": "stats-math/07-lecture/07-lecture.html#confidence-intervals-for-proportions",
+    "href": "stats-math/07-lecture/07-lecture.html#confidence-intervals-for-proportions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Wine Dataset",
-    "text": "Wine Dataset\n\nd &lt;- read.delim(\"data/winequality-red.csv\", sep = \";\")\ndim(d)\n\n[1] 1599   12\n\nd &lt;- d[!duplicated(d), ] # remove the duplicates\ndim(d)\n\n[1] 1359   12\n\nknitr::kable(head(d))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n7.4\n0.70\n0.00\n1.9\n0.076\n11\n34\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n2\n7.8\n0.88\n0.00\n2.6\n0.098\n25\n67\n0.9968\n3.20\n0.68\n9.8\n5\n\n\n3\n7.8\n0.76\n0.04\n2.3\n0.092\n15\n54\n0.9970\n3.26\n0.65\n9.8\n5\n\n\n4\n11.2\n0.28\n0.56\n1.9\n0.075\n17\n60\n0.9980\n3.16\n0.58\n9.8\n6\n\n\n6\n7.4\n0.66\n0.00\n1.8\n0.075\n13\n40\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n7\n7.9\n0.60\n0.06\n1.6\n0.069\n15\n59\n0.9964\n3.30\n0.46\n9.4\n5"
+    "section": "Confidence Intervals for Proportions",
+    "text": "Confidence Intervals for Proportions\n\n\n\n\nIn surveys, we are often interested in estimating the standard error of the proportion\nSuppose we want to estimate the proportion of the US population that supports same-sex marriage\nSay you randomly survey \\(n = 500\\) from the population, and \\(y = 355\\) people respond yes1\nThe estimate of the proportion is \\(\\hat{\\theta} = y/n\\) with the \\(\\text{se} = \\sqrt{\\hat{\\theta}(1 -\\hat{\\theta})/n }\\)\n\n\n\n\n\nn &lt;- 500\ny &lt;- 355\ntheta_hat &lt;- y/n\ntheta_hat |&gt; round(2)\n\n[1] 0.71\n\nse &lt;- sqrt(theta_hat * (1 - theta_hat) / n)\nse |&gt; round(2)\n\n[1] 0.02\n\ntheta_hat + 2*se |&gt; round(2)\n\n[1] 0.75\n\ntheta_hat - 2*se |&gt; round(2)\n\n[1] 0.67\n\nci_95 &lt;- theta_hat + qnorm(c(0.025, 0.975)) * se\nci_95 |&gt; round(2)\n\n[1] 0.67 0.75\n\n\n\n\nThe most recent Gallup poll from May 2023 found that 71% of Americans think same-sex marriage should be legally recognized"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#scaling-the-data",
-    "href": "stats-math/07-lecture/07-lecture.html#scaling-the-data",
+    "objectID": "stats-math/07-lecture/07-lecture.html#your-turn",
+    "href": "stats-math/07-lecture/07-lecture.html#your-turn",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Scaling the Data",
-    "text": "Scaling the Data\n\nds &lt;- scale(d) # subtract the mean and divide by sd\nknitr::kable(head(ds) %&gt;% round(2))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n-0.52\n0.93\n-1.39\n-0.46\n-0.25\n-0.47\n-0.38\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n2\n-0.29\n1.92\n-1.39\n0.06\n0.20\n0.87\n0.60\n0.05\n-0.71\n0.12\n-0.58\n-0.76\n\n\n3\n-0.29\n1.26\n-1.19\n-0.17\n0.08\n-0.09\n0.21\n0.16\n-0.32\n-0.05\n-0.58\n-0.76\n\n\n4\n1.66\n-1.36\n1.47\n-0.46\n-0.27\n0.11\n0.39\n0.69\n-0.97\n-0.46\n-0.58\n0.46\n\n\n6\n-0.52\n0.71\n-1.39\n-0.53\n-0.27\n-0.28\n-0.20\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n7\n-0.24\n0.39\n-1.09\n-0.68\n-0.39\n-0.09\n0.36\n-0.17\n-0.06\n-1.16\n-0.95\n-0.76\n\n\n\n\ncheck &lt;- apply(ds, 2, function(x) c(mean = mean(x), sd = sd(x))) %&gt;% round(2)\nknitr::kable(check)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\nmean\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\nsd\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n\n\n\n\nclass(ds); ds &lt;- as_tibble(ds)\n\n[1] \"matrix\" \"array\""
+    "section": "Your Turn",
+    "text": "Your Turn\nIn a national survey of \\(n\\) people, how large does \\(n\\) have to be so that you can estimate presidential approval to within a standard error of ±3 percentage points, ±1 percentage points?"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#quality-rating-of-red-wine",
-    "href": "stats-math/07-lecture/07-lecture.html#quality-rating-of-red-wine",
+    "objectID": "stats-math/07-lecture/07-lecture.html#standard-error-for-differences",
+    "href": "stats-math/07-lecture/07-lecture.html#standard-error-for-differences",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Quality Rating of Red Wine",
-    "text": "Quality Rating of Red Wine\n\n\n\nUnscaled Quality\n\n\nqplot(d$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")\n\n\n\n\n\n\n\n\n\n\nScaled Quality\n\n\nqplot(ds$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")"
+    "section": "Standard Error for Differences",
+    "text": "Standard Error for Differences\n\n\nWe already saw an example of how to add variances from two independent RVs\n\n\n\\[\n\\text{se}_{\\text{diff}} = \\sqrt{\\text{se}_1^2 + \\text{se}_2^2}\n\\]\n\n\nYour turn: How large does \\(n\\) have to be so that you can estimate the gender gap in approval to within a standard error of ±3 percentage points?"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#alcohol",
-    "href": "stats-math/07-lecture/07-lecture.html#alcohol",
+    "objectID": "stats-math/07-lecture/07-lecture.html#computer-demo-computing-cis",
+    "href": "stats-math/07-lecture/07-lecture.html#computer-demo-computing-cis",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Alcohol",
-    "text": "Alcohol\n\np &lt;- ggplot(ds, aes(alcohol, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Alcohol\") + ylab(\"Quality (Jittered)\")"
+    "section": "Computer Demo: Computing CIs",
+    "text": "Computer Demo: Computing CIs\n\nThese demos are taken from the book Active Statistics by Gelman and Vehtari\n\n\n# Generate fake data\np &lt;- 0.3\nn &lt;- 20\ndata &lt;- rbinom(1, n, p)\nprint(data)\n\n# Estimate proportion and calculate confidence interval\np_hat &lt;- data / n\nse &lt;- sqrt(p_hat * (1 - p_hat) / n)\nci &lt;- p_hat + c(-2, 2) * se\nprint(ci) \n\n# Put it in a loop\nreps &lt;- 100\nfor (i in 1:reps) {\n  data &lt;- rbinom(1, n, p)\n  p_hat &lt;- data / n\n  se &lt;- sqrt(p_hat * (1 - p_hat) / n)\n  ci &lt;- p_hat + c(-2, 2) * se\n  print(ci) \n}"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#volatile-acidity",
-    "href": "stats-math/07-lecture/07-lecture.html#volatile-acidity",
+    "objectID": "stats-math/07-lecture/07-lecture.html#computer-demo-proportions-means-and-differences-of-means",
+    "href": "stats-math/07-lecture/07-lecture.html#computer-demo-proportions-means-and-differences-of-means",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Volatile Acidity",
-    "text": "Volatile Acidity\n\np &lt;- ggplot(ds, aes(volatile.acidity, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Volatile Acidity\") + ylab(\"Quality (Jittered)\")"
+    "section": "Computer Demo: Proportions, Means, and Differences of Means",
+    "text": "Computer Demo: Proportions, Means, and Differences of Means\n\n# Read data from here:  https://github.com/avehtari/ROS-Examples\nlibrary(\"foreign\")\nlibrary(\"dplyr\")\npew_pre &lt;- read.dta(\n  paste0(\n    \"https://raw.githubusercontent.com/avehtari/\",\n    \"ROS-Examples/master/Pew/data/\",\n    \"pew_research_center_june_elect_wknd_data.dta\"\n  )\n)\npew_pre &lt;- pew_pre |&gt; select(c(\"age\", \"regicert\")) %&gt;%\n  na.omit() |&gt; filter(age != 99)\nn &lt;- nrow(pew_pre)\n\n# Estimate a proportion (certain to have registered for voting?)\nregistered &lt;- ifelse(pew_pre$regicert == \"absolutely certain\", 1, 0)\np_hat &lt;- mean(registered)\nse_hat &lt;- sqrt((p_hat * (1 - p_hat)) / n)\nround(p_hat + c(-2, 2) * se_hat, 4) # ci\n\n# Estimate an average (mean age)\nage &lt;- pew_pre$age\ny_hat &lt;- mean(age)\nse_hat &lt;- sd(age) / sqrt(n)\nround(y_hat + c(-2, 2) * se_hat, 4) # ci\n\n# Estimate a difference of means\nage2 &lt;- age[registered == 1]\nage1 &lt;- age[registered == 0]\ny_2_hat &lt;- mean(age2)\nse_2_hat &lt;- sd(age2) / sqrt(length(age2))\ny_1_hat &lt;- mean(age1)\nse_1_hat &lt;- sd(age1) / sqrt(length(age1))\ndiff_hat &lt;- y_2_hat - y_1_hat\nse_diff_hat &lt;- sqrt(se_1_hat ^ 2 + se_2_hat ^ 2)\nround(diff_hat + c(-2, 2) * se_diff_hat, 4) # ci"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#correlations",
-    "href": "stats-math/07-lecture/07-lecture.html#correlations",
+    "objectID": "stats-math/07-lecture/07-lecture.html#degrees-of-freedom",
+    "href": "stats-math/07-lecture/07-lecture.html#degrees-of-freedom",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Correlations",
-    "text": "Correlations\n\nlibrary(corrplot)\nM &lt;- cor(ds)\ncorrplot(M, method = 'ellipse', order = 'AOE', type = 'upper')"
+    "section": "Degrees of Freedom",
+    "text": "Degrees of Freedom\n\n\nSome distributions rely on the concept of degrees of freedom\nDegrees of freedom balance the need for accurate estimation against the amount of data available; it’s a way to correct for overfitting\nThe more parameters you estimate, the fewer degrees of freedom you have left for other calculations\nThe data will give us \\(n\\) (sample size) degrees of freedom, and \\(p\\) number of parameters will be used up during the estimation"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#linear-regression",
-    "href": "stats-math/07-lecture/07-lecture.html#linear-regression",
+    "objectID": "stats-math/07-lecture/07-lecture.html#normal-and-t-distribution",
+    "href": "stats-math/07-lecture/07-lecture.html#normal-and-t-distribution",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Linear Regression",
-    "text": "Linear Regression\n\n\nWe will fit a linear regression to the scaled wine dataset\nThe priors come from (sensible) defaults in rstanarm\nLinear regression can be specified in the following way, where \\(X\\) is the design matrix with one or more scaled predictors and \\(y\\) is the scaled quality score\n\n\n\n\\[\n\\begin{aligned}\ny &\\sim \\mathrm{Normal}(\\alpha + X \\beta, \\ \\sigma) \\\\\n\\alpha &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\beta &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\sigma &\\sim \\mathrm{Exp}(1)\n\\end{aligned}\n\\]"
+    "section": "Normal and t Distribution",
+    "text": "Normal and t Distribution\n\nt distribution has a degrees freedom parameter, and with a low number of degrees of freedom, it has heavier tails than the Normal"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#estimation-using-rs-lm",
-    "href": "stats-math/07-lecture/07-lecture.html#estimation-using-rs-lm",
+    "objectID": "stats-math/07-lecture/07-lecture.html#confidence-intervals-from-the-t-distribution",
+    "href": "stats-math/07-lecture/07-lecture.html#confidence-intervals-from-the-t-distribution",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Estimation using R’s lm()",
-    "text": "Estimation using R’s lm()\n\n\nWe will start by comparing alcohol content to quality ratings\nIn R’s lm() priors are not specified – they are uniform\n\n\n\n\nfit1_freq &lt;- lm(quality ~ alcohol, data = ds)\narm::display(fit1_freq)\n\nlm(formula = quality ~ alcohol, data = ds)\n            coef.est coef.se\n(Intercept) 0.00     0.02   \nalcohol     0.48     0.02   \n---\nn = 1359, k = 2\nresidual sd = 0.88, R-Squared = 0.23\n\n# avoid R's summary() function\nsummary(fit1_freq)\n\n\nCall:\nlm(formula = quality ~ alcohol, data = ds)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-3.4372 -0.4761 -0.2097  0.6494  3.1666 \n\nCoefficients:\n              Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -7.310e-15  2.380e-02    0.00        1    \nalcohol      4.803e-01  2.381e-02   20.17   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 0.8774 on 1357 degrees of freedom\nMultiple R-squared:  0.2307,    Adjusted R-squared:  0.2302 \nF-statistic:   407 on 1 and 1357 DF,  p-value: &lt; 2.2e-16"
+    "section": "Confidence Intervals from the t Distribution",
+    "text": "Confidence Intervals from the t Distribution\n\n\n\n\nt distribution has location and scale parameters and is symmetric like the Normal\nStandard error would have \\(n-1\\) degrees of freedom as one will be estimated to compute the mean\nSuppose you threw 5 darts and the distance from bull’s eye was as follows (standard dart board radius is about 23 cm)\n\n\n\n\n\n# Distance from the bull's eye in cm\ndata &lt;- c(8, 6, 10, 5, 18)\n\n# Calculate the sample mean\nmean_data &lt;- mean(data)\n\n# Calculate the standard error of the mean\nse_mean &lt;- sd(data) / sqrt(length(data))\n\n# Degrees of freedom\ndf &lt;- length(data) - 1\n\n# Calculate the 95% and 50% confidence interval \nci_95 &lt;- mean_data + qt(c(0.025, 0.975), df) * se_mean\nci_50 &lt;- mean_data + qt(c(0.25, 0.75), df) * se_mean\n\n# Output the results\nmean_data |&gt; round(2)\n\n[1] 9.4\n\nse_mean |&gt; round(2)\n\n[1] 2.32\n\nci_95 |&gt; round(2)\n\n[1]  2.97 15.83\n\nci_50 |&gt; round(2)\n\n[1]  7.69 11.11"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#running-the-regression-in-rstanarm",
-    "href": "stats-math/07-lecture/07-lecture.html#running-the-regression-in-rstanarm",
+    "objectID": "stats-math/07-lecture/07-lecture.html#bias-and-uncertainty",
+    "href": "stats-math/07-lecture/07-lecture.html#bias-and-uncertainty",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Running the Regression in rstanarm",
-    "text": "Running the Regression in rstanarm\n\nlibrary(rstanarm)\noptions(mc.cores = parallel::detectCores())\nfit1 &lt;- stan_glm(quality ~ alcohol, data = ds, refresh = 0)\nsummary(fit1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      quality ~ alcohol\n algorithm:    sampling\n sample:       4000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 1359\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 0.0    0.0  0.0   0.0   0.0  \nalcohol     0.5    0.0  0.4   0.5   0.5  \nsigma       0.9    0.0  0.9   0.9   0.9  \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 0.0    0.0  0.0   0.0   0.0  \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  3773 \nalcohol       0.0  1.0  3938 \nsigma         0.0  1.0  3610 \nmean_PPD      0.0  1.0  4028 \nlog-posterior 0.0  1.0  1744 \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
+    "section": "Bias and Uncertainty",
+    "text": "Bias and Uncertainty\n\nThere is a lot more to it than what is in following standard picture\nDiscuss among yourselves what are the potential sources of bias"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#plotting",
-    "href": "stats-math/07-lecture/07-lecture.html#plotting",
+    "objectID": "stats-math/07-lecture/07-lecture.html#statistical-significance",
+    "href": "stats-math/07-lecture/07-lecture.html#statistical-significance",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Plotting",
-    "text": "Plotting\n\n\n\nplot(fit1, plotfun = \"areas\", prob = 0.9)\n\n\n\n\n\n\n\n\n\n\nposterior_vs_prior(fit1)"
+    "section": "Statistical Significance",
+    "text": "Statistical Significance\n\n\nComes up in NHST: Null Hypothesis Significance Testing\nBad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise\nOften, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic\nYou flip a coin 10 times and observe 7 heads. Is there evidence of coin bias?\nWhat about if you got 70 heads out of 100?"
   },
   {
-    "objectID": "stats-math/07-lecture/07-lecture.html#evaluating-the-model",
-    "href": "stats-math/07-lecture/07-lecture.html#evaluating-the-model",
+    "objectID": "stats-math/07-lecture/07-lecture.html#some-problems-with-statistical-significance",
+    "href": "stats-math/07-lecture/07-lecture.html#some-problems-with-statistical-significance",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating the Model",
-    "text": "Evaluating the Model\n\nHow good is this model?\n\n\np1 &lt;- pp_check(fit1, plotfun = \"ppc_dens_overlay\"); p2 &lt;- pp_check(fit1, plotfun = \"ppc_ecdf_overlay\")\np3 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"mean\"); p4 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"sd\")\np1 + p2 + p3 + p4"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#evaluating-the-model-1",
-    "href": "stats-math/07-lecture/07-lecture.html#evaluating-the-model-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating the Model",
-    "text": "Evaluating the Model\n\nHow good is this model?\n\n\nyrep1 &lt;- posterior_predict(fit1)\ndim(yrep1)\n\n[1] 4000 1359\n\ns &lt;- sample(1:nrow(ds), size = 50) # select 50 random records\np1 &lt;- ppc_intervals(ds$quality[s], yrep1[, s]); p1"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#we-can-add-other-predictors",
-    "href": "stats-math/07-lecture/07-lecture.html#we-can-add-other-predictors",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "We Can Add Other Predictors",
-    "text": "We Can Add Other Predictors\n\nfit2 &lt;- stan_glm(quality ~ ., data = ds, refresh = 0)\nplot(fit2, plotfun = \"areas\", prob = 0.9, params = \"alcohol\")"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#have-we-improved-the-model",
-    "href": "stats-math/07-lecture/07-lecture.html#have-we-improved-the-model",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Have We Improved the Model",
-    "text": "Have We Improved the Model\n\nyrep2 &lt;- posterior_predict(fit2)\np1 &lt;- p1 + ggtitle(\"Model 1 predictions\")\np2 &lt;- ppc_intervals(ds$quality[s], yrep2[, s]) + ggtitle(\"Model 2 predictions\")\np1 + p2 + plot_layout(nrow = 2, byrow = FALSE)"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#have-we-improved-the-model-1",
-    "href": "stats-math/07-lecture/07-lecture.html#have-we-improved-the-model-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Have We Improved the Model",
-    "text": "Have We Improved the Model\n\n# Mean Square Error for Model 1\nmean((colMeans(yrep1) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.77\n\n# Mean Square Error for Model 2\nmean((colMeans(yrep2) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.64\n\nwidth &lt;- function(yrep, q1, q2) {\n  q &lt;- apply(yrep, 2, function (x) quantile(x, probs = c(q1, q2)))\n  width &lt;- apply(q, 2, diff)\n  return(mean(width))\n}\nwidth(yrep1, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.18\n\nwidth(yrep2, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.09"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#comparing-out-of-sample-performance",
-    "href": "stats-math/07-lecture/07-lecture.html#comparing-out-of-sample-performance",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Comparing Out of Sample Performance",
-    "text": "Comparing Out of Sample Performance\n\nloo1 &lt;- loo(fit1, cores = 4)\nloo2 &lt;- loo(fit2, cores = 4)\nloo_compare(loo1, loo2)\n\n     elpd_diff se_diff\nfit2    0.0       0.0 \nfit1 -117.4      17.7 \n\n\nVehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint."
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#can-we-still-improve-the-model",
-    "href": "stats-math/07-lecture/07-lecture.html#can-we-still-improve-the-model",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Can We Still Improve the Model",
-    "text": "Can We Still Improve the Model\n\n\nQuality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal\nFor more information, see ordered logistic distribution in the Stan manual\nWe are going to use the following parameterization available in Stan:\n\n\n\n\\[\n\\text{OrderedLogistic}(k~|~\\eta,c) = \\left\\{ \\begin{array}{ll} 1 -\n\\text{logit}^{-1}(\\eta - c_1)  &  \\text{if } k = 1, \\\\[4pt]\n\\text{logit}^{-1}(\\eta - c_{k-1}) - \\text{logit}^{-1}(\\eta - c_{k})  &\n\\text{if } 1 &lt; k &lt; K, \\text{and} \\\\[4pt] \\text{logit}^{-1}(\\eta -\nc_{K-1}) - 0  &  \\text{if } k = K \\end{array} \\right.\n\\]\n\n\n\nA similar model can fit with frequentist methods using MASS::polr() function"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#fitting-ordered-logistic",
-    "href": "stats-math/07-lecture/07-lecture.html#fitting-ordered-logistic",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Fitting Ordered Logistic",
-    "text": "Fitting Ordered Logistic\n\nds$quality &lt;- d$quality - 2          # quality vector is now 1:6\nds$quality &lt;- as.factor(ds$quality)  # it has to be treated as factor (category)\nfit3 &lt;- stan_polr(quality ~ ., prior = R2(0.25), # the prior is on explained variance\n                  prior_counts = dirichlet(1), \n                  data = ds, iter = 1000, refresh = 0)\nyrep3 &lt;- posterior_predict(fit3)\nyrep3[1:5, 1:5]\n\n     1   2   3   4   5  \n[1,] \"3\" \"3\" \"3\" \"3\" \"4\"\n[2,] \"3\" \"3\" \"4\" \"4\" \"3\"\n[3,] \"4\" \"1\" \"4\" \"3\" \"3\"\n[4,] \"3\" \"3\" \"3\" \"3\" \"3\"\n[5,] \"3\" \"3\" \"4\" \"2\" \"4\"\n\nyrep3 &lt;- apply(yrep3, 2, as.numeric)\nyrep3[1:5, 1:5]\n\n     1 2 3 4 5\n[1,] 3 3 3 3 4\n[2,] 3 3 4 4 3\n[3,] 4 1 4 3 3\n[4,] 3 3 3 3 3\n[5,] 3 3 4 2 4"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#evaluating-model-fit",
-    "href": "stats-math/07-lecture/07-lecture.html#evaluating-model-fit",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating Model Fit",
-    "text": "Evaluating Model Fit\n\n\n\npp_check(fit2, plotfun = \"ppc_dens_overlay\")\n\n\n\n\n\n\n\n\n\n\npp_check(fit3, plotfun = \"ppc_dens_overlay\")"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#evaluating-model-fit-1",
-    "href": "stats-math/07-lecture/07-lecture.html#evaluating-model-fit-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating Model Fit",
-    "text": "Evaluating Model Fit\n\nPlotsMetrics\n\n\n\np3 &lt;- ppc_intervals(as.numeric(ds$quality[s]), yrep3[, s]) + ggtitle(\"Model 3 predictions\")\np2 + p3 + plot_layout(nrow = 2, byrow = FALSE)\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Mean Square Error for Model 2:\", mean((colMeans(yrep2) - scale(d$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 2: 0.64\n\ncat(\"Mean Square Error for Model 3:\", mean((colMeans(yrep3) - as.numeric(ds$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 3: 0.43\n\ncat(\"Width of the 50% interval for Model 2:\", width(yrep2, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 2: 1.09\n\ncat(\"Width of the 50% interval for Model 3:\", width(yrep3, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 3: 0.72"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#quick-tips-to-improve-your-regression-modeling",
-    "href": "stats-math/07-lecture/07-lecture.html#quick-tips-to-improve-your-regression-modeling",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "10+ quick tips to improve your regression modeling",
-    "text": "10+ quick tips to improve your regression modeling\nThis advice comes from “Regression and Other Stories” by Gelman and Hill\n\n\nThink generatively (+)\nThink about what you are measuring (+)\nThink about variation, replication\nForget about statistical significance\nGraph the relevant and not the irrelevant\nInterpret regression coefficients as comparisons\nUnderstand statistical methods using fake-data simulation\nFit many models\nSet up a computational workflow\nUse transformations\nDo causal inference in a targeted way, not as a byproduct of a large regression\nLearn methods through live examples"
-  },
-  {
-    "objectID": "stats-math/07-lecture/07-lecture.html#so-long-and-thanks-for-all-the-fish",
-    "href": "stats-math/07-lecture/07-lecture.html#so-long-and-thanks-for-all-the-fish",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "So Long (and Thanks for All the Fish)",
-    "text": "So Long (and Thanks for All the Fish)\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nTwitter: @ericnovik\nhttps://www.linkedin.com/in/enovik/\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "section": "Some Problems with Statistical Significance",
+    "text": "Some Problems with Statistical Significance\n\n\nStatistical significance does not mean practical (or in the case of Biostats clinical) significance\nNo significance does not mean there is no effect\nThe difference between “significant” and “not significant” is not itself statistically significant\nResearcher degrees of freedom, p-hacking\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "stats-math/05-lecture/05-partial.html#session-5-outline",

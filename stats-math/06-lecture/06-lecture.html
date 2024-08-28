@@ -1144,7 +1144,7 @@ x &amp; = &amp; A^{-1}b
 <ul>
 <li class="fragment">We are switching to a more familiar (to statisticians) notation of <span class="math inline">\(X \beta = y\)</span> (instead of <span class="math inline">\(Ax = b\)</span>)</li>
 <li class="fragment">We typically augment the <span class="math inline">\(X\)</span> matrix with the column of 1s on the left to model the intercept term, sometimes called <span class="math inline">\(\beta_0\)</span></li>
-<li class="fragment">This should make sense when you think about <span class="math inline">\(Xb\)</span> as the linear combination of columns of <span class="math inline">\(X\)</span></li>
+<li class="fragment">This should make sense when you think about <span class="math inline">\(X \beta\)</span> as the linear combination of columns of <span class="math inline">\(X\)</span></li>
 <li class="fragment">In this form, <span class="math inline">\(X\)</span> is usually called the design matrix or the model matrix</li>
 <li class="fragment">The problem is that <span class="math inline">\(X\)</span> is not invertible, even if columns of <span class="math inline">\(X\)</span> are linearly independent</li>
 <li class="fragment">Let’s say that <span class="math inline">\(X\)</span> is a <span class="math inline">\(3 \times 2\)</span> matrix (3 rows and 2 columns), and columns are linearly independent. Note that <span class="math inline">\(\beta\)</span> is <span class="math inline">\(2 \times 1\)</span> and <span class="math inline">\(y\)</span> is <span class="math inline">\(3 \times 1\)</span>.</li>
@@ -1279,13 +1279,13 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <div>
 <ul>
 <li class="fragment"><p>This is a quadratic function. How can we solve it using linear regression (the least squares method)?</p></li>
-<li class="fragment"><p>We assumed the equation of motion was <span class="math inline">\(x(t) = a + bt^2\)</span></p></li>
-<li class="fragment"><p>The unknowns are <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span></p></li>
-<li class="fragment"><p>Let’s express it in the matrix notation and relabel the variables to match our system: <span class="math inline">\(y = \beta_0 + \beta x^2\)</span>. Nothing changes, just the labels.</p></li>
-<li class="fragment"><p>What is our design matrix <span class="math inline">\(X\)</span>? We had 51 observations, so <span class="math inline">\(X\)</span> will have two columns with 51 elements each: a column of 1s and a column representing the squares measurements: <span class="math inline">\(x^2\)</span>.</p></li>
+<li class="fragment"><p>We assumed the equation of motion was <span class="math inline">\(x(t) = a + bt^2\)</span>, which we will write as <span class="math inline">\(y(t) = \beta_0 + \beta_1 t^2\)</span></p></li>
+<li class="fragment"><p>The unknowns are <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span></p></li>
+<li class="fragment"><p>Let’s express it in the matrix notation</p></li>
+<li class="fragment"><p>What is our design matrix <span class="math inline">\(X\)</span>? We have 51 observations, so <span class="math inline">\(X\)</span> will have two columns and 51 rows: a column of 1s for the intercept and a column of times squared <span class="math inline">\(t^2\)</span></p></li>
 <li class="fragment"><p>Our unknown vector <span class="math inline">\(\hat{\beta}\)</span> has two elements <span class="math inline">\((\hat{\beta_0},\, \hat{\beta_1)}\)</span></p></li>
-<li class="fragment"><p><span class="math inline">\(y\)</span> is our outcome vector of length 51, capturing the car’s position at each time point <span class="math inline">\(x\)</span>.</p></li>
-<li class="fragment"><p>This way, <span class="math inline">\(y = X\hat{\beta}\)</span> captures our system in matrix form</p></li>
+<li class="fragment"><p><span class="math inline">\(y\)</span> is our outcome vector of length 51, capturing the car’s position at each time point <span class="math inline">\(t\)</span></p></li>
+<li class="fragment"><p><span class="math inline">\(y = X\hat{\beta}\)</span> captures our system in matrix form</p></li>
 </ul>
 </div>
 </div>
@@ -1294,18 +1294,18 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="co"># length of x (our time vector)</span></span>
-<span id="cb73-2"><a></a><span class="fu">length</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="co"># length of t (our time vector)</span></span>
+<span id="cb73-2"><a></a><span class="fu">length</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 51</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="co"># first few elements of x</span></span>
-<span id="cb75-2"><a></a><span class="fu">head</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="co"># first few elements of t</span></span>
+<span id="cb75-2"><a></a><span class="fu">head</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.0 0.1 0.2 0.3 0.4 0.5</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="co"># construct the design matrix</span></span>
-<span id="cb77-2"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(x)), x<span class="sc">^</span><span class="dv">2</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb77-2"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(t)), t<span class="sc">^</span><span class="dv">2</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
 <span id="cb77-3"><a></a><span class="fu">head</span>(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2]
@@ -1342,16 +1342,18 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 [1,] 1.46
 [2,] 3.01</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a><span class="co"># compare to R's lm()</span></span>
-<span id="cb85-2"><a></a><span class="fu">lm</span>(y <span class="sc">~</span> <span class="fu">I</span>(x<span class="sc">^</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y, <span class="at">t_squared =</span> t<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb85-2"><a></a><span class="co"># compare to R's lm()</span></span>
+<span id="cb85-3"><a></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> t_squared, <span class="at">data =</span> data)</span>
+<span id="cb85-4"><a></a>arm<span class="sc">::</span><span class="fu">display</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = y ~ I(x^2))
-
-Coefficients:
-(Intercept)       I(x^2)  
-      1.460        3.014  </code></pre>
+<pre><code>lm(formula = y ~ t_squared, data = data)
+            coef.est coef.se
+(Intercept) 1.46     0.54   
+t_squared   3.01     0.05   
+---
+n = 51, k = 2
+residual sd = 2.60, R-Squared = 0.99</code></pre>
 </div>
 </div>
 </div>
@@ -1369,7 +1371,7 @@ Coefficients:
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-33-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1382,7 +1384,7 @@ Coefficients:
 <h2>Your Turn</h2>
 <ul>
 <li>Look at the dataset <code>mtcars</code></li>
-<li>Plot <code>mpg</code> against <code>wp</code>, treating <code>mpg</code> as the output variable <span class="math inline">\(y\)</span>. (We generally don’t like to use the words dependent vs.&nbsp;independent in this context)</li>
+<li>Plot <code>mpg</code> against <code>wt</code>, treating <code>mpg</code> as the output variable <span class="math inline">\(y\)</span>. (We generally don’t like to use the words dependent vs.&nbsp;independent in this context)</li>
 <li>Using the normal equations, find the intercept and slope of the best-fit line</li>
 <li>Validate that it matches the output from <code>lm</code></li>
 <li>Now plot the line over the data and see if it “fits”</li>
