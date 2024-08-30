@@ -1589,200 +1589,207 @@
     "text": "References\n\n\n\nhttps://ericnovik.github.io/smac.html\n\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#session-8-outline",
-    "href": "stats-math/08-lecture/08-new.html#session-8-outline",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#session-8-outline",
+    "href": "stats-math/08-lecture/08-lecture-old.html#session-8-outline",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Session 8 Outline",
-    "text": "Session 8 Outline\n\n\nStatistical analysis workflow\nSimulating data for simple regression\nBinary predictor in a regression\nAdding continuous predictor\nCombining binary and continuous predictors\nInterpreting coefficients\nAdding interactions\nUncertainty and predictions\nAssumptions of the regression analysis\nRegression modeling advice\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "text": "Session 8 Outline\n\n\nStatistical analysis workflow\nIntroduction to the rstanarm package\nSetting up a linear regression\nModel evaluation\nModel expansion\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#analysis-workflow",
-    "href": "stats-math/08-lecture/08-new.html#analysis-workflow",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#analysis-workflow",
+    "href": "stats-math/08-lecture/08-lecture-old.html#analysis-workflow",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Analysis Workflow",
     "text": "Analysis Workflow\n\nFollowing is a high-level, end-to-end view from “R for Data Science” by Wickham and Grolemund"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#some-notation",
-    "href": "stats-math/08-lecture/08-new.html#some-notation",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#analysis-workflow-1",
+    "href": "stats-math/08-lecture/08-lecture-old.html#analysis-workflow-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Some Notation",
-    "text": "Some Notation\n\n\nObserved data \\(y\\)\nUnobserved but observable data \\(\\widetilde{y}\\)\nUnobservable parameters \\(\\theta\\)\nCovariates \\(X\\)\nPrior distribution \\(f(\\theta)\\) (for Bayesian inference)\nData model or sampling distribution (as a function of y) \\(f(y \\mid \\theta, X)\\)\nLikelihood (as a function of \\(\\theta\\)), \\(f(y \\mid \\theta, X)\\), sometimes written as \\(\\mathcal{L}(\\theta \\mid y, X)\\)\nMaximum likelihood estimate (MLE): \\(\\hat{\\theta} = \\underset{\\theta}{\\text{argmax}} \\, \\mathcal{L}(\\theta \\mid y, X)\\) (for Frequentist inference)\nPosterior distribution \\(f(\\theta \\mid y, X)\\) (for Bayesian inference)"
+    "section": "Analysis Workflow",
+    "text": "Analysis Workflow\n\n\n\nA more comprehensive “Bayesian Workflow” by Gelman at al."
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#bayes-vs-frequentist-inference",
-    "href": "stats-math/08-lecture/08-new.html#bayes-vs-frequentist-inference",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#some-notation",
+    "href": "stats-math/08-lecture/08-lecture-old.html#some-notation",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Some Notation",
+    "text": "Some Notation\n\n\nObserved data \\(y\\)\nUnobserved but observable data \\(\\widetilde{y}\\)\nUnobservable parameters \\(\\theta\\)\nCovariates \\(X\\)\nPrior distribution \\(f(\\theta)\\)\nLikelihood (as a function of \\(\\theta\\)), \\(f(y | \\theta, X)\\)\nPosterior distribution \\(f(\\theta | y, X)\\) (for Bayesian inference only)"
+  },
+  {
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#bayes-vs-frequentist-inference",
+    "href": "stats-math/08-lecture/08-lecture-old.html#bayes-vs-frequentist-inference",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Bayes vs Frequentist Inference",
     "text": "Bayes vs Frequentist Inference\n\n\n\n\nEstimation is the process of figuring out the unknowns, i.e., unobserved quantities\nIn frequentist inference, the problem is framed in terms of the most likely value(s) of \\(\\theta\\)\nBayesians want to characterize the whole distribution, a much more ambitious goal\n\n\n\n\n\nSuppose we want to characterize the following function, which represents some distribution of the unknown parameter:"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#basic-regression-setup",
-    "href": "stats-math/08-lecture/08-new.html#basic-regression-setup",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#wine-dataset",
+    "href": "stats-math/08-lecture/08-lecture-old.html#wine-dataset",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Basic Regression Setup",
-    "text": "Basic Regression Setup\n\n\nThere are lots of possible ways to set up a regression\nOne predictor: \\(y = a + bx + \\epsilon\\)\nMultiple predictors: \\(y = b_0 + b_1x_1 + b_2x_2 + \\cdots + b_nx_n + \\epsilon\\), which we can write as \\(y = X\\beta + \\epsilon\\)\nModels with interactions: \\(y = b_0 + b_1x_1 + b_2x_2 +  b_3x_1x_2 + \\epsilon\\)\nNon-linear models like: \\(\\log(y) = a + b\\log(x) + \\epsilon\\)\nGeneralized Linear Models (GLMs), which can, for example, fit binary data, categorical data, and so on\nNonparametric models that are popular in Machine Learning that can learn flexible, functional forms between \\(y\\) and \\(X\\)\nThe latter is not a panacea — if you have a good or good enough functional form, predictions will generally be better and the model will generalize better\n\n\n\nMost of the material in this section comes from Regression and Other Stories by Gelman et al."
+    "section": "Wine Dataset",
+    "text": "Wine Dataset"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#simulating-a-simple-regression",
-    "href": "stats-math/08-lecture/08-new.html#simulating-a-simple-regression",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#wine-dataset-1",
+    "href": "stats-math/08-lecture/08-lecture-old.html#wine-dataset-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Simulating a Simple Regression",
-    "text": "Simulating a Simple Regression\n\nFitting simulated data is a good start for an analysis\n\n\nlibrary(rstanarm)\nn &lt;- 15; x &lt;- 1:n\na &lt;- 0.5\nb &lt;- 2\nsigma &lt;- 3\ny &lt;- a + b*x + rnorm(n, mean = 0, sd = sigma) # or sigma * rnorm(n)\ndata &lt;- data.frame(x, y)\nfit1 &lt;- stan_glm(y ~ x, data = data, refresh = 0) \nprint(fit1)\n\nstan_glm\n family:       gaussian [identity]\n formula:      y ~ x\n observations: 15\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 3.6    1.5   \nx           1.7    0.2   \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 2.9    0.6   \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg"
+    "section": "Wine Dataset",
+    "text": "Wine Dataset\n\nd &lt;- read.delim(\"data/winequality-red.csv\", sep = \";\")\ndim(d)\n\n[1] 1599   12\n\nd &lt;- d[!duplicated(d), ] # remove the duplicates\ndim(d)\n\n[1] 1359   12\n\nknitr::kable(head(d))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n7.4\n0.70\n0.00\n1.9\n0.076\n11\n34\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n2\n7.8\n0.88\n0.00\n2.6\n0.098\n25\n67\n0.9968\n3.20\n0.68\n9.8\n5\n\n\n3\n7.8\n0.76\n0.04\n2.3\n0.092\n15\n54\n0.9970\n3.26\n0.65\n9.8\n5\n\n\n4\n11.2\n0.28\n0.56\n1.9\n0.075\n17\n60\n0.9980\n3.16\n0.58\n9.8\n6\n\n\n6\n7.4\n0.66\n0.00\n1.8\n0.075\n13\n40\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n7\n7.9\n0.60\n0.06\n1.6\n0.069\n15\n59\n0.9964\n3.30\n0.46\n9.4\n5"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#simulating-a-simple-regression-1",
-    "href": "stats-math/08-lecture/08-new.html#simulating-a-simple-regression-1",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#scaling-the-data",
+    "href": "stats-math/08-lecture/08-lecture-old.html#scaling-the-data",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Simulating a Simple Regression",
-    "text": "Simulating a Simple Regression\n\nWe extract our betas using the coef() R function\n\n\na_hat &lt;- coef(fit1)[1]\nb_hat &lt;- coef(fit1)[2]\np &lt;- ggplot(aes(x, y), data = data)\np + geom_point(size = 0.2) + geom_abline(intercept = a_hat, slope = b_hat, linewidth = 0.1)"
+    "section": "Scaling the Data",
+    "text": "Scaling the Data\n\nds &lt;- scale(d) # subtract the mean and divide by sd\nknitr::kable(head(ds) %&gt;% round(2))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n-0.52\n0.93\n-1.39\n-0.46\n-0.25\n-0.47\n-0.38\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n2\n-0.29\n1.92\n-1.39\n0.06\n0.20\n0.87\n0.60\n0.05\n-0.71\n0.12\n-0.58\n-0.76\n\n\n3\n-0.29\n1.26\n-1.19\n-0.17\n0.08\n-0.09\n0.21\n0.16\n-0.32\n-0.05\n-0.58\n-0.76\n\n\n4\n1.66\n-1.36\n1.47\n-0.46\n-0.27\n0.11\n0.39\n0.69\n-0.97\n-0.46\n-0.58\n0.46\n\n\n6\n-0.52\n0.71\n-1.39\n-0.53\n-0.27\n-0.28\n-0.20\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n7\n-0.24\n0.39\n-1.09\n-0.68\n-0.39\n-0.09\n0.36\n-0.17\n-0.06\n-1.16\n-0.95\n-0.76\n\n\n\n\ncheck &lt;- apply(ds, 2, function(x) c(mean = mean(x), sd = sd(x))) %&gt;% round(2)\nknitr::kable(check)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\nmean\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\nsd\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n\n\n\n\nclass(ds); ds &lt;- as_tibble(ds)\n\n[1] \"matrix\" \"array\""
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#kidiq-dataset",
-    "href": "stats-math/08-lecture/08-new.html#kidiq-dataset",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#quality-rating-of-red-wine",
+    "href": "stats-math/08-lecture/08-lecture-old.html#quality-rating-of-red-wine",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "KidIQ Dataset",
-    "text": "KidIQ Dataset\n\nData from a survey of adult American women and their children (a subsample from the National Longitudinal Survey of Youth).\n\n\nknitr::kable(rstanarm::kidiq[1:8, ])\n\n\n\n\nkid_score\nmom_hs\nmom_iq\nmom_age\n\n\n\n\n65\n1\n121.11753\n27\n\n\n98\n1\n89.36188\n25\n\n\n85\n1\n115.44316\n27\n\n\n83\n1\n99.44964\n25\n\n\n115\n1\n92.74571\n27\n\n\n98\n0\n107.90184\n18\n\n\n69\n1\n138.89311\n20\n\n\n106\n1\n125.14512\n23"
+    "section": "Quality Rating of Red Wine",
+    "text": "Quality Rating of Red Wine\n\n\n\nUnscaled Quality\n\n\nqplot(d$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")\n\n\n\n\n\n\n\n\n\n\nScaled Quality\n\n\nqplot(ds$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#single-binary-predictor",
-    "href": "stats-math/08-lecture/08-new.html#single-binary-predictor",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#alcohol",
+    "href": "stats-math/08-lecture/08-lecture-old.html#alcohol",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Single Binary Predictor",
-    "text": "Single Binary Predictor\n\nfit2 &lt;- stan_glm(kid_score ~ mom_hs, data = kidiq, refresh = 0) \nprint(fit2)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs\n observations: 434\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 77.6    2.1  \nmom_hs      11.7    2.4  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 19.9    0.7  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is \\(\\text{kid_score} = 78 + 12 \\cdot \\text{mom_hs} + \\epsilon\\)\nWhat is the average IQ of kids whose mothers did not complete high school? (in this dataset)\nWhat is the average IQ of kids whose mothers completed high school?\nDid high school cause the IQ change?"
+    "section": "Alcohol",
+    "text": "Alcohol\n\np &lt;- ggplot(ds, aes(alcohol, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Alcohol\") + ylab(\"Quality (Jittered)\")"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#single-binary-predictor-1",
-    "href": "stats-math/08-lecture/08-new.html#single-binary-predictor-1",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#volatile-acidity",
+    "href": "stats-math/08-lecture/08-lecture-old.html#volatile-acidity",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Single Binary Predictor",
-    "text": "Single Binary Predictor\n\np &lt;- ggplot(aes(mom_hs, kid_score), data = kidiq)\np + geom_jitter(height = 0, width = 0.1, size = 0.2) +\n  geom_abline(intercept = coef(fit2)[1], slope = coef(fit2)[2], linewidth = 0.1) +\n  scale_x_continuous(breaks = c(0, 1))"
+    "section": "Volatile Acidity",
+    "text": "Volatile Acidity\n\np &lt;- ggplot(ds, aes(volatile.acidity, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Volatile Acidity\") + ylab(\"Quality (Jittered)\")"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#single-continous-predictor",
-    "href": "stats-math/08-lecture/08-new.html#single-continous-predictor",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#correlations",
+    "href": "stats-math/08-lecture/08-lecture-old.html#correlations",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Single Continous Predictor",
-    "text": "Single Continous Predictor\n\nfit3 &lt;- stan_glm(kid_score ~ mom_iq, data = kidiq, refresh = 0) \nprint(fit3)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_iq\n observations: 434\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 25.9    6.0  \nmom_iq       0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.3    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is \\(\\text{kid_score} = 26 + 0.6 \\cdot \\text{mom_iq}+ \\epsilon\\)\nHow much do kids’ scores improve when maternal IQ differs by 10 points?\nWhat is the meaning of the intercepts = 26 here?"
+    "section": "Correlations",
+    "text": "Correlations\n\nlibrary(corrplot)\nM &lt;- cor(ds)\ncorrplot(M, method = 'ellipse', order = 'AOE', type = 'upper')"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#simple-transformations",
-    "href": "stats-math/08-lecture/08-new.html#simple-transformations",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#linear-regression",
+    "href": "stats-math/08-lecture/08-lecture-old.html#linear-regression",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Simple Transformations",
-    "text": "Simple Transformations\n\nWe will create a new variable called mom_iq_c, which stands for centered\nThe transformation: \\(\\text{mom_iq_c}_i = \\text{mom_iq}_i - \\overline{\\text{mom_iq}}\\)\n\n\nkidiq &lt;- kidiq |&gt;\n  mutate(mom_iq_c = mom_iq - mean(mom_iq))\nfit4 &lt;- stan_glm(kid_score ~ mom_iq_c, data = kidiq, refresh = 0) \nprint(fit4)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_iq_c\n observations: 434\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 86.8    0.9  \nmom_iq_c     0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.3    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is \\(\\text{kid_score} = 87 + 0.6 \\cdot \\text{mom_iq_c}+ \\epsilon\\)\nWhat is the meaning of the intercepts in this model?"
+    "section": "Linear Regression",
+    "text": "Linear Regression\n\n\nWe will fit a linear regression to the scaled wine dataset\nThe priors come from (sensible) defaults in rstanarm\nLinear regression can be specified in the following way, where \\(X\\) is the design matrix with one or more scaled predictors and \\(y\\) is the scaled quality score\n\n\n\n\\[\n\\begin{aligned}\ny &\\sim \\mathrm{Normal}(\\alpha + X \\beta, \\ \\sigma) \\\\\n\\alpha &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\beta &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\sigma &\\sim \\mathrm{Exp}(1)\n\\end{aligned}\n\\]"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#single-continous-predictor-1",
-    "href": "stats-math/08-lecture/08-new.html#single-continous-predictor-1",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#estimation-using-rs-lm",
+    "href": "stats-math/08-lecture/08-lecture-old.html#estimation-using-rs-lm",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Single Continous Predictor",
-    "text": "Single Continous Predictor\n\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(size = 0.2) +\n  geom_abline(intercept = coef(fit3)[1], slope = coef(fit3)[2], linewidth = 0.1)"
+    "section": "Estimation using R’s lm()",
+    "text": "Estimation using R’s lm()\n\n\nWe will start by comparing alcohol content to quality ratings\nIn R’s lm() priors are not specified – they are uniform\n\n\n\n\nfit1_freq &lt;- lm(quality ~ alcohol, data = ds)\narm::display(fit1_freq)\n\nlm(formula = quality ~ alcohol, data = ds)\n            coef.est coef.se\n(Intercept) 0.00     0.02   \nalcohol     0.48     0.02   \n---\nn = 1359, k = 2\nresidual sd = 0.88, R-Squared = 0.23\n\n# avoid R's summary() function\nsummary(fit1_freq)\n\n\nCall:\nlm(formula = quality ~ alcohol, data = ds)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-3.4372 -0.4761 -0.2097  0.6494  3.1666 \n\nCoefficients:\n              Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -7.310e-15  2.380e-02    0.00        1    \nalcohol      4.803e-01  2.381e-02   20.17   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 0.8774 on 1357 degrees of freedom\nMultiple R-squared:  0.2307,    Adjusted R-squared:  0.2302 \nF-statistic:   407 on 1 and 1357 DF,  p-value: &lt; 2.2e-16"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#combining-the-predictors",
-    "href": "stats-math/08-lecture/08-new.html#combining-the-predictors",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#running-the-regression-in-rstanarm",
+    "href": "stats-math/08-lecture/08-lecture-old.html#running-the-regression-in-rstanarm",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Combining the Predictors",
-    "text": "Combining the Predictors\n\nfit5 &lt;- stan_glm(kid_score ~ mom_hs + mom_iq_c, data = kidiq, refresh = 0)\nprint(fit5)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs + mom_iq_c\n observations: 434\n predictors:   3\n------\n            Median MAD_SD\n(Intercept) 82.1    1.9  \nmom_hs       6.0    2.2  \nmom_iq_c     0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.2    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is now: \\(\\text{kid_score} = 82 + 6 \\cdot \\text{mom_hs} + 0.6 \\cdot \\text{mom_iq_c}+ \\epsilon\\)\nWrite down the interpretation of each coefficient"
+    "section": "Running the Regression in rstanarm",
+    "text": "Running the Regression in rstanarm\n\nlibrary(rstanarm)\noptions(mc.cores = parallel::detectCores())\nfit1 &lt;- stan_glm(quality ~ alcohol, data = ds, refresh = 0)\nsummary(fit1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      quality ~ alcohol\n algorithm:    sampling\n sample:       4000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 1359\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 0.0    0.0  0.0   0.0   0.0  \nalcohol     0.5    0.0  0.4   0.5   0.5  \nsigma       0.9    0.0  0.9   0.9   0.9  \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 0.0    0.0  0.0   0.0   0.0  \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  3930 \nalcohol       0.0  1.0  4059 \nsigma         0.0  1.0  3914 \nmean_PPD      0.0  1.0  4029 \nlog-posterior 0.0  1.0  1689 \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#combining-the-predictors-1",
-    "href": "stats-math/08-lecture/08-new.html#combining-the-predictors-1",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#plotting",
+    "href": "stats-math/08-lecture/08-lecture-old.html#plotting",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Combining the Predictors",
-    "text": "Combining the Predictors\n\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs + mom_iq\n observations: 434\n predictors:   3\n------\n            Median MAD_SD\n(Intercept) 25.7    5.9  \nmom_hs       6.0    2.1  \nmom_iq       0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.2    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\nOur model is: \\(\\text{kid_score} = 26 + 6 \\cdot \\text{mom_hs} + 0.6 \\cdot \\text{mom_iq}+ \\epsilon\\)\nFor moms that did not complete high school, the line \\(y = 26 + 0.6 \\cdot \\text{mom_iq}\\)\nFor moms that did: \\(\\text{kid_score} = 26 + 6 \\cdot 1 + 0.6 \\cdot \\text{mom_iq} = 32 + 0.6 \\cdot \\text{mom_iq}\\)"
+    "section": "Plotting",
+    "text": "Plotting\n\n\n\nplot(fit1, plotfun = \"areas\", prob = 0.9)\n\n\n\n\n\n\n\n\n\n\nposterior_vs_prior(fit1)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#visualizing-the-fit-with-two-predictors",
-    "href": "stats-math/08-lecture/08-new.html#visualizing-the-fit-with-two-predictors",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#evaluating-the-model",
+    "href": "stats-math/08-lecture/08-lecture-old.html#evaluating-the-model",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Visualizing the Fit With Two Predictors",
-    "text": "Visualizing the Fit With Two Predictors\n\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(aes(color = as.factor(mom_hs)), size = 0.2) +\n  labs(color = \"Mom HS\") +\n  geom_abline(intercept = coef(fit6)[1], slope = coef(fit6)[3], linewidth = 0.1, color = 'red') +\n  geom_abline(intercept = coef(fit6)[1] + coef(fit6)[2], slope = coef(fit6)[3], linewidth = 0.1, color = 'blue')"
+    "section": "Evaluating the Model",
+    "text": "Evaluating the Model\n\nHow good is this model?\n\n\np1 &lt;- pp_check(fit1, plotfun = \"ppc_dens_overlay\"); p2 &lt;- pp_check(fit1, plotfun = \"ppc_ecdf_overlay\")\np3 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"mean\"); p4 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"sd\")\np1 + p2 + p3 + p4"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#adding-interactions",
-    "href": "stats-math/08-lecture/08-new.html#adding-interactions",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#evaluating-the-model-1",
+    "href": "stats-math/08-lecture/08-lecture-old.html#evaluating-the-model-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Adding Interactions",
-    "text": "Adding Interactions\n\nIn the previous model, we forced the slopes of mothers who completed and did not complete high school to be the same — the only difference was the intercept\nTo allow the slopes to vary, we include an interaction term\n\n\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs + mom_iq + mom_hs:mom_iq\n observations: 434\n predictors:   4\n------\n              Median MAD_SD\n(Intercept)   -10.0   13.2 \nmom_hs         49.7   14.8 \nmom_iq          1.0    0.1 \nmom_hs:mom_iq  -0.5    0.2 \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.0    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is: \\(\\text{kid_score} = -10 + 49 \\cdot \\text{mom_hs} + 1 \\cdot \\text{mom_iq} - 0.5 \\cdot \\text{mom_hs} \\cdot \\text{mom_iq} + \\epsilon\\)\nTo figure out the slopes, we consider two cases\nFor \\(\\text{mom_hs} = 0\\), the line is: \\(\\text{kid_score} = -10 + 1 \\cdot \\text{mom_iq}\\)\nFor \\(\\text{mom_hs} = 1\\), the line is: \\(\\text{kid_score} = -10 + 49 \\cdot 1 + 1 \\cdot \\text{mom_iq} - 0.5 \\cdot 1 \\cdot \\text{mom_iq} = 39 + 0.5\\cdot \\text{mom_iq}\\)"
+    "section": "Evaluating the Model",
+    "text": "Evaluating the Model\n\nHow good is this model?\n\n\nyrep1 &lt;- posterior_predict(fit1)\ndim(yrep1)\n\n[1] 4000 1359\n\ns &lt;- sample(1:nrow(ds), size = 50) # select 50 random records\np1 &lt;- ppc_intervals(ds$quality[s], yrep1[, s]); p1"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#visualizing-interactions",
-    "href": "stats-math/08-lecture/08-new.html#visualizing-interactions",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#we-can-add-other-predictors",
+    "href": "stats-math/08-lecture/08-lecture-old.html#we-can-add-other-predictors",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Visualizing Interactions",
-    "text": "Visualizing Interactions\n\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(aes(color = as.factor(mom_hs)), size = 0.2) +\n  labs(color = \"Mom HS\") +\n  geom_abline(intercept = coef(fit7)[1], slope = coef(fit7)[3], linewidth = 0.1, color = 'red') +\n  geom_abline(intercept = coef(fit7)[1] + coef(fit7)[2], slope = coef(fit7)[3] + coef(fit7)[4], linewidth = 0.1, color = 'blue')"
+    "section": "We Can Add Other Predictors",
+    "text": "We Can Add Other Predictors\n\nfit2 &lt;- stan_glm(quality ~ ., data = ds, refresh = 0)\nplot(fit2, plotfun = \"areas\", prob = 0.9, params = \"alcohol\")"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#interpreting-coefficients-in-complex-non-linear-models",
-    "href": "stats-math/08-lecture/08-new.html#interpreting-coefficients-in-complex-non-linear-models",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#have-we-improved-the-model",
+    "href": "stats-math/08-lecture/08-lecture-old.html#have-we-improved-the-model",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Interpreting Coefficients in Complex Non-Linear Models",
-    "text": "Interpreting Coefficients in Complex Non-Linear Models\n\n\nModels that have many parameters, many interactions, and are non-linear are difficult to interpret by looking at parameters marginally (i.e., one at a time)\nFor this reason, we typically rely on assessing how changes to model inputs affect model predictions, not the impact of each parameter\nPredictions take all the parameter values and their interactions into account"
+    "section": "Have We Improved the Model",
+    "text": "Have We Improved the Model\n\nyrep2 &lt;- posterior_predict(fit2)\np1 &lt;- p1 + ggtitle(\"Model 1 predictions\")\np2 &lt;- ppc_intervals(ds$quality[s], yrep2[, s]) + ggtitle(\"Model 2 predictions\")\np1 + p2 + plot_layout(nrow = 2, byrow = FALSE)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#uncertainty-and-prediction",
-    "href": "stats-math/08-lecture/08-new.html#uncertainty-and-prediction",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#have-we-improved-the-model-1",
+    "href": "stats-math/08-lecture/08-lecture-old.html#have-we-improved-the-model-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Uncertainty and Prediction",
-    "text": "Uncertainty and Prediction\n\n\nWe return to our simple linear regression model: \\(\\text{kid_score} = 26 + 0.6 \\cdot \\text{mom_iq}+ \\epsilon\\)\nWe can extract the simulations of all plausible parameter values (called a posterior distribution in Bayesian analysis)\n\n\n\n\npost &lt;- as.matrix(fit3)\ndim(post)\n\n[1] 4000    3\n\nknitr::kable(post[1:5, ])\n\n\n\n\n(Intercept)\nmom_iq\nsigma\n\n\n\n\n24.09719\n0.6290712\n17.95252\n\n\n27.53930\n0.5949530\n17.97956\n\n\n27.78007\n0.5880176\n17.43575\n\n\n27.17358\n0.5857842\n18.98631\n\n\n25.33189\n0.6105471\n18.90200"
+    "section": "Have We Improved the Model",
+    "text": "Have We Improved the Model\n\n# Mean Square Error for Model 1\nmean((colMeans(yrep1) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.77\n\n# Mean Square Error for Model 2\nmean((colMeans(yrep2) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.64\n\nwidth &lt;- function(yrep, q1, q2) {\n  q &lt;- apply(yrep, 2, function (x) quantile(x, probs = c(q1, q2)))\n  width &lt;- apply(q, 2, diff)\n  return(mean(width))\n}\nwidth(yrep1, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.18\n\nwidth(yrep2, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.09"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#uncertainty-and-prediction-1",
-    "href": "stats-math/08-lecture/08-new.html#uncertainty-and-prediction-1",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#comparing-out-of-sample-performance",
+    "href": "stats-math/08-lecture/08-lecture-old.html#comparing-out-of-sample-performance",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Uncertainty and Prediction",
-    "text": "Uncertainty and Prediction\n\n\nUsing these simulations we display 50 plausible regression lines\n\n\n\n\npost &lt;- as.data.frame(fit3)\npost_sub &lt;- post[sample(1:nrow(post), 50), ]\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(size = 0.2) + \n  geom_abline(aes(intercept = `(Intercept)`, slope = mom_iq), \n              linewidth = 0.1,\n              data = post_sub)"
+    "section": "Comparing Out of Sample Performance",
+    "text": "Comparing Out of Sample Performance\n\nloo1 &lt;- loo(fit1, cores = 4)\nloo2 &lt;- loo(fit2, cores = 4)\nloo_compare(loo1, loo2)\n\n     elpd_diff se_diff\nfit2    0.0       0.0 \nfit1 -117.6      17.8 \n\n\nVehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint."
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#uncertainty-and-prediction-2",
-    "href": "stats-math/08-lecture/08-new.html#uncertainty-and-prediction-2",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#can-we-still-improve-the-model",
+    "href": "stats-math/08-lecture/08-lecture-old.html#can-we-still-improve-the-model",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Uncertainty and Prediction",
-    "text": "Uncertainty and Prediction\n\n\nWe can compute inferential uncertainty in all the parameters directly\nWe can also compute event probabilities\n\n\n\n\npost &lt;- as.matrix(fit3)\n# median\napply(post, 2, median)\n\n(Intercept)      mom_iq       sigma \n 25.9055009   0.6091822  18.2948953 \n\napply(post, 2, mad)\n\n(Intercept)      mom_iq       sigma \n 6.04544342  0.06002576  0.60673742 \n\n# 50% uncertainty estimate\napply(post, 2, quantile, probs = c(0.25, 0.75))\n\n     parameters\n      (Intercept)    mom_iq    sigma\n  25%    21.78901 0.5684089 17.88528\n  75%    29.92900 0.6494455 18.70283\n\n# 90% uncertainty estimate\napply(post, 2, quantile, probs = c(0.05, 0.95))\n\n     parameters\n      (Intercept)    mom_iq    sigma\n  5%     15.90252 0.5099789 17.30298\n  95%    35.91615 0.7073038 19.29997\n\n# What is the probability that the coefficient of mom_iq is &gt; 0.6\nmean(post[, \"mom_iq\"] &gt; 0.6) |&gt; round(2)\n\n[1] 0.56"
+    "section": "Can We Still Improve the Model",
+    "text": "Can We Still Improve the Model\n\n\nQuality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal\nFor more information, see ordered logistic distribution in the Stan manual\nWe are going to use the following parameterization available in Stan:\n\n\n\n\\[\n\\text{OrderedLogistic}(k~|~\\eta,c) = \\left\\{ \\begin{array}{ll} 1 -\n\\text{logit}^{-1}(\\eta - c_1)  &  \\text{if } k = 1, \\\\[4pt]\n\\text{logit}^{-1}(\\eta - c_{k-1}) - \\text{logit}^{-1}(\\eta - c_{k})  &\n\\text{if } 1 &lt; k &lt; K, \\text{and} \\\\[4pt] \\text{logit}^{-1}(\\eta -\nc_{K-1}) - 0  &  \\text{if } k = K \\end{array} \\right.\n\\]\n\n\n\nA similar model can fit with frequentist methods using MASS::polr() function"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#types-of-prediction",
-    "href": "stats-math/08-lecture/08-new.html#types-of-prediction",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#fitting-ordered-logistic",
+    "href": "stats-math/08-lecture/08-lecture-old.html#fitting-ordered-logistic",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Types of Prediction",
-    "text": "Types of Prediction\n\n\nPoint prediction: \\(\\hat{a} + \\hat{b}x^{\\text{new}}\\) — predicting expected average \\(y\\) — don’t recommend\nLinear predictor with uncertainty in \\(a\\) and \\(b\\): \\(a + bx^{\\text{new}}\\) — predicting uncertainty around the expexted average value of \\(y\\) — typically used to assess treatment effect\nPredictive distribution: \\(a + bx^{\\text{new}} + \\epsilon\\) — predictive uncertainty around a new \\(y\\) — used to predict for a new individual (not ATT)"
+    "section": "Fitting Ordered Logistic",
+    "text": "Fitting Ordered Logistic\n\nds$quality &lt;- d$quality - 2          # quality vector is now 1:6\nds$quality &lt;- as.factor(ds$quality)  # it has to be treated as factor (category)\nfit3 &lt;- stan_polr(quality ~ ., prior = R2(0.25), # the prior is on explained variance\n                  prior_counts = dirichlet(1), \n                  data = ds, iter = 1000, refresh = 0)\nyrep3 &lt;- posterior_predict(fit3)\nyrep3[1:5, 1:5]\n\n     1   2   3   4   5  \n[1,] \"1\" \"3\" \"4\" \"4\" \"4\"\n[2,] \"4\" \"3\" \"3\" \"3\" \"3\"\n[3,] \"3\" \"3\" \"3\" \"4\" \"3\"\n[4,] \"3\" \"3\" \"3\" \"3\" \"3\"\n[5,] \"4\" \"4\" \"4\" \"3\" \"3\"\n\nyrep3 &lt;- apply(yrep3, 2, as.numeric)\nyrep3[1:5, 1:5]\n\n     1 2 3 4 5\n[1,] 1 3 4 4 4\n[2,] 4 3 3 3 3\n[3,] 3 3 3 4 3\n[4,] 3 3 3 3 3\n[5,] 4 4 4 3 3"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#prediction-in-rstanarm",
-    "href": "stats-math/08-lecture/08-new.html#prediction-in-rstanarm",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#evaluating-model-fit",
+    "href": "stats-math/08-lecture/08-lecture-old.html#evaluating-model-fit",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Prediction in RStanArm",
-    "text": "Prediction in RStanArm\n\nWe observe a new kid whose mom’s IQ = 120\nPoint prediction is shown in Red, 90% uncertainty around the average kid score in Blue, and 90% predictive uncertainty for a new kid is in Yellow.\n\n\n\n\nmom120 &lt;- data.frame(mom_iq = 120)\n(point_pred &lt;- predict(fit3, newdata = mom120))\n\n       1 \n98.94022 \n\nlin_pred &lt;- posterior_linpred(fit3, \n                              newdata = mom120)\npost_pred &lt;- posterior_predict(fit3, \n                               newdata = mom120)\n(lp_range &lt;- quantile(lin_pred, \n                      probs = c(0.05, 0.95)))\n\n       5%       95% \n 96.46994 101.37707 \n\n(pp_range &lt;- quantile(post_pred, \n                      probs = c(0.05, 0.95)))\n\n       5%       95% \n 69.29164 129.35116"
+    "section": "Evaluating Model Fit",
+    "text": "Evaluating Model Fit\n\n\n\npp_check(fit2, plotfun = \"ppc_dens_overlay\")\n\n\n\n\n\n\n\n\n\n\npp_check(fit3, plotfun = \"ppc_dens_overlay\")"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#linear-regression-assumptions",
-    "href": "stats-math/08-lecture/08-new.html#linear-regression-assumptions",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#evaluating-model-fit-1",
+    "href": "stats-math/08-lecture/08-lecture-old.html#evaluating-model-fit-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Linear Regression Assumptions",
-    "text": "Linear Regression Assumptions\nPresented in the order of importance\n\n\nValidity of the model for the question at hand\nRepresentativeness and valid scope of inference\nAdditivity and linearity\nIndependence of errors\nEqual variance of errors\nNormality of errors"
+    "section": "Evaluating Model Fit",
+    "text": "Evaluating Model Fit\n\nPlotsMetrics\n\n\n\np3 &lt;- ppc_intervals(as.numeric(ds$quality[s]), yrep3[, s]) + ggtitle(\"Model 3 predictions\")\np2 + p3 + plot_layout(nrow = 2, byrow = FALSE)\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Mean Square Error for Model 2:\", mean((colMeans(yrep2) - scale(d$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 2: 0.64\n\ncat(\"Mean Square Error for Model 3:\", mean((colMeans(yrep3) - as.numeric(ds$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 3: 0.43\n\ncat(\"Width of the 50% interval for Model 2:\", width(yrep2, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 2: 1.09\n\ncat(\"Width of the 50% interval for Model 3:\", width(yrep3, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 3: 0.73"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#quick-tips-to-improve-your-regression-modeling",
-    "href": "stats-math/08-lecture/08-new.html#quick-tips-to-improve-your-regression-modeling",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#quick-tips-to-improve-your-regression-modeling",
+    "href": "stats-math/08-lecture/08-lecture-old.html#quick-tips-to-improve-your-regression-modeling",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "10+ quick tips to improve your regression modeling",
-    "text": "10+ quick tips to improve your regression modeling\nThis advice comes from “Regression and Other Stories” by Gelman and Hill\n\n\nThink generatively\nThink about what you are measuring\nThink about variation, replication\nForget about statistical significance\nGraph the relevant and not the irrelevant\nInterpret regression coefficients as comparisons\nUnderstand statistical methods using fake-data simulation\nFit many models\nSet up a computational workflow\nUse transformations\nDo causal inference in a targeted way, not as a byproduct of a large regression\nLearn methods through live examples"
+    "text": "10+ quick tips to improve your regression modeling\nThis advice comes from “Regression and Other Stories” by Gelman and Hill\n\n\nThink generatively (+)\nThink about what you are measuring (+)\nThink about variation, replication\nForget about statistical significance\nGraph the relevant and not the irrelevant\nInterpret regression coefficients as comparisons\nUnderstand statistical methods using fake-data simulation\nFit many models\nSet up a computational workflow\nUse transformations\nDo causal inference in a targeted way, not as a byproduct of a large regression\nLearn methods through live examples"
   },
   {
-    "objectID": "stats-math/08-lecture/08-new.html#thanks-for-being-part-of-my-class",
-    "href": "stats-math/08-lecture/08-new.html#thanks-for-being-part-of-my-class",
+    "objectID": "stats-math/08-lecture/08-lecture-old.html#so-long-and-thanks-for-all-the-fish",
+    "href": "stats-math/08-lecture/08-lecture-old.html#so-long-and-thanks-for-all-the-fish",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Thanks for being part of my class!",
-    "text": "Thanks for being part of my class!\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nhttps://www.linkedin.com/in/enovik/\nTwitter: @ericnovik\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "section": "So Long (and Thanks for All the Fish)",
+    "text": "So Long (and Thanks for All the Fish)\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nTwitter: @ericnovik\nhttps://www.linkedin.com/in/enovik/\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "stats-math/08-lecture/08-lecture.html#session-8-outline",
     "href": "stats-math/08-lecture/08-lecture.html#session-8-outline",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Session 8 Outline",
-    "text": "Session 8 Outline\n\n\nStatistical analysis workflow\nIntroduction to the rstanarm package\nSetting up a linear regression\nModel evaluation\nModel expansion\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "text": "Session 8 Outline\n\n\nStatistical analysis workflow\nSimulating data for simple regression\nBinary predictor in a regression\nAdding continuous predictor\nCombining binary and continuous predictors\nInterpreting coefficients\nAdding interactions\nUncertainty and predictions\nAssumptions of the regression analysis\nRegression modeling advice\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
     "objectID": "stats-math/08-lecture/08-lecture.html#analysis-workflow",
@@ -1792,18 +1799,11 @@
     "text": "Analysis Workflow\n\nFollowing is a high-level, end-to-end view from “R for Data Science” by Wickham and Grolemund"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#analysis-workflow-1",
-    "href": "stats-math/08-lecture/08-lecture.html#analysis-workflow-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Analysis Workflow",
-    "text": "Analysis Workflow\n\n\n\nA more comprehensive “Bayesian Workflow” by Gelman at al."
-  },
-  {
     "objectID": "stats-math/08-lecture/08-lecture.html#some-notation",
     "href": "stats-math/08-lecture/08-lecture.html#some-notation",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Some Notation",
-    "text": "Some Notation\n\n\nObserved data \\(y\\)\nUnobserved but observable data \\(\\widetilde{y}\\)\nUnobservable parameters \\(\\theta\\)\nCovariates \\(X\\)\nPrior distribution \\(f(\\theta)\\)\nLikelihood (as a function of \\(\\theta\\)), \\(f(y | \\theta, X)\\)\nPosterior distribution \\(f(\\theta | y, X)\\) (for Bayesian inference only)"
+    "text": "Some Notation\n\n\nObserved data \\(y\\)\nUnobserved but observable data \\(\\widetilde{y}\\)\nUnobservable parameters \\(\\theta\\)\nCovariates \\(X\\)\nPrior distribution \\(f(\\theta)\\) (for Bayesian inference)\nData model or sampling distribution (as a function of y) \\(f(y \\mid \\theta, X)\\)\nLikelihood (as a function of \\(\\theta\\)), \\(f(y \\mid \\theta, X)\\), sometimes written as \\(\\mathcal{L}(\\theta \\mid y, X)\\)\nMaximum likelihood estimate (MLE): \\(\\hat{\\theta} = \\underset{\\theta}{\\text{argmax}} \\, \\mathcal{L}(\\theta \\mid y, X)\\) (for Frequentist inference)\nPosterior distribution \\(f(\\theta \\mid y, X)\\) (for Bayesian inference)"
   },
   {
     "objectID": "stats-math/08-lecture/08-lecture.html#bayes-vs-frequentist-inference",
@@ -1813,165 +1813,165 @@
     "text": "Bayes vs Frequentist Inference\n\n\n\n\nEstimation is the process of figuring out the unknowns, i.e., unobserved quantities\nIn frequentist inference, the problem is framed in terms of the most likely value(s) of \\(\\theta\\)\nBayesians want to characterize the whole distribution, a much more ambitious goal\n\n\n\n\n\nSuppose we want to characterize the following function, which represents some distribution of the unknown parameter:"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#wine-dataset",
-    "href": "stats-math/08-lecture/08-lecture.html#wine-dataset",
+    "objectID": "stats-math/08-lecture/08-lecture.html#basic-regression-setup",
+    "href": "stats-math/08-lecture/08-lecture.html#basic-regression-setup",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Wine Dataset",
-    "text": "Wine Dataset"
+    "section": "Basic Regression Setup",
+    "text": "Basic Regression Setup\n\n\nThere are lots of possible ways to set up a regression\nOne predictor: \\(y = a + bx + \\epsilon\\)\nMultiple predictors: \\(y = b_0 + b_1x_1 + b_2x_2 + \\cdots + b_nx_n + \\epsilon\\), which we can write as \\(y = X\\beta + \\epsilon\\)\nModels with interactions: \\(y = b_0 + b_1x_1 + b_2x_2 +  b_3x_1x_2 + \\epsilon\\)\nNon-linear models like: \\(\\log(y) = a + b\\log(x) + \\epsilon\\)\nGeneralized Linear Models (GLMs), which can, for example, fit binary data, categorical data, and so on\nNonparametric models that are popular in Machine Learning that can learn flexible, functional forms between \\(y\\) and \\(X\\)\nThe latter is not a panacea — if you have a good or good enough functional form, predictions will generally be better and the model will generalize better\n\n\n\nMost of the material in this section comes from Regression and Other Stories by Gelman et al."
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#wine-dataset-1",
-    "href": "stats-math/08-lecture/08-lecture.html#wine-dataset-1",
+    "objectID": "stats-math/08-lecture/08-lecture.html#simulating-a-simple-regression",
+    "href": "stats-math/08-lecture/08-lecture.html#simulating-a-simple-regression",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Wine Dataset",
-    "text": "Wine Dataset\n\nd &lt;- read.delim(\"data/winequality-red.csv\", sep = \";\")\ndim(d)\n\n[1] 1599   12\n\nd &lt;- d[!duplicated(d), ] # remove the duplicates\ndim(d)\n\n[1] 1359   12\n\nknitr::kable(head(d))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n7.4\n0.70\n0.00\n1.9\n0.076\n11\n34\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n2\n7.8\n0.88\n0.00\n2.6\n0.098\n25\n67\n0.9968\n3.20\n0.68\n9.8\n5\n\n\n3\n7.8\n0.76\n0.04\n2.3\n0.092\n15\n54\n0.9970\n3.26\n0.65\n9.8\n5\n\n\n4\n11.2\n0.28\n0.56\n1.9\n0.075\n17\n60\n0.9980\n3.16\n0.58\n9.8\n6\n\n\n6\n7.4\n0.66\n0.00\n1.8\n0.075\n13\n40\n0.9978\n3.51\n0.56\n9.4\n5\n\n\n7\n7.9\n0.60\n0.06\n1.6\n0.069\n15\n59\n0.9964\n3.30\n0.46\n9.4\n5"
+    "section": "Simulating a Simple Regression",
+    "text": "Simulating a Simple Regression\n\nFitting simulated data is a good start for an analysis\n\n\nlibrary(rstanarm)\nn &lt;- 15; x &lt;- 1:n\na &lt;- 0.5\nb &lt;- 2\nsigma &lt;- 3\ny &lt;- a + b*x + rnorm(n, mean = 0, sd = sigma) # or sigma * rnorm(n)\ndata &lt;- data.frame(x, y)\nfit1 &lt;- stan_glm(y ~ x, data = data, refresh = 0) \nprint(fit1)\n\nstan_glm\n family:       gaussian [identity]\n formula:      y ~ x\n observations: 15\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 0.1    1.4   \nx           2.1    0.2   \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 2.6    0.5   \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#scaling-the-data",
-    "href": "stats-math/08-lecture/08-lecture.html#scaling-the-data",
+    "objectID": "stats-math/08-lecture/08-lecture.html#simulating-a-simple-regression-1",
+    "href": "stats-math/08-lecture/08-lecture.html#simulating-a-simple-regression-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Scaling the Data",
-    "text": "Scaling the Data\n\nds &lt;- scale(d) # subtract the mean and divide by sd\nknitr::kable(head(ds) %&gt;% round(2))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\n1\n-0.52\n0.93\n-1.39\n-0.46\n-0.25\n-0.47\n-0.38\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n2\n-0.29\n1.92\n-1.39\n0.06\n0.20\n0.87\n0.60\n0.05\n-0.71\n0.12\n-0.58\n-0.76\n\n\n3\n-0.29\n1.26\n-1.19\n-0.17\n0.08\n-0.09\n0.21\n0.16\n-0.32\n-0.05\n-0.58\n-0.76\n\n\n4\n1.66\n-1.36\n1.47\n-0.46\n-0.27\n0.11\n0.39\n0.69\n-0.97\n-0.46\n-0.58\n0.46\n\n\n6\n-0.52\n0.71\n-1.39\n-0.53\n-0.27\n-0.28\n-0.20\n0.58\n1.29\n-0.58\n-0.95\n-0.76\n\n\n7\n-0.24\n0.39\n-1.09\n-0.68\n-0.39\n-0.09\n0.36\n-0.17\n-0.06\n-1.16\n-0.95\n-0.76\n\n\n\n\ncheck &lt;- apply(ds, 2, function(x) c(mean = mean(x), sd = sd(x))) %&gt;% round(2)\nknitr::kable(check)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfixed.acidity\nvolatile.acidity\ncitric.acid\nresidual.sugar\nchlorides\nfree.sulfur.dioxide\ntotal.sulfur.dioxide\ndensity\npH\nsulphates\nalcohol\nquality\n\n\n\n\nmean\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\nsd\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n\n\n\n\nclass(ds); ds &lt;- as_tibble(ds)\n\n[1] \"matrix\" \"array\""
+    "section": "Simulating a Simple Regression",
+    "text": "Simulating a Simple Regression\n\nWe extract our betas using the coef() R function\n\n\na_hat &lt;- coef(fit1)[1]\nb_hat &lt;- coef(fit1)[2]\np &lt;- ggplot(aes(x, y), data = data)\np + geom_point(size = 0.2) + geom_abline(intercept = a_hat, slope = b_hat, linewidth = 0.1)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#quality-rating-of-red-wine",
-    "href": "stats-math/08-lecture/08-lecture.html#quality-rating-of-red-wine",
+    "objectID": "stats-math/08-lecture/08-lecture.html#kidiq-dataset",
+    "href": "stats-math/08-lecture/08-lecture.html#kidiq-dataset",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Quality Rating of Red Wine",
-    "text": "Quality Rating of Red Wine\n\n\n\nUnscaled Quality\n\n\nqplot(d$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")\n\n\n\n\n\n\n\n\n\n\nScaled Quality\n\n\nqplot(ds$quality, geom = \"histogram\") + xlab(\"Quality Rating of Red Wine\")"
+    "section": "KidIQ Dataset",
+    "text": "KidIQ Dataset\n\nData from a survey of adult American women and their children (a subsample from the National Longitudinal Survey of Youth).\n\n\nknitr::kable(rstanarm::kidiq[1:8, ])\n\n\n\n\nkid_score\nmom_hs\nmom_iq\nmom_age\n\n\n\n\n65\n1\n121.11753\n27\n\n\n98\n1\n89.36188\n25\n\n\n85\n1\n115.44316\n27\n\n\n83\n1\n99.44964\n25\n\n\n115\n1\n92.74571\n27\n\n\n98\n0\n107.90184\n18\n\n\n69\n1\n138.89311\n20\n\n\n106\n1\n125.14512\n23"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#alcohol",
-    "href": "stats-math/08-lecture/08-lecture.html#alcohol",
+    "objectID": "stats-math/08-lecture/08-lecture.html#single-binary-predictor",
+    "href": "stats-math/08-lecture/08-lecture.html#single-binary-predictor",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Alcohol",
-    "text": "Alcohol\n\np &lt;- ggplot(ds, aes(alcohol, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Alcohol\") + ylab(\"Quality (Jittered)\")"
+    "section": "Single Binary Predictor",
+    "text": "Single Binary Predictor\n\nfit2 &lt;- stan_glm(kid_score ~ mom_hs, data = kidiq, refresh = 0) \nprint(fit2)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs\n observations: 434\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 77.6    2.0  \nmom_hs      11.8    2.4  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 19.9    0.7  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is \\(\\text{kid_score} = 78 + 12 \\cdot \\text{mom_hs} + \\epsilon\\)\nWhat is the average IQ of kids whose mothers did not complete high school? (in this dataset)\nWhat is the average IQ of kids whose mothers completed high school?\nDid high school cause the IQ change?"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#volatile-acidity",
-    "href": "stats-math/08-lecture/08-lecture.html#volatile-acidity",
+    "objectID": "stats-math/08-lecture/08-lecture.html#single-binary-predictor-1",
+    "href": "stats-math/08-lecture/08-lecture.html#single-binary-predictor-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Volatile Acidity",
-    "text": "Volatile Acidity\n\np &lt;- ggplot(ds, aes(volatile.acidity, quality))\np + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab(\"Volatile Acidity\") + ylab(\"Quality (Jittered)\")"
+    "section": "Single Binary Predictor",
+    "text": "Single Binary Predictor\n\np &lt;- ggplot(aes(mom_hs, kid_score), data = kidiq)\np + geom_jitter(height = 0, width = 0.1, size = 0.2) +\n  geom_abline(intercept = coef(fit2)[1], slope = coef(fit2)[2], linewidth = 0.1) +\n  scale_x_continuous(breaks = c(0, 1))"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#correlations",
-    "href": "stats-math/08-lecture/08-lecture.html#correlations",
+    "objectID": "stats-math/08-lecture/08-lecture.html#single-continous-predictor",
+    "href": "stats-math/08-lecture/08-lecture.html#single-continous-predictor",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Correlations",
-    "text": "Correlations\n\nlibrary(corrplot)\nM &lt;- cor(ds)\ncorrplot(M, method = 'ellipse', order = 'AOE', type = 'upper')"
+    "section": "Single Continous Predictor",
+    "text": "Single Continous Predictor\n\nfit3 &lt;- stan_glm(kid_score ~ mom_iq, data = kidiq, refresh = 0) \nprint(fit3)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_iq\n observations: 434\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 26.0    6.1  \nmom_iq       0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.3    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is \\(\\text{kid_score} = 26 + 0.6 \\cdot \\text{mom_iq}+ \\epsilon\\)\nHow much do kids’ scores improve when maternal IQ differs by 10 points?\nWhat is the meaning of the intercepts = 26 here?"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#linear-regression",
-    "href": "stats-math/08-lecture/08-lecture.html#linear-regression",
+    "objectID": "stats-math/08-lecture/08-lecture.html#simple-transformations",
+    "href": "stats-math/08-lecture/08-lecture.html#simple-transformations",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Linear Regression",
-    "text": "Linear Regression\n\n\nWe will fit a linear regression to the scaled wine dataset\nThe priors come from (sensible) defaults in rstanarm\nLinear regression can be specified in the following way, where \\(X\\) is the design matrix with one or more scaled predictors and \\(y\\) is the scaled quality score\n\n\n\n\\[\n\\begin{aligned}\ny &\\sim \\mathrm{Normal}(\\alpha + X \\beta, \\ \\sigma) \\\\\n\\alpha &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\beta &\\sim \\mathrm{Normal}(0, \\ 2.5) \\\\\n\\sigma &\\sim \\mathrm{Exp}(1)\n\\end{aligned}\n\\]"
+    "section": "Simple Transformations",
+    "text": "Simple Transformations\n\nWe will create a new variable called mom_iq_c, which stands for centered\nThe transformation: \\(\\text{mom_iq_c}_i = \\text{mom_iq}_i - \\overline{\\text{mom_iq}}\\)\n\n\nkidiq &lt;- kidiq |&gt;\n  mutate(mom_iq_c = mom_iq - mean(mom_iq))\nfit4 &lt;- stan_glm(kid_score ~ mom_iq_c, data = kidiq, refresh = 0) \nprint(fit4)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_iq_c\n observations: 434\n predictors:   2\n------\n            Median MAD_SD\n(Intercept) 86.8    0.9  \nmom_iq_c     0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.3    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is \\(\\text{kid_score} = 87 + 0.6 \\cdot \\text{mom_iq_c}+ \\epsilon\\)\nWhat is the meaning of the intercepts in this model?"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#estimation-using-rs-lm",
-    "href": "stats-math/08-lecture/08-lecture.html#estimation-using-rs-lm",
+    "objectID": "stats-math/08-lecture/08-lecture.html#single-continous-predictor-1",
+    "href": "stats-math/08-lecture/08-lecture.html#single-continous-predictor-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Estimation using R’s lm()",
-    "text": "Estimation using R’s lm()\n\n\nWe will start by comparing alcohol content to quality ratings\nIn R’s lm() priors are not specified – they are uniform\n\n\n\n\nfit1_freq &lt;- lm(quality ~ alcohol, data = ds)\narm::display(fit1_freq)\n\nlm(formula = quality ~ alcohol, data = ds)\n            coef.est coef.se\n(Intercept) 0.00     0.02   \nalcohol     0.48     0.02   \n---\nn = 1359, k = 2\nresidual sd = 0.88, R-Squared = 0.23\n\n# avoid R's summary() function\nsummary(fit1_freq)\n\n\nCall:\nlm(formula = quality ~ alcohol, data = ds)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-3.4372 -0.4761 -0.2097  0.6494  3.1666 \n\nCoefficients:\n              Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -7.310e-15  2.380e-02    0.00        1    \nalcohol      4.803e-01  2.381e-02   20.17   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 0.8774 on 1357 degrees of freedom\nMultiple R-squared:  0.2307,    Adjusted R-squared:  0.2302 \nF-statistic:   407 on 1 and 1357 DF,  p-value: &lt; 2.2e-16"
+    "section": "Single Continous Predictor",
+    "text": "Single Continous Predictor\n\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(size = 0.2) +\n  geom_abline(intercept = coef(fit3)[1], slope = coef(fit3)[2], linewidth = 0.1)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#running-the-regression-in-rstanarm",
-    "href": "stats-math/08-lecture/08-lecture.html#running-the-regression-in-rstanarm",
+    "objectID": "stats-math/08-lecture/08-lecture.html#combining-the-predictors",
+    "href": "stats-math/08-lecture/08-lecture.html#combining-the-predictors",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Running the Regression in rstanarm",
-    "text": "Running the Regression in rstanarm\n\nlibrary(rstanarm)\noptions(mc.cores = parallel::detectCores())\nfit1 &lt;- stan_glm(quality ~ alcohol, data = ds, refresh = 0)\nsummary(fit1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      quality ~ alcohol\n algorithm:    sampling\n sample:       4000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 1359\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 0.0    0.0  0.0   0.0   0.0  \nalcohol     0.5    0.0  0.4   0.5   0.5  \nsigma       0.9    0.0  0.9   0.9   0.9  \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 0.0    0.0  0.0   0.0   0.0  \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  3811 \nalcohol       0.0  1.0  3566 \nsigma         0.0  1.0  3168 \nmean_PPD      0.0  1.0  4004 \nlog-posterior 0.0  1.0  1987 \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
+    "section": "Combining the Predictors",
+    "text": "Combining the Predictors\n\nfit5 &lt;- stan_glm(kid_score ~ mom_hs + mom_iq_c, data = kidiq, refresh = 0)\nprint(fit5)\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs + mom_iq_c\n observations: 434\n predictors:   3\n------\n            Median MAD_SD\n(Intercept) 82.2    1.9  \nmom_hs       6.0    2.2  \nmom_iq_c     0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.2    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is now: \\(\\text{kid_score} = 82 + 6 \\cdot \\text{mom_hs} + 0.6 \\cdot \\text{mom_iq_c}+ \\epsilon\\)\nWrite down the interpretation of each coefficient"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#plotting",
-    "href": "stats-math/08-lecture/08-lecture.html#plotting",
+    "objectID": "stats-math/08-lecture/08-lecture.html#combining-the-predictors-1",
+    "href": "stats-math/08-lecture/08-lecture.html#combining-the-predictors-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Plotting",
-    "text": "Plotting\n\n\n\nplot(fit1, plotfun = \"areas\", prob = 0.9)\n\n\n\n\n\n\n\n\n\n\nposterior_vs_prior(fit1)"
+    "section": "Combining the Predictors",
+    "text": "Combining the Predictors\n\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs + mom_iq\n observations: 434\n predictors:   3\n------\n            Median MAD_SD\n(Intercept) 25.8    5.9  \nmom_hs       6.0    2.3  \nmom_iq       0.6    0.1  \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.2    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\nOur model is: \\(\\text{kid_score} = 26 + 6 \\cdot \\text{mom_hs} + 0.6 \\cdot \\text{mom_iq}+ \\epsilon\\)\nFor moms that did not complete high school, the line \\(y = 26 + 0.6 \\cdot \\text{mom_iq}\\)\nFor moms that did: \\(\\text{kid_score} = 26 + 6 \\cdot 1 + 0.6 \\cdot \\text{mom_iq} = 32 + 0.6 \\cdot \\text{mom_iq}\\)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#evaluating-the-model",
-    "href": "stats-math/08-lecture/08-lecture.html#evaluating-the-model",
+    "objectID": "stats-math/08-lecture/08-lecture.html#visualizing-the-fit-with-two-predictors",
+    "href": "stats-math/08-lecture/08-lecture.html#visualizing-the-fit-with-two-predictors",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating the Model",
-    "text": "Evaluating the Model\n\nHow good is this model?\n\n\np1 &lt;- pp_check(fit1, plotfun = \"ppc_dens_overlay\"); p2 &lt;- pp_check(fit1, plotfun = \"ppc_ecdf_overlay\")\np3 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"mean\"); p4 &lt;- pp_check(fit1, plotfun = \"ppc_stat\", stat =\"sd\")\np1 + p2 + p3 + p4"
+    "section": "Visualizing the Fit With Two Predictors",
+    "text": "Visualizing the Fit With Two Predictors\n\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(aes(color = as.factor(mom_hs)), size = 0.2) +\n  labs(color = \"Mom HS\") +\n  geom_abline(intercept = coef(fit6)[1], slope = coef(fit6)[3], linewidth = 0.1, color = 'red') +\n  geom_abline(intercept = coef(fit6)[1] + coef(fit6)[2], slope = coef(fit6)[3], linewidth = 0.1, color = 'blue')"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#evaluating-the-model-1",
-    "href": "stats-math/08-lecture/08-lecture.html#evaluating-the-model-1",
+    "objectID": "stats-math/08-lecture/08-lecture.html#adding-interactions",
+    "href": "stats-math/08-lecture/08-lecture.html#adding-interactions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating the Model",
-    "text": "Evaluating the Model\n\nHow good is this model?\n\n\nyrep1 &lt;- posterior_predict(fit1)\ndim(yrep1)\n\n[1] 4000 1359\n\ns &lt;- sample(1:nrow(ds), size = 50) # select 50 random records\np1 &lt;- ppc_intervals(ds$quality[s], yrep1[, s]); p1"
+    "section": "Adding Interactions",
+    "text": "Adding Interactions\n\nIn the previous model, we forced the slopes of mothers who completed and did not complete high school to be the same — the only difference was the intercept\nTo allow the slopes to vary, we include an interaction term\n\n\n\nstan_glm\n family:       gaussian [identity]\n formula:      kid_score ~ mom_hs + mom_iq + mom_hs:mom_iq\n observations: 434\n predictors:   4\n------\n              Median MAD_SD\n(Intercept)   -10.6   13.7 \nmom_hs         50.2   15.1 \nmom_iq          1.0    0.1 \nmom_hs:mom_iq  -0.5    0.2 \n\nAuxiliary parameter(s):\n      Median MAD_SD\nsigma 18.0    0.6  \n\n------\n* For help interpreting the printed output see ?print.stanreg\n* For info on the priors used see ?prior_summary.stanreg\n\n\n\n\nOur model is: \\(\\text{kid_score} = -10 + 49 \\cdot \\text{mom_hs} + 1 \\cdot \\text{mom_iq} - 0.5 \\cdot \\text{mom_hs} \\cdot \\text{mom_iq} + \\epsilon\\)\nTo figure out the slopes, we consider two cases\nFor \\(\\text{mom_hs} = 0\\), the line is: \\(\\text{kid_score} = -10 + 1 \\cdot \\text{mom_iq}\\)\nFor \\(\\text{mom_hs} = 1\\), the line is: \\(\\text{kid_score} = -10 + 49 \\cdot 1 + 1 \\cdot \\text{mom_iq} - 0.5 \\cdot 1 \\cdot \\text{mom_iq} = 39 + 0.5\\cdot \\text{mom_iq}\\)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#we-can-add-other-predictors",
-    "href": "stats-math/08-lecture/08-lecture.html#we-can-add-other-predictors",
+    "objectID": "stats-math/08-lecture/08-lecture.html#visualizing-interactions",
+    "href": "stats-math/08-lecture/08-lecture.html#visualizing-interactions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "We Can Add Other Predictors",
-    "text": "We Can Add Other Predictors\n\nfit2 &lt;- stan_glm(quality ~ ., data = ds, refresh = 0)\nplot(fit2, plotfun = \"areas\", prob = 0.9, params = \"alcohol\")"
+    "section": "Visualizing Interactions",
+    "text": "Visualizing Interactions\n\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(aes(color = as.factor(mom_hs)), size = 0.2) +\n  labs(color = \"Mom HS\") +\n  geom_abline(intercept = coef(fit7)[1], slope = coef(fit7)[3], linewidth = 0.1, color = 'red') +\n  geom_abline(intercept = coef(fit7)[1] + coef(fit7)[2], slope = coef(fit7)[3] + coef(fit7)[4], linewidth = 0.1, color = 'blue')"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#have-we-improved-the-model",
-    "href": "stats-math/08-lecture/08-lecture.html#have-we-improved-the-model",
+    "objectID": "stats-math/08-lecture/08-lecture.html#interpreting-coefficients-in-complex-non-linear-models",
+    "href": "stats-math/08-lecture/08-lecture.html#interpreting-coefficients-in-complex-non-linear-models",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Have We Improved the Model",
-    "text": "Have We Improved the Model\n\nyrep2 &lt;- posterior_predict(fit2)\np1 &lt;- p1 + ggtitle(\"Model 1 predictions\")\np2 &lt;- ppc_intervals(ds$quality[s], yrep2[, s]) + ggtitle(\"Model 2 predictions\")\np1 + p2 + plot_layout(nrow = 2, byrow = FALSE)"
+    "section": "Interpreting Coefficients in Complex Non-Linear Models",
+    "text": "Interpreting Coefficients in Complex Non-Linear Models\n\n\nModels that have many parameters, many interactions, and are non-linear are difficult to interpret by looking at parameters marginally (i.e., one at a time)\nFor this reason, we typically rely on assessing how changes to model inputs affect model predictions, not the impact of each parameter\nPredictions take all the parameter values and their interactions into account"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#have-we-improved-the-model-1",
-    "href": "stats-math/08-lecture/08-lecture.html#have-we-improved-the-model-1",
+    "objectID": "stats-math/08-lecture/08-lecture.html#uncertainty-and-prediction",
+    "href": "stats-math/08-lecture/08-lecture.html#uncertainty-and-prediction",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Have We Improved the Model",
-    "text": "Have We Improved the Model\n\n# Mean Square Error for Model 1\nmean((colMeans(yrep1) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.77\n\n# Mean Square Error for Model 2\nmean((colMeans(yrep2) - ds$quality)^2) %&gt;% round(2)\n\n[1] 0.64\n\nwidth &lt;- function(yrep, q1, q2) {\n  q &lt;- apply(yrep, 2, function (x) quantile(x, probs = c(q1, q2)))\n  width &lt;- apply(q, 2, diff)\n  return(mean(width))\n}\nwidth(yrep1, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.18\n\nwidth(yrep2, 0.25, 0.75) %&gt;% round(2)\n\n[1] 1.09"
+    "section": "Uncertainty and Prediction",
+    "text": "Uncertainty and Prediction\n\n\nWe return to our simple linear regression model: \\(\\text{kid_score} = 26 + 0.6 \\cdot \\text{mom_iq}+ \\epsilon\\)\nWe can extract the simulations of all plausible parameter values (called a posterior distribution in Bayesian analysis)\n\n\n\n\npost &lt;- as.matrix(fit3)\ndim(post)\n\n[1] 4000    3\n\nknitr::kable(post[1:5, ])\n\n\n\n\n(Intercept)\nmom_iq\nsigma\n\n\n\n\n31.77474\n0.5396861\n18.28899\n\n\n27.21061\n0.5917098\n18.20332\n\n\n27.27470\n0.5942835\n18.29135\n\n\n26.54087\n0.6114706\n18.79476\n\n\n25.46339\n0.6054314\n17.86559"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#comparing-out-of-sample-performance",
-    "href": "stats-math/08-lecture/08-lecture.html#comparing-out-of-sample-performance",
+    "objectID": "stats-math/08-lecture/08-lecture.html#uncertainty-and-prediction-1",
+    "href": "stats-math/08-lecture/08-lecture.html#uncertainty-and-prediction-1",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Comparing Out of Sample Performance",
-    "text": "Comparing Out of Sample Performance\n\nloo1 &lt;- loo(fit1, cores = 4)\nloo2 &lt;- loo(fit2, cores = 4)\nloo_compare(loo1, loo2)\n\n     elpd_diff se_diff\nfit2    0.0       0.0 \nfit1 -117.3      17.8 \n\n\nVehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint."
+    "section": "Uncertainty and Prediction",
+    "text": "Uncertainty and Prediction\n\n\nUsing these simulations we display 50 plausible regression lines\n\n\n\n\npost &lt;- as.data.frame(fit3)\npost_sub &lt;- post[sample(1:nrow(post), 50), ]\np &lt;- ggplot(aes(mom_iq, kid_score), data = kidiq)\np + geom_point(size = 0.2) + \n  geom_abline(aes(intercept = `(Intercept)`, slope = mom_iq), \n              linewidth = 0.1,\n              data = post_sub)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#can-we-still-improve-the-model",
-    "href": "stats-math/08-lecture/08-lecture.html#can-we-still-improve-the-model",
+    "objectID": "stats-math/08-lecture/08-lecture.html#uncertainty-and-prediction-2",
+    "href": "stats-math/08-lecture/08-lecture.html#uncertainty-and-prediction-2",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Can We Still Improve the Model",
-    "text": "Can We Still Improve the Model\n\n\nQuality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal\nFor more information, see ordered logistic distribution in the Stan manual\nWe are going to use the following parameterization available in Stan:\n\n\n\n\\[\n\\text{OrderedLogistic}(k~|~\\eta,c) = \\left\\{ \\begin{array}{ll} 1 -\n\\text{logit}^{-1}(\\eta - c_1)  &  \\text{if } k = 1, \\\\[4pt]\n\\text{logit}^{-1}(\\eta - c_{k-1}) - \\text{logit}^{-1}(\\eta - c_{k})  &\n\\text{if } 1 &lt; k &lt; K, \\text{and} \\\\[4pt] \\text{logit}^{-1}(\\eta -\nc_{K-1}) - 0  &  \\text{if } k = K \\end{array} \\right.\n\\]\n\n\n\nA similar model can fit with frequentist methods using MASS::polr() function"
+    "section": "Uncertainty and Prediction",
+    "text": "Uncertainty and Prediction\n\n\nWe can compute inferential uncertainty in all the parameters directly\nWe can also compute event probabilities\n\n\n\n\npost &lt;- as.matrix(fit3)\n# median\napply(post, 2, median)\n\n(Intercept)      mom_iq       sigma \n 26.0236767   0.6078977  18.2714868 \n\napply(post, 2, mad)\n\n(Intercept)      mom_iq       sigma \n 6.10031655  0.06062729  0.61543505 \n\n# 50% uncertainty estimate\napply(post, 2, quantile, probs = c(0.25, 0.75))\n\n     parameters\n      (Intercept)    mom_iq    sigma\n  25%    21.75756 0.5681001 17.86710\n  75%    30.06156 0.6504483 18.69458\n\n# 90% uncertainty estimate\napply(post, 2, quantile, probs = c(0.05, 0.95))\n\n     parameters\n      (Intercept)    mom_iq    sigma\n  5%     15.72707 0.5106528 17.32535\n  95%    35.77134 0.7095889 19.33193\n\n# What is the probability that the coefficient of mom_iq is &gt; 0.6\nmean(post[, \"mom_iq\"] &gt; 0.6) |&gt; round(2)\n\n[1] 0.55"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#fitting-ordered-logistic",
-    "href": "stats-math/08-lecture/08-lecture.html#fitting-ordered-logistic",
+    "objectID": "stats-math/08-lecture/08-lecture.html#types-of-prediction",
+    "href": "stats-math/08-lecture/08-lecture.html#types-of-prediction",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Fitting Ordered Logistic",
-    "text": "Fitting Ordered Logistic\n\nds$quality &lt;- d$quality - 2          # quality vector is now 1:6\nds$quality &lt;- as.factor(ds$quality)  # it has to be treated as factor (category)\nfit3 &lt;- stan_polr(quality ~ ., prior = R2(0.25), # the prior is on explained variance\n                  prior_counts = dirichlet(1), \n                  data = ds, iter = 1000, refresh = 0)\nyrep3 &lt;- posterior_predict(fit3)\nyrep3[1:5, 1:5]\n\n     1   2   3   4   5  \n[1,] \"3\" \"4\" \"4\" \"4\" \"3\"\n[2,] \"2\" \"3\" \"3\" \"4\" \"3\"\n[3,] \"3\" \"3\" \"4\" \"4\" \"2\"\n[4,] \"4\" \"3\" \"3\" \"3\" \"3\"\n[5,] \"4\" \"4\" \"4\" \"3\" \"3\"\n\nyrep3 &lt;- apply(yrep3, 2, as.numeric)\nyrep3[1:5, 1:5]\n\n     1 2 3 4 5\n[1,] 3 4 4 4 3\n[2,] 2 3 3 4 3\n[3,] 3 3 4 4 2\n[4,] 4 3 3 3 3\n[5,] 4 4 4 3 3"
+    "section": "Types of Prediction",
+    "text": "Types of Prediction\n\n\nPoint prediction: \\(\\hat{a} + \\hat{b}x^{\\text{new}}\\) — predicting expected average \\(y\\) — don’t recommend\nLinear predictor with uncertainty in \\(a\\) and \\(b\\): \\(a + bx^{\\text{new}}\\) — predicting uncertainty around the expexted average value of \\(y\\) — typically used to assess treatment effect\nPredictive distribution: \\(a + bx^{\\text{new}} + \\epsilon\\) — predictive uncertainty around a new \\(y\\) — used to predict for a new individual (not ATT)"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#evaluating-model-fit",
-    "href": "stats-math/08-lecture/08-lecture.html#evaluating-model-fit",
+    "objectID": "stats-math/08-lecture/08-lecture.html#prediction-in-rstanarm",
+    "href": "stats-math/08-lecture/08-lecture.html#prediction-in-rstanarm",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating Model Fit",
-    "text": "Evaluating Model Fit\n\n\n\npp_check(fit2, plotfun = \"ppc_dens_overlay\")\n\n\n\n\n\n\n\n\n\n\npp_check(fit3, plotfun = \"ppc_dens_overlay\")"
+    "section": "Prediction in RStanArm",
+    "text": "Prediction in RStanArm\n\nWe observe a new kid whose mom’s IQ = 120\nPoint prediction is shown in Red, 90% uncertainty around the average kid score in Blue, and 90% predictive uncertainty for a new kid is in Yellow.\n\n\n\n\nmom120 &lt;- data.frame(mom_iq = 120)\n(point_pred &lt;- predict(fit3, newdata = mom120))\n\n      1 \n98.9816 \n\nlin_pred &lt;- posterior_linpred(fit3, \n                              newdata = mom120)\npost_pred &lt;- posterior_predict(fit3, \n                               newdata = mom120)\n(lp_range &lt;- quantile(lin_pred, \n                      probs = c(0.05, 0.95)))\n\n      5%      95% \n 96.5370 101.4359 \n\n(pp_range &lt;- quantile(post_pred, \n                      probs = c(0.05, 0.95)))\n\n       5%       95% \n 68.88551 128.75195"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#evaluating-model-fit-1",
-    "href": "stats-math/08-lecture/08-lecture.html#evaluating-model-fit-1",
+    "objectID": "stats-math/08-lecture/08-lecture.html#linear-regression-assumptions",
+    "href": "stats-math/08-lecture/08-lecture.html#linear-regression-assumptions",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating Model Fit",
-    "text": "Evaluating Model Fit\n\nPlotsMetrics\n\n\n\np3 &lt;- ppc_intervals(as.numeric(ds$quality[s]), yrep3[, s]) + ggtitle(\"Model 3 predictions\")\np2 + p3 + plot_layout(nrow = 2, byrow = FALSE)\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Mean Square Error for Model 2:\", mean((colMeans(yrep2) - scale(d$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 2: 0.64\n\ncat(\"Mean Square Error for Model 3:\", mean((colMeans(yrep3) - as.numeric(ds$quality))^2) %&gt;% round(2))\n\nMean Square Error for Model 3: 0.43\n\ncat(\"Width of the 50% interval for Model 2:\", width(yrep2, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 2: 1.09\n\ncat(\"Width of the 50% interval for Model 3:\", width(yrep3, 0.25, 0.75) %&gt;% round(2))\n\nWidth of the 50% interval for Model 3: 0.72"
+    "section": "Linear Regression Assumptions",
+    "text": "Linear Regression Assumptions\nPresented in the order of importance\n\n\nValidity of the model for the question at hand\nRepresentativeness and valid scope of inference\nAdditivity and linearity\nIndependence of errors\nEqual variance of errors\nNormality of errors"
   },
   {
     "objectID": "stats-math/08-lecture/08-lecture.html#quick-tips-to-improve-your-regression-modeling",
     "href": "stats-math/08-lecture/08-lecture.html#quick-tips-to-improve-your-regression-modeling",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "10+ quick tips to improve your regression modeling",
-    "text": "10+ quick tips to improve your regression modeling\nThis advice comes from “Regression and Other Stories” by Gelman and Hill\n\n\nThink generatively (+)\nThink about what you are measuring (+)\nThink about variation, replication\nForget about statistical significance\nGraph the relevant and not the irrelevant\nInterpret regression coefficients as comparisons\nUnderstand statistical methods using fake-data simulation\nFit many models\nSet up a computational workflow\nUse transformations\nDo causal inference in a targeted way, not as a byproduct of a large regression\nLearn methods through live examples"
+    "text": "10+ quick tips to improve your regression modeling\nThis advice comes from “Regression and Other Stories” by Gelman and Hill\n\n\nThink generatively\nThink about what you are measuring\nThink about variation, replication\nForget about statistical significance\nGraph the relevant and not the irrelevant\nInterpret regression coefficients as comparisons\nUnderstand statistical methods using fake-data simulation\nFit many models\nSet up a computational workflow\nUse transformations\nDo causal inference in a targeted way, not as a byproduct of a large regression\nLearn methods through live examples"
   },
   {
-    "objectID": "stats-math/08-lecture/08-lecture.html#so-long-and-thanks-for-all-the-fish",
-    "href": "stats-math/08-lecture/08-lecture.html#so-long-and-thanks-for-all-the-fish",
+    "objectID": "stats-math/08-lecture/08-lecture.html#thanks-for-being-part-of-my-class",
+    "href": "stats-math/08-lecture/08-lecture.html#thanks-for-being-part-of-my-class",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "So Long (and Thanks for All the Fish)",
-    "text": "So Long (and Thanks for All the Fish)\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nTwitter: @ericnovik\nhttps://www.linkedin.com/in/enovik/\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "section": "Thanks for being part of my class!",
+    "text": "Thanks for being part of my class!\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nhttps://www.linkedin.com/in/enovik/\nTwitter: @ericnovik\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
   },
   {
     "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",

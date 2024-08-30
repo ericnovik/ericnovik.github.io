@@ -10,7 +10,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.54">
 
-  <meta name="author" content="Eric Novik | Summer 2023 | Session 07">
+  <meta name="author" content="Eric Novik | Summer 2024 | Session 08">
   <title>Eric Novik – SMaC: Statistics, Math, and Computing</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -400,7 +400,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Summer 2023 | Session 07 
+Eric Novik | Summer 2024 | Session 08 
 </div>
 </div>
 </div>
@@ -411,10 +411,15 @@ Eric Novik | Summer 2023 | Session 07
 <div>
 <ul>
 <li class="fragment">Statistical analysis workflow</li>
-<li class="fragment">Introduction to the <code>rstanarm</code> package</li>
-<li class="fragment">Setting up a linear regression</li>
-<li class="fragment">Model evaluation</li>
-<li class="fragment">Model expansion</li>
+<li class="fragment">Simulating data for simple regression</li>
+<li class="fragment">Binary predictor in a regression</li>
+<li class="fragment">Adding continuous predictor</li>
+<li class="fragment">Combining binary and continuous predictors</li>
+<li class="fragment">Interpreting coefficients</li>
+<li class="fragment">Adding interactions</li>
+<li class="fragment">Uncertainty and predictions</li>
+<li class="fragment">Assumptions of the regression analysis</li>
+<li class="fragment">Regression modeling advice</li>
 </ul>
 </div>
 <p><span class="math display">\[
@@ -432,16 +437,7 @@ Eric Novik | Summer 2023 | Session 07
 </ul>
 
 <img data-src="images/data-science.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="analysis-workflow-1" class="slide level2 smaller">
-<h2>Analysis Workflow</h2>
-
-<img data-src="images/workflow.png" class="quarto-figure quarto-figure-center r-stretch"><div>
-<ul>
-<li class="fragment">A more comprehensive <a href="https://arxiv.org/abs/2011.01808">“Bayesian Workflow”</a> by Gelman at al.</li>
-</ul>
-</div>
-</section>
-<section id="some-notation" class="slide level2">
+<section id="some-notation" class="slide level2 smaller">
 <h2>Some Notation</h2>
 <div>
 <ul>
@@ -449,9 +445,11 @@ Eric Novik | Summer 2023 | Session 07
 <li class="fragment">Unobserved but observable data <span class="math inline">\(\widetilde{y}\)</span></li>
 <li class="fragment">Unobservable parameters <span class="math inline">\(\theta\)</span></li>
 <li class="fragment">Covariates <span class="math inline">\(X\)</span></li>
-<li class="fragment">Prior distribution <span class="math inline">\(f(\theta)\)</span></li>
-<li class="fragment">Likelihood (as a function of <span class="math inline">\(\theta\)</span>), <span class="math inline">\(f(y | \theta, X)\)</span></li>
-<li class="fragment">Posterior distribution <span class="math inline">\(f(\theta | y, X)\)</span> (for Bayesian inference only)</li>
+<li class="fragment">Prior distribution <span class="math inline">\(f(\theta)\)</span> (for Bayesian inference)</li>
+<li class="fragment">Data model or sampling distribution (as a function of y) <span class="math inline">\(f(y \mid \theta, X)\)</span></li>
+<li class="fragment">Likelihood (as a function of <span class="math inline">\(\theta\)</span>), <span class="math inline">\(f(y \mid \theta, X)\)</span>, sometimes written as <span class="math inline">\(\mathcal{L}(\theta \mid y, X)\)</span></li>
+<li class="fragment">Maximum likelihood estimate (MLE): <span class="math inline">\(\hat{\theta} = \underset{\theta}{\text{argmax}} \, \mathcal{L}(\theta \mid y, X)\)</span> (for Frequentist inference)</li>
+<li class="fragment">Posterior distribution <span class="math inline">\(f(\theta \mid y, X)\)</span> (for Bayesian inference)</li>
 </ul>
 </div>
 </section>
@@ -481,765 +479,596 @@ Eric Novik | Summer 2023 | Session 07
 </div>
 </div></div>
 </section>
-<section id="wine-dataset" class="slide level2 smaller">
-<h2>Wine Dataset</h2>
-
-<img data-src="images/uci.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="wine-dataset-1" class="slide level2 smaller">
-<h2>Wine Dataset</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>d <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">"data/winequality-red.csv"</span>, <span class="at">sep =</span> <span class="st">";"</span>)</span>
-<span id="cb1-2"><a></a><span class="fu">dim</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1599   12</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>d <span class="ot">&lt;-</span> d[<span class="sc">!</span><span class="fu">duplicated</span>(d), ] <span class="co"># remove the duplicates</span></span>
-<span id="cb3-2"><a></a><span class="fu">dim</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1359   12</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(d))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top">
-<colgroup>
-<col style="width: 1%">
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 7%">
-<col style="width: 9%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 13%">
-<col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 6%">
-<col style="width: 5%">
-<col style="width: 5%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: right;">fixed.acidity</th>
-<th style="text-align: right;">volatile.acidity</th>
-<th style="text-align: right;">citric.acid</th>
-<th style="text-align: right;">residual.sugar</th>
-<th style="text-align: right;">chlorides</th>
-<th style="text-align: right;">free.sulfur.dioxide</th>
-<th style="text-align: right;">total.sulfur.dioxide</th>
-<th style="text-align: right;">density</th>
-<th style="text-align: right;">pH</th>
-<th style="text-align: right;">sulphates</th>
-<th style="text-align: right;">alcohol</th>
-<th style="text-align: right;">quality</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: right;">7.4</td>
-<td style="text-align: right;">0.70</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">0.076</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">34</td>
-<td style="text-align: right;">0.9978</td>
-<td style="text-align: right;">3.51</td>
-<td style="text-align: right;">0.56</td>
-<td style="text-align: right;">9.4</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: right;">7.8</td>
-<td style="text-align: right;">0.88</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">2.6</td>
-<td style="text-align: right;">0.098</td>
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">67</td>
-<td style="text-align: right;">0.9968</td>
-<td style="text-align: right;">3.20</td>
-<td style="text-align: right;">0.68</td>
-<td style="text-align: right;">9.8</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: right;">7.8</td>
-<td style="text-align: right;">0.76</td>
-<td style="text-align: right;">0.04</td>
-<td style="text-align: right;">2.3</td>
-<td style="text-align: right;">0.092</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">54</td>
-<td style="text-align: right;">0.9970</td>
-<td style="text-align: right;">3.26</td>
-<td style="text-align: right;">0.65</td>
-<td style="text-align: right;">9.8</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: right;">11.2</td>
-<td style="text-align: right;">0.28</td>
-<td style="text-align: right;">0.56</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">0.075</td>
-<td style="text-align: right;">17</td>
-<td style="text-align: right;">60</td>
-<td style="text-align: right;">0.9980</td>
-<td style="text-align: right;">3.16</td>
-<td style="text-align: right;">0.58</td>
-<td style="text-align: right;">9.8</td>
-<td style="text-align: right;">6</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">6</td>
-<td style="text-align: right;">7.4</td>
-<td style="text-align: right;">0.66</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">0.075</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">0.9978</td>
-<td style="text-align: right;">3.51</td>
-<td style="text-align: right;">0.56</td>
-<td style="text-align: right;">9.4</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">7</td>
-<td style="text-align: right;">7.9</td>
-<td style="text-align: right;">0.60</td>
-<td style="text-align: right;">0.06</td>
-<td style="text-align: right;">1.6</td>
-<td style="text-align: right;">0.069</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">59</td>
-<td style="text-align: right;">0.9964</td>
-<td style="text-align: right;">3.30</td>
-<td style="text-align: right;">0.46</td>
-<td style="text-align: right;">9.4</td>
-<td style="text-align: right;">5</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="scaling-the-data" class="slide level2 smaller">
-<h2>Scaling the Data</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>ds <span class="ot">&lt;-</span> <span class="fu">scale</span>(d) <span class="co"># subtract the mean and divide by sd</span></span>
-<span id="cb6-2"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(ds) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top">
-<colgroup>
-<col style="width: 1%">
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 7%">
-<col style="width: 9%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 13%">
-<col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 6%">
-<col style="width: 5%">
-<col style="width: 5%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: right;">fixed.acidity</th>
-<th style="text-align: right;">volatile.acidity</th>
-<th style="text-align: right;">citric.acid</th>
-<th style="text-align: right;">residual.sugar</th>
-<th style="text-align: right;">chlorides</th>
-<th style="text-align: right;">free.sulfur.dioxide</th>
-<th style="text-align: right;">total.sulfur.dioxide</th>
-<th style="text-align: right;">density</th>
-<th style="text-align: right;">pH</th>
-<th style="text-align: right;">sulphates</th>
-<th style="text-align: right;">alcohol</th>
-<th style="text-align: right;">quality</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: right;">-0.52</td>
-<td style="text-align: right;">0.93</td>
-<td style="text-align: right;">-1.39</td>
-<td style="text-align: right;">-0.46</td>
-<td style="text-align: right;">-0.25</td>
-<td style="text-align: right;">-0.47</td>
-<td style="text-align: right;">-0.38</td>
-<td style="text-align: right;">0.58</td>
-<td style="text-align: right;">1.29</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">-0.95</td>
-<td style="text-align: right;">-0.76</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: right;">-0.29</td>
-<td style="text-align: right;">1.92</td>
-<td style="text-align: right;">-1.39</td>
-<td style="text-align: right;">0.06</td>
-<td style="text-align: right;">0.20</td>
-<td style="text-align: right;">0.87</td>
-<td style="text-align: right;">0.60</td>
-<td style="text-align: right;">0.05</td>
-<td style="text-align: right;">-0.71</td>
-<td style="text-align: right;">0.12</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">-0.76</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: right;">-0.29</td>
-<td style="text-align: right;">1.26</td>
-<td style="text-align: right;">-1.19</td>
-<td style="text-align: right;">-0.17</td>
-<td style="text-align: right;">0.08</td>
-<td style="text-align: right;">-0.09</td>
-<td style="text-align: right;">0.21</td>
-<td style="text-align: right;">0.16</td>
-<td style="text-align: right;">-0.32</td>
-<td style="text-align: right;">-0.05</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">-0.76</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: right;">1.66</td>
-<td style="text-align: right;">-1.36</td>
-<td style="text-align: right;">1.47</td>
-<td style="text-align: right;">-0.46</td>
-<td style="text-align: right;">-0.27</td>
-<td style="text-align: right;">0.11</td>
-<td style="text-align: right;">0.39</td>
-<td style="text-align: right;">0.69</td>
-<td style="text-align: right;">-0.97</td>
-<td style="text-align: right;">-0.46</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">0.46</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">6</td>
-<td style="text-align: right;">-0.52</td>
-<td style="text-align: right;">0.71</td>
-<td style="text-align: right;">-1.39</td>
-<td style="text-align: right;">-0.53</td>
-<td style="text-align: right;">-0.27</td>
-<td style="text-align: right;">-0.28</td>
-<td style="text-align: right;">-0.20</td>
-<td style="text-align: right;">0.58</td>
-<td style="text-align: right;">1.29</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">-0.95</td>
-<td style="text-align: right;">-0.76</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">7</td>
-<td style="text-align: right;">-0.24</td>
-<td style="text-align: right;">0.39</td>
-<td style="text-align: right;">-1.09</td>
-<td style="text-align: right;">-0.68</td>
-<td style="text-align: right;">-0.39</td>
-<td style="text-align: right;">-0.09</td>
-<td style="text-align: right;">0.36</td>
-<td style="text-align: right;">-0.17</td>
-<td style="text-align: right;">-0.06</td>
-<td style="text-align: right;">-1.16</td>
-<td style="text-align: right;">-0.95</td>
-<td style="text-align: right;">-0.76</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>check <span class="ot">&lt;-</span> <span class="fu">apply</span>(ds, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">c</span>(<span class="at">mean =</span> <span class="fu">mean</span>(x), <span class="at">sd =</span> <span class="fu">sd</span>(x))) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb7-2"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(check)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top" style="width:100%;">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 7%">
-<col style="width: 9%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 13%">
-<col style="width: 5%">
-<col style="width: 1%">
-<col style="width: 6%">
-<col style="width: 5%">
-<col style="width: 5%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: right;">fixed.acidity</th>
-<th style="text-align: right;">volatile.acidity</th>
-<th style="text-align: right;">citric.acid</th>
-<th style="text-align: right;">residual.sugar</th>
-<th style="text-align: right;">chlorides</th>
-<th style="text-align: right;">free.sulfur.dioxide</th>
-<th style="text-align: right;">total.sulfur.dioxide</th>
-<th style="text-align: right;">density</th>
-<th style="text-align: right;">pH</th>
-<th style="text-align: right;">sulphates</th>
-<th style="text-align: right;">alcohol</th>
-<th style="text-align: right;">quality</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">mean</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">sd</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">class</span>(ds); ds <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(ds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "matrix" "array" </code></pre>
-</div>
-</div>
-</section>
-<section id="quality-rating-of-red-wine" class="slide level2 smaller">
-<h2>Quality Rating of Red Wine</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Unscaled Quality</li>
-</ul>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">qplot</span>(d<span class="sc">$</span>quality, <span class="at">geom =</span> <span class="st">"histogram"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Quality Rating of Red Wine"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<ul>
-<li>Scaled Quality</li>
-</ul>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">qplot</span>(ds<span class="sc">$</span>quality, <span class="at">geom =</span> <span class="st">"histogram"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Quality Rating of Red Wine"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section id="alcohol" class="slide level2 smaller">
-<h2>Alcohol</h2>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ds, <span class="fu">aes</span>(alcohol, quality))</span>
-<span id="cb12-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Alcohol"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Quality (Jittered)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="480"></section>
-<section id="volatile-acidity" class="slide level2 smaller">
-<h2>Volatile Acidity</h2>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ds, <span class="fu">aes</span>(volatile.acidity, quality))</span>
-<span id="cb13-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Volatile Acidity"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Quality (Jittered)"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" width="480"></section>
-<section id="correlations" class="slide level2 smaller">
-<h2>Correlations</h2>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">library</span>(corrplot)</span>
-<span id="cb14-2"><a></a>M <span class="ot">&lt;-</span> <span class="fu">cor</span>(ds)</span>
-<span id="cb14-3"><a></a><span class="fu">corrplot</span>(M, <span class="at">method =</span> <span class="st">'ellipse'</span>, <span class="at">order =</span> <span class="st">'AOE'</span>, <span class="at">type =</span> <span class="st">'upper'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="480"></section>
-<section id="linear-regression" class="slide level2 smaller">
-<h2>Linear Regression</h2>
+<section id="basic-regression-setup" class="slide level2 smaller">
+<h2>Basic Regression Setup</h2>
 <div>
 <ul>
-<li class="fragment">We will fit a linear regression to the scaled wine dataset</li>
-<li class="fragment">The priors come from (sensible) defaults in <code>rstanarm</code></li>
-<li class="fragment">Linear regression can be specified in the following way, where <span class="math inline">\(X\)</span> is the design matrix with one or more scaled predictors and <span class="math inline">\(y\)</span> is the scaled quality score</li>
+<li class="fragment">There are lots of possible ways to set up a regression</li>
+<li class="fragment">One predictor: <span class="math inline">\(y = a + bx + \epsilon\)</span></li>
+<li class="fragment">Multiple predictors: <span class="math inline">\(y = b_0 + b_1x_1 + b_2x_2 + \cdots + b_nx_n + \epsilon\)</span>, which we can write as <span class="math inline">\(y = X\beta + \epsilon\)</span></li>
+<li class="fragment">Models with interactions: <span class="math inline">\(y = b_0 + b_1x_1 + b_2x_2 +  b_3x_1x_2 + \epsilon\)</span></li>
+<li class="fragment">Non-linear models like: <span class="math inline">\(\log(y) = a + b\log(x) + \epsilon\)</span></li>
+<li class="fragment">Generalized Linear Models (GLMs), which can, for example, fit binary data, categorical data, and so on</li>
+<li class="fragment">Nonparametric models that are popular in Machine Learning that can learn flexible, functional forms between <span class="math inline">\(y\)</span> and <span class="math inline">\(X\)</span></li>
+<li class="fragment">The latter is not a panacea — if you have a good or good enough functional form, predictions will generally be better and the model will generalize better</li>
 </ul>
 </div>
-<div class="fragment">
-<p><span class="math display">\[
-\begin{aligned}
-y &amp;\sim \mathrm{Normal}(\alpha + X \beta, \ \sigma) \\
-\alpha &amp;\sim \mathrm{Normal}(0, \ 2.5) \\
-\beta &amp;\sim \mathrm{Normal}(0, \ 2.5) \\
-\sigma &amp;\sim \mathrm{Exp}(1)
-\end{aligned}
-\]</span></p>
+<div class="footer">
+<p>Most of the material in this section comes from <a href="https://avehtari.github.io/ROS-Examples/">Regression and Other Stories</a> by Gelman et al.&nbsp;</p>
 </div>
 </section>
-<section id="estimation-using-rs-lm" class="slide level2 smaller">
-<h2>Estimation using R’s lm()</h2>
-<div>
+<section id="simulating-a-simple-regression" class="slide level2 smaller">
+<h2>Simulating a Simple Regression</h2>
 <ul>
-<li class="fragment">We will start by comparing alcohol content to quality ratings</li>
-<li class="fragment">In R’s lm() priors are not specified – they are uniform</li>
+<li>Fitting simulated data is a good start for an analysis</li>
 </ul>
-</div>
-<div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>fit1_freq <span class="ot">&lt;-</span> <span class="fu">lm</span>(quality <span class="sc">~</span> alcohol, <span class="at">data =</span> ds)</span>
-<span id="cb15-2"><a></a>arm<span class="sc">::</span><span class="fu">display</span>(fit1_freq)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb1-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">15</span>; x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n</span>
+<span id="cb1-3"><a></a>a <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb1-4"><a></a>b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb1-5"><a></a>sigma <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb1-6"><a></a>y <span class="ot">&lt;-</span> a <span class="sc">+</span> b<span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma) <span class="co"># or sigma * rnorm(n)</span></span>
+<span id="cb1-7"><a></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
+<span id="cb1-8"><a></a>fit1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb1-9"><a></a><span class="fu">print</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>lm(formula = quality ~ alcohol, data = ds)
-            coef.est coef.se
-(Intercept) 0.00     0.02   
-alcohol     0.48     0.02   
----
-n = 1359, k = 2
-residual sd = 0.88, R-Squared = 0.23</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="co"># avoid R's summary() function</span></span>
-<span id="cb17-2"><a></a><span class="fu">summary</span>(fit1_freq)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = quality ~ alcohol, data = ds)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--3.4372 -0.4761 -0.2097  0.6494  3.1666 
-
-Coefficients:
-              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -7.310e-15  2.380e-02    0.00        1    
-alcohol      4.803e-01  2.381e-02   20.17   &lt;2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.8774 on 1357 degrees of freedom
-Multiple R-squared:  0.2307,    Adjusted R-squared:  0.2302 
-F-statistic:   407 on 1 and 1357 DF,  p-value: &lt; 2.2e-16</code></pre>
-</div>
-</div>
-</div>
-</section>
-<section id="running-the-regression-in-rstanarm" class="slide level2 smaller">
-<h2>Running the Regression in rstanarm</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">library</span>(rstanarm)</span>
-<span id="cb19-2"><a></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
-<span id="cb19-3"><a></a>fit1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(quality <span class="sc">~</span> alcohol, <span class="at">data =</span> ds, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb19-4"><a></a><span class="fu">summary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Model Info:
- function:     stan_glm
+<pre><code>stan_glm
  family:       gaussian [identity]
- formula:      quality ~ alcohol
- algorithm:    sampling
- sample:       4000 (posterior sample size)
- priors:       see help('prior_summary')
- observations: 1359
+ formula:      y ~ x
+ observations: 15
  predictors:   2
+------
+            Median MAD_SD
+(Intercept) 0.1    1.4   
+x           2.1    0.2   
 
-Estimates:
-              mean   sd   10%   50%   90%
-(Intercept) 0.0    0.0  0.0   0.0   0.0  
-alcohol     0.5    0.0  0.4   0.5   0.5  
-sigma       0.9    0.0  0.9   0.9   0.9  
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 2.6    0.5   
 
-Fit Diagnostics:
-           mean   sd   10%   50%   90%
-mean_PPD 0.0    0.0  0.0   0.0   0.0  
-
-The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
-
-MCMC diagnostics
-              mcse Rhat n_eff
-(Intercept)   0.0  1.0  3811 
-alcohol       0.0  1.0  3566 
-sigma         0.0  1.0  3168 
-mean_PPD      0.0  1.0  4004 
-log-posterior 0.0  1.0  1987 
-
-For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
 </section>
-<section id="plotting" class="slide level2 smaller">
-<h2>Plotting</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">plot</span>(fit1, <span class="at">plotfun =</span> <span class="st">"areas"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">posterior_vs_prior</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section id="evaluating-the-model" class="slide level2 smaller">
-<h2>Evaluating the Model</h2>
+<section id="simulating-a-simple-regression-1" class="slide level2 smaller">
+<h2>Simulating a Simple Regression</h2>
 <ul>
-<li>How good is this model?</li>
+<li>We extract our betas using the <code>coef()</code> R function</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(fit1, <span class="at">plotfun =</span> <span class="st">"ppc_dens_overlay"</span>); p2 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(fit1, <span class="at">plotfun =</span> <span class="st">"ppc_ecdf_overlay"</span>)</span>
-<span id="cb23-2"><a></a>p3 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(fit1, <span class="at">plotfun =</span> <span class="st">"ppc_stat"</span>, <span class="at">stat =</span><span class="st">"mean"</span>); p4 <span class="ot">&lt;-</span> <span class="fu">pp_check</span>(fit1, <span class="at">plotfun =</span> <span class="st">"ppc_stat"</span>, <span class="at">stat =</span><span class="st">"sd"</span>)</span>
-<span id="cb23-3"><a></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> p4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>a_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit1)[<span class="dv">1</span>]</span>
+<span id="cb3-2"><a></a>b_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit1)[<span class="dv">2</span>]</span>
+<span id="cb3-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> data)</span>
+<span id="cb3-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">intercept =</span> a_hat, <span class="at">slope =</span> b_hat, <span class="at">linewidth =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
-<section id="evaluating-the-model-1" class="slide level2 smaller">
-<h2>Evaluating the Model</h2>
+<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="480"></section>
+<section id="kidiq-dataset" class="slide level2 smaller">
+<h2>KidIQ Dataset</h2>
 <ul>
-<li>How good is this model?</li>
+<li>Data from a survey of adult American women and their children (a subsample from the National Longitudinal Survey of Youth).</li>
 </ul>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>yrep1 <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(fit1)</span>
-<span id="cb24-2"><a></a><span class="fu">dim</span>(yrep1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4000 1359</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(ds), <span class="at">size =</span> <span class="dv">50</span>) <span class="co"># select 50 random records</span></span>
-<span id="cb26-2"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ppc_intervals</span>(ds<span class="sc">$</span>quality[s], yrep1[, s]); p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
-<section id="we-can-add-other-predictors" class="slide level2 smaller">
-<h2>We Can Add Other Predictors</h2>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>fit2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(quality <span class="sc">~</span> ., <span class="at">data =</span> ds, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb27-2"><a></a><span class="fu">plot</span>(fit2, <span class="at">plotfun =</span> <span class="st">"areas"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>, <span class="at">params =</span> <span class="st">"alcohol"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
-<section id="have-we-improved-the-model" class="slide level2 smaller">
-<h2>Have We Improved the Model</h2>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>yrep2 <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(fit2)</span>
-<span id="cb28-2"><a></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Model 1 predictions"</span>)</span>
-<span id="cb28-3"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">ppc_intervals</span>(ds<span class="sc">$</span>quality[s], yrep2[, s]) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Model 2 predictions"</span>)</span>
-<span id="cb28-4"><a></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
-<section id="have-we-improved-the-model-1" class="slide level2 smaller">
-<h2>Have We Improved the Model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># Mean Square Error for Model 1</span></span>
-<span id="cb29-2"><a></a><span class="fu">mean</span>((<span class="fu">colMeans</span>(yrep1) <span class="sc">-</span> ds<span class="sc">$</span>quality)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.77</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="co"># Mean Square Error for Model 2</span></span>
-<span id="cb31-2"><a></a><span class="fu">mean</span>((<span class="fu">colMeans</span>(yrep2) <span class="sc">-</span> ds<span class="sc">$</span>quality)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.64</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>width <span class="ot">&lt;-</span> <span class="cf">function</span>(yrep, q1, q2) {</span>
-<span id="cb33-2"><a></a>  q <span class="ot">&lt;-</span> <span class="fu">apply</span>(yrep, <span class="dv">2</span>, <span class="cf">function</span> (x) <span class="fu">quantile</span>(x, <span class="at">probs =</span> <span class="fu">c</span>(q1, q2)))</span>
-<span id="cb33-3"><a></a>  width <span class="ot">&lt;-</span> <span class="fu">apply</span>(q, <span class="dv">2</span>, diff)</span>
-<span id="cb33-4"><a></a>  <span class="fu">return</span>(<span class="fu">mean</span>(width))</span>
-<span id="cb33-5"><a></a>}</span>
-<span id="cb33-6"><a></a><span class="fu">width</span>(yrep1, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.18</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">width</span>(yrep2, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.09</code></pre>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(rstanarm<span class="sc">::</span>kidiq[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, ])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;">kid_score</th>
+<th style="text-align: right;">mom_hs</th>
+<th style="text-align: right;">mom_iq</th>
+<th style="text-align: right;">mom_age</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">121.11753</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">89.36188</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">115.44316</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">99.44964</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">115</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">92.74571</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">107.90184</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">138.89311</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">125.14512</td>
+<td style="text-align: right;">23</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
-<section id="comparing-out-of-sample-performance" class="slide level2 smaller">
-<h2>Comparing Out of Sample Performance</h2>
+<section id="single-binary-predictor" class="slide level2 smaller">
+<h2>Single Binary Predictor</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>loo1 <span class="ot">&lt;-</span> <span class="fu">loo</span>(fit1, <span class="at">cores =</span> <span class="dv">4</span>)</span>
-<span id="cb37-2"><a></a>loo2 <span class="ot">&lt;-</span> <span class="fu">loo</span>(fit2, <span class="at">cores =</span> <span class="dv">4</span>)</span>
-<span id="cb37-3"><a></a><span class="fu">loo_compare</span>(loo1, loo2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>fit2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_hs, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb5-2"><a></a><span class="fu">print</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     elpd_diff se_diff
-fit2    0.0       0.0 
-fit1 -117.3      17.8 </code></pre>
+<pre><code>stan_glm
+ family:       gaussian [identity]
+ formula:      kid_score ~ mom_hs
+ observations: 434
+ predictors:   2
+------
+            Median MAD_SD
+(Intercept) 77.6    2.0  
+mom_hs      11.8    2.4  
+
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 19.9    0.7  
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
-<p>Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint.</p>
-</section>
-<section id="can-we-still-improve-the-model" class="slide level2 smaller">
-<h2>Can We Still Improve the Model</h2>
 <div>
 <ul>
-<li class="fragment">Quality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal</li>
-<li class="fragment">For more information, see <a href="https://mc-stan.org/docs/functions-reference/ordered-logistic-distribution.html">ordered logistic distribution</a> in the Stan manual</li>
-<li class="fragment">We are going to use the following parameterization available in Stan:</li>
+<li class="fragment">Our model is <span class="math inline">\(\text{kid_score} = 78 + 12 \cdot \text{mom_hs} + \epsilon\)</span></li>
+<li class="fragment">What is the average IQ of kids whose mothers did not complete high school? (in this dataset)</li>
+<li class="fragment">What is the average IQ of kids whose mothers completed high school?</li>
+<li class="fragment">Did high school cause the IQ change?</li>
+</ul>
+</div>
+</section>
+<section id="single-binary-predictor-1" class="slide level2 smaller">
+<h2>Single Binary Predictor</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_hs, kid_score), <span class="at">data =</span> kidiq)</span>
+<span id="cb7-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit2)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit2)[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
+<section id="single-continous-predictor" class="slide level2 smaller">
+<h2>Single Continous Predictor</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>fit3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_iq, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb8-2"><a></a><span class="fu">print</span>(fit3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stan_glm
+ family:       gaussian [identity]
+ formula:      kid_score ~ mom_iq
+ observations: 434
+ predictors:   2
+------
+            Median MAD_SD
+(Intercept) 26.0    6.1  
+mom_iq       0.6    0.1  
+
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 18.3    0.6  
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Our model is <span class="math inline">\(\text{kid_score} = 26 + 0.6 \cdot \text{mom_iq}+ \epsilon\)</span></li>
+<li class="fragment">How much do kids’ scores improve when maternal IQ differs by 10 points?</li>
+<li class="fragment">What is the meaning of the intercepts = 26 here?</li>
+</ul>
+</div>
+</section>
+<section id="simple-transformations" class="slide level2 smaller">
+<h2>Simple Transformations</h2>
+<ul>
+<li>We will create a new variable called <code>mom_iq_c</code>, which stands for centered</li>
+<li>The transformation: <span class="math inline">\(\text{mom_iq_c}_i = \text{mom_iq}_i - \overline{\text{mom_iq}}\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>kidiq <span class="ot">&lt;-</span> kidiq <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a></a>  <span class="fu">mutate</span>(<span class="at">mom_iq_c =</span> mom_iq <span class="sc">-</span> <span class="fu">mean</span>(mom_iq))</span>
+<span id="cb10-3"><a></a>fit4 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_iq_c, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb10-4"><a></a><span class="fu">print</span>(fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stan_glm
+ family:       gaussian [identity]
+ formula:      kid_score ~ mom_iq_c
+ observations: 434
+ predictors:   2
+------
+            Median MAD_SD
+(Intercept) 86.8    0.9  
+mom_iq_c     0.6    0.1  
+
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 18.3    0.6  
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Our model is <span class="math inline">\(\text{kid_score} = 87 + 0.6 \cdot \text{mom_iq_c}+ \epsilon\)</span></li>
+<li class="fragment">What is the meaning of the intercepts in this model?</li>
+</ul>
+</div>
+</section>
+<section id="single-continous-predictor-1" class="slide level2 smaller">
+<h2>Single Continous Predictor</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<span id="cb12-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit3)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit3)[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
+<section id="combining-the-predictors" class="slide level2 smaller">
+<h2>Combining the Predictors</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>fit5 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_hs <span class="sc">+</span> mom_iq_c, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb13-2"><a></a><span class="fu">print</span>(fit5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stan_glm
+ family:       gaussian [identity]
+ formula:      kid_score ~ mom_hs + mom_iq_c
+ observations: 434
+ predictors:   3
+------
+            Median MAD_SD
+(Intercept) 82.2    1.9  
+mom_hs       6.0    2.2  
+mom_iq_c     0.6    0.1  
+
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 18.2    0.6  
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Our model is now: <span class="math inline">\(\text{kid_score} = 82 + 6 \cdot \text{mom_hs} + 0.6 \cdot \text{mom_iq_c}+ \epsilon\)</span></li>
+<li class="fragment">Write down the interpretation of each coefficient</li>
+</ul>
+</div>
+</section>
+<section id="combining-the-predictors-1" class="slide level2 smaller">
+<h2>Combining the Predictors</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>stan_glm
+ family:       gaussian [identity]
+ formula:      kid_score ~ mom_hs + mom_iq
+ observations: 434
+ predictors:   3
+------
+            Median MAD_SD
+(Intercept) 25.8    5.9  
+mom_hs       6.0    2.3  
+mom_iq       0.6    0.1  
+
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 18.2    0.6  
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
+</div>
+</div>
+<ul>
+<li>Our model is: <span class="math inline">\(\text{kid_score} = 26 + 6 \cdot \text{mom_hs} + 0.6 \cdot \text{mom_iq}+ \epsilon\)</span></li>
+<li>For moms that did not complete high school, the line <span class="math inline">\(y = 26 + 0.6 \cdot \text{mom_iq}\)</span></li>
+<li>For moms that did: <span class="math inline">\(\text{kid_score} = 26 + 6 \cdot 1 + 0.6 \cdot \text{mom_iq} = 32 + 0.6 \cdot \text{mom_iq}\)</span></li>
+</ul>
+</section>
+<section id="visualizing-the-fit-with-two-predictors" class="slide level2 smaller">
+<h2>Visualizing the Fit With Two Predictors</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<span id="cb16-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">as.factor</span>(mom_hs)), <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb16-3"><a></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Mom HS"</span>) <span class="sc">+</span></span>
+<span id="cb16-4"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit6)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit6)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb16-5"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit6)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit6)[<span class="dv">2</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit6)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
+<section id="adding-interactions" class="slide level2 smaller">
+<h2>Adding Interactions</h2>
+<ul>
+<li>In the previous model, we forced the slopes of mothers who completed and did not complete high school to be the same — the only difference was the intercept</li>
+<li>To allow the slopes to vary, we include an interaction term</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>stan_glm
+ family:       gaussian [identity]
+ formula:      kid_score ~ mom_hs + mom_iq + mom_hs:mom_iq
+ observations: 434
+ predictors:   4
+------
+              Median MAD_SD
+(Intercept)   -10.6   13.7 
+mom_hs         50.2   15.1 
+mom_iq          1.0    0.1 
+mom_hs:mom_iq  -0.5    0.2 
+
+Auxiliary parameter(s):
+      Median MAD_SD
+sigma 18.0    0.6  
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Our model is: <span class="math inline">\(\text{kid_score} = -10 + 49 \cdot \text{mom_hs} + 1 \cdot \text{mom_iq} - 0.5 \cdot \text{mom_hs} \cdot \text{mom_iq} + \epsilon\)</span></li>
+<li class="fragment">To figure out the slopes, we consider two cases</li>
+<li class="fragment">For <span class="math inline">\(\text{mom_hs} = 0\)</span>, the line is: <span class="math inline">\(\text{kid_score} = -10 + 1 \cdot \text{mom_iq}\)</span></li>
+<li class="fragment">For <span class="math inline">\(\text{mom_hs} = 1\)</span>, the line is: <span class="math inline">\(\text{kid_score} = -10 + 49 \cdot 1 + 1 \cdot \text{mom_iq} - 0.5 \cdot 1 \cdot \text{mom_iq} = 39 + 0.5\cdot \text{mom_iq}\)</span></li>
+</ul>
+</div>
+</section>
+<section id="visualizing-interactions" class="slide level2 smaller">
+<h2>Visualizing Interactions</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<span id="cb18-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">as.factor</span>(mom_hs)), <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb18-3"><a></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Mom HS"</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit7)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit7)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb18-5"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit7)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit7)[<span class="dv">2</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit7)[<span class="dv">3</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit7)[<span class="dv">4</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
+<section id="interpreting-coefficients-in-complex-non-linear-models" class="slide level2">
+<h2>Interpreting Coefficients in Complex Non-Linear Models</h2>
+<div>
+<ul>
+<li class="fragment">Models that have many parameters, many interactions, and are non-linear are difficult to interpret by looking at parameters marginally (i.e., one at a time)</li>
+<li class="fragment">For this reason, we typically rely on assessing how changes to model inputs affect model predictions, not the impact of each parameter</li>
+<li class="fragment">Predictions take all the parameter values and their interactions into account</li>
+</ul>
+</div>
+</section>
+<section id="uncertainty-and-prediction" class="slide level2 smaller">
+<h2>Uncertainty and Prediction</h2>
+<div>
+<ul>
+<li class="fragment">We return to our simple linear regression model: <span class="math inline">\(\text{kid_score} = 26 + 0.6 \cdot \text{mom_iq}+ \epsilon\)</span></li>
+<li class="fragment">We can extract the simulations of all plausible parameter values (called a posterior distribution in Bayesian analysis)</li>
 </ul>
 </div>
 <div class="fragment">
-<p><span class="math display">\[
-\text{OrderedLogistic}(k~|~\eta,c) = \left\{ \begin{array}{ll} 1 -
-\text{logit}^{-1}(\eta - c_1)  &amp;  \text{if } k = 1, \\[4pt]
-\text{logit}^{-1}(\eta - c_{k-1}) - \text{logit}^{-1}(\eta - c_{k})  &amp;
-\text{if } 1 &lt; k &lt; K, \text{and} \\[4pt] \text{logit}^{-1}(\eta -
-c_{K-1}) - 0  &amp;  \text{if } k = K \end{array} \right.
-\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit3)</span>
+<span id="cb19-2"><a></a><span class="fu">dim</span>(post)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4000    3</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(post[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;">(Intercept)</th>
+<th style="text-align: right;">mom_iq</th>
+<th style="text-align: right;">sigma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">31.77474</td>
+<td style="text-align: right;">0.5396861</td>
+<td style="text-align: right;">18.28899</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">27.21061</td>
+<td style="text-align: right;">0.5917098</td>
+<td style="text-align: right;">18.20332</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">27.27470</td>
+<td style="text-align: right;">0.5942835</td>
+<td style="text-align: right;">18.29135</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">26.54087</td>
+<td style="text-align: right;">0.6114706</td>
+<td style="text-align: right;">18.79476</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25.46339</td>
+<td style="text-align: right;">0.6054314</td>
+<td style="text-align: right;">17.86559</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="uncertainty-and-prediction-1" class="slide level2 smaller">
+<h2>Uncertainty and Prediction</h2>
 <div>
 <ul>
-<li class="fragment">A similar model can fit with frequentist methods using <code>MASS::polr()</code> function</li>
+<li class="fragment">Using these simulations we display 50 plausible regression lines</li>
 </ul>
 </div>
-</section>
-<section id="fitting-ordered-logistic" class="slide level2 smaller">
-<h2>Fitting Ordered Logistic</h2>
+<div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>ds<span class="sc">$</span>quality <span class="ot">&lt;-</span> d<span class="sc">$</span>quality <span class="sc">-</span> <span class="dv">2</span>          <span class="co"># quality vector is now 1:6</span></span>
-<span id="cb39-2"><a></a>ds<span class="sc">$</span>quality <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(ds<span class="sc">$</span>quality)  <span class="co"># it has to be treated as factor (category)</span></span>
-<span id="cb39-3"><a></a>fit3 <span class="ot">&lt;-</span> <span class="fu">stan_polr</span>(quality <span class="sc">~</span> ., <span class="at">prior =</span> <span class="fu">R2</span>(<span class="fl">0.25</span>), <span class="co"># the prior is on explained variance</span></span>
-<span id="cb39-4"><a></a>                  <span class="at">prior_counts =</span> <span class="fu">dirichlet</span>(<span class="dv">1</span>), </span>
-<span id="cb39-5"><a></a>                  <span class="at">data =</span> ds, <span class="at">iter =</span> <span class="dv">1000</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb39-6"><a></a>yrep3 <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(fit3)</span>
-<span id="cb39-7"><a></a>yrep3[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     1   2   3   4   5  
-[1,] "3" "4" "4" "4" "3"
-[2,] "2" "3" "3" "4" "3"
-[3,] "3" "3" "4" "4" "2"
-[4,] "4" "3" "3" "3" "3"
-[5,] "4" "4" "4" "3" "3"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>yrep3 <span class="ot">&lt;-</span> <span class="fu">apply</span>(yrep3, <span class="dv">2</span>, as.numeric)</span>
-<span id="cb41-2"><a></a>yrep3[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     1 2 3 4 5
-[1,] 3 4 4 4 3
-[2,] 2 3 3 4 3
-[3,] 3 3 4 4 2
-[4,] 4 3 3 3 3
-[5,] 4 4 4 3 3</code></pre>
-</div>
-</div>
-</section>
-<section id="evaluating-model-fit" class="slide level2 smaller">
-<h2>Evaluating Model Fit</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="fu">pp_check</span>(fit2, <span class="at">plotfun =</span> <span class="st">"ppc_dens_overlay"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(fit3)</span>
+<span id="cb22-2"><a></a>post_sub <span class="ot">&lt;-</span> post[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(post), <span class="dv">50</span>), ]</span>
+<span id="cb22-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<span id="cb22-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb22-5"><a></a>  <span class="fu">geom_abline</span>(<span class="fu">aes</span>(<span class="at">intercept =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, <span class="at">slope =</span> mom_iq), </span>
+<span id="cb22-6"><a></a>              <span class="at">linewidth =</span> <span class="fl">0.1</span>,</span>
+<span id="cb22-7"><a></a>              <span class="at">data =</span> post_sub)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
+</div>
+</section>
+<section id="uncertainty-and-prediction-2" class="slide level2 smaller">
+<h2>Uncertainty and Prediction</h2>
+<div>
+<ul>
+<li class="fragment">We can compute inferential uncertainty in all the parameters directly</li>
+<li class="fragment">We can also compute event probabilities</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit3)</span>
+<span id="cb23-2"><a></a><span class="co"># median</span></span>
+<span id="cb23-3"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)      mom_iq       sigma 
+ 26.0236767   0.6078977  18.2714868 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, mad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)      mom_iq       sigma 
+ 6.10031655  0.06062729  0.61543505 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># 50% uncertainty estimate</span></span>
+<span id="cb27-2"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     parameters
+      (Intercept)    mom_iq    sigma
+  25%    21.75756 0.5681001 17.86710
+  75%    30.06156 0.6504483 18.69458</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># 90% uncertainty estimate</span></span>
+<span id="cb29-2"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     parameters
+      (Intercept)    mom_iq    sigma
+  5%     15.72707 0.5106528 17.32535
+  95%    35.77134 0.7095889 19.33193</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="co"># What is the probability that the coefficient of mom_iq is &gt; 0.6</span></span>
+<span id="cb31-2"><a></a><span class="fu">mean</span>(post[, <span class="st">"mom_iq"</span>] <span class="sc">&gt;</span> <span class="fl">0.6</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.55</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="types-of-prediction" class="slide level2">
+<h2>Types of Prediction</h2>
+<div>
+<ul>
+<li class="fragment">Point prediction: <span class="math inline">\(\hat{a} + \hat{b}x^{\text{new}}\)</span> — predicting expected average <span class="math inline">\(y\)</span> — don’t recommend</li>
+<li class="fragment">Linear predictor with uncertainty in <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>: <span class="math inline">\(a + bx^{\text{new}}\)</span> — predicting uncertainty around the expexted average value of <span class="math inline">\(y\)</span> — typically used to assess treatment effect</li>
+<li class="fragment">Predictive distribution: <span class="math inline">\(a + bx^{\text{new}} + \epsilon\)</span> — predictive uncertainty around a new <span class="math inline">\(y\)</span> — used to predict for a new individual (not ATT)</li>
+</ul>
+</div>
+</section>
+<section id="prediction-in-rstanarm" class="slide level2 smaller">
+<h2>Prediction in RStanArm</h2>
+<ul>
+<li>We observe a new kid whose mom’s IQ = 120</li>
+<li>Point prediction is shown in <span style="color:red">Red</span>, 90% uncertainty around the average kid score in <span style="color:blue">Blue</span>, and 90% predictive uncertainty for a new kid is in <span style="color:yellow">Yellow</span>.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>mom120 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">mom_iq =</span> <span class="dv">120</span>)</span>
+<span id="cb33-2"><a></a>(point_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit3, <span class="at">newdata =</span> mom120))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      1 
+98.9816 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>lin_pred <span class="ot">&lt;-</span> <span class="fu">posterior_linpred</span>(fit3, </span>
+<span id="cb35-2"><a></a>                              <span class="at">newdata =</span> mom120)</span>
+<span id="cb35-3"><a></a>post_pred <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(fit3, </span>
+<span id="cb35-4"><a></a>                               <span class="at">newdata =</span> mom120)</span>
+<span id="cb35-5"><a></a>(lp_range <span class="ot">&lt;-</span> <span class="fu">quantile</span>(lin_pred, </span>
+<span id="cb35-6"><a></a>                      <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      5%      95% 
+ 96.5370 101.4359 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>(pp_range <span class="ot">&lt;-</span> <span class="fu">quantile</span>(post_pred, </span>
+<span id="cb37-2"><a></a>                      <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       5%       95% 
+ 68.88551 128.75195 </code></pre>
+</div>
+</div>
 </div><div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">pp_check</span>(fit3, <span class="at">plotfun =</span> <span class="st">"ppc_dens_overlay"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
 </section>
-<section id="evaluating-model-fit-1" class="slide level2 smaller">
-<h2>Evaluating Model Fit</h2>
-<div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Plots</a></li><li><a href="#tabset-1-2">Metrics</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>p3 <span class="ot">&lt;-</span> <span class="fu">ppc_intervals</span>(<span class="fu">as.numeric</span>(ds<span class="sc">$</span>quality[s]), yrep3[, s]) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Model 3 predictions"</span>)</span>
-<span id="cb45-2"><a></a>p2 <span class="sc">+</span> p3 <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-1-2">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">cat</span>(<span class="st">"Mean Square Error for Model 2:"</span>, <span class="fu">mean</span>((<span class="fu">colMeans</span>(yrep2) <span class="sc">-</span> <span class="fu">scale</span>(d<span class="sc">$</span>quality))<span class="sc">^</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Mean Square Error for Model 2: 0.64</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="fu">cat</span>(<span class="st">"Mean Square Error for Model 3:"</span>, <span class="fu">mean</span>((<span class="fu">colMeans</span>(yrep3) <span class="sc">-</span> <span class="fu">as.numeric</span>(ds<span class="sc">$</span>quality))<span class="sc">^</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Mean Square Error for Model 3: 0.43</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">cat</span>(<span class="st">"Width of the 50% interval for Model 2:"</span>, <span class="fu">width</span>(yrep2, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Width of the 50% interval for Model 2: 1.09</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="fu">cat</span>(<span class="st">"Width of the 50% interval for Model 3:"</span>, <span class="fu">width</span>(yrep3, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Width of the 50% interval for Model 3: 0.72</code></pre>
-</div>
-</div>
-</div>
-</div>
+<section id="linear-regression-assumptions" class="slide level2">
+<h2>Linear Regression Assumptions</h2>
+<p>Presented in the order of importance</p>
+<div>
+<ul>
+<li class="fragment">Validity of the model for the question at hand</li>
+<li class="fragment">Representativeness and valid scope of inference</li>
+<li class="fragment">Additivity and linearity</li>
+<li class="fragment">Independence of errors</li>
+<li class="fragment">Equal variance of errors</li>
+<li class="fragment">Normality of errors</li>
+</ul>
 </div>
 </section>
 <section id="quick-tips-to-improve-your-regression-modeling" class="slide level2 smaller">
@@ -1247,8 +1076,8 @@ c_{K-1}) - 0  &amp;  \text{if } k = K \end{array} \right.
 <p>This advice comes from “Regression and Other Stories” by Gelman and Hill</p>
 <div>
 <ul>
-<li class="fragment">Think generatively (+)</li>
-<li class="fragment">Think about what you are measuring (+)</li>
+<li class="fragment">Think generatively</li>
+<li class="fragment">Think about what you are measuring</li>
 <li class="fragment">Think about variation, replication</li>
 <li class="fragment">Forget about statistical significance</li>
 <li class="fragment">Graph the relevant and not the irrelevant</li>
@@ -1262,16 +1091,16 @@ c_{K-1}) - 0  &amp;  \text{if } k = K \end{array} \right.
 </ul>
 </div>
 </section>
-<section id="so-long-and-thanks-for-all-the-fish" class="slide level2 smaller">
-<h2>So Long (and Thanks for All the Fish)</h2>
+<section id="thanks-for-being-part-of-my-class" class="slide level2 smaller">
+<h2>Thanks for being part of my class!</h2>
 
 <img data-src="images/itsover.jpeg" class="quarto-figure quarto-figure-center r-stretch"><ul>
 <li>Lectures: https://ericnovik.github.io/smac.html</li>
 <li>Keep in touch:
 <ul>
 <li>eric.novik@nyu.edu</li>
-<li>Twitter: <a href="https://twitter.com/ericnovik">@ericnovik</a></li>
 <li>https://www.linkedin.com/in/enovik/</li>
+<li>Twitter: <a href="https://twitter.com/ericnovik">@ericnovik</a></li>
 <li>Personal blog: https://ericnovik.com/</li>
 </ul></li>
 </ul>
