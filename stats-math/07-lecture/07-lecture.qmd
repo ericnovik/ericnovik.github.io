@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 07"
+author: "Eric Novik | Summer 2024 | Session 7"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -16,24 +16,30 @@ editor: source
 always_allow_html: true
 bibliography: ../references.bib
 ---
-
-## Session 8 Outline
+## Session 7 Outline
 
 ::: incremental
--   Statistical analysis workflow
--   Introduction to the `rstanarm` package
--   Setting up a linear regression
--   Model evaluation
--   Model expansion
-
+- Statistical inference
+- Sampling distribution
+- Standard errors
+- Confidence intervals
+- Degrees of freedom and t distribution
+- Bias and uncertainty
+- Statistical significance
 :::
 
+::: footer
+The material for this session is based on Chapter 4 of the [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) by Gelman et al.
+:::
+
+
 ```{r}
-library(dplyr)
-library(corrplot)
+library(magrittr)
 library(patchwork)
 library(ggplot2)
-library(bayesplot)
+library(caracas)
+library(stringr)
+reticulate::use_condaenv("miniconda3")
 thm <-
   theme_minimal() + theme(
     panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
@@ -50,466 +56,400 @@ $$
 \DeclareMathOperator{\I}{\text{I}}
 $$
 
-## Analysis Workflow
-- Following is a high-level, end-to-end view from "R for Data Science" by Wickham and Grolemund
-
-![](images/data-science.png){fig-align="center"}
-
-## Analysis Workflow {.smaller}
-
-![](images/workflow.png){fig-align="center"}
-
-::: incremental
-- A more comprehensive ["Bayesian Workflow"](https://arxiv.org/abs/2011.01808) by Gelman at al.
-:::
-
-
-
-## Some Notation
-
-::: incremental
-
-- Observed data $y$
-- Unobserved but observable data $\widetilde{y}$
-- Unobservable parameters $\theta$
-- Covariates $X$
-- Prior distribution $f(\theta)$
-- Likelihood (as a function of $\theta$), $f(y | \theta, X)$
-- Posterior distribution $f(\theta | y, X)$ (for Bayesian inference only)
-
-:::
-
-## Bayes vs Frequentist Inference {.smaller}
+## Introduction to Statistical Inference {.smaller}
 
 ::: columns
 ::: {.column width="50%"}
 
-::: incremental
-- **Estimation** is the process of figuring out the unknowns, i.e., unobserved quantities
-- In frequentist inference, the problem is framed in terms of the **most likely value(s)** of $\theta$
-- Bayesians want to characterize the whole distribution, a much more ambitious goal
-::: 
-
+- **Statistical Inference:** A process of learning from noisy measurements
+- **Key Challenges:**
+  - Generalizing from a sample to the population of interest
+  - Learning what would have happened under different treatment
+  - Understanding the relationship between the measurement and the estimand
 :::
 
 ::: {.column width="50%"}
 
-::: incremental
-- Suppose we want to characterize the following function, which represents some distribution of the unknown parameter:
+![](images/estimator_icons.png){fig-align="center" width="600"}
 
-::: 
+Image source: https://diff.healthpolicydatascience.org/
+
+:::
+:::
+
+## Measurement Error Models
+::: incremental
+- We are trying to estimate the parameters of some data-generating process
+- For our car example, we assumed that the car position data are coming from the following model:
 
 ::: {.fragment}
-![](images/freq_vs_bayes.jpg){fig-align="center"}
-:::
-
-:::
-:::
-
-
-
-## Wine Dataset {.smaller}
-
-![](images/uci.png){fig-align="center"}
-
-## Wine Dataset {.smaller}
-```{r}
-#| cache: true
-#| echo: true
-
-d <- read.delim("data/winequality-red.csv", sep = ";")
-dim(d)
-d <- d[!duplicated(d), ] # remove the duplicates
-dim(d)
-knitr::kable(head(d))
-```
-
-## Scaling the Data {.smaller}
-```{r}
-#| cache: true
-#| echo: true
-
-ds <- scale(d) # subtract the mean and divide by sd
-knitr::kable(head(ds) %>% round(2))
-check <- apply(ds, 2, function(x) c(mean = mean(x), sd = sd(x))) %>% round(2)
-knitr::kable(check)
-class(ds); ds <- as_tibble(ds)
-```
-
-## Quality Rating of Red Wine {.smaller}
-
-::: columns
-::: {.column width="50%"}
-
-- Unscaled Quality
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-
-qplot(d$quality, geom = "histogram") + xlab("Quality Rating of Red Wine")
-```
-
-:::
-
-::: {.column width="50%"}
-
-- Scaled Quality
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-
-qplot(ds$quality, geom = "histogram") + xlab("Quality Rating of Red Wine")
-```
-
-:::
-:::
-
-## Alcohol {.smaller}
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-
-p <- ggplot(ds, aes(alcohol, quality))
-p + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab("Alcohol") + ylab("Quality (Jittered)")
-```
-
-## Volatile Acidity {.smaller}
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-p <- ggplot(ds, aes(volatile.acidity, quality))
-p + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab("Volatile Acidity") + ylab("Quality (Jittered)") 
-```
-
-## Correlations  {.smaller}
-
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-library(corrplot)
-M <- cor(ds)
-corrplot(M, method = 'ellipse', order = 'AOE', type = 'upper')
-```
-
-
-## Linear Regression {.smaller}
-
-::: incremental
-- We will fit a linear regression to the scaled wine dataset
-- The priors come from (sensible) defaults in `rstanarm`
-- Linear regression can be specified in the following way, where $X$ is the design matrix with one or more scaled predictors and $y$ is the scaled quality score
-:::
-
-::: {.fragment}
-$$ 
-\begin{aligned}
-y &\sim \mathrm{Normal}(\alpha + X \beta, \ \sigma) \\
-\alpha &\sim \mathrm{Normal}(0, \ 2.5) \\
-\beta &\sim \mathrm{Normal}(0, \ 2.5) \\
-\sigma &\sim \mathrm{Exp}(1)
-\end{aligned}
+$$
+x_i(t) = a + bt_i^2 + \epsilon_i
 $$
 :::
 
-## Estimation using R's lm() {.smaller}
+- We also assumed that time $t$ was observed precisely, but we can also have an error in $t$
+- Errors may be multiplicative, not just additive
+:::
+
+
+## Sampling Distribution {.smaller}
 
 ::: incremental
-- We will start by comparing alcohol content to quality ratings
-- In R's lm() priors are not specified -- they are uniform
+- **Generative model** for our data: given the generative model, we can create replicas of the dataset
+- Sampling distribution is typically unknown and depends on the data collection, how subjects are assigned to treatment conditions, sampling process
+- **Examples**
+  - Simple random sample of size $n$ from the population of size $N$. Here, each person has the same probability of being selected
+  - Our constant acceleration model $x_i(t) = a + bt_i^2 + \epsilon_i$, where we fix $a$ and $b$, and $t$, and draw $\epsilon$ from an error distribition, such as $\text{Normal}(0, 1)$
+  - We can write some code to generate observations according to this process (which is what I did for the car example)
+:::
+
+## Standard Errors {.smaller}
+
+::: incremental
+- **Standard error** is the estimated standard deviation of the estimate
+- It provides a **measure of uncertainty** around the estimate
+- Standard error decreases as the sample size increases
+- To estimate the SE of the mean from a large population with sd = $\sigma$: $\frac{\sigma}{\sqrt{n}}$ 
+
+::: {.fragment}
+```{r}
+#| echo: true
+set.seed(1)
+n <- 100; mu <- 5; sigma <- 1.5
+x <- rnorm(n, mean = mu, sd = sigma)
+x_bar <- mean(x); round(x_bar, 2)
+(se <- sigma/sqrt(n))
+```
+:::
+
+- If $\sigma$ is unknown, we can estimate it from the sample: $s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}$ 
 :::
 
 ::: {.fragment}
 ```{r}
 #| echo: true
-#| cache: true
-
-fit1_freq <- lm(quality ~ alcohol, data = ds)
-arm::display(fit1_freq)
-
-# avoid R's summary() function
-summary(fit1_freq)
+var(x)
+sum((x - x_bar)^2) / (n - 1)
 ```
 :::
 
-## Running the Regression in rstanarm {.smaller}
+## Confidence Intervals {.smaller}
 
-```{r}
-#| echo: true
-#| cache: true
+::: incremental
+- For a given sampling distribution, confidence interval provides a range of parameter values consistent with the data
+- For example, for a normal sampling distribution, an estimate $\hat{\theta}$ will fall in $\hat{\theta} \pm 2\cdot\text{se}$ about 95% of the time
+:::
 
-library(rstanarm)
-options(mc.cores = parallel::detectCores())
-fit1 <- stan_glm(quality ~ alcohol, data = ds, refresh = 0)
-summary(fit1)
-```
-
-
-## Plotting  {.smaller}
-::: columns
-::: {.column width="50%"}
-
+::: {.fragment}
 ```{r}
 #| cache: true
-#| echo: true
-#| fig-width: 5
+#| fig-width: 8
 #| fig-height: 4
 #| fig-align: center
 
-plot(fit1, plotfun = "areas", prob = 0.9)
+n_samples <- 100
+sample_size <- 100
+true_mean <- mu
+true_sd <- sigma
 
-```
-:::
-
-::: {.column width="50%"}
-
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-
-posterior_vs_prior(fit1)
-
-```
-:::
-:::
-
-## Evaluating the Model {.smaller}
-
-- How good is this model?
-
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 7
-#| fig-height: 4
-#| fig-align: center
-
-p1 <- pp_check(fit1, plotfun = "ppc_dens_overlay"); p2 <- pp_check(fit1, plotfun = "ppc_ecdf_overlay")
-p3 <- pp_check(fit1, plotfun = "ppc_stat", stat ="mean"); p4 <- pp_check(fit1, plotfun = "ppc_stat", stat ="sd")
-p1 + p2 + p3 + p4
-```
-
-## Evaluating the Model {.smaller}
-
-- How good is this model?
-
-```{r}
-#| cache: true
-#| echo: true
-#| fig-width: 7
-#| fig-height: 2
-#| fig-align: center
-yrep1 <- posterior_predict(fit1)
-dim(yrep1)
-s <- sample(1:nrow(ds), size = 50) # select 50 random records
-p1 <- ppc_intervals(ds$quality[s], yrep1[, s]); p1
-```
-
-## We Can Add Other Predictors {.smaller}
-
-```{r}
-#| echo: true
-#| cache: true
-#| fig-width: 7
-#| fig-height: 5
-#| fig-align: center
-
-fit2 <- stan_glm(quality ~ ., data = ds, refresh = 0)
-plot(fit2, plotfun = "areas", prob = 0.9, params = "alcohol")
-```
-
-## Have We Improved the Model {.smaller}
-
-```{r}
-#| echo: true
-#| cache: true
-#| fig-width: 7
-#| fig-height: 5
-#| fig-align: center
-yrep2 <- posterior_predict(fit2)
-p1 <- p1 + ggtitle("Model 1 predictions")
-p2 <- ppc_intervals(ds$quality[s], yrep2[, s]) + ggtitle("Model 2 predictions")
-p1 + p2 + plot_layout(nrow = 2, byrow = FALSE)
-```
-
-## Have We Improved the Model {.smaller}
-```{r}
-#| echo: true
-#| cache: true
-
-# Mean Square Error for Model 1
-mean((colMeans(yrep1) - ds$quality)^2) %>% round(2)
-# Mean Square Error for Model 2
-mean((colMeans(yrep2) - ds$quality)^2) %>% round(2)
-
-width <- function(yrep, q1, q2) {
-  q <- apply(yrep, 2, function (x) quantile(x, probs = c(q1, q2)))
-  width <- apply(q, 2, diff)
-  return(mean(width))
+# Function to compute confidence intervals
+compute_ci <- function(sample, level = 0.95) {
+  mean_sample <- mean(sample)
+  se <- sd(sample) / sqrt(length(sample))
+  z <- qnorm(1 - (1 - level) / 2)
+  lower <- mean_sample - z * se
+  upper <- mean_sample + z * se
+  return(c(lower, upper))
 }
-width(yrep1, 0.25, 0.75) %>% round(2)
-width(yrep2, 0.25, 0.75) %>% round(2)
+
+# Generate samples and compute confidence intervals
+results <- data.frame(sample_id = integer(), 
+                      ci_lower_50 = numeric(), 
+                      ci_upper_50 = numeric(),
+                      ci_lower_95 = numeric(), 
+                      ci_upper_95 = numeric())
+
+for (i in 1:n_samples) {
+  sample <- rnorm(sample_size, mean = true_mean, sd = true_sd)
+  ci_50 <- compute_ci(sample, level = 0.50)
+  ci_95 <- compute_ci(sample, level = 0.95)
+  results <- rbind(results, data.frame(sample_id = i, 
+                                       ci_lower_50 = ci_50[1], 
+                                       ci_upper_50 = ci_50[2],
+                                       ci_lower_95 = ci_95[1], 
+                                       ci_upper_95 = ci_95[2]))
+}
+
+# Plot the confidence intervals using geom_linerange
+ggplot(results, aes(x = sample_id)) +
+  geom_linerange(aes(ymin = ci_lower_50, ymax = ci_upper_50), linewidth = 0.8) +
+  geom_linerange(aes(ymin = ci_lower_95, ymax = ci_upper_95), linewidth = 0.2) +
+  geom_hline(yintercept = true_mean, linewidth = 0.1, color = 'red') +
+  labs(title = "Confidence Intervals for 100 Samples from Normal(5, 1.5)",
+       x = "",
+       caption = "50% CI in bold, 95% CI is thin black")
+
 ```
-
-## Comparing Out of Sample Performance {.smaller}
-
-```{r}
-#| echo: true
-#| cache: true
-
-loo1 <- loo(fit1, cores = 4)
-loo2 <- loo(fit2, cores = 4)
-loo_compare(loo1, loo2)
-```
-
-Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint.
-
-## Can We Still Improve the Model {.smaller}
-
-::: incremental
-- Quality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal
-- For more information, see [ordered logistic distribution](https://mc-stan.org/docs/functions-reference/ordered-logistic-distribution.html) in the Stan manual
-- We are going to use the following parameterization available in Stan:
 :::
 
-::: {.fragment}
-$$
-\text{OrderedLogistic}(k~|~\eta,c) = \left\{ \begin{array}{ll} 1 -
-\text{logit}^{-1}(\eta - c_1)  &  \text{if } k = 1, \\[4pt]
-\text{logit}^{-1}(\eta - c_{k-1}) - \text{logit}^{-1}(\eta - c_{k})  &
-\text{if } 1 < k < K, \text{and} \\[4pt] \text{logit}^{-1}(\eta -
-c_{K-1}) - 0  &  \text{if } k = K \end{array} \right.
-$$
-:::
-
-::: incremental
--   A similar model can fit with frequentist methods using `MASS::polr()` function
-:::
-
-## Fitting Ordered Logistic {.smaller}
-
-```{r}
-#| echo: true
-#| cache: true
-#| fig-width: 5
-#| fig-height: 5
-#| fig-align: center
-
-ds$quality <- d$quality - 2          # quality vector is now 1:6
-ds$quality <- as.factor(ds$quality)  # it has to be treated as factor (category)
-fit3 <- stan_polr(quality ~ ., prior = R2(0.25), # the prior is on explained variance
-                  prior_counts = dirichlet(1), 
-                  data = ds, iter = 1000, refresh = 0)
-yrep3 <- posterior_predict(fit3)
-yrep3[1:5, 1:5]
-yrep3 <- apply(yrep3, 2, as.numeric)
-yrep3[1:5, 1:5]
-```
-
-## Evaluating Model Fit {.smaller}
+## Confidence Intervals for Proportions {.smaller}
 
 ::: columns
 ::: {.column width="50%"}
-```{r}
-#| echo: true
-#| cache: true
-#| fig-width: 5
-#| fig-height: 5
-#| fig-align: center
-pp_check(fit2, plotfun = "ppc_dens_overlay")
-```
+
+::: incremental
+- In surveys, we are often interested in estimating the standard error of the proportion
+- Suppose we want to estimate the proportion of the US population that supports same-sex marriage
+- Say you randomly survey $n = 500$ from the population, and $y = 355$ people respond yes[^1]
+- The estimate of the proportion is $\hat{\theta} = y/n$ with the $\text{se} = \sqrt{\hat{\theta}(1 -\hat{\theta})/n }$
+:::
 
 :::
 
 ::: {.column width="50%"}
+
+::: {.fragment}
 ```{r}
-#| echo: true
 #| cache: true
-#| fig-width: 5
-#| fig-height: 5
-#| fig-align: center
-pp_check(fit3, plotfun = "ppc_dens_overlay")
+#| echo: true
+n <- 500
+y <- 355
+theta_hat <- y/n
+theta_hat |> round(2)
+se <- sqrt(theta_hat * (1 - theta_hat) / n)
+se |> round(2)
+theta_hat + 2*se |> round(2)
+theta_hat - 2*se |> round(2)
+ci_95 <- theta_hat + qnorm(c(0.025, 0.975)) * se
+ci_95 |> round(2)
 ```
+:::
 
 :::
 :::
 
+[^1]: The most recent Gallup poll from May 2023 found that 71% of Americans think same-sex marriage should be legally recognized
 
-## Evaluating Model Fit {.smaller}
+## Your Turn
+In a national survey of $n$ people, how large does $n$ have to be so that you can estimate
+presidential approval to within a standard error of ±3 percentage points, ±1 percentage points?
 
-::: panel-tabset
-### Plots
 
-```{r}
-#| echo: true
-#| cache: true
-#| fig-width: 7
-#| fig-height: 5
-#| fig-align: center
+## Standard Error for Differences
+::: incremental
+- We already saw an example of how to add variances from two independent RVs
 
-p3 <- ppc_intervals(as.numeric(ds$quality[s]), yrep3[, s]) + ggtitle("Model 3 predictions")
-p2 + p3 + plot_layout(nrow = 2, byrow = FALSE)
-```
 
-### Metrics
+::: {.fragment}
+$$
+\text{se}_{\text{diff}} = \sqrt{\text{se}_1^2 + \text{se}_2^2}
+$$
+:::
 
-```{r}
-#| echo: true
-#| cache: true
-
-cat("Mean Square Error for Model 2:", mean((colMeans(yrep2) - scale(d$quality))^2) %>% round(2))
-cat("Mean Square Error for Model 3:", mean((colMeans(yrep3) - as.numeric(ds$quality))^2) %>% round(2))
-cat("Width of the 50% interval for Model 2:", width(yrep2, 0.25, 0.75) %>% round(2))
-cat("Width of the 50% interval for Model 3:", width(yrep3, 0.25, 0.75) %>% round(2))
-```
+- Your turn: How large does $n$ have to be so that you can estimate the gender gap in approval to within a standard error of ±3 percentage points? 
 
 :::
 
-## 10+ quick tips to improve your regression modeling {.smaller}
 
-This advice comes from "Regression and Other Stories" by Gelman and Hill
+## Computer Demo: Computing CIs {.smaller}
+
+- These demos are taken from the book [Active Statistics](https://avehtari.github.io/ActiveStatistics/) by Gelman and Vehtari
+
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+
+# Generate fake data
+p <- 0.3
+n <- 20
+data <- rbinom(1, n, p)
+print(data)
+
+# Estimate proportion and calculate confidence interval
+p_hat <- data / n
+se <- sqrt(p_hat * (1 - p_hat) / n)
+ci <- p_hat + c(-2, 2) * se
+print(ci) 
+
+# Put it in a loop
+reps <- 100
+for (i in 1:reps) {
+  data <- rbinom(1, n, p)
+  p_hat <- data / n
+  se <- sqrt(p_hat * (1 - p_hat) / n)
+  ci <- p_hat + c(-2, 2) * se
+  print(ci) 
+}
+
+```
+
+## Computer Demo: Proportions, Means, and Differences of Means {.smaller}
+
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+
+# Read data from here:  https://github.com/avehtari/ROS-Examples
+library("foreign")
+library("dplyr")
+pew_pre <- read.dta(
+  paste0(
+    "https://raw.githubusercontent.com/avehtari/",
+    "ROS-Examples/master/Pew/data/",
+    "pew_research_center_june_elect_wknd_data.dta"
+  )
+)
+pew_pre <- pew_pre |> select(c("age", "regicert")) %>%
+  na.omit() |> filter(age != 99)
+n <- nrow(pew_pre)
+
+# Estimate a proportion (certain to have registered for voting?)
+registered <- ifelse(pew_pre$regicert == "absolutely certain", 1, 0)
+p_hat <- mean(registered)
+se_hat <- sqrt((p_hat * (1 - p_hat)) / n)
+round(p_hat + c(-2, 2) * se_hat, 4) # ci
+
+# Estimate an average (mean age)
+age <- pew_pre$age
+y_hat <- mean(age)
+se_hat <- sd(age) / sqrt(n)
+round(y_hat + c(-2, 2) * se_hat, 4) # ci
+
+# Estimate a difference of means
+age2 <- age[registered == 1]
+age1 <- age[registered == 0]
+y_2_hat <- mean(age2)
+se_2_hat <- sd(age2) / sqrt(length(age2))
+y_1_hat <- mean(age1)
+se_1_hat <- sd(age1) / sqrt(length(age1))
+diff_hat <- y_2_hat - y_1_hat
+se_diff_hat <- sqrt(se_1_hat ^ 2 + se_2_hat ^ 2)
+round(diff_hat + c(-2, 2) * se_diff_hat, 4) # ci
+
+```
+
+## Degrees of Freedom
 
 ::: incremental
-- Think generatively (+)
-- Think about what you are measuring (+)
-- Think about variation, replication
-- Forget about statistical significance
-- Graph the relevant and not the irrelevant
-- Interpret regression coefficients as comparisons
-- Understand statistical methods using fake-data simulation
-- Fit many models
-- Set up a computational workflow
-- Use transformations
-- Do causal inference in a targeted way, not as a byproduct of a large regression
-- Learn methods through live examples
-::: 
+- Some distributions rely on the concept of degrees of freedom
+- Degrees of freedom balance the need for accurate estimation against the amount of data available; it's a way to correct for overfitting
+- The more parameters you estimate, the fewer degrees of freedom you have left for other calculations
+- The data will give us $n$ (sample size) degrees of freedom, and $p$ number of parameters will be used up during the estimation
+:::
 
-## So Long (and Thanks for All the Fish) {.smaller}
+## Normal and t Distribution
+- t distribution has a degrees freedom parameter, and with a low number of degrees of freedom, it has heavier tails than the Normal
 
-![](images/itsover.jpeg){fig-align="center"}
+```{r}
+#| cache: true
+#| fig-width: 6
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
 
-- Lectures: https://ericnovik.github.io/smac.html
-- Keep in touch:
-  - eric.novik@nyu.edu
-  - Twitter: [\@ericnovik](https://twitter.com/ericnovik)
-  - https://www.linkedin.com/in/enovik/
-  - Personal blog: https://ericnovik.com/
-  
+x_values <- seq(-4, 4, length.out = 1000)
+
+# Compute the densities
+data <- data.frame(
+  x = x_values,
+  normal = dnorm(x_values),
+  t_df_2 = dt(x_values, df = 2),
+  t_df_10 = dt(x_values, df = 10),
+  t_df_100 = dt(x_values, df = 100)
+)
+
+# Melt the data for ggplot
+library(reshape2)
+data_melted <- melt(data, id.vars = "x", 
+                    variable.name = "Distribution", 
+                    value.name = "Density")
+
+# Plot using ggplot2
+ggplot(data_melted, aes(x = x, y = Density, color = Distribution)) +
+  geom_line(size = 0.2) +
+  scale_color_manual(values = c("black", "red", "blue", "green"),
+                     labels = c("Normal", "t (df = 2)", "t (df = 10)", "t (df = 100)")) +
+  labs(title = "Standard Normal and t-Distributions",
+       x = "",
+       y = "Density") +
+  theme(legend.title = element_blank())
+
+```
+
+## Confidence Intervals from the t Distribution {.smaller}
+
+::: columns
+::: {.column width="40%"}
+
+::: incremental
+- t distribution has location and scale parameters and is symmetric like the Normal
+- Standard error would have $n-1$ degrees of freedom as one will be estimated to compute the mean
+- Suppose you threw 5 darts and the distance from bull's eye was as follows (standard dart board radius is about 23 cm)
+:::
+
+:::
+
+::: {.column width="60%"}
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+
+# Distance from the bull's eye in cm
+data <- c(8, 6, 10, 5, 18)
+
+# Calculate the sample mean
+mean_data <- mean(data)
+
+# Calculate the standard error of the mean
+se_mean <- sd(data) / sqrt(length(data))
+
+# Degrees of freedom
+df <- length(data) - 1
+
+# Calculate the 95% and 50% confidence interval 
+ci_95 <- mean_data + qt(c(0.025, 0.975), df) * se_mean
+ci_50 <- mean_data + qt(c(0.25, 0.75), df) * se_mean
+
+# Output the results
+mean_data |> round(2)
+se_mean |> round(2)
+ci_95 |> round(2)
+ci_50 |> round(2)
+```
+:::
+
+:::
+:::
+
+
+## Bias and Uncertainty
+- There is a lot more to it than what is in following standard picture
+- Discuss among yourselves what are the potential sources of bias
+
+![](images/bias-var.png){fig-align="center" width="672"}
+
+## Statistical Significance
+
+::: incremental
+- Comes up in NHST: Null Hypothesis Significance Testing
+- Bad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise
+- Often, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic
+- You flip a coin 10 times and observe 7 heads. Is there evidence of coin bias?
+- What about if you got 70 heads out of 100?
+:::
+
+## Some Problems with Statistical Significance
+
+::: incremental
+- Statistical significance does not mean practical (or in the case of Biostats clinical) significance
+- No significance does not mean there is no effect
+- The difference between “significant” and “not significant” is not itself statistically significant
+- Researcher degrees of freedom, p-hacking
+:::
+
 

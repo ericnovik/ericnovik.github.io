@@ -1,0 +1,487 @@
+---
+title: "SMaC: Statistics, Math, and Computing"
+subtitle: "Applied Statistics for Social Science Research"
+author: "Eric Novik | Summer 2024 | Session 08"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/smac.html>
+editor: source
+always_allow_html: true
+bibliography: ../references.bib
+---
+
+## Session 8 Outline
+
+::: incremental
+- Statistical analysis workflow
+- Simulating data for simple regression
+- Binary predictor in a regression
+- Adding continuous predictor
+- Combining binary and continuous predictors
+- Interpreting coefficients
+- Adding interactions
+- Uncertainty and predictions
+- Assumptions of the regression analysis
+- Regression modeling advice
+
+:::
+
+```{r}
+library(dplyr)
+library(corrplot)
+library(patchwork)
+library(ggplot2)
+library(rstanarm)
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
+  )
+theme_set(thm)
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Analysis Workflow
+- Following is a high-level, end-to-end view from "R for Data Science" by Wickham and Grolemund
+
+![](images/data-science.png){fig-align="center"}
+
+
+
+
+## Some Notation {.smaller}
+
+::: incremental
+- Observed data $y$
+- Unobserved but observable data $\widetilde{y}$
+- Unobservable parameters $\theta$
+- Covariates $X$
+- Prior distribution $f(\theta)$ (for Bayesian inference)
+- Data model or sampling distribution (as a function of y) $f(y \mid \theta, X)$
+- Likelihood (as a function of $\theta$), $f(y \mid \theta, X)$, sometimes written as $\mathcal{L}(\theta \mid y, X)$
+- Maximum likelihood estimate (MLE): $\hat{\theta} = \underset{\theta}{\text{argmax}} \, \mathcal{L}(\theta \mid y, X)$ (for Frequentist inference)
+- Posterior distribution $f(\theta \mid y, X)$ (for Bayesian inference)
+:::
+
+## Bayes vs Frequentist Inference {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- **Estimation** is the process of figuring out the unknowns, i.e., unobserved quantities
+- In frequentist inference, the problem is framed in terms of the **most likely value(s)** of $\theta$
+- Bayesians want to characterize the whole distribution, a much more ambitious goal
+::: 
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+- Suppose we want to characterize the following function, which represents some distribution of the unknown parameter:
+
+::: 
+
+::: {.fragment}
+![](images/freq_vs_bayes.jpg){fig-align="center"}
+:::
+
+:::
+:::
+
+## Basic Regression Setup {.smaller}
+
+::: incremental
+- There are lots of possible ways to set up a regression
+- One predictor: $y = a + bx + \epsilon$
+- Multiple predictors: $y = b_0 + b_1x_1 + b_2x_2 + \cdots + b_nx_n + \epsilon$, which we can write as $y = X\beta + \epsilon$
+- Models with interactions: $y = b_0 + b_1x_1 + b_2x_2 +  b_3x_1x_2 + \epsilon$
+- Non-linear models like: $\log(y) = a + b\log(x) + \epsilon$
+- Generalized Linear Models (GLMs), which can, for example, fit binary data, categorical data, and so on
+- Nonparametric models that are popular in Machine Learning that can learn flexible, functional forms between $y$ and $X$
+- The latter is not a panacea --- if you have a good or good enough functional form, predictions will generally be better and the model will generalize better
+:::
+
+::: footer
+Most of the material in this section comes from [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) by Gelman et al. 
+:::
+
+## Simulating a Simple Regression {.smaller}
+
+- Fitting simulated data is a good start for an analysis
+
+```{r}
+#| cache: true
+#| echo: true
+#| message: false
+#| warning: false
+library(rstanarm)
+n <- 15; x <- 1:n
+a <- 0.5
+b <- 2
+sigma <- 3
+y <- a + b*x + rnorm(n, mean = 0, sd = sigma) # or sigma * rnorm(n)
+data <- data.frame(x, y)
+fit1 <- stan_glm(y ~ x, data = data, refresh = 0) 
+print(fit1)
+```
+
+## Simulating a Simple Regression {.smaller}
+
+- We extract our betas using the `coef()` R function
+
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+a_hat <- coef(fit1)[1]
+b_hat <- coef(fit1)[2]
+p <- ggplot(aes(x, y), data = data)
+p + geom_point(size = 0.2) + geom_abline(intercept = a_hat, slope = b_hat, linewidth = 0.1)
+
+```
+
+## KidIQ Dataset {.smaller}
+
+- Data from a survey of adult American women and their children (a subsample from the National Longitudinal Survey of Youth).
+
+```{r}
+#| cache: true
+#| echo: true
+
+knitr::kable(rstanarm::kidiq[1:8, ])
+```
+
+## Single Binary Predictor {.smaller}
+
+
+```{r}
+#| cache: true
+#| echo: true
+
+fit2 <- stan_glm(kid_score ~ mom_hs, data = kidiq, refresh = 0) 
+print(fit2)
+```
+
+::: incremental
+- Our model is $\text{kid_score} = 78 + 12 \cdot \text{mom_hs} + \epsilon$
+- What is the average IQ of kids whose mothers did not complete high school? (in this dataset)
+- What is the average IQ of kids whose mothers completed high school?
+- Did high school cause the IQ change?
+:::
+
+## Single Binary Predictor {.smaller}
+
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+p <- ggplot(aes(mom_hs, kid_score), data = kidiq)
+p + geom_jitter(height = 0, width = 0.1, size = 0.2) +
+  geom_abline(intercept = coef(fit2)[1], slope = coef(fit2)[2], linewidth = 0.1) +
+  scale_x_continuous(breaks = c(0, 1))
+```
+
+
+
+## Single Continous Predictor {.smaller}
+
+```{r}
+#| cache: true
+#| echo: true
+
+fit3 <- stan_glm(kid_score ~ mom_iq, data = kidiq, refresh = 0) 
+print(fit3)
+```
+
+::: incremental
+- Our model is $\text{kid_score} = 26 + 0.6 \cdot \text{mom_iq}+ \epsilon$
+- How much do kids' scores improve when maternal IQ differs by 10 points?
+- What is the meaning of the intercepts = 26 here?
+:::
+
+## Simple Transformations {.smaller}
+- We will create a new variable called `mom_iq_c`, which stands for centered
+- The transformation: $\text{mom_iq_c}_i = \text{mom_iq}_i - \overline{\text{mom_iq}}$
+
+```{r}
+#| cache: true
+#| echo: true
+kidiq <- kidiq |>
+  mutate(mom_iq_c = mom_iq - mean(mom_iq))
+fit4 <- stan_glm(kid_score ~ mom_iq_c, data = kidiq, refresh = 0) 
+print(fit4)
+```
+
+::: incremental
+- Our model is $\text{kid_score} = 87 + 0.6 \cdot \text{mom_iq_c}+ \epsilon$
+- What is the meaning of the intercepts in this model?
+:::
+
+
+## Single Continous Predictor {.smaller}
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+p <- ggplot(aes(mom_iq, kid_score), data = kidiq)
+p + geom_point(size = 0.2) +
+  geom_abline(intercept = coef(fit3)[1], slope = coef(fit3)[2], linewidth = 0.1)
+```
+
+## Combining the Predictors {.smaller}
+
+```{r}
+#| cache: true
+#| echo: true
+fit5 <- stan_glm(kid_score ~ mom_hs + mom_iq_c, data = kidiq, refresh = 0)
+print(fit5)
+```
+::: incremental
+- Our model is now: $\text{kid_score} = 82 + 6 \cdot \text{mom_hs} + 0.6 \cdot \text{mom_iq_c}+ \epsilon$
+- Write down the interpretation of each coefficient
+:::
+
+## Combining the Predictors {.smaller}
+
+```{r}
+#| cache: true
+#| echo: false
+fit6 <- stan_glm(kid_score ~ mom_hs + mom_iq, data = kidiq, refresh = 0)
+print(fit6)
+```
+- Our model is: $\text{kid_score} = 26 + 6 \cdot \text{mom_hs} + 0.6 \cdot \text{mom_iq}+ \epsilon$
+- For moms that did not complete high school, the line $y = 26 + 0.6 \cdot \text{mom_iq}$
+- For moms that did: $\text{kid_score} = 26 + 6 \cdot 1 + 0.6 \cdot \text{mom_iq} = 32 + 0.6 \cdot \text{mom_iq}$
+
+## Visualizing the Fit With Two Predictors {.smaller}
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+p <- ggplot(aes(mom_iq, kid_score), data = kidiq)
+p + geom_point(aes(color = as.factor(mom_hs)), size = 0.2) +
+  labs(color = "Mom HS") +
+  geom_abline(intercept = coef(fit6)[1], slope = coef(fit6)[3], linewidth = 0.1, color = 'red') +
+  geom_abline(intercept = coef(fit6)[1] + coef(fit6)[2], slope = coef(fit6)[3], linewidth = 0.1, color = 'blue')
+```
+
+## Adding Interactions {.smaller}
+
+- In the previous model, we forced the slopes of mothers who completed and did not complete high school to be the same --- the only difference was the intercept 
+- To allow the slopes to vary, we include an interaction term
+
+```{r}
+#| cache: true
+#| echo: false
+fit7 <- stan_glm(kid_score ~ mom_hs + mom_iq + mom_hs:mom_iq, data = kidiq, refresh = 0)
+print(fit7)
+```
+
+::: incremental
+- Our model is: $\text{kid_score} = -10 + 49 \cdot \text{mom_hs} + 1 \cdot \text{mom_iq} - 0.5 \cdot \text{mom_hs} \cdot \text{mom_iq} + \epsilon$
+- To figure out the slopes, we consider two cases
+- For $\text{mom_hs} = 0$, the line is: $\text{kid_score} = -10 + 1 \cdot \text{mom_iq}$
+- For $\text{mom_hs} = 1$, the line is: $\text{kid_score} = -10 + 49 \cdot 1 + 1 \cdot \text{mom_iq} - 0.5 \cdot 1 \cdot \text{mom_iq} = 39 + 0.5\cdot \text{mom_iq}$
+:::
+
+## Visualizing Interactions {.smaller}
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+#| echo: true
+p <- ggplot(aes(mom_iq, kid_score), data = kidiq)
+p + geom_point(aes(color = as.factor(mom_hs)), size = 0.2) +
+  labs(color = "Mom HS") +
+  geom_abline(intercept = coef(fit7)[1], slope = coef(fit7)[3], linewidth = 0.1, color = 'red') +
+  geom_abline(intercept = coef(fit7)[1] + coef(fit7)[2], slope = coef(fit7)[3] + coef(fit7)[4], linewidth = 0.1, color = 'blue')
+```
+
+## Interpreting Coefficients in Complex Non-Linear Models
+
+::: incremental
+- Models that have many parameters, many interactions, and are non-linear are difficult to interpret by looking at parameters marginally (i.e., one at a time)
+- For this reason, we typically rely on assessing how changes to model inputs affect model predictions, not the impact of each parameter
+- Predictions take all the parameter values and their interactions into account
+:::
+
+## Uncertainty and Prediction {.smaller}
+::: incremental
+- We return to our simple linear regression model: $\text{kid_score} = 26 + 0.6 \cdot \text{mom_iq}+ \epsilon$
+- We can extract the simulations of all plausible parameter values (called a posterior distribution in Bayesian analysis)
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+post <- as.matrix(fit3)
+dim(post)
+knitr::kable(post[1:5, ])
+```
+:::
+
+## Uncertainty and Prediction {.smaller}
+::: incremental
+- Using these simulations we display 50 plausible regression lines
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+
+post <- as.data.frame(fit3)
+post_sub <- post[sample(1:nrow(post), 50), ]
+p <- ggplot(aes(mom_iq, kid_score), data = kidiq)
+p + geom_point(size = 0.2) + 
+  geom_abline(aes(intercept = `(Intercept)`, slope = mom_iq), 
+              linewidth = 0.1,
+              data = post_sub)
+```
+:::
+
+## Uncertainty and Prediction {.smaller}
+::: incremental
+- We can compute inferential uncertainty in all the parameters directly
+- We can also compute event probabilities
+:::
+
+::: {.fragment}
+```{r}
+#| cache: true
+#| echo: true
+post <- as.matrix(fit3)
+# median
+apply(post, 2, median)
+apply(post, 2, mad)
+# 50% uncertainty estimate
+apply(post, 2, quantile, probs = c(0.25, 0.75))
+# 90% uncertainty estimate
+apply(post, 2, quantile, probs = c(0.05, 0.95))
+# What is the probability that the coefficient of mom_iq is > 0.6
+mean(post[, "mom_iq"] > 0.6) |> round(2)
+```
+:::
+
+## Types of Prediction
+
+::: incremental
+- Point prediction: $\hat{a} + \hat{b}x^{\text{new}}$ --- predicting expected average $y$ --- don't recommend
+- Linear predictor with uncertainty in $a$ and $b$: $a + bx^{\text{new}}$ --- predicting uncertainty around the expexted average value of $y$ --- typically used to assess treatment effect
+- Predictive distribution: $a + bx^{\text{new}} + \epsilon$ --- predictive uncertainty around a new $y$ --- used to predict for a new individual (not ATT)
+:::
+
+## Prediction in RStanArm {.smaller}
+
+- We observe a new kid whose mom's IQ = 120
+- Point prediction is shown in <span style="color:red">Red</span>, 90% uncertainty around the average kid score in <span style="color:blue">Blue</span>, and 90% predictive uncertainty for a new kid is in <span style="color:yellow">Yellow</span>.
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| echo: true
+mom120 <- data.frame(mom_iq = 120)
+(point_pred <- predict(fit3, newdata = mom120))
+lin_pred <- posterior_linpred(fit3, 
+                              newdata = mom120)
+post_pred <- posterior_predict(fit3, 
+                               newdata = mom120)
+(lp_range <- quantile(lin_pred, 
+                      probs = c(0.05, 0.95)))
+(pp_range <- quantile(post_pred, 
+                      probs = c(0.05, 0.95)))
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| echo: false
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+p <- ggplot(aes(mom_iq, kid_score), data = kidiq)
+p + geom_point(size = 1.5, alpha = 1/3) +
+  geom_linerange(x = 120, ymin = pp_range["5%"], ymax = pp_range["95%"], alpha = 0.01, linewidth = 3, color = 'yellow')  +
+  geom_linerange(x = 120, ymin = lp_range["5%"], ymax = lp_range["95%"], linewidth = 3,
+                 color = 'blue', alpha = 0.008) +
+  geom_point(x = 120, y = point_pred, color = 'red', size = 1.5) +
+  xlim(110, 130) + ylim(60, 130)
+```
+
+:::
+:::
+
+## Linear Regression Assumptions
+
+Presented in the order of importance
+
+::: incremental
+- Validity of the model for the question at hand
+- Representativeness and valid scope of inference
+- Additivity and linearity
+- Independence of errors
+- Equal variance of errors
+- Normality of errors
+:::
+
+## 10+ quick tips to improve your regression modeling {.smaller}
+
+This advice comes from "Regression and Other Stories" by Gelman and Hill
+
+::: incremental
+- Think generatively
+- Think about what you are measuring
+- Think about variation, replication
+- Forget about statistical significance
+- Graph the relevant and not the irrelevant
+- Interpret regression coefficients as comparisons
+- Understand statistical methods using fake-data simulation
+- Fit many models
+- Set up a computational workflow
+- Use transformations
+- Do causal inference in a targeted way, not as a byproduct of a large regression
+- Learn methods through live examples
+::: 
+
+## Thanks for being part of my class! {.smaller}
+
+![](images/itsover.jpeg){fig-align="center"}
+
+- Lectures: https://ericnovik.github.io/smac.html
+- Keep in touch:
+  - eric.novik@nyu.edu
+  - https://www.linkedin.com/in/enovik/
+  - Twitter: [\@ericnovik](https://twitter.com/ericnovik)
+  - Personal blog: https://ericnovik.com/
+  
+
+

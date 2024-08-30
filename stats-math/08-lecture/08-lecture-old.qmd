@@ -1,0 +1,515 @@
+---
+title: "SMaC: Statistics, Math, and Computing"
+subtitle: "Applied Statistics for Social Science Research"
+author: "Eric Novik | Summer 2023 | Session 07"
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/smac.html>
+editor: source
+always_allow_html: true
+bibliography: ../references.bib
+---
+
+## Session 8 Outline
+
+::: incremental
+-   Statistical analysis workflow
+-   Introduction to the `rstanarm` package
+-   Setting up a linear regression
+-   Model evaluation
+-   Model expansion
+
+:::
+
+```{r}
+library(dplyr)
+library(corrplot)
+library(patchwork)
+library(ggplot2)
+library(bayesplot)
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
+  )
+theme_set(thm)
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Analysis Workflow
+- Following is a high-level, end-to-end view from "R for Data Science" by Wickham and Grolemund
+
+![](images/data-science.png){fig-align="center"}
+
+## Analysis Workflow {.smaller}
+
+![](images/workflow.png){fig-align="center"}
+
+::: incremental
+- A more comprehensive ["Bayesian Workflow"](https://arxiv.org/abs/2011.01808) by Gelman at al.
+:::
+
+
+
+## Some Notation
+
+::: incremental
+
+- Observed data $y$
+- Unobserved but observable data $\widetilde{y}$
+- Unobservable parameters $\theta$
+- Covariates $X$
+- Prior distribution $f(\theta)$
+- Likelihood (as a function of $\theta$), $f(y | \theta, X)$
+- Posterior distribution $f(\theta | y, X)$ (for Bayesian inference only)
+
+:::
+
+## Bayes vs Frequentist Inference {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- **Estimation** is the process of figuring out the unknowns, i.e., unobserved quantities
+- In frequentist inference, the problem is framed in terms of the **most likely value(s)** of $\theta$
+- Bayesians want to characterize the whole distribution, a much more ambitious goal
+::: 
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+- Suppose we want to characterize the following function, which represents some distribution of the unknown parameter:
+
+::: 
+
+::: {.fragment}
+![](images/freq_vs_bayes.jpg){fig-align="center"}
+:::
+
+:::
+:::
+
+
+
+## Wine Dataset {.smaller}
+
+![](images/uci.png){fig-align="center"}
+
+## Wine Dataset {.smaller}
+```{r}
+#| cache: true
+#| echo: true
+
+d <- read.delim("data/winequality-red.csv", sep = ";")
+dim(d)
+d <- d[!duplicated(d), ] # remove the duplicates
+dim(d)
+knitr::kable(head(d))
+```
+
+## Scaling the Data {.smaller}
+```{r}
+#| cache: true
+#| echo: true
+
+ds <- scale(d) # subtract the mean and divide by sd
+knitr::kable(head(ds) %>% round(2))
+check <- apply(ds, 2, function(x) c(mean = mean(x), sd = sd(x))) %>% round(2)
+knitr::kable(check)
+class(ds); ds <- as_tibble(ds)
+```
+
+## Quality Rating of Red Wine {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+- Unscaled Quality
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+qplot(d$quality, geom = "histogram") + xlab("Quality Rating of Red Wine")
+```
+
+:::
+
+::: {.column width="50%"}
+
+- Scaled Quality
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+qplot(ds$quality, geom = "histogram") + xlab("Quality Rating of Red Wine")
+```
+
+:::
+:::
+
+## Alcohol {.smaller}
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+p <- ggplot(ds, aes(alcohol, quality))
+p + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab("Alcohol") + ylab("Quality (Jittered)")
+```
+
+## Volatile Acidity {.smaller}
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+p <- ggplot(ds, aes(volatile.acidity, quality))
+p + geom_jitter(width = 0.1, height = 0.2, alpha = 1/5) + xlab("Volatile Acidity") + ylab("Quality (Jittered)") 
+```
+
+## Correlations  {.smaller}
+
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+library(corrplot)
+M <- cor(ds)
+corrplot(M, method = 'ellipse', order = 'AOE', type = 'upper')
+```
+
+
+## Linear Regression {.smaller}
+
+::: incremental
+- We will fit a linear regression to the scaled wine dataset
+- The priors come from (sensible) defaults in `rstanarm`
+- Linear regression can be specified in the following way, where $X$ is the design matrix with one or more scaled predictors and $y$ is the scaled quality score
+:::
+
+::: {.fragment}
+$$ 
+\begin{aligned}
+y &\sim \mathrm{Normal}(\alpha + X \beta, \ \sigma) \\
+\alpha &\sim \mathrm{Normal}(0, \ 2.5) \\
+\beta &\sim \mathrm{Normal}(0, \ 2.5) \\
+\sigma &\sim \mathrm{Exp}(1)
+\end{aligned}
+$$
+:::
+
+## Estimation using R's lm() {.smaller}
+
+::: incremental
+- We will start by comparing alcohol content to quality ratings
+- In R's lm() priors are not specified -- they are uniform
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+
+fit1_freq <- lm(quality ~ alcohol, data = ds)
+arm::display(fit1_freq)
+
+# avoid R's summary() function
+summary(fit1_freq)
+```
+:::
+
+## Running the Regression in rstanarm {.smaller}
+
+```{r}
+#| echo: true
+#| cache: true
+
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+fit1 <- stan_glm(quality ~ alcohol, data = ds, refresh = 0)
+summary(fit1)
+```
+
+
+## Plotting  {.smaller}
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+plot(fit1, plotfun = "areas", prob = 0.9)
+
+```
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+posterior_vs_prior(fit1)
+
+```
+:::
+:::
+
+## Evaluating the Model {.smaller}
+
+- How good is this model?
+
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+p1 <- pp_check(fit1, plotfun = "ppc_dens_overlay"); p2 <- pp_check(fit1, plotfun = "ppc_ecdf_overlay")
+p3 <- pp_check(fit1, plotfun = "ppc_stat", stat ="mean"); p4 <- pp_check(fit1, plotfun = "ppc_stat", stat ="sd")
+p1 + p2 + p3 + p4
+```
+
+## Evaluating the Model {.smaller}
+
+- How good is this model?
+
+```{r}
+#| cache: true
+#| echo: true
+#| fig-width: 7
+#| fig-height: 2
+#| fig-align: center
+yrep1 <- posterior_predict(fit1)
+dim(yrep1)
+s <- sample(1:nrow(ds), size = 50) # select 50 random records
+p1 <- ppc_intervals(ds$quality[s], yrep1[, s]); p1
+```
+
+## We Can Add Other Predictors {.smaller}
+
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+
+fit2 <- stan_glm(quality ~ ., data = ds, refresh = 0)
+plot(fit2, plotfun = "areas", prob = 0.9, params = "alcohol")
+```
+
+## Have We Improved the Model {.smaller}
+
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+yrep2 <- posterior_predict(fit2)
+p1 <- p1 + ggtitle("Model 1 predictions")
+p2 <- ppc_intervals(ds$quality[s], yrep2[, s]) + ggtitle("Model 2 predictions")
+p1 + p2 + plot_layout(nrow = 2, byrow = FALSE)
+```
+
+## Have We Improved the Model {.smaller}
+```{r}
+#| echo: true
+#| cache: true
+
+# Mean Square Error for Model 1
+mean((colMeans(yrep1) - ds$quality)^2) %>% round(2)
+# Mean Square Error for Model 2
+mean((colMeans(yrep2) - ds$quality)^2) %>% round(2)
+
+width <- function(yrep, q1, q2) {
+  q <- apply(yrep, 2, function (x) quantile(x, probs = c(q1, q2)))
+  width <- apply(q, 2, diff)
+  return(mean(width))
+}
+width(yrep1, 0.25, 0.75) %>% round(2)
+width(yrep2, 0.25, 0.75) %>% round(2)
+```
+
+## Comparing Out of Sample Performance {.smaller}
+
+```{r}
+#| echo: true
+#| cache: true
+
+loo1 <- loo(fit1, cores = 4)
+loo2 <- loo(fit2, cores = 4)
+loo_compare(loo1, loo2)
+```
+
+Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. 27(5), 1413–1432. :10.1007/s11222-016-9696-4. Links: published | arXiv preprint.
+
+## Can We Still Improve the Model {.smaller}
+
+::: incremental
+- Quality variable is an ordinal scale variable, so a more appropriate likelihood would also be ordinal
+- For more information, see [ordered logistic distribution](https://mc-stan.org/docs/functions-reference/ordered-logistic-distribution.html) in the Stan manual
+- We are going to use the following parameterization available in Stan:
+:::
+
+::: {.fragment}
+$$
+\text{OrderedLogistic}(k~|~\eta,c) = \left\{ \begin{array}{ll} 1 -
+\text{logit}^{-1}(\eta - c_1)  &  \text{if } k = 1, \\[4pt]
+\text{logit}^{-1}(\eta - c_{k-1}) - \text{logit}^{-1}(\eta - c_{k})  &
+\text{if } 1 < k < K, \text{and} \\[4pt] \text{logit}^{-1}(\eta -
+c_{K-1}) - 0  &  \text{if } k = K \end{array} \right.
+$$
+:::
+
+::: incremental
+-   A similar model can fit with frequentist methods using `MASS::polr()` function
+:::
+
+## Fitting Ordered Logistic {.smaller}
+
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+
+ds$quality <- d$quality - 2          # quality vector is now 1:6
+ds$quality <- as.factor(ds$quality)  # it has to be treated as factor (category)
+fit3 <- stan_polr(quality ~ ., prior = R2(0.25), # the prior is on explained variance
+                  prior_counts = dirichlet(1), 
+                  data = ds, iter = 1000, refresh = 0)
+yrep3 <- posterior_predict(fit3)
+yrep3[1:5, 1:5]
+yrep3 <- apply(yrep3, 2, as.numeric)
+yrep3[1:5, 1:5]
+```
+
+## Evaluating Model Fit {.smaller}
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+pp_check(fit2, plotfun = "ppc_dens_overlay")
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+pp_check(fit3, plotfun = "ppc_dens_overlay")
+```
+
+:::
+:::
+
+
+## Evaluating Model Fit {.smaller}
+
+::: panel-tabset
+### Plots
+
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+
+p3 <- ppc_intervals(as.numeric(ds$quality[s]), yrep3[, s]) + ggtitle("Model 3 predictions")
+p2 + p3 + plot_layout(nrow = 2, byrow = FALSE)
+```
+
+### Metrics
+
+```{r}
+#| echo: true
+#| cache: true
+
+cat("Mean Square Error for Model 2:", mean((colMeans(yrep2) - scale(d$quality))^2) %>% round(2))
+cat("Mean Square Error for Model 3:", mean((colMeans(yrep3) - as.numeric(ds$quality))^2) %>% round(2))
+cat("Width of the 50% interval for Model 2:", width(yrep2, 0.25, 0.75) %>% round(2))
+cat("Width of the 50% interval for Model 3:", width(yrep3, 0.25, 0.75) %>% round(2))
+```
+
+:::
+
+## 10+ quick tips to improve your regression modeling {.smaller}
+
+This advice comes from "Regression and Other Stories" by Gelman and Hill
+
+::: incremental
+- Think generatively (+)
+- Think about what you are measuring (+)
+- Think about variation, replication
+- Forget about statistical significance
+- Graph the relevant and not the irrelevant
+- Interpret regression coefficients as comparisons
+- Understand statistical methods using fake-data simulation
+- Fit many models
+- Set up a computational workflow
+- Use transformations
+- Do causal inference in a targeted way, not as a byproduct of a large regression
+- Learn methods through live examples
+::: 
+
+## So Long (and Thanks for All the Fish) {.smaller}
+
+![](images/itsover.jpeg){fig-align="center"}
+
+- Lectures: https://ericnovik.github.io/smac.html
+- Keep in touch:
+  - eric.novik@nyu.edu
+  - Twitter: [\@ericnovik](https://twitter.com/ericnovik)
+  - https://www.linkedin.com/in/enovik/
+  - Personal blog: https://ericnovik.com/
+  
+

@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2023 | Session 6"
+author: "Eric Novik | Summer 2024 | Session 6"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -46,7 +46,7 @@ thm <-
 theme_set(thm)
 
 add_align <- function(latex) {
-  str_c("\\begin{align} ", latex, " \\end{align}")
+  str_c("\\begin{aligned} ", latex, " \\end{aligned}")
 }
 
 draw_vector <- function(x, ...) {
@@ -564,14 +564,14 @@ library(caracas)
 A <- matrix(c("a", "b", "c", "d"), 2, 2)
 A <- as_sym(A)
 
-str_c("A = ") %>% str_c(tex(A)) %>% add_align() %>% cat()
-str_c("\\text{det}(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% cat()
+str_c("A = ") %>% str_c(tex(A)) %>% add_align() %>% str_c("\\newline") %>% cat()
+str_c("\\det(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% str_c("\\newline") %>% cat()
 
 B <- matrix(c("a", "b", "c", "d", "e", "f", "g", "h", "i"), 3, 3)
 B <- as_sym(B)
 
-str_c("B = ") %>% str_c(tex(B)) %>% add_align() %>% cat()
-str_c("\\text{det}(B) = ") %>% str_c(tex(det(B))) %>% add_align() %>% cat()
+str_c("B = ") %>% str_c(tex(B)) %>% add_align() %>% str_c("\\newline") %>% cat()
+str_c("\\det(B) = ") %>% str_c(tex(det(B))) %>% add_align() %>% cat()
 
 ```
 
@@ -694,9 +694,9 @@ A <- as_sym(A)
 b <- c("b_1", "b_2")
 b <- as_sym(b)
 
-str_c(tex(A)) %>% str_c("x = ") %>% str_c(tex(b)) %>% add_align() %>% cat()
-str_c("\\text{det}(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% cat()
-str_c("A^{-1} = ") %>% str_c(tex(inv(A))) %>% add_align() %>% cat()
+str_c(tex(A)) %>% str_c("x = ") %>% str_c(tex(b)) %>% add_align() %>% str_c("\\newline") %>% cat()
+str_c("\\det(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% str_c("\\newline") %>% cat()
+str_c("A^{-1} = ") %>% str_c(tex(inv(A))) %>% add_align() %>% str_c("\\newline") %>% cat()
 str_c("x = ") %>% str_c(tex(simplify(solve_lin(A, b)))) %>% add_align() %>% cat()
 
 ```
@@ -753,13 +753,13 @@ For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
 
 ::: incremental
 
-- Statistical inference is concerned with "solving" overdetermined systems
+- Frequentist statistical inference is concerned with "solving" overdetermined systems
 - We have lots of observations with relatively few variables. (Sometimes, we have more variables than observations, but we will not discuss it here)
 - Clearly, there is no exact solution
 - In fact, there are typically infinitely many ways in which you can draw a line through a cloud of points or a plane through n-dimensional space
 - **Optimization** based (or frequentist) inference is concerned with finding the most likely values of the unknowns giving rise to that line (or plane) and approximating their variance
 - **Integration** based (or Bayesian) inference is concerned with finding a joint PDF of the unknowns -- all plausible values weighted by their probability. Therefore, the "estimated variance" is a consequence of this PDF. (Recall our example of estimating variance from the distribution of the difference in heights.) In this sense, Bayesian inference is an uncertainty-preserving system, a very desirable quality.
-- For simple linear models, both of these methods produce similar results, so we will first show the optimized solution. 
+- For simple linear models, both of these methods produce similar results.
 
 :::
 
@@ -768,7 +768,7 @@ For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
 ::: incremental
 - We are switching to a more familiar (to statisticians) notation of $X \beta = y$ (instead of $Ax = b$)
 - We typically augment the $X$ matrix with the column of 1s on the left to model the intercept term, sometimes called $\beta_0$
-- This should make sense when you think about $Xb$ as the linear combination of columns of $X$
+- This should make sense when you think about $X \beta$ as the linear combination of columns of $X$
 - In this form, $X$ is usually called the design matrix or the model matrix
 - The problem is that $X$ is not invertible, even if columns of $X$ are linearly independent
 - Let's say that $X$ is a $3 \times 2$ matrix (3 rows and 2 columns), and columns are linearly independent. Note that $\beta$ is $2 \times 1$ and $y$ is $3 \times 1$.
@@ -876,19 +876,19 @@ print(p)
 ::: incremental
 - This is a quadratic function. How can we solve it using linear regression (the least squares method)?
 
-- We assumed the equation of motion was $x(t) = a + bt^2$
+- We assumed the equation of motion was $x(t) = a + bt^2$, which we will write as $y(t) = \beta_0 + \beta_1 t^2$
 
-- The unknowns are $a$ and $b$
+- The unknowns are $\beta_0$ and $\beta_1$
 
-- Let's express it in the matrix notation and relabel the variables to match our system: $y = \beta_0 + \beta x^2$. Nothing changes, just the labels.
+- Let's express it in the matrix notation
 
-- What is our design matrix $X$? We had 51 observations, so $X$ will have two columns with 51 elements each: a column of 1s and a column representing the squares measurements: $x^2$. 
+- What is our design matrix $X$? We have 51 observations, so $X$ will have two columns and 51 rows: a column of 1s for the intercept and a column of times squared $t^2$
 
 - Our unknown vector $\hat{\beta}$ has two elements $(\hat{\beta_0},\, \hat{\beta_1)}$
 
-- $y$ is our outcome vector of length 51, capturing the car's position at each time point $x$.
+- $y$ is our outcome vector of length 51, capturing the car's position at each time point $t$
 
-- This way, $y = X\hat{\beta}$ captures our system in matrix form
+- $y = X\hat{\beta}$ captures our system in matrix form
 ::: 
 
 ### Solution
@@ -898,16 +898,21 @@ print(p)
 
 ::: {.fragment}
 ```{r}
+#| echo: false
+t <- x
+```
+
+```{r}
 #| echo: true
 
-# length of x (our time vector)
-length(x)
+# length of t (our time vector)
+length(t)
 
-# first few elements of x
-head(x)
+# first few elements of t
+head(t)
 
 # construct the design matrix
-X <- matrix(c(rep(1, length(x)), x^2), ncol = 2)
+X <- matrix(c(rep(1, length(t)), t^2), ncol = 2)
 head(X)
 
 # inspect the vector y
@@ -930,9 +935,11 @@ head(y)
 
 beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
 beta_hat %>% round(2)
-
+data <- data.frame(y = y, t_squared = t^2)
 # compare to R's lm()
-lm(y ~ I(x^2))
+fit <- lm(y ~ t_squared, data = data)
+arm::display(fit)
+
 ```
 :::
 
@@ -958,7 +965,7 @@ p + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')
 
 ## Your Turn {.smaller}
 - Look at the dataset `mtcars`
-- Plot `mpg` against `wp`, treating `mpg` as the output variable $y$. (We generally don't like to use the words dependent vs. independent in this context)
+- Plot `mpg` against `wt`, treating `mpg` as the output variable $y$. (We generally don't like to use the words dependent vs. independent in this context)
 - Using the normal equations, find the intercept and slope of the best-fit line
 - Validate that it matches the output from `lm`
 - Now plot the line over the data and see if it "fits"
