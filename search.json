@@ -11,7 +11,7 @@
     "href": "bayes-course.html",
     "title": "APSTA-GE 2123: Bayesian Inference",
     "section": "",
-    "text": "This is the home of the Spring 2024 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignment will be posted on Brightspace.\nThis is the current version of the syllabus. Please check the date, as it is subject to change.\n\nLectures\nThe following is a preliminary lecture plan. We will add the links after each lecture.\n\nLecture 01: Introduction and Bayesian Workflow\nLecture 02: Conjugate Models and Beta-Binomial\nLecture 03: More Conjugate Models and Introduction to Posterior Sampling\nLecture 04: MCMC, Posterior Inference, and Prediction\nLecture 05: Linear Regression and Model Evaluation\nLecture 06: Expanding the Linear Model and Modeling Counts\nLecture 07: Logistic regression and introduction to hierarchical models\n\nThe final project is due at the end of the semester, and the presentations will take place during finals week. Use these guidelines when working on your proposal and the final report.\n\n\nBackground Resources\nThe following resources may be helpful to those who need a refresher on the prerequisites.\n\nR for Data Science 2e, Wickham et al. \nCalculus Made Easy, Thompson\nCalculus, Strang et al.\nYouTube: Essence of Calculus, Sanderson\nIntoduction to Probability, Blitzstein et al.\nIntroduction to Probability Cheatsheet v2, Chen et al.\n\n\n\nAdditional Bayesian Resources\n\nStatistical Rethinking, McElreath\nA Student’s Guide to Bayesian Statistics, Lambert\nBayesian Data Analysis, Gelman et al.\nStan User’s Guide, Stan Development Team"
+    "text": "This is the home of the Spring 2024 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignment will be posted on Brightspace.\nThis is the current version of the syllabus. Please check the date, as it is subject to change.\n\nLectures\nThe following is a preliminary lecture plan. We will add the links after each lecture.\n\nLecture 01: Introduction and Bayesian Workflow\nLecture 02: Conjugate Models and Beta-Binomial\nLecture 03: More Conjugate Models and Introduction to Posterior Sampling\nLecture 04: MCMC, Posterior Inference, and Prediction\nLecture 05: Linear Regression and Model Evaluation\nLecture 06: Expanding the Linear Model and Modeling Counts\nLecture 07: Logistic regression and introduction to hierarchical models\n\n\n\nBackground Resources\nThe following resources may be helpful to those who need a refresher on the prerequisites.\n\nR for Data Science 2e, Wickham et al.\nCalculus Made Easy, Thompson\nCalculus, Strang et al.\nYouTube: Essence of Calculus, Sanderson\nIntoduction to Probability, Blitzstein et al.\nIntroduction to Probability Cheatsheet v2, Chen et al.\n\n\n\nAdditional Bayesian Resources\n\nStatistical Rethinking, McElreath\nA Student’s Guide to Bayesian Statistics, Lambert\nBayesian Data Analysis, Gelman et al.\nStan User’s Guide, Stan Development Team\nTen Great Ideas About Chance, Diaconis and Skyrms"
   },
   {
     "objectID": "bayes-course/04-lecture/04-lecture.html#mcmc-posterior-inference-and-prediction",
@@ -158,7 +158,7 @@
     "href": "bayes-course/04-lecture/04-lecture.html#breaking-codes-with-mcmc",
     "title": "Bayesian Inference",
     "section": "Breaking Codes with MCMC",
-    "text": "Breaking Codes with MCMC\n\nDianconisCypher textAlgorithmDecoded text\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Breaking Codes with MCMC\n\nDianconisCypher textAlgorithmDecoded text"
   },
   {
     "objectID": "bayes-course/06-lecture/06-lecture.html#more-linear-models-and-modeling-counts",
@@ -501,7 +501,7 @@
     "href": "bayes-course/06-lecture/06-lecture.html#example-trapping-roaches-9",
     "title": "Bayesian Inference",
     "section": "Example: Trapping Roaches",
-    "text": "Example: Trapping Roaches\n\n\nLet’s check the comparison of the out-of-sample predictive performance relative to the Poisson model\n\n\n\n\nloo_pois &lt;- loo(m7)\nloo_nb &lt;- loo(m8)\nloo_compare(loo_pois, loo_nb)\n\n   elpd_diff se_diff\nm8     0.0       0.0\nm7 -5329.4     703.8\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Example: Trapping Roaches\n\n\nLet’s check the comparison of the out-of-sample predictive performance relative to the Poisson model\n\n\n\n\nloo_pois &lt;- loo(m7)\nloo_nb &lt;- loo(m8)\nloo_compare(loo_pois, loo_nb)\n\n   elpd_diff se_diff\nm8     0.0       0.0\nm7 -5329.4     703.8"
   },
   {
     "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
@@ -760,7 +760,7 @@
     "href": "bayes-course/03-lecture/03-lecture.html#stan-homework",
     "title": "Bayesian Inference",
     "section": "Stan Homework",
-    "text": "Stan Homework\n\nModify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e. using target +=)\nModify the program to account for an arbitrary Beta(a, b) distribution\nVerify that you got the right result in #1 by a) comparing Stan’s posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown here; c) modifying the R code to get a third point of comparison.\n\n\nHint: For #2, pass parameters a and b in the data block\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Stan Homework\n\nModify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e. using target +=)\nModify the program to account for an arbitrary Beta(a, b) distribution\nVerify that you got the right result in #1 by a) comparing Stan’s posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown here; c) modifying the R code to get a third point of comparison.\n\n\nHint: For #2, pass parameters a and b in the data block\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#session-5-outline",
@@ -879,7 +879,7 @@
     "href": "stats-math/05-lecture/05-lecture.html#what-we-did-not-cover",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "What We Did Not Cover",
-    "text": "What We Did Not Cover\n\nJoint, Marginal, and Conditional P[M/D]Fs\nCovariance and correlation\nConditional Expectations\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "What We Did Not Cover\n\nJoint, Marginal, and Conditional P[M/D]Fs\nCovariance and correlation\nConditional Expectations"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#session-4-outline",
@@ -1012,7 +1012,7 @@
     "href": "stats-math/04-lecture/04-lecture.html#example-monte-hall",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Monte Hall",
-    "text": "Example: Monte Hall\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Example: Monte Hall"
   },
   {
     "objectID": "stats-math/06-lecture/06-lecture.html#session-6-outline",
@@ -1166,7 +1166,7 @@
     "href": "stats-math/06-lecture/06-lecture.html#your-turn-2",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
-    "text": "Your Turn\n\nLook at the dataset mtcars\nPlot mpg against wt, treating mpg as the output variable \\(y\\). (We generally don’t like to use the words dependent vs. independent in this context)\nUsing the normal equations, find the intercept and slope of the best-fit line\nValidate that it matches the output from lm\nNow plot the line over the data and see if it “fits”\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Your Turn\n\nLook at the dataset mtcars\nPlot mpg against wt, treating mpg as the output variable \\(y\\). (We generally don’t like to use the words dependent vs. independent in this context)\nUsing the normal equations, find the intercept and slope of the best-fit line\nValidate that it matches the output from lm\nNow plot the line over the data and see if it “fits”"
   },
   {
     "objectID": "stats-math/02-lecture/02-Lecture.html#session-2-outline",
@@ -1334,7 +1334,7 @@
     "href": "stats-math/02-lecture/02-Lecture.html#homework",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Homework",
-    "text": "Homework\n\nA particle is moving in a counter-clockwise uniform circular motion according to the following equations:\n\n\\[\nx(t) = R \\cos(\\omega t) \\\\\ny(t) = R \\sin(\\omega t)\n\\]\n\nWhere \\(\\omega\\) is called angular frequency (radians per unit of time) and \\(R\\) is the radius of rotation. The full cycle is achieved when \\(T = 2 \\pi/ \\omega\\)\nCreate two functions that take \\(R\\), \\(t\\), and \\(\\omega\\) as parameters\nCreate a vector \\(t\\) of length 100 that achieves one full rotation\nPlot the \\(x\\) position against \\(t\\) and the \\(y\\) position against \\(t\\) on the same graph\nNow plot \\(x\\) against \\(y\\). Do the plots make sense?\nCreate 4 more functions: 2 for velocity (in x and y direction) and 2 for acceleration\nPlot the velocity against the position (say in the x direction) and the velocity against acceleration\nWhat have you learned?\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Homework\n\nA particle is moving in a counter-clockwise uniform circular motion according to the following equations:\n\n\\[\nx(t) = R \\cos(\\omega t) \\\\\ny(t) = R \\sin(\\omega t)\n\\]\n\nWhere \\(\\omega\\) is called angular frequency (radians per unit of time) and \\(R\\) is the radius of rotation. The full cycle is achieved when \\(T = 2 \\pi/ \\omega\\)\nCreate two functions that take \\(R\\), \\(t\\), and \\(\\omega\\) as parameters\nCreate a vector \\(t\\) of length 100 that achieves one full rotation\nPlot the \\(x\\) position against \\(t\\) and the \\(y\\) position against \\(t\\) on the same graph\nNow plot \\(x\\) against \\(y\\). Do the plots make sense?\nCreate 4 more functions: 2 for velocity (in x and y direction) and 2 for acceleration\nPlot the velocity against the position (say in the x direction) and the velocity against acceleration\nWhat have you learned?"
   },
   {
     "objectID": "stats-math/01-lecture/01-Lecture.html#course-objectives",
@@ -1586,7 +1586,7 @@
     "href": "stats-math/01-lecture/01-Lecture.html#references-2",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "References",
-    "text": "References\n\n\n\nhttps://ericnovik.github.io/smac.html\n\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
+    "text": "References\n\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Boca Raton: crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge, UK ; New York, NY: Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. Sebastopol, CA: O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nPetersen, Kaare Brandt, and Michael Syskind Pedersen. 2012. “The Matrix Cookbook.” https://www.freetechbooks.com/the-matrix-cookbook-t435.html.\n\n\nSanderson, Grant. 2018a. “Essence of Calculus,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr.\n\n\n———. 2018b. “Essence of Linear Algebra,” November. https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. New York: St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
   },
   {
     "objectID": "stats-math/08-lecture/08-lecture-old.html#session-8-outline",
@@ -1782,7 +1782,7 @@
     "href": "stats-math/08-lecture/08-lecture-old.html#so-long-and-thanks-for-all-the-fish",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "So Long (and Thanks for All the Fish)",
-    "text": "So Long (and Thanks for All the Fish)\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nTwitter: @ericnovik\nhttps://www.linkedin.com/in/enovik/\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "So Long (and Thanks for All the Fish)\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nTwitter: @ericnovik\nhttps://www.linkedin.com/in/enovik/\nPersonal blog: https://ericnovik.com/"
   },
   {
     "objectID": "stats-math/08-lecture/08-lecture.html#session-8-outline",
@@ -1971,7 +1971,7 @@
     "href": "stats-math/08-lecture/08-lecture.html#thanks-for-being-part-of-my-class",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Thanks for being part of my class!",
-    "text": "Thanks for being part of my class!\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nhttps://www.linkedin.com/in/enovik/\nTwitter: @ericnovik\nPersonal blog: https://ericnovik.com/\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Thanks for being part of my class!\n\n\nLectures: https://ericnovik.github.io/smac.html\nKeep in touch:\n\neric.novik@nyu.edu\nhttps://www.linkedin.com/in/enovik/\nTwitter: @ericnovik\nPersonal blog: https://ericnovik.com/"
   },
   {
     "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",
@@ -2118,7 +2118,7 @@
     "href": "stats-math/03-lecture/03-lecture.html#homework",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Homework",
-    "text": "Homework\n\nTake a look at dataset iris (?iris)\nCompute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width\nCompute the average by each Species of flower (hint: use group_by and summarise functions from dplyr)\nProduce the plot that looks like this:\n\n\n\n\n\n\n\nProduce the plot that looks like this: (check out geom_density and facet_wrap functions)\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral (on paper) from \\(0\\) to \\(2\\pi\\) and use R’s integrate function to validate your answer.\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Homework\n\nTake a look at dataset iris (?iris)\nCompute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width\nCompute the average by each Species of flower (hint: use group_by and summarise functions from dplyr)\nProduce the plot that looks like this:\n\n\n\n\n\n\n\nProduce the plot that looks like this: (check out geom_density and facet_wrap functions)\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral (on paper) from \\(0\\) to \\(2\\pi\\) and use R’s integrate function to validate your answer."
   },
   {
     "objectID": "stats-math/07-lecture/07-lecture.html#session-7-outline",
@@ -2237,7 +2237,7 @@
     "href": "stats-math/07-lecture/07-lecture.html#some-problems-with-statistical-significance",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Some Problems with Statistical Significance",
-    "text": "Some Problems with Statistical Significance\n\n\nStatistical significance does not mean practical (or in the case of Biostats clinical) significance\nNo significance does not mean there is no effect\nThe difference between “significant” and “not significant” is not itself statistically significant\nResearcher degrees of freedom, p-hacking\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Some Problems with Statistical Significance\n\n\nStatistical significance does not mean practical (or in the case of Biostats clinical) significance\nNo significance does not mean there is no effect\nThe difference between “significant” and “not significant” is not itself statistically significant\nResearcher degrees of freedom, p-hacking"
   },
   {
     "objectID": "stats-math/05-lecture/05-partial.html#session-5-outline",
@@ -2272,7 +2272,7 @@
     "href": "stats-math/05-lecture/05-partial.html#binomial-in-r",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Binomial in R",
-    "text": "Binomial in R\n\n# What is the probability of getting 2 Heads out of 5 fair trials?\nN &lt;- 5; x &lt;- 2\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 5/16\n\n# What is the binomial PMF: P(X = x), for N = 5, p = 0.5?\nN &lt;- 5; x &lt;- -2:7 # notice we range x over any integers\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]    0    0 1/32 5/32 5/16 5/16 5/32 1/32    0    0\n\n# Verify that the PMF sums to 1\nsum(dbinom(x = x, size = N, prob = 0.5))\n\n[1] 1\n\n# What is the probability of 3 heads or fewer\npbinom(3, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 13/16\n\n# compute the CDF: P(X &lt;= x), for N = 5, p = 0.5\npbinom(x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n# get from the PMF to CDF; cumsum() is the cumulative sum function\ndbinom(x = x, size = N, prob = 0.5) |&gt; cumsum() |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n\n\n\nYour Turn: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF.\n\n\n\n\n\nhttps://ericnovik.github.io/smac.html"
+    "text": "Binomial in R\n\n# What is the probability of getting 2 Heads out of 5 fair trials?\nN &lt;- 5; x &lt;- 2\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 5/16\n\n# What is the binomial PMF: P(X = x), for N = 5, p = 0.5?\nN &lt;- 5; x &lt;- -2:7 # notice we range x over any integers\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]    0    0 1/32 5/32 5/16 5/16 5/32 1/32    0    0\n\n# Verify that the PMF sums to 1\nsum(dbinom(x = x, size = N, prob = 0.5))\n\n[1] 1\n\n# What is the probability of 3 heads or fewer\npbinom(3, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 13/16\n\n# compute the CDF: P(X &lt;= x), for N = 5, p = 0.5\npbinom(x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n# get from the PMF to CDF; cumsum() is the cumulative sum function\ndbinom(x = x, size = N, prob = 0.5) |&gt; cumsum() |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n\n\n\nYour Turn: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF."
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#introductions",
@@ -2510,7 +2510,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#overview-of-the-class",
     "title": "Bayesian Inference",
     "section": "Overview of the class",
-    "text": "Overview of the class\n\nSyllabus\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Overview of the class\n\nSyllabus"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#conjugate-models-and-beta-binomial",
@@ -2685,7 +2685,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
     "title": "Bayesian Inference",
     "section": "The myth of objectivity in science",
-    "text": "The myth of objectivity in science\n\n\nAll of science requires choices, and those choices are, by definition, subjective\nNeither Frequentist nor Bayesian inference imbues objectivity into your analysis\nAll priors are subjective, including no priors, which don’t exist (uniform prior on the real line is not “no prior”)\nRemember that important scientific discoveries were made before Statistics became a thing\nA better alternative to objective vs subjective debate:\n\n\n\n\n…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence1\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html\n\n\nGelman, A., & Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453"
+    "text": "The myth of objectivity in science\n\n\nAll of science requires choices, and those choices are, by definition, subjective\nNeither Frequentist nor Bayesian inference imbues objectivity into your analysis\nAll priors are subjective, including no priors, which don’t exist (uniform prior on the real line is not “no prior”)\nRemember that important scientific discoveries were made before Statistics became a thing\nA better alternative to objective vs subjective debate:\n\n\n\n\n…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence1\n\n\n\n\nGelman, A., & Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453"
   },
   {
     "objectID": "bayes-course/07-lecture/07-lecture.html#logistic-regression-and-introduction-to-hierarchical-models",
@@ -3035,7 +3035,7 @@
     "href": "bayes-course/07-lecture/07-lecture.html#course-evaluations",
     "title": "Bayesian Inference",
     "section": "Course Evaluations",
-    "text": "Course Evaluations\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Course Evaluations"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#homework-feedback",
@@ -3308,7 +3308,7 @@
     "href": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-4",
     "title": "Bayesian Inference",
     "section": "Quantifying Model Accuracy",
-    "text": "Quantifying Model Accuracy\n\nlibrary(loo)\nlm2 &lt;- loo(m2)\nlm2\n\n\nComputed from 1200 by 544 log-likelihood matrix.\n\n         Estimate   SE\nelpd_loo  -1648.7 14.3\np_loo         3.0  0.3\nlooic      3297.3 28.6\n------\nMCSE of elpd_loo is 0.1.\nMCSE and ESS estimates assume MCMC draws (r_eff in [0.6, 1.0]).\n\nAll Pareto k estimates are good (k &lt; 0.68).\nSee help('pareto-k-diagnostic') for details.\n\nplot(lm2)\n\n\n\n\n\nhttps://ericnovik.github.io/bayes-course.html"
+    "text": "Quantifying Model Accuracy\n\nlibrary(loo)\nlm2 &lt;- loo(m2)\nlm2\n\n\nComputed from 1200 by 544 log-likelihood matrix.\n\n         Estimate   SE\nelpd_loo  -1648.7 14.3\np_loo         3.0  0.3\nlooic      3297.3 28.6\n------\nMCSE of elpd_loo is 0.1.\nMCSE and ESS estimates assume MCMC draws (r_eff in [0.6, 1.0]).\n\nAll Pareto k estimates are good (k &lt; 0.68).\nSee help('pareto-k-diagnostic') for details.\n\nplot(lm2)"
   },
   {
     "objectID": "index.html",
