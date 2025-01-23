@@ -11,7 +11,7 @@
     "href": "bayes-course.html",
     "title": "APSTA-GE 2123: Bayesian Inference",
     "section": "",
-    "text": "This is the home of the Spring 2025 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignment will be posted on Brightspace.\nThis is the current version of the syllabus. Please check the date, as it is subject to change."
+    "text": "This is the home of the Spring 2025 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignments will be posted on Brightspace.\nThis is the current version of the syllabus. Please check the date, as it is subject to change."
   },
   {
     "objectID": "bayes-course.html#footnotes",
@@ -2314,7 +2314,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#statistics-vs.-aiml",
     "title": "Bayesian Inference",
     "section": "Statistics vs. AI/ML",
-    "text": "Statistics vs. AI/ML\n⚠️ What follows is an oversimplified opinion.\n\n\n\n\nAI is great for automating tasks that humans find easy\n\nRecognizing faces, cats, and other objects\nIdentifying tumors on a radiology scan\nPlaying Chess and Go\nDriving a car\nPost ChatGPT 4: Generating coherent text/images/video, signs of reasoning\n\n\n\n\nStatistics is great at answering questions that humans find hard\n\nHow fast does a drug clear from the body?\nWhat is the expected tumor size two months after treatment?\nHow would patients respond under a different treatment?\nShould I take this drug?\nShould we (FDA/EMA/…) approve this drug?\n\n\n\n\n\n\n“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman"
+    "text": "Statistics vs. AI/ML\n⚠️ What follows is an oversimplified opinion.\n\n\n\n\nAI is great for automating tasks that humans find easy\n\nRecognizing faces, cats, and other objects\nIdentifying tumors on a radiology scan\nPlaying Chess and Go\nDriving a car\nPost ChatGPT 4: Generating coherent text/images/video, signs of reasoning\n\n\n\n\nStatistics is great at answering questions that humans find hard\n\nHow fast does a drug clear from the body?\nWhat is the expected tumor size two months after treatment?\nHow would patients respond under a different treatment?\nShould I take this drug?\nShould we (FDA/EMA/…) approve this drug?\n\n\n\n\n\n\n\nThese are speaker notes for this slide.\nYou can add multiple lines of notes. You can include bullets and not bullets And latex: \\(y = f(x)\\) \\(z = f(g)\\)\n\n\n\n“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#brief-history",
@@ -2405,14 +2405,14 @@
     "href": "bayes-course/01-lecture/01-lecture.html#joint-marginal-and-conditional",
     "title": "Bayesian Inference",
     "section": "Joint, Marginal, and Conditional",
-    "text": "Joint, Marginal, and Conditional\n\n\nTitanic carried approximately 2,200 passengers and sank on 15 April 1912\nLet \\(G: \\{m, f\\}\\) represent Gender and \\(S: \\{n, y\\}\\) represent Survival\n\n\n\n\n\nsurv &lt;- apply(Titanic, c(2, 4), sum) |&gt; \n  as_tibble()\nsurv_prop &lt;- round(surv / sum(surv), 3)\nbind_cols(Sex = c(\"Male\", \"Female\"), \n          surv_prop) |&gt; \n  adorn_totals(c(\"row\", \"col\")) |&gt;\n  knitr::kable(caption = \n               \"Titanic survival proportions\")\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n\n\n\n\\(\\P(G = m \\cap S = y) =\\) 0.167\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) =\\) ??\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) = 0.323\\)"
+    "text": "Joint, Marginal, and Conditional\n\n\nTitanic carried approximately 2,200 passengers and sank on 15 April 1912\nLet \\(G: \\{m, f\\}\\) represent Gender and \\(S: \\{n, y\\}\\) represent Survival\n\n\n\n\n\nsurv &lt;- apply(Titanic, c(2, 4), sum) \nsurv_prop &lt;- round(surv / sum(surv), 3)\nbind_cols(Sex = c(\"Male\", \"Female\"), surv_prop) |&gt; \n  janitor::adorn_totals(c(\"row\", \"col\")) |&gt;\n  knitr::kable(caption = \n         \"Titanic survival proportions\")\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n\n\n\n\\(\\P(G = m \\cap S = y) =\\) 0.167\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) =\\) ??\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) = 0.323\\)"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#joint-marginal-and-conditional-1",
     "href": "bayes-course/01-lecture/01-lecture.html#joint-marginal-and-conditional-1",
     "title": "Bayesian Inference",
     "section": "Joint, Marginal, and Conditional",
-    "text": "Joint, Marginal, and Conditional\n\n\n\n\nWhat is \\(\\P(G = m \\mid S = y)\\), probability of being male given survival?\nTo compute that, we only consider the column  where Survival = Yes\n\\(\\P(G = m \\mid S = y) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(S = y)} = \\frac{0.167}{0.323} \\\\ \\approx 0.52\\)\nYou want \\(\\P(S = y \\mid G = m)\\), comparing it to \\(\\P(S = y \\mid G = f)\\)\n\\(\\P(S = y \\mid G = m) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(G = m)} = \\frac{0.167}{0.787} \\\\ \\approx 0.21\\)\n\\(\\P(S = y \\mid G = f) = \\frac{\\P(G = f \\, \\cap \\, S = y)}{\\P(G = f)} = \\frac{0.156}{0.213} \\\\ \\approx 0.73\\)\nHow would you calculate \\(\\P(S = n \\mid G = m)\\)?\n\\(\\P(S = n \\mid G = m) = 1 - \\P(S = y \\mid G = m)\\)\n\n\n\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n “Untergang der Titanic”, as conceived by Willy Stöwer, 1912"
+    "text": "Joint, Marginal, and Conditional\n\n\n\n\nWhat is \\(\\P(G = m \\mid S = y)\\), probability of being  male given survival?\nTo compute that, we only consider the column  where Survival = Yes\n\\(\\P(G = m \\mid S = y) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(S = y)} = \\frac{0.167}{0.323} \\\\ \\approx 0.52\\)\nYou want \\(\\P(S = y \\mid G = m)\\), comparing it to \\(\\\\ \\qquad \\ \\ \\ \\ \\ \\ \\P(S = y \\mid G = f)\\)\n\\(\\P(S = y \\mid G = m) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(G = m)} = \\frac{0.167}{0.787} \\\\ \\approx 0.21\\)\n\\(\\P(S = y \\mid G = f) = \\frac{\\P(G = f \\, \\cap \\, S = y)}{\\P(G = f)} = \\frac{0.156}{0.213} \\\\ \\approx 0.73\\)\nHow would you compute \\(\\P(S = n \\mid G = m)\\)?\n\\(\\P(S = n \\mid G = m) = 1 - \\P(S = y \\mid G = m)\\)\n\n\n\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n “Untergang der Titanic”, as conceived by Willy Stöwer, 1912"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#law-of-total-probability-lotp",
@@ -2429,18 +2429,32 @@
     "text": "Bayes’s Rule for Events\n\n\nWe can combine the definition of conditional probability with the LOTP to come up with Bayes’s rule for events, assuming \\(\\P(B) \\neq 0\\)\n\n\n\\[\n\\P(A \\mid B) = \\frac{\\P(B \\cap A)}{\\P(B)} =\n               \\frac{\\P(B \\mid A) \\P(A)}{\\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)}\n\\]\n\n\nWe typically think of \\(A\\) is some unknown we wish to learn (e.g., the status of a disease) and \\(B\\) as the data we observe (e.g., the result of a diagnostic test)\nWe call \\(\\P(A)\\) prior probability of A (e.g., how prevalent is the disease in the population)\nWe call \\(\\P(A \\mid B)\\), the posterior probability of the unknown \\(A\\) given data \\(B\\)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture.html#example-medical-testing",
-    "href": "bayes-course/01-lecture/01-lecture.html#example-medical-testing",
+    "objectID": "bayes-course/01-lecture/01-lecture.html#estimating-pi-by-simulation",
+    "href": "bayes-course/01-lecture/01-lecture.html#estimating-pi-by-simulation",
     "title": "Bayesian Inference",
-    "section": "Example: Medical Testing",
-    "text": "Example: Medical Testing\n\nThe authors calculated the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.\n\n\n\nYour child tests positive on this test. What is the probability that she has COVID? That is, we want to know \\(\\P(D^+ \\mid T^+)\\)\n\\(\\text{Specificity } := \\P(T^- \\mid D^-) = 0.998\\)\nFalse positive rate \\(\\text{FP} := 1 - \\text{Specificity } = 1 - \\P(T^- \\mid D^-) = \\P(T^+ \\mid D^-) = 0.002\\)\n\\(\\text{Sensitivity } := \\P(T^+ \\mid D^+) = 0.454\\)\nFalse negative rate \\(\\text{FP} := 1 - \\text{Sensitivity } = 1 - \\P(T^+ \\mid D^+) = \\P(T^- \\mid D^+) = 0.546\\)\nPrevalence: \\(\\P(D^+) = 0.001\\)\n\n\n\n\\[\n\\begin{eqnarray}\n\\P(D^+ \\mid T^+) = \\frac{\\P(T^+ \\mid D^+) \\P(D^+)}{\\P(T^+)} & = & \\\\\n\\frac{\\P(T^+ \\mid D^+) \\P(D^+)}{\\sum_{i=1}^{n}\\P(T^+ \\mid D^i) \\P(D^i) } & = & \\\\\n\\frac{\\P(T^+ \\mid D^+) \\P(D^+)}{\\P(T^+ \\mid D^+) \\P(D^+) + \\P(T^+ \\mid D^-) \\P(D^-)} & = & \\\\\n\\frac{0.454 \\cdot 0.001}{0.454 \\cdot 0.001 + 0.002 \\cdot 0.999} & \\approx & 0.18\n\\end{eqnarray}\n\\]"
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\nThe idea is that we can approximate the ratio of the area of an inscribed circle, \\(A_c\\), to the area of the square, \\(A_s\\), by uniformly “throwing darts” at the square with the side \\(2r\\) and counting how many darts land inside the circle versus inside the square.\n\n\\[\n\\begin{align}\nA_{c}& = \\pi r^2 \\\\\nA_{s}& = (2r)^2 = 4r^2 \\\\\n\\frac{A_{c}}{A_{s}}& = \\frac{\\pi r^2}{4r^2} = \\frac{\\pi}{4} \\implies \\pi = \\frac{4A_{c}}{A_{s}}\n\\end{align}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture.html#bayesian-analysis",
-    "href": "bayes-course/01-lecture/01-lecture.html#bayesian-analysis",
+    "objectID": "bayes-course/01-lecture/01-lecture.html#estimating-pi-by-simulation-1",
+    "href": "bayes-course/01-lecture/01-lecture.html#estimating-pi-by-simulation-1",
     "title": "Bayesian Inference",
-    "section": "Bayesian Analysis",
-    "text": "Bayesian Analysis\n\n\n\n\nSuppose we enrolled five people in an early cancer clinical trial\nEach person was given an active treatment\nFrom previous trials, we have some idea of historical response rates (proportion of people responding)\nAt the end of the trial, \\(Y = y \\in \\{0,1,...,5 \\}\\) people will have responded1 to the treatment\nWe are interested in estimating the probability that the response rate is greater or equal to 50%\n\n\n\n Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: RECIST 1.1 - and more\n\nPartial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement."
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\nTo estimate \\(\\pi\\), we perform the following simulation:\n\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\I(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\nThe numerator is a sum over an indicator function \\(\\I\\), which evaluates to \\(1\\) if the inequality holds and \\(0\\) otherwise."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#estimating-pi-by-simulation-2",
+    "href": "bayes-course/01-lecture/01-lecture.html#estimating-pi-by-simulation-2",
+    "title": "Bayesian Inference",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\n\nCode and PlotEstimate\n\n\n\n\nn &lt;- 1e3\nx &lt;- runif(n, -1, 1); y &lt;- runif(n, -1, 1)\ninside &lt;- x^2 + y^2 &lt; 1\ndata &lt;- tibble(x, y, inside)\np &lt;- ggplot(aes(x = x, y = y), data = data)\np + geom_point(aes(color = inside)) + theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Estimated value of pi =\", 4*sum(inside) / n)\n\nEstimated value of pi = 3.236\n\n\n\n\n\n\n\n\nx\ny\ninside\n\n\n\n\n-0.7632237\n0.6148435\nTRUE\n\n\n-0.9140901\n0.0375340\nTRUE\n\n\n-0.9026850\n-0.2055622\nTRUE\n\n\n0.0032529\n0.2861587\nTRUE\n\n\n0.8934228\n-0.5011882\nFALSE"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#example-bayesian-analysis",
+    "href": "bayes-course/01-lecture/01-lecture.html#example-bayesian-analysis",
+    "title": "Bayesian Inference",
+    "section": "Example Bayesian Analysis",
+    "text": "Example Bayesian Analysis\n\n\n\n\nSuppose we enrolled five people in an early cancer clinical trial\nEach person was given an active treatment\nFrom previous trials, we have some idea of historical response rates (proportion of people responding)\nAt the end of the trial, \\(Y = y \\in \\{0,1,...,5 \\}\\) people will have responded1 to the treatment\nWe are interested in estimating the probability that the response rate is greater or equal to 50%\n\n\n\n Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: RECIST 1.1 - and more\n\nPartial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement."
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#notation",
@@ -2489,7 +2503,7 @@
     "href": "bayes-course/01-lecture/01-lecture.html#compute-the-posterior",
     "title": "Bayesian Inference",
     "section": "Compute the Posterior",
-    "text": "Compute the Posterior\n\n\n\n\nCompute the likelihood\n\n\\(\\binom{5}{3} \\theta^3 (1 - \\theta)^{2}\\) for \\(\\theta \\in \\{0.10, 0.30, 0.50, 0.70, 0.90\\}\\)\n\nMultiply the likelihood by the prior to compute the numerator\n\n\\(f(y = 3 \\mid \\theta) f(\\theta)\\)\n\nSum the numerator to get the marginal likelihood\n\n\\(f(y = 3) = \\sum_{\\theta} f(y = 3 | \\theta) f(\\theta) \\approx 0.2\\)\n\nFinally, compute the posterior\n\n\\(f(\\theta \\mid y = 3) = \\frac{f(y = 3 \\mid \\theta) f(\\theta)}{\\sum_{\\theta} f(y = 3 | \\theta) f(\\theta)}\\)\n\n\n\n\n\n\nN &lt;- 5; y &lt;- 3\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.05, 0.45, 0.30, 0.15, 0.05)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.05\n0.01\n0.00\n0.00\n\n\n0.3\n0.45\n0.13\n0.06\n0.29\n\n\n0.5\n0.30\n0.31\n0.09\n0.46\n\n\n0.7\n0.15\n0.31\n0.05\n0.23\n\n\n0.9\n0.05\n0.07\n0.00\n0.02\n\n\nTotal\n1.00\n0.83\n0.20\n1.00"
+    "text": "Compute the Posterior\n\n\n\n\nCompute the likelihood\n\n\\(\\binom{5}{3} \\theta^3 (1 - \\theta)^{2}\\) for \\(\\theta \\in \\{0.10, 0.30, 0.50, 0.70, 0.90\\}\\)\n\nMultiply the likelihood by the prior to compute the numerator\n\n\\(f(y = 3 \\mid \\theta) f(\\theta)\\)\n\nSum the numerator to get the marginal likelihood\n\n\\(f(y = 3) = \\\\ \\sum_{\\theta} f(y = 3 | \\theta) f(\\theta) \\approx 0.2\\)\n\nFinally, compute the posterior\n\n\\(f(\\theta \\mid y = 3) = \\frac{f(y = 3 \\mid \\theta) f(\\theta)}{\\sum_{\\theta} f(y = 3 | \\theta) f(\\theta)}\\)\n\n\n\n\n\n\nN &lt;- 5; y &lt;- 3\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.05, 0.45, 0.30, 0.15, 0.05)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.05\n0.01\n0.00\n0.00\n\n\n0.3\n0.45\n0.13\n0.06\n0.29\n\n\n0.5\n0.30\n0.31\n0.09\n0.46\n\n\n0.7\n0.15\n0.31\n0.05\n0.23\n\n\n0.9\n0.05\n0.07\n0.00\n0.02\n\n\nTotal\n1.00\n0.83\n0.20\n1.00"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#computing-event-probability",

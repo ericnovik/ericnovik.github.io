@@ -9,7 +9,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
-  <meta name="author" content="Eric Novik | Spring 2023 | Lecture 1">
+  <meta name="author" content="Eric Novik">
   <title>Eric Novik – Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-f1dfd3a0977a76e2a9d8c22d888bc8cb.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-e5f05fbf047af74eaeebd9af45a8e44b.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -203,9 +203,18 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Spring 2023 | Lecture 1 
+Eric Novik 
 </div>
+<div class="quarto-title-author-email">
+<a href="mailto:Spring 2025 | Lecture 1">Spring 2025 | Lecture 1</a>
 </div>
+        <p class="quarto-title-affiliation">
+            New York University
+          </p>
+        <p class="quarto-title-affiliation">
+            Generable Inc.
+          </p>
+    </div>
 </div>
 
 </section>
@@ -313,6 +322,22 @@ Eric Novik | Spring 2023 | Lecture 1
 </div></div>
 
 </div>
+<aside class="notes">
+<ul>
+<li>These are speaker notes for this slide.</li>
+<li>You can add multiple lines of notes. You can include bullets and not bullets And latex: <span class="math inline">\(y = f(x)\)</span> <span class="math inline">\(z = f(g)\)</span></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <aside><div>
 <p>“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman</p>
 </div></aside></section>
@@ -640,16 +665,14 @@ Eric Novik | Spring 2023 | Lecture 1
 </ul>
 </div>
 <div class="fragment">
-<div class="cell columns column-output-location" data-layout-align="center">
+<div class="cell columns column-output-location" data-layout-align="center" data-class.code="small-code">
 <div class="column">
-<div class="sourceCode cell-code" id="cb15" data-code-line-numbers="|1|3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>surv <span class="ot">&lt;-</span> <span class="fu">apply</span>(Titanic, <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), sum) <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb15-3"><a></a>surv_prop <span class="ot">&lt;-</span> <span class="fu">round</span>(surv <span class="sc">/</span> <span class="fu">sum</span>(surv), <span class="dv">3</span>)</span>
-<span id="cb15-4"><a></a><span class="fu">bind_cols</span>(<span class="at">Sex =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), </span>
-<span id="cb15-5"><a></a>          surv_prop) <span class="sc">|&gt;</span> </span>
-<span id="cb15-6"><a></a>  <span class="fu">adorn_totals</span>(<span class="fu">c</span>(<span class="st">"row"</span>, <span class="st">"col"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb15-7"><a></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> </span>
-<span id="cb15-8"><a></a>               <span class="st">"Titanic survival proportions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15" data-code-line-numbers="|1|2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>surv <span class="ot">&lt;-</span> <span class="fu">apply</span>(Titanic, <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), sum) </span>
+<span id="cb15-2"><a></a>surv_prop <span class="ot">&lt;-</span> <span class="fu">round</span>(surv <span class="sc">/</span> <span class="fu">sum</span>(surv), <span class="dv">3</span>)</span>
+<span id="cb15-3"><a></a><span class="fu">bind_cols</span>(<span class="at">Sex =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), surv_prop) <span class="sc">|&gt;</span> </span>
+<span id="cb15-4"><a></a>  janitor<span class="sc">::</span><span class="fu">adorn_totals</span>(<span class="fu">c</span>(<span class="st">"row"</span>, <span class="st">"col"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> </span>
+<span id="cb15-6"><a></a>         <span class="st">"Titanic survival proportions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <table class="caption-top">
@@ -694,19 +717,19 @@ Eric Novik | Spring 2023 | Lecture 1
 </ul>
 </div>
 </section>
-<section id="joint-marginal-and-conditional-1" class="slide level2 smaller">
+<section id="joint-marginal-and-conditional-1" class="slide level2 tiny">
 <h2>Joint, Marginal, and Conditional</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <div>
 <ul>
-<li class="fragment">What is <span class="math inline">\(\P(G = m \mid S = y)\)</span>, probability of being male given survival?</li>
+<li class="fragment">What is <span class="math inline">\(\P(G = m \mid S = y)\)</span>, probability of being <br> male given survival?</li>
 <li class="fragment">To compute that, we only consider the column <br> where Survival = Yes</li>
 <li class="fragment"><span class="math inline">\(\P(G = m \mid S = y) = \frac{\P(G = m \, \cap \, S = y)}{\P(S = y)} = \frac{0.167}{0.323} \\ \approx 0.52\)</span></li>
-<li class="fragment">You want <span class="math inline">\(\P(S = y \mid G = m)\)</span>, comparing it to <span class="math inline">\(\P(S = y \mid G = f)\)</span></li>
+<li class="fragment">You want <span class="math inline">\(\P(S = y \mid G = m)\)</span>, comparing it to <span class="math inline">\(\\ \qquad \ \ \ \ \ \ \P(S = y \mid G = f)\)</span></li>
 <li class="fragment"><span class="math inline">\(\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \\ \approx 0.21\)</span></li>
 <li class="fragment"><span class="math inline">\(\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \\ \approx 0.73\)</span></li>
-<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/fEqKsHkr2OIKXCuh4jeqQ">How would you calculate</a> <span class="math inline">\(\P(S = n \mid G = m)\)</span>?</li>
+<li class="fragment">How would you compute <span class="math inline">\(\P(S = n \mid G = m)\)</span>?</li>
 <li class="fragment"><span class="math inline">\(\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)\)</span></li>
 </ul>
 </div>
@@ -778,34 +801,114 @@ Eric Novik | Spring 2023 | Lecture 1
 </ul>
 </div>
 </section>
-<section id="example-medical-testing" class="slide level2 smaller">
-<h2>Example: Medical Testing</h2>
-<blockquote>
-<p><a href="https://www.idsociety.org/covid-19-real-time-learning-network/diagnostics/rapid-testing/#:~:text=The%20authors%20calculated%20the%20sensitivity,negative%20predictive%20value%20was%2097.3%25.">The authors calculated</a> the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.</p>
-</blockquote>
-<div>
-<ul>
-<li class="fragment">Your child tests positive on this test. What is the probability that she has COVID? That is, we want to know <span class="math inline">\(\P(D^+ \mid T^+)\)</span></li>
-<li class="fragment"><span class="math inline">\(\text{Specificity } := \P(T^- \mid D^-) = 0.998\)</span></li>
-<li class="fragment">False positive rate <span class="math inline">\(\text{FP} := 1 - \text{Specificity } = 1 - \P(T^- \mid D^-) = \P(T^+ \mid D^-) = 0.002\)</span></li>
-<li class="fragment"><span class="math inline">\(\text{Sensitivity } := \P(T^+ \mid D^+) = 0.454\)</span></li>
-<li class="fragment">False negative rate <span class="math inline">\(\text{FP} := 1 - \text{Sensitivity } = 1 - \P(T^+ \mid D^+) = \P(T^- \mid D^+) = 0.546\)</span></li>
-<li class="fragment">Prevalence: <span class="math inline">\(\P(D^+) = 0.001\)</span></li>
-</ul>
-</div>
+<section id="estimating-pi-by-simulation" class="slide level2">
+<h2>Estimating <span class="math inline">\(\pi\)</span> by Simulation</h2>
+<p>The idea is that we can approximate the ratio of the area of an inscribed circle, <span class="math inline">\(A_c\)</span>, to the area of the square, <span class="math inline">\(A_s\)</span>, by uniformly “throwing darts” at the square with the side <span class="math inline">\(2r\)</span> and counting how many darts land inside the circle versus inside the square.</p>
 <div class="fragment">
 <p><span class="math display">\[
-\begin{eqnarray}
-\P(D^+ \mid T^+) = \frac{\P(T^+ \mid D^+) \P(D^+)}{\P(T^+)} &amp; = &amp; \\
-\frac{\P(T^+ \mid D^+) \P(D^+)}{\sum_{i=1}^{n}\P(T^+ \mid D^i) \P(D^i) } &amp; = &amp; \\
-\frac{\P(T^+ \mid D^+) \P(D^+)}{\P(T^+ \mid D^+) \P(D^+) + \P(T^+ \mid D^-) \P(D^-)} &amp; = &amp; \\
-\frac{0.454 \cdot 0.001}{0.454 \cdot 0.001 + 0.002 \cdot 0.999} &amp; \approx &amp; 0.18
-\end{eqnarray}
+\begin{align}
+A_{c}&amp; = \pi r^2 \\
+A_{s}&amp; = (2r)^2 = 4r^2 \\
+\frac{A_{c}}{A_{s}}&amp; = \frac{\pi r^2}{4r^2} = \frac{\pi}{4} \implies \pi = \frac{4A_{c}}{A_{s}}
+\end{align}
 \]</span></p>
 </div>
 </section>
-<section id="bayesian-analysis" class="slide level2 smaller scrollable">
-<h2>Bayesian Analysis</h2>
+<section id="estimating-pi-by-simulation-1" class="slide level2">
+<h2>Estimating <span class="math inline">\(\pi\)</span> by Simulation</h2>
+<p>To estimate <span class="math inline">\(\pi\)</span>, we perform the following simulation:</p>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{align}
+X&amp; \sim \text{Uniform}(-1, 1) \\
+Y&amp; \sim \text{Uniform}(-1, 1) \\
+\pi&amp; \approx \frac{4 \sum_{i=1}^{N} \I(x_i^2 + y_i^2 &lt; 1)}{N}
+\end{align}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The numerator is a sum over an indicator function <span class="math inline">\(\I\)</span>, which evaluates to <span class="math inline">\(1\)</span> if the inequality holds and <span class="math inline">\(0\)</span> otherwise.</p>
+</div>
+</section>
+<section id="estimating-pi-by-simulation-2" class="slide level2">
+<h2>Estimating <span class="math inline">\(\pi\)</span> by Simulation</h2>
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Code and Plot</a></li><li><a href="#tabset-3-2">Estimate</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
+<span id="cb16-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>); y <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb16-3"><a></a>inside <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> y<span class="sc">^</span><span class="dv">2</span> <span class="sc">&lt;</span> <span class="dv">1</span></span>
+<span id="cb16-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(x, y, inside)</span>
+<span id="cb16-5"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">data =</span> data)</span>
+<span id="cb16-6"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> inside)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">cat</span>(<span class="st">"Estimated value of pi ="</span>, <span class="dv">4</span><span class="sc">*</span><span class="fu">sum</span>(inside) <span class="sc">/</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimated value of pi = 3.236</code></pre>
+</div>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: left;">inside</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">-0.7632237</td>
+<td style="text-align: right;">0.6148435</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">-0.9140901</td>
+<td style="text-align: right;">0.0375340</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">-0.9026850</td>
+<td style="text-align: right;">-0.2055622</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0032529</td>
+<td style="text-align: right;">0.2861587</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.8934228</td>
+<td style="text-align: right;">-0.5011882</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-bayesian-analysis" class="slide level2 smaller scrollable">
+<h2>Example Bayesian Analysis</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div>
@@ -869,23 +972,23 @@ Eric Novik | Spring 2023 | Lecture 1
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>dot_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
-<span id="cb16-2"><a></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, y), <span class="fu">aes</span>(x, y))</span>
-<span id="cb16-3"><a></a>  p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb16-4"><a></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> x, </span>
-<span id="cb16-5"><a></a>                     <span class="at">yend =</span> y), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb16-6"><a></a>    <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span> </span>
-<span id="cb16-7"><a></a>    <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">f</span>(theta)))</span>
-<span id="cb16-8"><a></a>}</span>
-<span id="cb16-9"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
-<span id="cb16-10"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
-<span id="cb16-11"><a></a><span class="fu">dot_plot</span>(theta, prior) <span class="sc">+</span></span>
-<span id="cb16-12"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Prior probability of response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>dot_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb19-2"><a></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, y), <span class="fu">aes</span>(x, y))</span>
+<span id="cb19-3"><a></a>  p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb19-4"><a></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> x, </span>
+<span id="cb19-5"><a></a>                     <span class="at">yend =</span> y), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb19-6"><a></a>    <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span> </span>
+<span id="cb19-7"><a></a>    <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">f</span>(theta)))</span>
+<span id="cb19-8"><a></a>}</span>
+<span id="cb19-9"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb19-10"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
+<span id="cb19-11"><a></a><span class="fu">dot_plot</span>(theta, prior) <span class="sc">+</span></span>
+<span id="cb19-12"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Prior probability of response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
@@ -910,13 +1013,13 @@ Eric Novik | Spring 2023 | Lecture 1
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>N <span class="ot">=</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>N; theta <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
-<span id="cb17-2"><a></a>(f_y <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> y, <span class="at">size =</span> N, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span></span>
-<span id="cb17-3"><a></a>    <span class="fu">fractions</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>N <span class="ot">=</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>N; theta <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb20-2"><a></a>(f_y <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> y, <span class="at">size =</span> N, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a></a>    <span class="fu">fractions</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1/32 5/32 5/16 5/16 5/32 1/32</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="at">x =</span> y, <span class="at">size =</span> N, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="at">x =</span> y, <span class="at">size =</span> N, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
@@ -927,7 +1030,7 @@ Eric Novik | Spring 2023 | Lecture 1
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" width="1536"></p>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="1536"></p>
 </figure>
 </div>
 </div>
@@ -948,11 +1051,11 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>dbinom_theta <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, N, y) {</span>
-<span id="cb21-2"><a></a>  <span class="fu">choose</span>(N, y) <span class="sc">*</span> theta<span class="sc">^</span>y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta)<span class="sc">^</span>(N <span class="sc">-</span> y) </span>
-<span id="cb21-3"><a></a>}</span>
-<span id="cb21-4"><a></a><span class="fu">integrate</span>(dbinom_theta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="dv">1</span>, </span>
-<span id="cb21-5"><a></a>          <span class="at">N =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="dv">3</span>)[[<span class="dv">1</span>]] <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>dbinom_theta <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, N, y) {</span>
+<span id="cb24-2"><a></a>  <span class="fu">choose</span>(N, y) <span class="sc">*</span> theta<span class="sc">^</span>y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta)<span class="sc">^</span>(N <span class="sc">-</span> y) </span>
+<span id="cb24-3"><a></a>}</span>
+<span id="cb24-4"><a></a><span class="fu">integrate</span>(dbinom_theta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="dv">1</span>, </span>
+<span id="cb24-5"><a></a>          <span class="at">N =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="dv">3</span>)[[<span class="dv">1</span>]] <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1/6</code></pre>
 </div>
@@ -971,7 +1074,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -984,7 +1087,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1007,7 +1110,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </ul></li>
 <li class="fragment">Sum the numerator to get the marginal likelihood
 <ul>
-<li class="fragment"><span class="math inline">\(f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2\)</span></li>
+<li class="fragment"><span class="math inline">\(f(y = 3) = \\ \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2\)</span></li>
 </ul></li>
 <li class="fragment">Finally, compute the posterior
 <ul>
@@ -1018,13 +1121,13 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb23-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
-<span id="cb23-3"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
-<span id="cb23-4"><a></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
-<span id="cb23-5"><a></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
-<span id="cb23-6"><a></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
-<span id="cb23-7"><a></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb26-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb26-3"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>, <span class="fl">0.05</span>)</span>
+<span id="cb26-4"><a></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
+<span id="cb26-5"><a></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
+<span id="cb26-6"><a></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
+<span id="cb26-7"><a></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p><br></p>
@@ -1107,12 +1210,12 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>probs <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
-<span id="cb24-2"><a></a>  <span class="fu">filter</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.50</span>) <span class="sc">|&gt;</span></span>
-<span id="cb24-3"><a></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(prior, post) <span class="sc">|&gt;</span></span>
-<span id="cb24-4"><a></a>  <span class="fu">colSums</span>() <span class="sc">|&gt;</span></span>
-<span id="cb24-5"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb24-6"><a></a>probs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>probs <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a></a>  <span class="fu">filter</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.50</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(prior, post) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a></a>  <span class="fu">colSums</span>() <span class="sc">|&gt;</span></span>
+<span id="cb27-5"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb27-6"><a></a>probs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>prior  post 
  0.50  0.71 </code></pre>
@@ -1200,13 +1303,13 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb26-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
-<span id="cb26-3"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>)</span>
-<span id="cb26-4"><a></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
-<span id="cb26-5"><a></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
-<span id="cb26-6"><a></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
-<span id="cb26-7"><a></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; y <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb29-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.70</span>, <span class="fl">0.90</span>)</span>
+<span id="cb29-3"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>)</span>
+<span id="cb29-4"><a></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
+<span id="cb29-5"><a></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
+<span id="cb29-6"><a></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
+<span id="cb29-7"><a></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
