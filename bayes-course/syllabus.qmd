@@ -27,21 +27,37 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Course description
 
-This course will introduce students to Bayesian data analysis and Bayesian workflow, a process we follow to develop statistical models, test their efficacy, and make model improvements. This is a deep subject with a rich history, and we can only offer an introductory treatment during a seven-week course. Nonetheless, motivated students should get enough experience from this course to learn how to think like a Bayesian, understand the basics of Bayesian machinery, fit General Linear Models using Bayesian inference, evaluate model quality, and make predictions.
+This course will introduce students to Bayesian data analysis and Bayesian workflow, a process we follow to develop statistical models, test their efficacy and make model improvements. This is a deep subject with a rich history, and we can only offer an introductory treatment during a seven-week course. Nonetheless, motivated students should get enough experience from this course to learn how to think like a Bayesian, understand the basics of Bayesian machinery, fit General Linear Models using Bayesian inference, evaluate model quality, and make predictions.
 
 During the course, we will use simulations, the R language, Stan, and the `rstanarm` package.
 
+## Student Learning Outcomes
+
+Upon completion of the course, students will be able to:
+
+1.  Explain and be able to implement the key components of the Bayesian workflow.
+
+1.  Understand the role of likelihood, prior distribution, prior predictive distribution, and posterior predictive distribution.
+
+1.  Implement a simple MCMC sampler in R. 
+
+1.  Fit GLMs using `rstanarm` and `Stan` and interpret the output. 
+
+1.  Evaluate if you should trust the model inferences (draws from the posterior). 
+
+1.  Evaluate if the model is adequate for the intended task.
+  
 ## Times, Location, and Office Hours
 
-In-person weekly lectures will be held every Monday from 5 p.m. to 8 p.m. at 194 Mercer St, Room 204, beginning on March 25 and ending on May 06. Office hours will be held online on Thursdays from 5 p.m. to 8 p.m. by [appointment](https://calendar.app.google/qgsEMNLyisacYtM76).
+In-person weekly lectures will be held every Monday from 5 p.m. to 9 p.m. in Tisch Hall, Room LC11, beginning on March 17 and ending on May 5. Office hours will be held online on Thursdays from 5 pm to 7 pm by [appointment](https://calendar.app.google/N5VpwjuW9HzhBB6a6).
 
 ## Course prerequisites
 
-Students should be familiar with the R language. Ideally, students will be comfortable with probability and basic differential and integral calculus and have taken a basic regression course. Students don't have to be familiar with Stan or `rstanarm`, and no prior knowledge of Bayes is expected.
+Students should be familiar with the R language. Students should be comfortable with probability, basic differential and integral calculus, and have taken at least one regression course. Students don't have to be familiar with Stan or `rstanarm`, and no prior knowledge of Bayes is expected.
 
 ## Course materials
 
-The core text for the course will be *Bayes Rules!* @johnson2022, which is available for free [online](https://www.bayesrulesbook.com/) and as a paper copy from [CRC Press](https://www.routledge.com/Bayes-Rules-An-Introduction-to-Applied-Bayesian-Modeling/Johnson-Ott-Dogucu/p/book/9780367255398). 
+The core text for the course will be *Bayes Rules!* by @johnson2022, which is available for free [online](https://www.bayesrulesbook.com/) and as a paper copy from [CRC Press](https://www.routledge.com/Bayes-Rules-An-Introduction-to-Applied-Bayesian-Modeling/Johnson-Ott-Dogucu/p/book/9780367255398). We will also read [Bayesian Workflow](https://arxiv.org/abs/2011.01808) by @gelman2020.
 
 Students are expected to have access to R and RStudio or another R programming environment. Students should follow the setup instructions from the [Getting set up](https://www.bayesrulesbook.com/preface.html#setup) chapter.
 
@@ -66,74 +82,74 @@ The following tentative schedule assumes seven 3-hour sessions during which we p
     We will briefly discuss the history of Bayesian inference and introduce the key components of the Bayesian workflow --- from model development to model testing and decision-making. We will dig into the key components of Bayes's rule and introduce the Binomial model.
 
     -   Bayes Rules!, Chapters [1](https://www.bayesrulesbook.com/chapter-1.html) and [2](https://www.bayesrulesbook.com/chapter-2.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 1: Introduction
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 1: Introduction
 
 -   **(2) Conjugate models: Beta-Binomial**
 
-    To demonstrate the Bayesian machinery, we will review a few simple models for which analytical solutions are available, particularly the Beta-Binomial. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.
+    To demonstrate the Bayesian machinery, we will review a few simple models for which analytical solutions are available, particularly the beta-binomial. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.
 
     -   Bayes Rules!, Chapters [3](https://www.bayesrulesbook.com/chapter-3.html) and [4](https://www.bayesrulesbook.com/chapter-4.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 2: Before fitting a model
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 2: Before fitting a model
 
 -   **(3) Other conjugate models and introduction to posterior sampling**
 
     This lecture will examine Gamma-Poisson and Normal-Normal models and discuss posterior sampling. We will begin with grid approximations and then show the output from state-of-the-art posterior samplers, such as the NUTS sampler available in Stan. We will introduce the Stan language, demonstrate a few simple models written in Stan, and go over MCMC diagnostics.
 
     -   Bayes Rules!, Chapters [5](https://www.bayesrulesbook.com/chapter-5.html) and [6](https://www.bayesrulesbook.com/chapter-6.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 3: Fitting a model
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 3: Fitting a model
 
 -   **(4) MCMC, posterior inference, and prediction**
 
     Most interesting models don't have nice analytic posteriors since most integrals do not have closed-form solutions. Fortunately, Markov Chain Monte Carlo (MCMC) algorithms make it possible to sample from target distributions with arbitrary precision (in infinite time). To understand how MCMC works, we will look under the hood of one of the oldest algorithms, the Metropolis-Hastings algorithm (1953, 1970). We will introduce the posterior predictive distribution.
 
     -   Bayes Rules!, Chapters [7](https://www.bayesrulesbook.com/chapter-7.html) and [8](https://www.bayesrulesbook.com/chapter-8.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 4: Using constructed data to find and understand problems
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 4: Using constructed data to find and understand problems
 
 -   **(5) Bayesian linear regression and model evaluation**
 
     Modern MCMC algorithms, such as Hamiltonian Monte Carlo (@homan2014), allow us to sample from complicated posteriors efficiently. The Stan language implements this method, and we will use it for the remainder of the course to draw samples from posterior distributions. We will also build a linear regression model in the `rstanarm` package, which exposes many Stan models via a familiar R language formula interface. We will discuss what makes a good model.
 
     -   Bayes Rules!, Chapters [9](https://www.bayesrulesbook.com/chapter-9.html) and [10](https://www.bayesrulesbook.com/chapter-10.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 6: Evaluating and using a fitted model
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 6: Evaluating and using a fitted model
 
 -   **(6) Expanding the linear model and modeling counts**
 
     We will discuss linear model expansion and compare model performance using leave-one-out cross-validation (LOO). We will also introduce models for analyzing count data, such as Poisson and Negative Binomial.
 
     -   Bayes Rules!, Chapters [11](https://www.bayesrulesbook.com/chapter-11.html) and [12](https://www.bayesrulesbook.com/chapter-12.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 7: Modifying a model
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 7: Modifying a model
 
 -   **(7) Logistic regression and introduction to hierarchical models**
 
     In the final lecture, we will discuss logistic regression and introduce hierarchical models -- the workhorse of Bayesian analysis. We will fit and evaluate hierarchical regression and compare the results to complete pooling and no-pooling estimates.
 
     -   Bayes Rules!, Chapters [13](https://www.bayesrulesbook.com/chapter-13.html) and [15](https://www.bayesrulesbook.com/chapter-15.html)
-    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808) @gelman2020, Chapter 5: Addressing computational problems
+    -   [Bayesian Workflow](https://arxiv.org/abs/2011.01808), Chapter 5: Addressing computational problems
 
 ## Grading
 
-There will be six homework assignments, an analysis project that can be completed in groups of up to three people, and two in-class quizzes. All assignments must be completed in [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html), [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html), or similar systems suitable for scientific publication. During the final, each team will present the analysis to the class. The presentation should contain at most five slides and take 10 minutes. We will distribute the presentation template and some guidelines for the analysis during the first week of class.
+There will be six homework assignments, two short in-class quizzes, and a computational final. All assignments must be completed in [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html), [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html), or similar systems suitable for scientific publication. 
 
--   Six homework assignments: 60%
--   Two quizzes: 15%
--   Group project and presentation: 20%
--   Class participation: 5%
+-   Six homework assignments: 50%
+-   Two quizzes: 20%
+-   Computational final: 20%
+-   Class participation: 10%
 
-The homework will be assigned at the end of each lecture and due by the following Monday at 5 pm. Since we may be reviewing some homework questions during class, we cannot accept late submissions. The students can discuss the homework problems with each other, but they should not collaborate on writing up the solutions.
+The **homework** will be assigned at the end of each lecture and due by the following Monday at 5 pm. Since we may be reviewing a subset of homework questions during class, we cannot accept late submissions. The students can discuss the homework problems with each other, but they should not collaborate on writing up the solutions.
 
-The quizzes are designed to test your understanding of the material. They will be administered on two random days during the semester, and a well-prepared student should be able to complete a quiz in about 20 minutes.
+The **quizzes** are designed to test your understanding of the material. They will be administered on two random days during the semester, and a well-prepared student should be able to complete a quiz in about 20 minutes.
 
-The group project is a collaborative exercise, as are most real-world projects. Please refer to the [project guidelines](https://ericnovik.github.io/bayes-course/project-template.pdf). Each team must present their work to get full credit for the analysis project, with 90% weight given to the project and 10% to the presentation.
+The computational **final** will be administered in class during finals week. Each student will be given a small dataset to analyze and a list of questions. The students will be expected to perform the analysis using the tools developed during the semester and submit both the `Rmd` or `Quarto` file and the rendered PDF output.
 
-To earn class participation credit, students must post in the online lecture discussions on Brightspace under the Class Participation topic. For each lecture, please ask a question about the material or the homework, ask a general question about the topic, or respond to the question asked by another student.
+To earn **class participation** credit, students must attend all lectures _and_ post in the online lecture discussions on Brightspace under the Class Participation topic. For each lecture, please ask a question about the material, ask a general question about Bayesian analysis, or respond to the question asked by another student.
 
 ## ChatGPT and Large Language Models
 
-Most of you are familiar with LLMs. They are extremely helpful tools, but they can be helpful and harmful during learning. Please do not use LLMs for your homework (it may give you wrong answers, and you may not know why), but when researching project topics and checking and improving your project code, feel free to use LLMs. When writing up the results of your project, please use your own words --- do not use LLMs to create narrative text for you, but if you do, you have to cite it as being produced by the LLM. If you have more questions regarding "fair use," feel free to post in the discussion room on Brightspace.
+Most of you are familiar with LLMs. They are extremely helpful tools but can be helpful and harmful during learning. Please do not use LLMs for your homework (it may give you wrong answers, and you may not know why) or during the computational final exam. The best use of an LLM is as a tutor. You can and should ask LLMs to clarify confusing concepts and provide examples. If you use the latest paid versions of the most popular LLMs, like ChatGPT 4o/4o1, the answers are usually correct and well-explained, but please don't hesitate to ask on Brightspace.
 
 ## Q&A and After-Class Discussion
 
-We will set up several discussion threads on Brightspace at the beginning of class, including homework Q&A and Project Q&A. All questions regarding class material, homework, and the project should be posted on Brightspace so other students can benefit from the answers. Please don't email the instructor or the Grader about the course material.
+We will set up several discussion threads on Brightspace at the beginning of class, including homework Q&A. All questions regarding class material, homework, and the final should be posted on Brightspace so other students can benefit from the answers. Please don't email the instructor or the grader about the course material -- post on the forums instead.
 
 ## Participation and Attendance Policies
 
@@ -168,3 +184,6 @@ Students with physical or learning disabilities are required to register with th
 If you are experiencing undue personal and/or academic stress during the semester that may be interfering with your ability to perform academically, the NYU Wellness Exchange (212 443 9999) offers a range of services to assist and support you. I am available to speak with you about stresses related to your work in my course, and I can assist you in connecting with the Wellness Exchange. Additionally, if you anticipate any challenges with completing the assignments, readings, exams and other work required in this course, I encourage you to register with the Moses Center (212 998 4980) in advance so that you may be granted the proper academic accommodations.
 
 ## References
+
+
+

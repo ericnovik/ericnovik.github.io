@@ -3,7 +3,7 @@ title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author:
  - name: "Eric Novik"
-   email: "Spring 2024 | Lecture 1"
+   email: "Spring 2025 | Lecture 1"
    affiliations: 
     - name: New York University
     - name: Generable Inc.
@@ -152,6 +152,15 @@ What do you think the range of certainty scores will look like: will there be an
 
 :::
 
+::: {.notes}
+  - These are speaker notes for this slide.
+  - You can add multiple lines of notes.
+  You can include bullets and not bullets
+  And latex: $y = f(x)$
+  $z = f(g)$
+:::
+  
+  
 ## Brief History {.smaller}
 
 [Summary](https://www.lesswrong.com/posts/RTt59BtFLqQbsSiqd/a-history-of-bayes-theorem) of the book [The Theory That Would Not Die](https://www.amazon.com/Theory-That-Would-Not-Die/dp/0300169698/)
@@ -402,23 +411,20 @@ str(sim)
 :::
 
 ::: {.fragment}
-```{r}
+```{r, class.code="small-code"}
 #| fig-width: 4.5
 #| fig-height: 4.5
 #| fig-align: center
 #| echo: true
-#| code-line-numbers: "|1|3"
+#| code-line-numbers: "|1|2"
 #| output-location: column
 
-surv <- apply(Titanic, c(2, 4), sum) |> 
-  as_tibble()
+surv <- apply(Titanic, c(2, 4), sum) 
 surv_prop <- round(surv / sum(surv), 3)
-bind_cols(Sex = c("Male", "Female"), 
-          surv_prop) |> 
-  adorn_totals(c("row", "col")) |>
+bind_cols(Sex = c("Male", "Female"), surv_prop) |> 
+  janitor::adorn_totals(c("row", "col")) |>
   knitr::kable(caption = 
-               "Titanic survival proportions")
-
+         "Titanic survival proportions")
 ```
 :::
 
@@ -428,19 +434,19 @@ bind_cols(Sex = c("Male", "Female"),
 - $\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) = 0.323$ 
 :::
 
-## Joint, Marginal, and Conditional {.smaller}
+## Joint, Marginal, and Conditional {.tiny}
 
 ::: columns
 ::: {.column width="60%"}
 
 ::: incremental
-- What is $\P(G = m \mid S = y)$, probability of being male given survival?
+- What is $\P(G = m \mid S = y)$, probability of being <br /> male given survival?
 - To compute that, we only consider the column <br /> where Survival = Yes
 - $\P(G = m \mid S = y) = \frac{\P(G = m \, \cap \, S = y)}{\P(S = y)} = \frac{0.167}{0.323} \\ \approx 0.52$
-- You want $\P(S = y \mid G = m)$, comparing it to $\P(S = y \mid G = f)$
+- You want $\P(S = y \mid G = m)$, comparing it to $\\ \qquad \ \ \ \ \ \ \P(S = y \mid G = f)$
 - $\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \\ \approx 0.21$
 - $\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \\ \approx 0.73$
-- [How would you calculate](https://www.polleverywhere.com/free_text_polls/fEqKsHkr2OIKXCuh4jeqQ) $\P(S = n \mid G = m)$?
+- How would you compute $\P(S = n \mid G = m)$?
 - $\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)$
 :::
 
@@ -492,31 +498,73 @@ $$
 - We call $\P(A \mid B)$, the posterior probability of the unknown $A$ given data $B$
 :::
 
-## Example: Medical Testing {.smaller}
+## Estimating $\pi$ by Simulation
 
-> [The authors calculated](https://www.idsociety.org/covid-19-real-time-learning-network/diagnostics/rapid-testing/#:~:text=The%20authors%20calculated%20the%20sensitivity,negative%20predictive%20value%20was%2097.3%25.) the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.
+The idea is that we can approximate the ratio of the area of an inscribed circle, $A_c$, to the area of the square, $A_s$, by uniformly "throwing darts" at the square with the side $2r$ and counting how many darts land inside the circle versus inside the square.
 
-::: incremental
--   Your child tests positive on this test. What is the probability that she has COVID? That is, we want to know $\P(D^+ \mid T^+)$
--   $\text{Specificity } := \P(T^- \mid D^-) = 0.998$
--   False positive rate $\text{FP} := 1 - \text{Specificity } = 1 - \P(T^- \mid D^-) = \P(T^+ \mid D^-) = 0.002$
--   $\text{Sensitivity } := \P(T^+ \mid D^+) = 0.454$
--   False negative rate $\text{FP} := 1 - \text{Sensitivity } = 1 - \P(T^+ \mid D^+) = \P(T^- \mid D^+) = 0.546$
--   Prevalence: $\P(D^+) = 0.001$
-:::
-
-::: {.fragment}
+::: fragment
 $$
-\begin{eqnarray}
-\P(D^+ \mid T^+) = \frac{\P(T^+ \mid D^+) \P(D^+)}{\P(T^+)} & = & \\
-\frac{\P(T^+ \mid D^+) \P(D^+)}{\sum_{i=1}^{n}\P(T^+ \mid D^i) \P(D^i) } & = & \\
-\frac{\P(T^+ \mid D^+) \P(D^+)}{\P(T^+ \mid D^+) \P(D^+) + \P(T^+ \mid D^-) \P(D^-)} & = & \\
-\frac{0.454 \cdot 0.001}{0.454 \cdot 0.001 + 0.002 \cdot 0.999} & \approx & 0.18
-\end{eqnarray}
+\begin{align}
+A_{c}& = \pi r^2 \\
+A_{s}& = (2r)^2 = 4r^2 \\
+\frac{A_{c}}{A_{s}}& = \frac{\pi r^2}{4r^2} = \frac{\pi}{4} \implies \pi = \frac{4A_{c}}{A_{s}}
+\end{align}
 $$
 :::
 
-## Bayesian Analysis {.smaller}
+## Estimating $\pi$ by Simulation
+
+To estimate $\pi$, we perform the following simulation:
+
+::: fragment
+$$
+\begin{align}
+X& \sim \text{Uniform}(-1, 1) \\
+Y& \sim \text{Uniform}(-1, 1) \\
+\pi& \approx \frac{4 \sum_{i=1}^{N} \I(x_i^2 + y_i^2 < 1)}{N}
+\end{align}
+$$
+:::
+
+::: fragment
+The numerator is a sum over an indicator function $\I$, which evaluates to $1$ if the inequality holds and $0$ otherwise.
+:::
+
+## Estimating $\pi$ by Simulation
+
+::: panel-tabset
+### Code and Plot
+
+::: fragment
+```{r}
+#| echo: true
+#| fig-width: 3
+#| fig-height: 3
+#| fig-align: center
+n <- 1e3
+x <- runif(n, -1, 1); y <- runif(n, -1, 1)
+inside <- x^2 + y^2 < 1
+data <- tibble(x, y, inside)
+p <- ggplot(aes(x = x, y = y), data = data)
+p + geom_point(aes(color = inside)) + theme(legend.position = "none")
+```
+:::
+
+### Estimate
+
+```{r}
+#| echo: true
+cat("Estimated value of pi =", 4*sum(inside) / n)
+```
+
+::: fragment
+```{r}
+knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
+```
+:::
+:::
+
+## Example Bayesian Analysis {.smaller}
 
 ::: columns
 ::: {.column width="50%"}
@@ -709,11 +757,11 @@ grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
 
 ::: incremental
 - Compute the likelihood
-   - $\binom{5}{3} \theta^3 (1 - \theta)^{2}$ for $\theta \in \{0.10, 0.30, 0.50, 0.70, 0.90\}$
+  - $\binom{5}{3} \theta^3 (1 - \theta)^{2}$ for $\theta \in \{0.10, 0.30, 0.50, 0.70, 0.90\}$
 - Multiply the likelihood by the prior to compute the numerator
   - $f(y = 3 \mid \theta) f(\theta)$
 - Sum the numerator to get the marginal likelihood
-  - $f(y = 3) = \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2$
+  - $f(y = 3) = \\ \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2$
 - Finally, compute the posterior
   - $f(\theta \mid y = 3) = \frac{f(y = 3 \mid \theta) f(\theta)}{\sum_{\theta} f(y = 3 | \theta) f(\theta)}$
 :::
