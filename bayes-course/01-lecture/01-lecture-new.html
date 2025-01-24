@@ -413,19 +413,22 @@ Eric Novik
 <p>Left: Pierre Simon Laplace in the style of Wassily Kandinsky, by OpenAI DALL·E</p>
 </div>
 </section>
-<section id="elasticity-of-demand-stan-with-hierarchical-models" class="slide level2">
-<h2>Elasticity of Demand (Stan with Hierarchical Models)</h2>
+<section id="elasticity-of-demand" class="slide level2">
+<h2>Elasticity of Demand</h2>
+<h4 id="stan-with-hierarchical-models">Stan with Hierarchical Models</h4>
 
 <img data-src="images/books.png" class="quarto-figure quarto-figure-center r-stretch" width="100"></section>
-<section id="pharmacometrics-stan-with-odes" class="slide level2">
-<h2>Pharmacometrics (Stan with ODEs)</h2>
+<section id="pharmacokinetics-of-drugs" class="slide level2">
+<h2>Pharmacokinetics of Drugs</h2>
+<h4 id="stan-with-ordinary-differential-equations">Stan with Ordinary Differential Equations</h4>
 
 <img data-src="images/pk.png" class="quarto-figure quarto-figure-center r-stretch" width="100"></section>
-<section id="nonparametric-bayes-stan-with-gps" class="slide level2">
-<h2>Nonparametric Bayes (Stan with GPs)</h2>
+<section id="nonparametric-bayes" class="slide level2">
+<h2>Nonparametric Bayes</h2>
+<h4 id="stan-with-gaussian-processes">Stan with Gaussian Processes</h4>
 
 <img data-src="images/gp.png" class="quarto-figure quarto-figure-center r-stretch" width="100"><div class="footer">
-<p>Timonen, J., Mannerström, H., Vehtari, A., &amp; Lähdesmäki, H. (2021). lgpr: An interpretable non-parametric method for inferring covariate effects from longitudinal data. Bioinformatics, 37(13), 1860–1867. https://doi.org/10.1093/bioinformatics/btab021</p>
+<p>Timonen, J., Mannerström, H., Vehtari, A., &amp; Lähdesmäki, H. (2021)</p>
 </div>
 </section>
 <section id="review-of-probability" class="slide level2">
@@ -544,23 +547,23 @@ Eric Novik
 <span id="cb3-4"><a></a>}</span>
 <span id="cb3-5"><a></a><span class="fu">roll</span>(die, <span class="dv">2</span>) <span class="co"># roll the die twice</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 6 3</code></pre>
+<pre><code>[1] 1 4</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>rolls <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e4</span>, <span class="fu">roll</span>(die, <span class="dv">2</span>))</span>
 <span id="cb5-2"><a></a>rolls[, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>] <span class="co"># print first 8 columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
-[1,]    6    5    6    6    2    3    6    3
-[2,]    3    2    4    4    3    2    6    1</code></pre>
+[1,]    5    1    5    6    1    6    2    1
+[2,]    2    1    3    4    4    1    1    3</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>roll_sums <span class="ot">&lt;-</span> <span class="fu">colSums</span>(rolls)</span>
 <span id="cb7-2"><a></a><span class="fu">head</span>(roll_sums)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  9  7 10 10  5  5</code></pre>
+<pre><code>[1]  7  2  8 10  5  7</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">mean</span>(roll_sums <span class="sc">&lt;</span> <span class="dv">11</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9151</code></pre>
+<pre><code>[1] 0.9169</code></pre>
 </div>
 </div>
 </div>
@@ -591,26 +594,26 @@ Eric Novik
 <span id="cb11-2"><a></a><span class="fu">str</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 20
- $ : int [1:2] 1 3
- $ : int [1:2] 6 5
- $ : int [1:2] 2 5
- $ : int [1:2] 5 5
- $ : int [1:2] 1 6
- $ : int [1:2] 6 3
- $ : int [1:2] 6 4
- $ : int [1:2] 5 5
- $ : int [1:2] 4 1
- $ : int [1:2] 5 4
- $ : int [1:2] 6 5
- $ : int [1:2] 2 5
- $ : int [1:2] 4 6
- $ : int [1:2] 2 6
- $ : int [1:2] 6 5
- $ : int [1:2] 4 5
- $ : int [1:2] 6 6
- $ : int [1:2] 5 6
  $ : int [1:2] 3 3
- $ : int [1:2] 5 2</code></pre>
+ $ : int [1:2] 1 5
+ $ : int [1:2] 6 4
+ $ : int [1:2] 2 5
+ $ : int [1:2] 3 2
+ $ : int [1:2] 6 5
+ $ : int [1:2] 3 4
+ $ : int [1:2] 2 3
+ $ : int [1:2] 6 4
+ $ : int [1:2] 5 6
+ $ : int [1:2] 5 3
+ $ : int [1:2] 2 3
+ $ : int [1:2] 1 2
+ $ : int [1:2] 1 3
+ $ : int [1:2] 3 2
+ $ : int [1:2] 3 6
+ $ : int [1:2] 2 2
+ $ : int [1:2] 3 1
+ $ : int [1:2] 3 4
+ $ : int [1:2] 6 6</code></pre>
 </div>
 </div>
 </div>
@@ -626,26 +629,26 @@ Eric Novik
 <span id="cb13-2"><a></a><span class="fu">str</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 20
- $ : int 2
- $ : int [1:2] 4 3
- $ : int [1:3] 5 1 1
- $ : int [1:4] 5 6 2 6
- $ : int [1:5] 2 2 4 1 1
- $ : int [1:6] 1 6 6 5 4 4
- $ : int [1:7] 5 3 2 2 4 4 3
- $ : int [1:8] 2 6 3 5 3 1 1 1
- $ : int [1:9] 2 1 4 1 5 2 6 4 6
- $ : int [1:10] 3 6 4 5 4 4 6 3 3 6
- $ : int [1:11] 4 1 4 1 5 4 6 3 6 5 ...
- $ : int [1:12] 5 2 5 4 2 6 3 4 1 4 ...
- $ : int [1:13] 6 5 5 5 4 3 2 5 3 6 ...
- $ : int [1:14] 3 5 3 5 1 3 6 6 2 4 ...
- $ : int [1:15] 4 6 6 5 1 2 5 5 3 2 ...
- $ : int [1:16] 3 2 6 4 2 4 2 2 6 6 ...
- $ : int [1:17] 5 2 5 2 5 1 3 4 4 6 ...
- $ : int [1:18] 3 6 1 4 2 4 5 4 2 4 ...
- $ : int [1:19] 5 5 6 3 3 5 4 1 5 4 ...
- $ : int [1:20] 6 2 4 2 3 3 3 1 4 6 ...</code></pre>
+ $ : int 4
+ $ : int [1:2] 1 4
+ $ : int [1:3] 4 2 1
+ $ : int [1:4] 2 4 6 4
+ $ : int [1:5] 6 2 2 3 6
+ $ : int [1:6] 5 4 5 5 5 1
+ $ : int [1:7] 5 1 2 5 3 1 4
+ $ : int [1:8] 2 1 3 6 5 5 1 6
+ $ : int [1:9] 6 3 2 3 2 5 3 5 4
+ $ : int [1:10] 4 5 3 2 5 1 4 4 3 1
+ $ : int [1:11] 3 3 2 2 4 4 6 6 3 5 ...
+ $ : int [1:12] 3 6 6 2 6 4 3 5 2 1 ...
+ $ : int [1:13] 2 5 2 6 6 4 1 1 2 3 ...
+ $ : int [1:14] 3 6 6 3 1 6 5 1 5 2 ...
+ $ : int [1:15] 5 6 4 3 4 2 2 2 4 2 ...
+ $ : int [1:16] 6 4 3 6 1 5 3 2 2 6 ...
+ $ : int [1:17] 3 1 1 2 3 1 5 5 2 5 ...
+ $ : int [1:18] 3 2 1 3 5 6 6 3 4 5 ...
+ $ : int [1:19] 5 3 4 4 5 3 5 4 2 2 ...
+ $ : int [1:20] 5 5 3 1 6 6 3 5 2 5 ...</code></pre>
 </div>
 </div>
 </div>
@@ -857,7 +860,7 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="01-lecture-new_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
@@ -868,7 +871,7 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">cat</span>(<span class="st">"Estimated value of pi ="</span>, <span class="dv">4</span><span class="sc">*</span><span class="fu">sum</span>(inside) <span class="sc">/</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Estimated value of pi = 3.236</code></pre>
+<pre><code>Estimated value of pi = 3.188</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -884,29 +887,29 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">-0.7632237</td>
-<td style="text-align: right;">0.6148435</td>
-<td style="text-align: left;">TRUE</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">-0.9140901</td>
-<td style="text-align: right;">0.0375340</td>
-<td style="text-align: left;">TRUE</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">-0.9026850</td>
-<td style="text-align: right;">-0.2055622</td>
-<td style="text-align: left;">TRUE</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0.0032529</td>
-<td style="text-align: right;">0.2861587</td>
-<td style="text-align: left;">TRUE</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.8934228</td>
-<td style="text-align: right;">-0.5011882</td>
+<td style="text-align: right;">-0.9594655</td>
+<td style="text-align: right;">-0.4555570</td>
 <td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">-0.5064962</td>
+<td style="text-align: right;">0.8101702</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">-0.8132646</td>
+<td style="text-align: right;">0.1812500</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.6380646</td>
+<td style="text-align: right;">0.2964768</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.3849212</td>
+<td style="text-align: right;">0.1850667</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 </tbody>
 </table>
@@ -998,7 +1001,7 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="01-lecture-new_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
@@ -1040,7 +1043,7 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="1536"></p>
+<p><img data-src="01-lecture-new_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="1536"></p>
 </figure>
 </div>
 </div>
@@ -1084,7 +1087,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-lecture-new_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1097,7 +1100,7 @@ f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \fra
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="01-lecture-new_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
