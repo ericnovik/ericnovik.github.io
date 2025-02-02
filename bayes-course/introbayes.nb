@@ -10,16 +10,139 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    155336,       2715]
-NotebookOptionsPosition[    154103,       2685]
-NotebookOutlinePosition[    154498,       2701]
-CellTagsIndexPosition[    154455,       2698]
+NotebookDataLength[    160215,       2846]
+NotebookOptionsPosition[    158529,       2808]
+NotebookOutlinePosition[    158924,       2824]
+CellTagsIndexPosition[    158881,       2821]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 
 Cell[CellGroupData[{
+Cell["Lecture 1", "Section",
+ CellChangeTimes->{{3.9472379272692738`*^9, 
+  3.9472379710723047`*^9}},ExpressionUUID->"0aa38497-0123-4e25-9ae0-\
+33e10daa671b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"BivariateNormalPDF", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"x_", ",", "y_"}], "}"}], ",", "\[Mu]_", ",", 
+      "\[CapitalSigma]_"}], "]"}], ":=", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "\[CapitalSigma]Det", ",", "\[CapitalSigma]Inv", ",", "d", ",", 
+        "normConst", ",", "exponent"}], "}"}], ",", 
+      RowBox[{"(*", 
+       RowBox[{
+       "Compute", " ", "determinant", " ", "and", " ", "inverse", " ", "of", 
+        " ", "covariance", " ", "matrix"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"\[CapitalSigma]Det", "=", 
+        RowBox[{"Det", "[", "\[CapitalSigma]", "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"\[CapitalSigma]Inv", "=", 
+        RowBox[{"Inverse", "[", "\[CapitalSigma]", "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"Dimensionality", " ", 
+         RowBox[{"(", 
+          RowBox[{"should", " ", "be", " ", "2"}], ")"}]}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"d", "=", 
+        RowBox[{"Length", "[", "\[Mu]", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"Normalization", " ", "constant"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"normConst", "=", 
+        RowBox[{"1", "/", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"2", " ", "\[Pi]"}], ")"}], "^", 
+            RowBox[{"(", 
+             RowBox[{"d", "/", "2"}], ")"}]}], " ", 
+           RowBox[{"Sqrt", "[", "\[CapitalSigma]Det", "]"}]}], ")"}]}]}], ";",
+        "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Exponent", " ", "term", " ", "with", " ", "proper", " ", "vector", 
+         " ", "subtraction"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"exponent", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "1"}], "/", "2"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"x", ",", "y"}], "}"}], "-", "\[Mu]"}], ")"}], ".", 
+           "\[CapitalSigma]Inv", ".", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"x", ",", "y"}], "}"}], "-", "\[Mu]"}], ")"}]}], 
+          ")"}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"Return", " ", "the", " ", "density", " ", "function"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"normConst", " ", 
+        RowBox[{"Exp", "[", "exponent", "]"}]}]}]}], "]"}]}], ";"}], "\n", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.947237977787426*^9, 3.947237982191317*^9}, {
+  3.9472380328558807`*^9, 3.947238033306614*^9}, {3.94723891163629*^9, 
+  3.947238912747766*^9}, {3.947238989949788*^9, 3.947239004627026*^9}, {
+  3.947239130567122*^9, 3.947239155251556*^9}},
+ CellLabel->"In[37]:=",ExpressionUUID->"9f564f90-be56-43ad-af2d-94ed224c06ab"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"\[Mu]", "=", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}]}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"Mean", " ", "vector"}], "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"\[CapitalSigma]", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0.5"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0.5", ",", "1"}], "}"}]}], "}"}]}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"Covariance", " ", "matrix"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"BivariateNormalPDF", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1"}], "}"}], ",", "\[Mu]", ",", "\[CapitalSigma]"}], 
+    "]"}], "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.947238938035932*^9, 3.9472389480837317`*^9}, 
+   3.947239042708394*^9, {3.947239163342576*^9, 
+   3.9472391741727247`*^9}},ExpressionUUID->"5c9cc74f-889d-4c5c-a2c7-\
+825ae40f7452"],
+
+Cell[BoxData["0.09435389770895924`"], "Output",
+ CellChangeTimes->{3.9472391711198063`*^9},
+ CellLabel->"Out[40]=",ExpressionUUID->"231d32da-4ca0-429c-8e8d-67befa1b94fa"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["Lecture 2 ", "Section",
  CellChangeTimes->{{3.876130637707108*^9, 3.87613066788758*^9}, {
   3.920827195322178*^9, 
@@ -2701,20 +2824,28 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 203, 4, 67, "Section",ExpressionUUID->"60e50546-e962-4278-b101-5302c068b404"],
-Cell[786, 28, 154, 3, 30, "Input",ExpressionUUID->"e31a8414-dbcf-4686-a70a-159122ced938"],
+Cell[580, 22, 158, 3, 67, "Section",ExpressionUUID->"0aa38497-0123-4e25-9ae0-33e10daa671b"],
+Cell[741, 27, 3047, 77, 325, "Input",ExpressionUUID->"9f564f90-be56-43ad-af2d-94ed224c06ab"],
 Cell[CellGroupData[{
-Cell[965, 35, 600, 11, 30, "Input",ExpressionUUID->"c5e6d99f-890c-4a01-8a83-d1e72eeb597f"],
-Cell[1568, 48, 378, 7, 34, "Output",ExpressionUUID->"6d25e906-c670-4ec3-bce3-af71ccdb31d8"]
+Cell[3813, 108, 971, 27, 115, "Input",ExpressionUUID->"5c9cc74f-889d-4c5c-a2c7-825ae40f7452"],
+Cell[4787, 137, 170, 2, 34, "Output",ExpressionUUID->"231d32da-4ca0-429c-8e8d-67befa1b94fa"]
+}, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1983, 60, 342, 8, 52, "Input",ExpressionUUID->"034d3cfd-f5f7-49af-9088-addb720ef121"],
-Cell[2328, 70, 7278, 138, 244, "Output",ExpressionUUID->"64c96de2-491d-4b56-94f7-5dec45fcda38"]
-}, Open  ]],
-Cell[9621, 211, 152, 3, 30, "Input",ExpressionUUID->"d11e8272-2cf6-42fa-9aa3-e61dcba6454d"],
+Cell[5006, 145, 203, 4, 67, "Section",ExpressionUUID->"60e50546-e962-4278-b101-5302c068b404"],
+Cell[5212, 151, 154, 3, 30, "Input",ExpressionUUID->"e31a8414-dbcf-4686-a70a-159122ced938"],
 Cell[CellGroupData[{
-Cell[9798, 218, 551, 14, 30, "Input",ExpressionUUID->"3e06a248-3697-4ce3-a169-e06617600c01"],
-Cell[10352, 234, 143723, 2447, 396, "Output",ExpressionUUID->"3b10c0f9-3007-4850-8011-bf92bde1396c"]
+Cell[5391, 158, 600, 11, 30, "Input",ExpressionUUID->"c5e6d99f-890c-4a01-8a83-d1e72eeb597f"],
+Cell[5994, 171, 378, 7, 34, "Output",ExpressionUUID->"6d25e906-c670-4ec3-bce3-af71ccdb31d8"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6409, 183, 342, 8, 52, "Input",ExpressionUUID->"034d3cfd-f5f7-49af-9088-addb720ef121"],
+Cell[6754, 193, 7278, 138, 244, "Output",ExpressionUUID->"64c96de2-491d-4b56-94f7-5dec45fcda38"]
+}, Open  ]],
+Cell[14047, 334, 152, 3, 30, "Input",ExpressionUUID->"d11e8272-2cf6-42fa-9aa3-e61dcba6454d"],
+Cell[CellGroupData[{
+Cell[14224, 341, 551, 14, 30, "Input",ExpressionUUID->"3e06a248-3697-4ce3-a169-e06617600c01"],
+Cell[14778, 357, 143723, 2447, 373, "Output",ExpressionUUID->"3b10c0f9-3007-4850-8011-bf92bde1396c"]
 }, Open  ]]
 }, Open  ]]
 }
