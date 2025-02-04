@@ -1,0 +1,964 @@
+---
+title: "Bayesian Inference"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author:
+ - name: "Eric Novik"
+   email: "Spring 2025 | Lecture 1"
+   affiliations: 
+    - name: New York University
+    - name: Generable Inc.
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+---
+
+## Introductions
+
+- [What is the city of your birth?](https://www.polleverywhere.com/free_text_polls/j8542cMkfw1Z7cxNGvsc6)
+
+![](images/van-gogh-moon.webp){fig-align="center" width="500"}
+
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(MASS)
+library(gridExtra)
+library(purrr)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+
+```
+
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+## Two Truths and a Lie[^1] {.smaller}
+
+::: columns
+::: {.column width="50%"}
+1. One person tells three personal statements, one of which is a lie. 
+1. Others discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale). 
+1. The storyteller reveals which was the lie. 
+1. Enter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once.
+:::
+
+::: {.column width="50%"}
+![](images/two-truths.png){fig-align="center" width="500"}
+:::
+:::
+
+[^1]: Gelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101.
+
+## Two Truths and a Lie
+
+https://tinyurl.com/two-truths-and
+
+![](images/two-truths-and-400.png){fig-align="center" width="500"}
+
+::: {.notes}
+What do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves.
+:::
+
+## Lecture 1: Bayesian Workflow {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+-   Two Truths and a Lie
+-   Statistics vs AI/ML
+-   Brief history of Bayesian inference
+-   Review of basic probability
+-   Introduction to Bayesian workflow
+-   Bayes's rule for events
+-   Binomial model and the Bayesian Crank
+-   Overview of the Course
+:::
+
+:::
+
+::: {.column width="50%"}
+
+![](images/road.webp){fig-align="center" width="500"}
+
+:::
+:::
+
+## Statistics vs. AI/ML {.smaller}
+
+⚠️ What follows is an oversimplified opinion.
+
+::: incremental
+::: columns
+::: {.column width="50%"}
+
+-   AI is great for **automating tasks** that humans find *easy*
+    -   Recognizing faces, cats, and other objects
+    -   Identifying tumors on a radiology scan
+    -   Playing Chess and Go
+    -   Driving a car
+    -   Post ChatGPT 4: Generating coherent text/images/video, signs of reasoning
+:::
+
+::: {.column width="50%"}
+-   Statistics is great at **answering questions** that humans find hard
+    -   How fast does a drug clear from the body? 
+    -   What is the expected tumor size two months after treatment? 
+    -   How would patients respond under a different treatment?
+    -   Should I take this drug?
+    -   Should we (FDA/EMA/...) approve this drug? 
+    
+:::
+:::
+
+::: aside
+"Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense." — Andrew Gelman
+:::
+
+
+:::
+
+::: {.notes}
+  - These are speaker notes for this slide.
+  - You can add multiple lines of notes.
+  You can include bullets and not bullets
+  And latex: $y = f(x)$
+  $z = f(g)$
+:::
+  
+  
+## Brief History {.smaller}
+
+[Summary](https://www.lesswrong.com/posts/RTt59BtFLqQbsSiqd/a-history-of-bayes-theorem) of the book [The Theory That Would Not Die](https://www.amazon.com/Theory-That-Would-Not-Die/dp/0300169698/)
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+-   Thomas Bayes (1702(?) --- 1761) is credited with the discovery of the "Bayes's Rule"
+-   His paper was published posthumously by Richard Price in 1763
+-   Laplace (1749 --- 1827) independently discovered the rule and published it in 1774
+-   Scientific context: Newton's Principia was published in 1687
+-   Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, FiveThirtyEight
+:::
+:::
+
+::: {.column width="50%"}
+
+![](images/bayes.png){fig-align="center" width="672"}
+
+:::
+:::
+
+::: notes
+Stephen Stigler gives 3:1 in favor of Nicholas Saunderson for the discovery of Bayes's \[sic\] rule.
+:::
+
+## Laplace's Demon {.smaller}
+
+::: columns
+::: {.column width="50%"}
+> We may regard the present state of the universe as the effect of its past and the cause of its future. An intellect which at any given moment knew all of the forces that animate nature and the mutual positions of the beings that compose it, if this intellect were vast enough to submit the data to analysis, could condense into a single formula the movement of the greatest bodies of the universe and that of the lightest atom; for such an intellect **nothing could be uncertain**, and the future just like the past would be present before its eyes.
+:::
+
+::: {.column width="50%"}
+![](images/laplace.jpeg){fig-align="center"}
+
+Marquis Pierre Simon de Laplace (1729 --- 1827)
+
+"Uncertainty is a function of our ignorance, not a property of the world."
+:::
+:::
+
+## Modern Examples of Bayesian Analyses
+
+::: columns
+::: {.column width="50%"}
+![](images/laplace-modern.png){fig-align="center" width="500px"}
+:::
+
+::: {.column width="50%"}
+![](images/laplace.webp){fig-align="center" width="500px"}
+:::
+:::
+
+
+::: footer
+Left: Pierre Simon Laplace in the style of Wassily Kandinsky, by OpenAI DALL·E
+:::
+
+
+## Elasticity of Demand (Stan with Hierarchical Model)
+
+![](images/books.png){fig-align="center" width="100px"}
+
+## Pharmacometrics (Stan with ODEs)
+![](images/pk.png){fig-align="center" width="100px"}
+
+## Nonparametric Bayes (Stan with GPs)
+![](images/gp.png){fig-align="center" width="100px"}
+
+::: footer
+Timonen, J., Mannerström, H., Vehtari, A., & Lähdesmäki, H. (2021). lgpr: An interpretable non-parametric method for inferring covariate effects from longitudinal data. Bioinformatics, 37(13), 1860–1867. https://doi.org/10.1093/bioinformatics/btab021
+:::
+
+
+## Review of Probability 
+
+::: incremental
+- A set of all possible outcomes is called a sample space and denoted by $\Omega$
+- An outcome of an experiment is denoted by $\omega \in \Omega$
+- We typically denote events by capital letters, say $A \subseteq \Omega$
+- Axioms of probability:
+   - $\P(A) \geq 0, \, \text{for all } A$
+   - $\P(\Omega) = 1$
+   - If $A_1, A_2, A_3, \ldots$ are disjoint: $\P(\cup_{i=1}^{\infty} A_i) = \sum_{i=1}^{\infty} \P(A_i)$
+
+:::
+
+## Example
+
+::: panel-tabset
+### Rolling dice
+
+::: incremental
+- You roll a fair six-sided die twice
+- [Give an example](https://www.polleverywhere.com/free_text_polls/hbp5mikDZQuaAUY93DxEe) of an $\omega \in \Omega$
+- [How many elements](https://www.polleverywhere.com/free_text_polls/ei1LTjb0Hs527FmxOYcyz) are in $\Omega$? What is $\Omega$?
+- Define an event $A$ as the sum of the two rolls less than 11
+- How many elements are in $A$?
+- [What is](https://www.polleverywhere.com/free_text_polls/jeW2aLcvHLARVmmUlcshY) $\P(A)$?
+:::
+
+### Omega {.smaller}
+
+::: columns
+::: {.column width="46%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+outer(1:6, 1:6, FUN = "+")
+```
+:::
+
+::: incremental
+- $\Omega$ consists of all pairs: 
+   - $\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}$
+:::
+
+:::
+
+::: {.column width="54%"}
+
+::: incremental
+- There are 36 such pairs
+- 33 of those pairs result in a sum of less than 11
+- $\P(A) = \frac{33}{36} = \frac{11}{12}$
+:::
+
+:::
+:::
+
+:::
+
+## Random Variables Review
+
+::: panel-tabset
+
+## Review
+::: incremental
+- Random variable is not random -- it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment
+- PMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)
+- Expectations (Blitzstein and Hwang, Ch. 4)
+- Joint Distributions (Blitzstein and Hwang, Ch. 7)
+- Conditional Expectations (Blitzstein and Hwang, Ch. 9)
+:::
+
+## Mapping
+
+Random variable X for the number of Heads in two flips
+
+![](images/nofheads.png){fig-align="center" height="400"}
+:::
+
+
+## Example Simulation {.smaller}
+
+::: incremental
+- We will use R's `sample()` function to simulate rolls of a die and `replicate()` function to repeat the rolling process many times
+- Modern approach: `purrr::map(1:n, \(x) expression)`
+:::
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+
+die <- 1:6
+roll <- function(x, n) {
+  sample(x, size = n, replace = TRUE)
+}
+roll(die, 2) # roll the die twice
+rolls <- replicate(1e4, roll(die, 2))
+rolls[, 1:8] # print first 8 columns
+roll_sums <- colSums(rolls)
+head(roll_sums)
+mean(roll_sums < 11) 
+
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+- Given a Random Variable $Y$, $y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N$ are simulations or draws from $Y$
+- Fundamental bridge (Blitzstein & Hwang p. 164): $\P(A) = \E(\I_A)$
+- Computationally: $\P(Y < 11) \approx \frac{1}{N} \sum^{N}_{n=1} \I(y^n < 11)$
+- In R, `roll_sums < 11` creates an indicator variable
+- And `mean()` does the average
+:::
+
+:::
+:::
+
+## Example Simulation with purrr {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- Roll a die twice, twenty times
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+sim <- purrr::map(1:20, \(x) roll(die, 2))
+str(sim)
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+- Roll a die once, twice, ...., twenty times
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+sim <- purrr::map(1:20, \(x) roll(die, x))
+str(sim)
+```
+:::
+
+:::
+:::
+## Review of Conditional Probability
+::: incremental
+- For arbitrary $A$ and $B$, if $\P(B) > 0$:
+    - Conditional probability: $\P(A \mid B) = \frac{\P(AB)}{\P(B)}$
+    - Conditional probability: $\P(B \mid A) = \frac{\P(AB)}{\P(A)}$
+- Bayes's rule: $\P(A \mid B) = \frac{\P(AB)}{\P(B)} = \frac{\P(B \mid A) \P(A)}{\P(B)}$
+- $A$ and $B$ are independent if observing $B$ does not give you any more information about $A$: $\P(A \mid B) = \P(A)$
+- And $\P(A B) = \P(A) \P(B)$ (from Bayes's rule)
+:::
+
+
+## Joint, Marginal, and Conditional {.smaller}
+::: incremental
+- Titanic carried approximately 2,200 passengers and sank on 15 April 1912
+- Let $G: \{m, f\}$ represent Gender and $S: \{n, y\}$ represent Survival
+:::
+
+::: {.fragment}
+```{r, class.code="small-code"}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: true
+#| code-line-numbers: "|1|2"
+#| output-location: column
+
+surv <- apply(Titanic, c(2, 4), sum) 
+surv_prop <- round(surv / sum(surv), 3)
+bind_cols(Sex = c("Male", "Female"), surv_prop) |> 
+  janitor::adorn_totals(c("row", "col")) |>
+  knitr::kable(caption = 
+         "Titanic survival proportions")
+```
+:::
+
+::: incremental
+- $\P(G = m \cap S = y) =$ `r surv_prop[1, 2]`
+- $\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) =$ ??
+- $\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) = 0.323$ 
+:::
+
+## Joint, Marginal, and Conditional {.tiny}
+
+::: columns
+::: {.column width="60%"}
+
+::: incremental
+- What is $\P(G = m \mid S = y)$, probability of being <br /> male given survival?
+- To compute that, we only consider the column <br /> where Survival = Yes
+- $\P(G = m \mid S = y) = \frac{\P(G = m \, \cap \, S = y)}{\P(S = y)} = \frac{0.167}{0.323} \\ \approx 0.52$
+- You want $\P(S = y \mid G = m)$, comparing it to $\\ \qquad \ \ \ \ \ \ \P(S = y \mid G = f)$
+- $\P(S = y \mid G = m) = \frac{\P(G = m \, \cap \, S = y)}{\P(G = m)} = \frac{0.167}{0.787} \\ \approx 0.21$
+- $\P(S = y \mid G = f) = \frac{\P(G = f \, \cap \, S = y)}{\P(G = f)} = \frac{0.156}{0.213} \\ \approx 0.73$
+- How would you compute $\P(S = n \mid G = m)$?
+- $\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)$
+:::
+
+:::
+
+
+::: {.column width="40%"}
+```{r}
+#| fig-align: right
+#| echo: false
+bind_cols(Sex = c("Male", "Female"), surv_prop) |> 
+  adorn_totals(c("row", "col")) |>
+  knitr::kable(caption = "Titanic survival proportions")
+```
+
+![](images/titanic.jpeg){fig-align="right"}
+"Untergang der Titanic", as conceived by Willy Stöwer, 1912
+:::
+:::
+
+## Law of Total Probability (LOTP)
+Let $A$ be a partition of $\Omega$, so that each $A_i$ is disjoint, $\P(A_i >0)$, and $\cup A_i = \Omega$.
+$$
+\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)
+$$ 
+
+![](images/LTP.png){fig-align="center" width="500"}
+
+::: footer
+Image from Blitzstein and Hwang (2019), Page 55
+:::
+
+## Bayes's Rule for Events {.smaller}
+
+::: incremental
+- We can combine the definition of conditional probability with the LOTP to come up with Bayes's rule for events, assuming $\P(B) \neq 0$
+
+::: {.fragment}
+$$
+\P(A \mid B) = \frac{\P(B \cap A)}{\P(B)} = 
+               \frac{\P(B \mid A) \P(A)}{\sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)}
+$$
+:::
+
+- We typically think of $A$ is some unknown we wish to learn (e.g., the status of a disease) and $B$ as the data we observe (e.g., the result of a diagnostic test)
+
+- We call $\P(A)$ prior probability of A (e.g., how prevalent is the disease in the population)
+
+- We call $\P(A \mid B)$, the posterior probability of the unknown $A$ given data $B$
+:::
+
+## Estimating $\pi$ by Simulation
+
+The idea is that we can approximate the ratio of the area of an inscribed circle, $A_c$, to the area of the square, $A_s$, by uniformly "throwing darts" at the square with the side $2r$ and counting how many darts land inside the circle versus inside the square.
+
+::: fragment
+$$
+\begin{align}
+A_{c}& = \pi r^2 \\
+A_{s}& = (2r)^2 = 4r^2 \\
+\frac{A_{c}}{A_{s}}& = \frac{\pi r^2}{4r^2} = \frac{\pi}{4} \implies \pi = \frac{4A_{c}}{A_{s}}
+\end{align}
+$$
+:::
+
+## Estimating $\pi$ by Simulation
+
+To estimate $\pi$, we perform the following simulation:
+
+::: fragment
+$$
+\begin{align}
+X& \sim \text{Uniform}(-1, 1) \\
+Y& \sim \text{Uniform}(-1, 1) \\
+\pi& \approx \frac{4 \sum_{i=1}^{N} \I(x_i^2 + y_i^2 < 1)}{N}
+\end{align}
+$$
+:::
+
+::: fragment
+The numerator is a sum over an indicator function $\I$, which evaluates to $1$ if the inequality holds and $0$ otherwise.
+:::
+
+## Estimating $\pi$ by Simulation
+
+::: panel-tabset
+### Code and Plot
+
+::: fragment
+```{r}
+#| echo: true
+#| fig-width: 3
+#| fig-height: 3
+#| fig-align: center
+n <- 1e3
+x <- runif(n, -1, 1); y <- runif(n, -1, 1)
+inside <- x^2 + y^2 < 1
+data <- tibble(x, y, inside)
+p <- ggplot(aes(x = x, y = y), data = data)
+p + geom_point(aes(color = inside)) + theme(legend.position = "none")
+```
+:::
+
+### Estimate
+
+```{r}
+#| echo: true
+cat("Estimated value of pi =", 4*sum(inside) / n)
+```
+
+::: fragment
+```{r}
+knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
+```
+:::
+:::
+
+## Example Bayesian Analysis {.smaller}
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+- Suppose we enrolled five people in an early cancer clinical trial
+- Each person was given an active treatment
+- From previous trials, we have some idea of historical response rates (proportion of people responding)
+- At the end of the trial, $Y = y \in \{0,1,...,5 \}$ people will have responded[^3] to the treatment
+- We are interested in estimating the probability that the response rate is greater or equal to 50%
+:::
+
+:::
+
+::: {.column width="50%"}
+
+![](images/recist.jpeg){fig-align="center"}
+Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: [RECIST 1.1 - and more](https://radiologyassistant.nl/more/recist-1-1/recist-1-1)
+:::
+:::
+
+[^3]: Partial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement.
+
+
+## Notation {.smaller}
+
+Greek letters will be used for latent parameters, and English letters will be used for observables.
+
+::: incremental
+-   $\theta$: unknowns or parameters to be estimated; could be multivariate, discrete, and continuous (your book uses $\pi$)
+-   $y$: observations or measurements to be modelled ($y_1, y_2, ...$)
+-   $\widetilde{y}$ : unobserved but observable quantities (in your book $y'$)
+-   $x$: covariates
+-   $f( \theta )$: a prior model, P[DM]F of $\theta$
+-   $f_y(y \mid \theta, x)$: an observational model, P[DM]F when it is a function of $y$ (in your book: $f(y \mid \pi)$); we typically drop the $x$ to simplify the notation.
+-   $f_{\theta}(y \mid \theta)$: is a likelihood function when it is a function of $\theta$ (in your book: $\L(\pi \mid y)$)
+-   Some people write $\L(\theta; y)$ or simply $\L(\theta)$
+:::
+
+## General Approach {.smaller}
+::: incremental
+- Before observing the data, we need to specify a prior model $f(\theta)$ on all unknowns $\theta$[^4] 
+- Pick a data model $f(y \mid \theta, x)$ --- this is typically more important than the prior; this includes the model for the conditional mean: $\E(y \mid x)$
+- For more complex models, we construct a prior predictive distribution, $f(y)$
+  - We will define this quantity later --- it will help us assess if our choice of priors makes sense on the observational scale
+- After we observe data $y$, we treat $f(y \mid \theta, x)$ as the likelihood of observing $y$ under all plausible values of $\theta$, conditioning on $x$ if necessary
+- Derive a posterior model for $\theta$, $\, f(\theta \mid y, x)$ using Bayes's rule or by simulation
+- Evaluate model quality: 1) quality of the inferences; 2) quality of predictions. Revise the model if necessary
+- Compute all the quantities of interest from the posterior, such as event probabilities, e.g., $\P(\theta > 0.5)$, posterior predictive distribution $f(\widetilde{y} \mid y)$, decision functions, etc.
+:::
+
+[^4]: There is always a prior, even in frequentist inference. 
+
+::: footer
+For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011.01808) by Gelman et al. (2020)
+:::
+
+## Example Prior Model {.smaller}
+::: incremental
+- We will construct a prior model for our clinical trial
+- From previous trials, we construct a discretized version of the prior distribution of the response rate
+- The most likely value for response rate is 30%
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 3
+#| fig-height: 3
+#| fig-align: center
+#| output-location: column
+#| echo: true
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, 
+                     yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + 
+    ylab(expression(f(theta)))
+}
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+prior <- c(0.05, 0.45, 0.30, 0.15, 0.05)
+dot_plot(theta, prior) +
+  ggtitle("Prior probability of response")
+```
+:::
+
+::: incremental
+- Even though $\theta$ is a continuous parameter, we can still specify a discrete prior
+- The posterior will also be discrete and of the same cardinality
+:::
+
+## Data Model {.smaller}
+::: incremental
+- We consider each person's response rate to be independent, given the treatment
+- We have a fixed number of people in the trial, $N = 5$, and $0$ to $5$ successes
+- We will therefore consider: $y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(5,\theta)$
+- $f(y \mid \theta) = \text{Bin} (y \mid 5,\theta) = \binom{5}{y} \theta^y (1 - \theta)^{5 - y}$ for $y \in \{0,1,\ldots,5\}$
+- Is this a valid probability distribution as a function of $y$?
+
+::: {.fragment}
+```{r}
+#| echo: true
+N = 5; y <- 0:N; theta <- 0.5
+(f_y <- dbinom(x = y, size = N, prob = theta) |>
+    fractions())
+sum(dbinom(x = y, size = N, prob = theta))
+```
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 16
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+f_y <- map(theta, ~ dbinom(x = y, size = N, prob = .))
+yl <- expression(paste("f(y | ", theta, ")"))
+p <- list()
+for (i in 1:N) {
+  p[[i]] <- dot_plot(y, f_y[[i]]) + xlab(expression(y)) + ylab(yl) +
+    ggtitle(bquote(theta == .(theta[i])))
+}
+grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
+```
+:::
+:::
+
+## Likelihood Function {.smaller}
+::: incremental
+- We ran the trial and observed 3 out of 5 responders
+- We can now construct a likelihood function for $y = 3$ as a function of $\theta$
+- Let's check if this function is a probability distribution:
+$$
+f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
+$$
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+integrate(dbinom_theta, lower = 0, upper = 1, 
+          N = 5, y = 3)[[1]] |> fractions()
+```
+:::
+
+::: incremental
+- $f(y)$ is called marginal distribution of the data or, more aptly, prior predictive distribution
+- It tells us that prior to observing $y$, all values of $y$ are equally likely
+:::
+
+## Likelihood Function {.smaller}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+N <- 5; y <- 0:N
+p1 <- list()
+lik <- map(y, ~ dbinom(x = ., size = N, prob = theta))
+for (i in 1:(N + 1)) {
+  p1[[i]] <- dot_plot(theta, lik[[i]]) + 
+    xlab(expression(theta)) + ylab("Lik") +
+    ggtitle(bquote(y == .(y[i])))
+}
+grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], p1[[6]], nrow = 2)
+```
+
+::: {.fragment}
+Compare with the data model:
+:::
+
+::: {.fragment}
+```{r}
+#| fig-width: 8
+#| fig-height: 1.5
+#| fig-align: center
+#| echo: false
+grid.arrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], nrow = 1)
+```
+:::
+
+## Compute the Posterior {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- Compute the likelihood
+  - $\binom{5}{3} \theta^3 (1 - \theta)^{2}$ for $\theta \in \{0.10, 0.30, 0.50, 0.70, 0.90\}$
+- Multiply the likelihood by the prior to compute the numerator
+  - $f(y = 3 \mid \theta) f(\theta)$
+- Sum the numerator to get the marginal likelihood
+  - $f(y = 3) = \\ \sum_{\theta} f(y = 3 | \theta) f(\theta) \approx 0.2$
+- Finally, compute the posterior
+  - $f(\theta \mid y = 3) = \frac{f(y = 3 \mid \theta) f(\theta)}{\sum_{\theta} f(y = 3 | \theta) f(\theta)}$
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+N <- 5; y <- 3
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+prior <- c(0.05, 0.45, 0.30, 0.15, 0.05)
+lik <- dbinom(y, N, theta)
+lik_x_prior <-  lik * prior
+constant <- sum(lik_x_prior)
+post <- lik_x_prior / constant
+```
+:::
+
+<br />
+
+::: {.fragment}
+```{r}
+#| echo: false
+library(kableExtra)
+d <- data.frame(theta, prior, lik, lik_x_prior, post)
+d |>
+  adorn_totals("row") |>
+  kbl(booktabs = T,
+      linesep = "",
+      digits = 2) |>
+  kable_paper(full_width = F) |>
+  column_spec(5,
+              color = "white",
+              background = spec_color(d$post[1:5], end = 0.5,
+                                      direction = -1)) |>
+  column_spec(2,
+              color = "white",
+              background = spec_color(d$prior[1:5], end = 0.5,
+                                      direction = -1)) |>
+  column_spec(3,
+              color = "white",
+              background = spec_color(d$lik[1:5], end = 0.5,
+                                      direction = -1)) |>
+  column_spec(4,
+    color = "white",
+    background = spec_color(d$lik_x_prior[1:5], end = 0.5,
+                            direction = -1)
+  ) |>
+  row_spec(6, color = "black", background = "#f0f1eb")
+#d |> knitr::kable(caption = "Summary of posterior analysis")
+```
+:::
+
+:::
+:::
+
+## Computing Event Probability {.smaller}
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+- To compute event probabilities, we integrate (or sum) the relevant regions of the parameter space
+$$
+\P(\theta \geq 0.5) = \int_{0.5}^{1} f(\theta \mid y) \, d\theta
+$$
+
+- In this case, we only have discrete quantities, so we sum:
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+probs <- d |>
+  filter(theta >= 0.50) |>
+  dplyr::select(prior, post) |>
+  colSums() |>
+  round(2)
+probs
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: false
+d |>
+  adorn_totals("row") |>
+  kbl(booktabs = T, linesep = "", digits = 2) |>
+  kable_paper(full_width = F) |>
+  column_spec(5, color = "white", 
+              background = spec_color(d$post[1:5], end = .5,
+                                      direction = -1)) |>
+  column_spec(2, color = "white", 
+              background = spec_color(d$prior[1:5], end = .5,
+                                      direction = -1)) |>
+  column_spec(3, color = "white", 
+              background = spec_color(d$lik[1:5], end = .5,
+                                      direction = -1)) |>
+  column_spec(4, color = "white", 
+              background = spec_color(d$lik_x_prior[1:5], end = .5,
+                                      direction = -1)) |>
+  row_spec(6, color = "black", background = "#f0f1eb")
+```
+:::
+
+<br />
+
+::: incremental
+- $\P(\theta \geq 0.50) =$ `r probs[[1]]` and $\P(\theta | y \geq 0.50) =$ `r probs[[2]]`
+::: 
+
+:::
+:::
+
+
+
+## What If We Used a Flat Prior? {.smaller}
+
+::: incremental
+- Flat or uniform prior means that we consider all values of $\theta$ equality likely
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+N <- 5; y <- 3
+theta <- c(0.10, 0.30, 0.50, 0.70, 0.90)
+prior <- c(0.20, 0.20, 0.20, 0.20, 0.20)
+lik <- dbinom(y, N, theta)
+lik_x_prior <-  lik * prior
+constant <- sum(lik_x_prior)
+post <- lik_x_prior / constant
+```
+::: 
+
+::: {.fragment}
+```{r}
+#| echo: false
+library(kableExtra)
+d <- data.frame(theta, prior, lik, lik_x_prior, post)
+d |>
+  adorn_totals("row") |>
+  kbl(booktabs = T, linesep = "", digits = 2) |>
+  kable_paper(full_width = F) |>
+  column_spec(5, color = "white", 
+              background = spec_color(d$post[1:5], end = .6,
+                                      direction = -1)) |>
+  column_spec(2, color = "white", 
+              background = spec_color(d$prior[1:5], end = .6,
+                                      direction = -1)) |>
+  column_spec(3, color = "white", 
+              background = spec_color(d$lik[1:5], end = .6,
+                                      direction = -1)) |>
+  column_spec(4, color = "white", 
+              background = spec_color(d$lik_x_prior[1:5], end = .6,
+                                      direction = -1)) |>
+  row_spec(6, color = "black", background = "#f0f1eb")
+```
+:::
+
+::: {.fragment}
+```{r}
+#| echo: false
+probs <- d |>
+  filter(theta >= 0.5) |>
+  dplyr::select(prior, post) |>
+  colSums() |>
+  round(2)
+```
+:::
+
+::: incremental
+- $\P(\theta \geq 0.50) =$ `r probs[[1]]` and $\P(\theta | y \geq 0.50) =$ `r probs[[2]]`
+::: 
+
+
+## Bayesian Workflow{.smaller}
+
+![](images/workflow.png){fig-align="center" width="672"}
+
+::: footer
+Gelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 \[Stat\]. http://arxiv.org/abs/2011.01808
+:::
+
+
+## Overview of the class
+-   [Syllabus](https://ericnovik.github.io/bayes-course/syllabus.pdf)
+
