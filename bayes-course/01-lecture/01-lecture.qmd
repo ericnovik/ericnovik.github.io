@@ -294,13 +294,22 @@ Timonen, J., Mannerström, H., Vehtari, A., & Lähdesmäki, H. (2021)
 
 :::
 
-## Random Variables Review
+## Random Variables Review {.small}
 
 ::: panel-tabset
 
 ## Review
 ::: incremental
-- A random variable $X$ is a function that maps outcomes of a random experiment to real numbers. Formally: $X: \Omega \to \mathbb{R}$. For each $\omega \in \Omega$, $X(\omega) \in\mathbb{R}$.
+- A random variable $X$ is a function that maps outcomes of a random experiment to real numbers. $X: \Omega \to \mathbb{R}$. For each $\omega \in \Omega$, $X(\omega) \in\mathbb{R}$.
+:::
+
+::: {.fragment}
+$$
+\P_X(X = x_i) = \P\left(\{\omega_j \in \Omega : X(\omega_j) = x_i\}\right)
+$$
+:::
+
+::: incremental
 - PMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)
 - Expectations (Blitzstein and Hwang, Ch. 4)
 - Joint Distributions (Blitzstein and Hwang, Ch. 7)
@@ -309,7 +318,7 @@ Timonen, J., Mannerström, H., Vehtari, A., & Lähdesmäki, H. (2021)
 
 ## Illustration
 
-Random variable X for the number of Heads in two flips
+Random variable $X(\omega)$ for the number of Heads in two flips
 
 ![](images/nofheads.png){fig-align="center" height="400"}
 :::
@@ -933,9 +942,7 @@ knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
 :::
 
 
-## Notation {.smaller}
-
-Greek letters will be used for latent parameters, and English letters will be used for observables.
+## Simplified Notation {.smaller}
 
 ::: incremental
 -   $\theta$: unknowns or parameters to be estimated; could be multivariate, discrete, and continuous; in your book $\pi$
@@ -946,6 +953,8 @@ Greek letters will be used for latent parameters, and English letters will be us
 -   $f(y \mid \theta, x)$: an observational model, P[DM]F when it is a function of $y$; in your book: $f(y \mid \pi)$
 -   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$; in your book: $\L(\pi \mid y)$
 -   Some people write $\L(\theta; y)$ or simply $\L(\theta)$
+-   $U(z)$: utility function where $z$ can be $\theta$, $\tilde{y}$ 
+-   $\E(U(z) \mid d)$: expected utility for decision $d$
 :::
 
 ## Simplified Bayesian Workflow {.small}
@@ -956,7 +965,7 @@ Greek letters will be used for latent parameters, and English letters will be us
 - After observing data $y$, we treat $f(y \mid \theta, x)$ as the likelihood of observing $y$ under all plausible values of $\theta$, conditioning on $x$ if necessary
 - Derive a posterior distribution for $\theta$, $\, f(\theta \mid y, x)$
 - Evaluate model quality: 1) quality of the inferences; 2) quality of predictions; go back to the beginning
-- Compute derived quantities such event probilities e.g., $\P(\theta > 0.5)$, posterior predictive distribution $f(\widetilde{y} \mid y)$, expected utilities $\E(U(x) \mid d)$, etc.
+- Compute derived quantities, such as $\P(\theta > \alpha)$, $f(\widetilde{y} \mid y)$, and $d^* = \textrm{arg max}_d \ \E(U(z) \mid d)$ 
 :::
 
 ::: footer
@@ -973,7 +982,7 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
 - Game Setup:
   - You are offered to bet on the proportion of red balls in a box
   - True proportions: $\theta \in \{0.25,\, 0.50,\, 0.75\}$
-  - You draw 10 balls with replacement and observe 6 red balls
+  - You are allowed to draw 10 balls from the box with replacement
   - Payoffs if your chosen $\theta$ is correct:
     - For $\theta=0.25$: \$3
     - For $\theta=0.50$: \$5
@@ -994,7 +1003,7 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
 
 
 ::: {.fragment}
-- Your options are: A) Don't play; B) Pay \$2 to play immediately; C) Pay \$1 to buy an extra ball, then pay \$2 to play
+- Your options are: A) Don't play; B) Pay \$2 to play after observing red balls in 10 draws; C) Pay \$1 to buy an extra ball (11th), then pay \$2 to play
 :::
 
 
@@ -1004,16 +1013,18 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
 ::: {.column width="60%"}
 
 ::: incremental
-- We will assume a uniform prior on $\theta$  
-- What does that mean? Is that a reasonable assumption?
-- We take a ball from the box; what is $\P(y = \text{red})$?
-- LOTP, marginal probability of data, prior predictive probability
+- What does it mean to put a uniform prior on $\theta$?
+- What are we assuming about the game design under this prior?
+- Is that a reasonable assumption, given the payoffs?
+- We take one ball from the box; what is $\P(y = \text{red})$?
+- Law of Total Probability (LOTP):
 :::
 
 :::
 
 ::: {.column width="40%"}
 
+::: {.fragment}
 ```{r}
 #| fig-width: 3
 #| fig-height: 3
@@ -1033,6 +1044,7 @@ dot_plot(theta, prior) + ggtitle("Prior PMF")
 ```
 :::
 :::
+:::
 
 
 ::: {.fragment}
@@ -1045,7 +1057,7 @@ $$
 :::
 
 
-## Data Model: Before Making Observations {.smaller}
+## Data Model: Before Drawing 10 Balls {.smaller}
 
 ::: incremental
 - Take red ball as success, so $y$ successes out of $N = 10$ trials
@@ -1060,7 +1072,7 @@ $$
 ```{r}
 #| echo: true
 N = 10; y <- 0:N
-f_y <- dbinom(x = y, size = N, prob = 1/3)
+f_y <- dbinom(x = y, size = N, prob = 0.50)
 sum(f_y)
 ```
 :::
@@ -1083,31 +1095,31 @@ grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1)
 :::
 :::
 
-## Likelihood Function {.smaller}
-::: incremental
-- We know we pulled out 6 red balls
-- We can construct a likelihood function for $y = 6$ as a function of $\theta$
-- Let's check if this function is a probability distribution:
-$$
-f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
-$$
-:::
+<!-- ## Likelihood Function: After Drawing 10 Balls {.smaller} -->
+<!-- ::: incremental -->
+<!-- - We observe that 6 out of 10 balls are red -->
+<!-- - We can construct a likelihood function for $y = 6$ as a function of $\theta$ -->
+<!-- - Let's check if this function is a probability distribution: -->
+<!-- $$ -->
+<!-- f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1} -->
+<!-- $$ -->
+<!-- ::: -->
 
-::: {.fragment}
-```{r}
-#| echo: true
-dbinom_theta <- function(theta, N, y) {
-  choose(N, y) * theta^y * (1 - theta)^(N - y) 
-}
-integrate(dbinom_theta, lower = 0, upper = 1, 
-          N = 10, y = 6)[[1]] |> fractions()
-```
-:::
+<!-- ::: {.fragment} -->
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- dbinom_theta <- function(theta, N, y) { -->
+<!--   choose(N, y) * theta^y * (1 - theta)^(N - y) -->
+<!-- } -->
+<!-- integrate(dbinom_theta, lower = 0, upper = 1, -->
+<!--           N = 10, y = 6)[[1]] |> fractions() -->
+<!-- ``` -->
+<!-- ::: -->
 
-::: incremental
-- Recall, $f(y)$ is called marginal distribution or prior predictive distribution
-- It tells us that prior to observing $y$, all values of $y$ are equally likely
-:::
+<!-- ::: incremental -->
+<!-- - Recall, $f(y)$ is called marginal distribution or prior predictive distribution -->
+<!-- - It tells us that prior to observing $y$, all values of $y$ are equally likely -->
+<!-- ::: -->
 
 ## Visualizing the Likelihood Function {.smaller}
 
@@ -1141,6 +1153,30 @@ grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1)
 ```
 :::
 
+## Putting It All Together {.small}
+
+::: incremental
+- We observe 6 red balls, so we can condition on $y = 6$
+- Let's turn the Bayesian crank
+:::
+
+::: {.fragment}
+$$
+\begin{eqnarray*}
+f(\theta \mid y) &=& \frac{f(y \mid \theta) f(\theta)}{f(y)} =  
+\frac{f(y \mid \theta) f(\theta)}{\sum_{i=1}^{3} f(y, \, \theta_i)} = 
+\frac{f(y \mid \theta) f(\theta)}{\sum_{i=1}^{3} f(y \mid \theta_i) f(\theta_i)} \\ &\propto&
+f(y \mid \theta) f(\theta) \propto
+\theta^6 (1 - \theta)^{4}
+\end{eqnarray*}
+$$
+:::
+
+::: incremental
+- How many elements in $f(\theta)$?
+- How many elements in $f(\theta \mid y)$?
+:::
+
 ## Compute the Posterior {.smaller}
 
 - We observed $y = 6$, so $f(y \mid \theta) \propto \theta^6 (1 - \theta)^{4}$
@@ -1149,7 +1185,7 @@ grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1)
 ::: {.column width="60%"}
 
 ::: incremental
-  - For $\theta = 0.25$: 
+  - For $\theta = 0.25$: (we can drop $\binom{10}{6}$ term)
     $$
     f(y | 0.25) = \binom{10}{6} (0.25)^6 (0.75)^4 \approx 0.02
     $$
@@ -1223,24 +1259,23 @@ d |>
 
 ## Option 1: Play Immediately {.smaller}
 
-::: {.fragment}
-- Let $X$ be the payoff. You want to choose your $\theta$ such that $\E(X)$ is maximized: $\textrm{arg max}_{\theta} \ \mathbb{E}[X \mid \theta]$
+::: incremental
+- Let $x_i$ represent the payoffs for each option $i$
+- You want to choose $\theta^*$, such that the utility is maximized; here we take it to be linear in the payoffs:
+:::
 
+::: {.fragment}
 $$
-\E(X) = f(\theta \mid y) \times \text{Prize } - \text{Cost} 
+\theta^* = \textrm{arg max}_{\theta} \left\{ x_i \times f(\theta_i \mid y) - \text{Cost} \right\}
 $$
 :::
 
 ::: incremental
 
-- Bet on $\theta=0.25$: $0.044 \times 3 \approx 0.132$
-- Bet on $\theta=0.50$: $0.559 \times 5 \approx 2.795$: MLE
-- Bet on $\theta=0.75$: $0.397 \times 15 \approx 5.955$
-
-- **Best choice:** Bet on $\theta=0.75$ with expected prize \$5.96.
-
-- **Net Expected Payoff:** $\E(X) = 5.96 - 2 = \$3.96$
-
+- Bet on $\theta=0.25$: $0.044 \times 3 - 2 \approx -\$1.87$
+- Bet on $\theta=0.50$: $0.559 \times 5 - 2 \approx  \$0.80$
+- Bet on $\theta=0.75$: $0.397 \times 15 - 2 \approx \$3.96$
+- We bet on $\theta^*=0.75$ with expected payoff of \$3.96.
 :::
 
 ::: {.fragment}
@@ -1251,26 +1286,27 @@ The bet on the most likely outcome, $\theta=0.50$ (MLE), is suboptimal!
 
 :::
 
-## Option 2: Should You Buy and Extra Ball? {.small}
+## Option 2: Should You Buy and Extra Ball? {.smaller}
 
 ::: incremental
-- Compute the probability of the red ball on the next draw
-- Note that prior, unconditional probability of the red ball is 0.50. Why?
-- In symbols: $f(\text{red} \mid \theta)$, where $\theta$ has been updated from $1/3$ to $f(\theta \mid y)$
+- We need to average over uncertainty of the red vs green ball
+- Instead of $f(\theta) = 1/3$, we use $f(\theta \mid y)$, where y is 6 reds out of 10
+- Compute the probability of red on the next draw (LOTP conditional on $y$):
+:::
 
-- Posterior predictive probability of red:
-
-  $$
-  \begin{eqnarray*}
-  \P(\tilde{y} = \text{red} \mid y) &=& 0.044\times 0.25 + 0.559\times 0.5 + 0.397\times 0.75 \\
+::: {.fragment}
+$$
+\begin{eqnarray*}
+\P(\tilde{y} = \text{red} \mid y) &=& \sum_{i=1}^{3} f(\tilde{y} = \text{red}, \ \theta_i \mid y) = \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i, \ y) f(\theta_i \mid y) \\
+&=& \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i) f(\theta_i \mid y) \\
+ \P(\tilde{y} = \text{red} \mid y) &=& 0.25 \times 0.044  +0.5 \times 0.559  + 0.75 \times 0.397  \\
   &\approx& 0.589
-  \end{eqnarray*}
-  $$
+\end{eqnarray*}
+$$
+:::
 
-- Posterior predictive probability of green:
-  $$
-   \P(\text{green}) = 1 - \P(\text{red})  \approx 0.411
-  $$
+::: {.fragment}
+- Posterior predictive probability of green: $\P(\text{green}) = 1 - \P(\text{red})  \approx 0.411$
 :::
 
 
