@@ -54,8 +54,8 @@ dot_plot <- function(x, y) {
 ::: {.column width="50%"}
 
 - State your name
-- Where you are from
-- Why are you taking this class
+- What is your field of study/work, and what are you hoping to learn in this class
+- Go to: [https://tinyurl.com/nyu-colab](https://tinyurl.com/nyu-colab) and write down where you are from (Country, City)
 
 :::
 
@@ -102,32 +102,32 @@ $$
 
 
 
-## Two Truths and a Lie[^1] {.smaller}
+<!-- ## Two Truths and a Lie[^1] {.smaller} -->
 
-::: columns
-::: {.column width="50%"}
-1. One person tells three personal statements, one of which is a lie. 
-1. Others discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale). 
-1. The storyteller reveals which was the lie. 
-1. Enter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once.
-:::
+<!-- ::: columns -->
+<!-- ::: {.column width="50%"} -->
+<!-- 1. One person tells three personal statements, one of which is a lie.  -->
+<!-- 1. Others discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale).  -->
+<!-- 1. The storyteller reveals which was the lie.  -->
+<!-- 1. Enter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once. -->
+<!-- ::: -->
 
-::: {.column width="50%"}
-![](images/two-truths.png){fig-align="center" width="500"}
-:::
-:::
+<!-- ::: {.column width="50%"} -->
+<!-- ![](images/two-truths.png){fig-align="center" width="500"} -->
+<!-- ::: -->
+<!-- ::: -->
 
-[^1]: Gelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101.
+<!-- [^1]: Gelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101. -->
 
-## Two Truths and a Lie
+<!-- ## Two Truths and a Lie -->
 
-https://tinyurl.com/two-truths-and
+<!-- https://tinyurl.com/two-truths-and -->
 
-![](images/two-truths-and-400.png){fig-align="center" width="500"}
+<!-- ![](images/two-truths-and-400.png){fig-align="center" width="500"} -->
 
-::: {.notes}
-What do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves.
-:::
+<!-- ::: {.notes} -->
+<!-- What do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves. -->
+<!-- ::: -->
 
 
 
@@ -165,7 +165,7 @@ What do you think the range of certainty scores will look like: will there be an
 
 :::
 
-## Statistics {.small}
+## Turn to your neighbor and discuss {.small}
 
 Classify each of the following: {_decision_, _parameter inference_, _prediction_, _causal inference_}
 
@@ -200,7 +200,7 @@ Which category is missing data imputation?
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
--   Thomas Bayes (1702(?) --- 1761) is credited with the discovery of the "Bayes's Rule"
+-   Thomas Bayes (1702(?) --- 1761) is [credited](https://en.wikipedia.org/wiki/Nicholas_Saunderson) with the discovery of the "Bayes's Rule"
 -   His paper was published posthumously by Richard Price in 1763
 -   Laplace (1749 --- 1827) independently discovered the rule and published it in 1774
 -   Scientific context: Newton's Principia was published in 1687
@@ -261,16 +261,7 @@ Left: Pierre Simon Laplace in the style of Wassily Kandinsky, by OpenAI DALL·E
 ## Pharmacokinetics of Drugs 
 ####  Stan with Ordinary Differential Equations
 
-::: columns
-::: {.column width="70%"}
 ![](images/pk.png){fig-align="left"}
-:::
-
-::: {.column width="30%"}
-![](images/PrHalfLife.png){fig-align="right" width="500px"}
-:::
-:::
-
 
 ## Nonparametric Bayes
 #### Stan with Gaussian Processes 
@@ -707,7 +698,7 @@ variance(dmv_norm)
 covariance(dmv_norm)
 density(dmv_norm, cbind(-3, -3)) |> round(2) # should be low
 cdf(dmv_norm, cbind(3, 3)) |> round(2)       # should be high
-draws <- generate(dmv_norm, 1e3)             # draws from the bivariate normal
+draws <- generate(dmv_norm, 1e4)             # draws from the bivariate normal
 str(draws)
 draws <- as_tibble(draws[[1]])
 head(draws)
@@ -719,11 +710,11 @@ cov(draws) |> round(2)
 cor(draws) |> round(2)
 
 # should be close to cdf(dist, cbind(3, 3)); why?
-# both evaluate to P(X and Y < 3)
-mean(draws$x < 3 & draws$y < 3)
+# both evaluate to P(X and Y < 3); & is an _and_ operator
+mean(draws$x < 3 & draws$y < 3) |> round(2)
 
-# P(X < 0 or Y < 1)
-mean(draws$x < 0 | draws$y < 1)
+# P(X < 0 or Y < 1); | is an _or_, not conditioning operator
+mean(draws$x < 0 | draws$y < 1) |> round(2)
 ```
 
 
@@ -973,7 +964,7 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
 :::
 
 
-## Mystery Box Game Analysis {.smaller}
+## Mystery Box Game Analysis {.tiny}
 
 ::: columns
 ::: {.column width="60%"}
@@ -1003,403 +994,373 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
 
 
 ::: {.fragment}
-- Your options are: A) Don't play; B) Pay \$2 to play after observing red balls in 10 draws; C) Pay \$1 to buy an extra ball (11th), then pay \$2 to play
+- Your options are: A) Don't play; B) Draw 10 balls, and pay $2 to play; C) Pay \$1 to buy an extra ball (11th), then pay \$2 to play
+- Warmup: Before drawing 10 balls what is the expected value of each bet? Which one should we choose? (still have to pay $2 to play)
 :::
 
 
-## Example Prior Model {.smaller}
+<!-- ## Example Prior Model {.smaller} -->
 
-::: columns
-::: {.column width="60%"}
+<!-- ::: columns -->
+<!-- ::: {.column width="60%"} -->
 
-::: incremental
-- What does it mean to put a uniform prior on $\theta$?
-- What are we assuming about the game design under this prior?
-- Is that a reasonable assumption, given the payoffs?
-- We take one ball from the box; what is $\P(y = \text{red})$?
-- Law of Total Probability (LOTP):
-:::
-
-:::
-
-::: {.column width="40%"}
-
-::: {.fragment}
-```{r}
-#| fig-width: 3
-#| fig-height: 3
-#| fig-align: center
-#| echo: false
-dot_plot <- function(x, y) {
-  p <- ggplot(data.frame(x, y), aes(x, y))
-  p + geom_point(aes(x = x, y = y), size = 0.5) +
-    geom_segment(aes(x = x, y = 0, xend = x, 
-                     yend = y), linewidth = 0.2) +
-      scale_x_continuous(breaks = x) +
-    xlab(expression(theta)) + 
-    ylab(expression(f(theta)))
-}
-theta <- c(0.25, 0.50, 0.75); prior <- c(1/3, 1/3, 1/3)
-dot_plot(theta, prior) + ggtitle("Prior PMF")
-```
-:::
-:::
-:::
-
-
-::: {.fragment}
-$$
-\begin{eqnarray*}
-\P(y = \text{red}) &=& \sum_{i=1}^{3} f(y = \text{red}, \theta_i) = \sum_{i=1}^{3} f(y = \text{red} \mid \theta_i) f(\theta_i) \\
- &=& (0.25) \cdot \left(\frac{1}{3}\right) + (0.50) \cdot \left(\frac{1}{3}\right) + (0.75) \cdot \left(\frac{1}{3}\right)
-\end{eqnarray*}
-$$
-:::
-
-
-## Data Model: Before Drawing 10 Balls {.smaller}
-
-::: incremental
-- Take red ball as success, so $y$ successes out of $N = 10$ trials
-$$
-y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(10,\theta)
-$$
-
-- $f(y \mid \theta) = \text{Bin} (y \mid 10,\theta) = \binom{10}{y} \theta^y (1 - \theta)^{10 - y}$ for $y \in \{0,1,\ldots,10\}$
-- Is this a valid probability distribution as a function of $y$?
-
-::: {.fragment}
-```{r}
-#| echo: true
-N = 10; y <- 0:N
-f_y <- dbinom(x = y, size = N, prob = 0.50)
-sum(f_y)
-```
-:::
-
-::: {.fragment}
-```{r}
-#| fig-width: 16
-#| fig-height: 3
-#| fig-align: center
-#| echo: false
-f_y <- map(theta, ~ dbinom(x = y, size = N, prob = .))
-yl <- expression(paste("f(y | ", theta, ")"))
-p <- list()
-for (i in 1:length(theta)) {
-  p[[i]] <- dot_plot(y, f_y[[i]]) + xlab(expression(y)) + ylab(yl) +
-    ggtitle(bquote(theta == .(theta[i])))
-}
-grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1)
-```
-:::
-:::
-
-<!-- ## Likelihood Function: After Drawing 10 Balls {.smaller} -->
 <!-- ::: incremental -->
-<!-- - We observe that 6 out of 10 balls are red -->
-<!-- - We can construct a likelihood function for $y = 6$ as a function of $\theta$ -->
-<!-- - Let's check if this function is a probability distribution: -->
+<!-- - What does it mean to put a uniform prior on $\theta$? -->
+<!-- - What are we assuming about the game design under this prior? -->
+<!-- - Is that a reasonable assumption, given the payoffs? -->
+<!-- - We take one ball from the box; what is $\P(y = \text{red})$? -->
+<!-- - Law of Total Probability (LOTP): -->
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="40%"} -->
+
+<!-- ::: {.fragment} -->
+<!-- ```{r} -->
+<!-- #| fig-width: 3 -->
+<!-- #| fig-height: 3 -->
+<!-- #| fig-align: center -->
+<!-- #| echo: false -->
+<!-- dot_plot <- function(x, y) { -->
+<!--   p <- ggplot(data.frame(x, y), aes(x, y)) -->
+<!--   p + geom_point(aes(x = x, y = y), size = 0.5) + -->
+<!--     geom_segment(aes(x = x, y = 0, xend = x, -->
+<!--                      yend = y), linewidth = 0.2) + -->
+<!--       scale_x_continuous(breaks = x) + -->
+<!--     xlab(expression(theta)) + -->
+<!--     ylab(expression(f(theta))) -->
+<!-- } -->
+<!-- theta <- c(0.25, 0.50, 0.75); prior <- c(1/3, 1/3, 1/3) -->
+<!-- dot_plot(theta, prior) + ggtitle("Prior PMF") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- ::: -->
+
+
+<!-- ::: {.fragment} -->
 <!-- $$ -->
-<!-- f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1} -->
+<!-- \begin{eqnarray*} -->
+<!-- \P(y = \text{red}) &=& \sum_{i=1}^{3} f(y = \text{red}, \theta_i) = \sum_{i=1}^{3} f(y = \text{red} \mid \theta_i) f(\theta_i) \\ -->
+<!--  &=& (0.25) \cdot \left(\frac{1}{3}\right) + (0.50) \cdot \left(\frac{1}{3}\right) + (0.75) \cdot \left(\frac{1}{3}\right) -->
+<!-- \end{eqnarray*} -->
 <!-- $$ -->
 <!-- ::: -->
+
+
+<!-- ## Data Model: Before Drawing 10 Balls {.smaller} -->
+
+<!-- ::: incremental -->
+<!-- - Take red ball as success, so $y$ successes out of $N = 10$ trials -->
+<!-- $$ -->
+<!-- y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(10,\theta) -->
+<!-- $$ -->
+
+<!-- - $f(y \mid \theta) = \text{Bin} (y \mid 10,\theta) = \binom{10}{y} \theta^y (1 - \theta)^{10 - y}$ for $y \in \{0,1,\ldots,10\}$ -->
+<!-- - Is this a valid probability distribution as a function of $y$? -->
 
 <!-- ::: {.fragment} -->
 <!-- ```{r} -->
 <!-- #| echo: true -->
-<!-- dbinom_theta <- function(theta, N, y) { -->
-<!--   choose(N, y) * theta^y * (1 - theta)^(N - y) -->
-<!-- } -->
-<!-- integrate(dbinom_theta, lower = 0, upper = 1, -->
-<!--           N = 10, y = 6)[[1]] |> fractions() -->
+<!-- N = 10; y <- 0:N -->
+<!-- f_y <- dbinom(x = y, size = N, prob = 0.50) -->
+<!-- sum(f_y) -->
 <!-- ``` -->
 <!-- ::: -->
 
-<!-- ::: incremental -->
-<!-- - Recall, $f(y)$ is called marginal distribution or prior predictive distribution -->
-<!-- - It tells us that prior to observing $y$, all values of $y$ are equally likely -->
+<!-- ::: {.fragment} -->
+<!-- ```{r} -->
+<!-- #| fig-width: 16 -->
+<!-- #| fig-height: 3 -->
+<!-- #| fig-align: center -->
+<!-- #| echo: false -->
+<!-- f_y <- map(theta, ~ dbinom(x = y, size = N, prob = .)) -->
+<!-- yl <- expression(paste("f(y | ", theta, ")")) -->
+<!-- p <- list() -->
+<!-- for (i in 1:length(theta)) { -->
+<!--   p[[i]] <- dot_plot(y, f_y[[i]]) + xlab(expression(y)) + ylab(yl) + -->
+<!--     ggtitle(bquote(theta == .(theta[i]))) -->
+<!-- } -->
+<!-- grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1) -->
+<!-- ``` -->
+<!-- ::: -->
 <!-- ::: -->
 
-## Visualizing the Likelihood Function {.smaller}
+<!-- <!-- ## Likelihood Function: After Drawing 10 Balls {.smaller} --> -->
+<!-- <!-- ::: incremental --> -->
+<!-- <!-- - We observe that 6 out of 10 balls are red --> -->
+<!-- <!-- - We can construct a likelihood function for $y = 6$ as a function of $\theta$ --> -->
+<!-- <!-- - Let's check if this function is a probability distribution: --> -->
+<!-- <!-- $$ --> -->
+<!-- <!-- f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1} --> -->
+<!-- <!-- $$ --> -->
+<!-- <!-- ::: --> -->
 
-```{r}
-#| fig-width: 8
-#| fig-height: 3
-#| fig-align: center
-#| echo: false
-p1 <- list()
-lik <- map(y, ~ dbinom(x = ., size = N, prob = theta))
-for (i in 1:(N + 1)) {
-  p1[[i]] <- dot_plot(theta, lik[[i]]) + 
-    xlab(expression(theta)) + ylab("Lik") +
-    ggtitle(bquote(y == .(y[i])))
-}
-grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], 
-             p1[[6]], p1[[7]], p1[[8]], p1[[9]], p1[[10]], nrow = 2)
-```
+<!-- <!-- ::: {.fragment} --> -->
+<!-- <!-- ```{r} --> -->
+<!-- <!-- #| echo: true --> -->
+<!-- <!-- dbinom_theta <- function(theta, N, y) { --> -->
+<!-- <!--   choose(N, y) * theta^y * (1 - theta)^(N - y) --> -->
+<!-- <!-- } --> -->
+<!-- <!-- integrate(dbinom_theta, lower = 0, upper = 1, --> -->
+<!-- <!--           N = 10, y = 6)[[1]] |> fractions() --> -->
+<!-- <!-- ``` --> -->
+<!-- <!-- ::: --> -->
 
-::: {.fragment}
-Compare with the data model:
-:::
+<!-- <!-- ::: incremental --> -->
+<!-- <!-- - Recall, $f(y)$ is called marginal distribution or prior predictive distribution --> -->
+<!-- <!-- - It tells us that prior to observing $y$, all values of $y$ are equally likely --> -->
+<!-- <!-- ::: --> -->
 
-::: {.fragment}
-```{r}
-#| fig-width: 8
-#| fig-height: 1.5
-#| fig-align: center
-#| echo: false
-grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1)
-```
-:::
+<!-- ## Visualizing the Likelihood Function {.smaller} -->
 
-## Putting It All Together {.small}
+<!-- ```{r} -->
+<!-- #| fig-width: 8 -->
+<!-- #| fig-height: 3 -->
+<!-- #| fig-align: center -->
+<!-- #| echo: false -->
+<!-- p1 <- list() -->
+<!-- lik <- map(y, ~ dbinom(x = ., size = N, prob = theta)) -->
+<!-- for (i in 1:(N + 1)) { -->
+<!--   p1[[i]] <- dot_plot(theta, lik[[i]]) + -->
+<!--     xlab(expression(theta)) + ylab("Lik") + -->
+<!--     ggtitle(bquote(y == .(y[i]))) -->
+<!-- } -->
+<!-- grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], -->
+<!--              p1[[6]], p1[[7]], p1[[8]], p1[[9]], p1[[10]], nrow = 2) -->
+<!-- ``` -->
 
-::: incremental
-- We observe 6 red balls, so we can condition on $y = 6$
-- Let's turn the Bayesian crank
-:::
+<!-- ::: {.fragment} -->
+<!-- Compare with the data model: -->
+<!-- ::: -->
 
-::: {.fragment}
-$$
-\begin{eqnarray*}
-f(\theta \mid y) &=& \frac{f(y \mid \theta) f(\theta)}{f(y)} =  
-\frac{f(y \mid \theta) f(\theta)}{\sum_{i=1}^{3} f(y, \, \theta_i)} = 
-\frac{f(y \mid \theta) f(\theta)}{\sum_{i=1}^{3} f(y \mid \theta_i) f(\theta_i)} \\ &\propto&
-f(y \mid \theta) f(\theta) \propto
-\theta^6 (1 - \theta)^{4}
-\end{eqnarray*}
-$$
-:::
+<!-- ::: {.fragment} -->
+<!-- ```{r} -->
+<!-- #| fig-width: 8 -->
+<!-- #| fig-height: 1.5 -->
+<!-- #| fig-align: center -->
+<!-- #| echo: false -->
+<!-- grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1) -->
+<!-- ``` -->
+<!-- ::: -->
 
-::: incremental
-- How many elements in $f(\theta)$?
-- How many elements in $f(\theta \mid y)$?
-:::
+<!-- ## Putting It All Together {.small} -->
 
-## Compute the Posterior {.smaller}
+<!-- ::: incremental -->
+<!-- - We observe 6 red balls, so we can condition on $y = 6$ -->
+<!-- - Let's turn the Bayesian crank -->
+<!-- ::: -->
 
-- We observed $y = 6$, so $f(y \mid \theta) \propto \theta^6 (1 - \theta)^{4}$
+<!-- ::: {.fragment} -->
+<!-- $$ -->
+<!-- \begin{eqnarray*} -->
+<!-- f(\theta \mid y) &=& \frac{f(y \mid \theta) f(\theta)}{f(y)} = -->
+<!-- \frac{f(y \mid \theta) f(\theta)}{\sum_{i=1}^{3} f(y, \, \theta_i)} = -->
+<!-- \frac{f(y \mid \theta) f(\theta)}{\sum_{i=1}^{3} f(y \mid \theta_i) f(\theta_i)} \\ &\propto& -->
+<!-- f(y \mid \theta) f(\theta) \propto -->
+<!-- \theta^6 (1 - \theta)^{4} -->
+<!-- \end{eqnarray*} -->
+<!-- $$ -->
+<!-- ::: -->
 
-::: columns
-::: {.column width="60%"}
+<!-- ::: incremental -->
+<!-- - How many elements in $f(\theta)$? -->
+<!-- - How many elements in $f(\theta \mid y)$? -->
+<!-- ::: -->
 
-::: incremental
-  - For $\theta = 0.25$: (we can drop $\binom{10}{6}$ term)
-    $$
-    f(y | 0.25) = \binom{10}{6} (0.25)^6 (0.75)^4 \approx 0.02
-    $$
-  - For $\theta = 0.50$: 
-    $$
-    f(y | 0.50) = \binom{10}{6} (0.5)^{10} \approx 0.21
-    $$
-  - For $\theta = 0.75$: 
-    $$
-    f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
-    $$
-:::
+<!-- ## Compute the Posterior {.smaller} -->
 
-:::
+<!-- - We observed $y = 6$, so $f(y \mid \theta) \propto \theta^6 (1 - \theta)^{4}$ -->
 
-::: {.column width="40%"}
+<!-- ::: columns -->
+<!-- ::: {.column width="60%"} -->
 
-::: {.fragment}
-```{r}
-#| echo: true
-N <- 10; y <- 6
-theta <- c(0.25, 0.50, 0.75)
-prior <- c(1/3, 1/3, 1/3)
-lik <- dbinom(y, N, theta)
-lik_x_prior <-  lik * prior
-constant <- sum(lik_x_prior)
-post <- lik_x_prior / constant
-```
-:::
+<!-- ::: incremental -->
+<!--   - For $\theta = 0.25$: (we can drop $\binom{10}{6}$ term) -->
+<!--     $$ -->
+<!--     f(y | 0.25) = \binom{10}{6} (0.25)^6 (0.75)^4 \approx 0.02 -->
+<!--     $$ -->
+<!--   - For $\theta = 0.50$: -->
+<!--     $$ -->
+<!--     f(y | 0.50) = \binom{10}{6} (0.5)^{10} \approx 0.21 -->
+<!--     $$ -->
+<!--   - For $\theta = 0.75$: -->
+<!--     $$ -->
+<!--     f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15 -->
+<!--     $$ -->
+<!-- ::: -->
 
-<br />
+<!-- ::: -->
 
-::: {.fragment}
-```{r}
-#| echo: false
+<!-- ::: {.column width="40%"} -->
 
-library(kableExtra)
-d <- data.frame(theta, prior, lik, lxp = lik_x_prior, post)
-nr <- nrow(d)
+<!-- ::: {.fragment} -->
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- N <- 10; y <- 6 -->
+<!-- theta <- c(0.25, 0.50, 0.75) -->
+<!-- prior <- c(1/3, 1/3, 1/3) -->
+<!-- lik <- dbinom(y, N, theta) -->
+<!-- lik_x_prior <-  lik * prior -->
+<!-- constant <- sum(lik_x_prior) -->
+<!-- post <- lik_x_prior / constant -->
+<!-- ``` -->
+<!-- ::: -->
 
-# Format and display the table
-d |>
-  adorn_totals("row") |>
-  kbl(booktabs = T,
-      linesep = "",
-      digits = 2) |>
-  kable_paper(full_width = F) |>
-  column_spec(5,
-              color = "white",
-              background = spec_color(d$post[1:nr], end = 0.5,
-                                      direction = -1)) |>
-  column_spec(2,
-              color = "white",
-              background = spec_color(d$prior[1:nr], end = 0.5,
-                                      direction = -1)) |>
-  column_spec(3,
-              color = "white",
-              background = spec_color(d$lik[1:nr], end = 0.5,
-                                      direction = -1)) |>
-  column_spec(4,
-              color = "white",
-              background = spec_color(d$lxp[1:nr], end = 0.5,
-                                      direction = -1)
-  ) |>
-  row_spec(4, color = "black", background = "#f0f1eb")
-```
-:::
+<!-- <br /> -->
 
-:::
-:::
+<!-- ::: {.fragment} -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
 
-## Option 1: Play Immediately {.smaller}
+<!-- library(kableExtra) -->
+<!-- d <- data.frame(theta, prior, lik, lxp = lik_x_prior, post) -->
+<!-- nr <- nrow(d) -->
 
-::: incremental
-- Let $x_i$ represent the payoffs for each option $i$
-- You want to choose $\theta^*$, such that the utility is maximized; here we take it to be linear in the payoffs:
-:::
+<!-- # Format and display the table -->
+<!-- d |> -->
+<!--   adorn_totals("row") |> -->
+<!--   kbl(booktabs = T, -->
+<!--       linesep = "", -->
+<!--       digits = 2) |> -->
+<!--   kable_paper(full_width = F) |> -->
+<!--   column_spec(5, -->
+<!--               color = "white", -->
+<!--               background = spec_color(d$post[1:nr], end = 0.5, -->
+<!--                                       direction = -1)) |> -->
+<!--   column_spec(2, -->
+<!--               color = "white", -->
+<!--               background = spec_color(d$prior[1:nr], end = 0.5, -->
+<!--                                       direction = -1)) |> -->
+<!--   column_spec(3, -->
+<!--               color = "white", -->
+<!--               background = spec_color(d$lik[1:nr], end = 0.5, -->
+<!--                                       direction = -1)) |> -->
+<!--   column_spec(4, -->
+<!--               color = "white", -->
+<!--               background = spec_color(d$lxp[1:nr], end = 0.5, -->
+<!--                                       direction = -1) -->
+<!--   ) |> -->
+<!--   row_spec(4, color = "black", background = "#f0f1eb") -->
+<!-- ``` -->
+<!-- ::: -->
 
-::: {.fragment}
-$$
-\theta^* = \textrm{arg max}_{\theta} \left\{ x_i \times f(\theta_i \mid y) - \text{Cost} \right\}
-$$
-:::
+<!-- ::: -->
+<!-- ::: -->
 
-::: incremental
+<!-- ## Option 1: Play Immediately {.smaller} -->
 
-- Bet on $\theta=0.25$: $0.044 \times 3 - 2 \approx -\$1.87$
-- Bet on $\theta=0.50$: $0.559 \times 5 - 2 \approx  \$0.80$
-- Bet on $\theta=0.75$: $0.397 \times 15 - 2 \approx \$3.96$
-- We bet on $\theta^*=0.75$ with expected payoff of \$3.96.
-:::
+<!-- ::: incremental -->
+<!-- - Let $x_i$ represent the payoffs for each option $i$ -->
+<!-- - You want to choose $\theta^*$, such that the utility is maximized; here we take it to be linear in the payoffs: -->
+<!-- ::: -->
 
-::: {.fragment}
+<!-- ::: {.fragment} -->
+<!-- $$ -->
+<!-- \theta^* = \textrm{arg max}_{\theta} \left\{ x_i \times f(\theta_i \mid y) - \text{Cost} \right\} -->
+<!-- $$ -->
+<!-- ::: -->
 
-::: callout-warning
-The bet on the most likely outcome, $\theta=0.50$ (MLE), is suboptimal!
-:::
+<!-- ::: incremental -->
 
-:::
+<!-- - Bet on $\theta=0.25$: $3 \times 0.044 - 2 \approx -\$1.87$ -->
+<!-- - Bet on $\theta=0.50$: $5 \times 0.559 - 2 \approx  \$0.80$ -->
+<!-- - Bet on $\theta=0.75$: $15 \times 0.397 - 2 \approx \$3.96$ -->
+<!-- - We bet on $\theta^*=0.75$ with expected payoff of \$3.96, compared with $3 before we drew 10 balls -->
+<!-- ::: -->
 
-## Option 2: Should You Buy and Extra Ball? {.smaller}
+<!-- ::: {.fragment} -->
 
-::: incremental
-- We need to average over uncertainty of the red vs green ball
-- Instead of $f(\theta) = 1/3$, we use $f(\theta \mid y)$, where y is 6 reds out of 10
-- Compute the probability of red on the next draw (LOTP conditional on $y$):
-:::
+<!-- ::: callout-warning -->
+<!-- The bet on the most likely outcome, $\theta=0.50$ (MLE), is suboptimal! -->
+<!-- ::: -->
 
-::: {.fragment}
-$$
-\begin{eqnarray*}
-\P(\tilde{y} = \text{red} \mid y) &=& \sum_{i=1}^{3} f(\tilde{y} = \text{red}, \ \theta_i \mid y) = \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i, \ y) f(\theta_i \mid y) \\
-&=& \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i) f(\theta_i \mid y) \\
- \P(\tilde{y} = \text{red} \mid y) &=& 0.25 \times 0.044  +0.5 \times 0.559  + 0.75 \times 0.397  \\
-  &\approx& 0.589
-\end{eqnarray*}
-$$
-:::
+<!-- ::: -->
 
-::: {.fragment}
-- Posterior predictive probability of green: $\P(\text{green}) = 1 - \P(\text{red})  \approx 0.411$
-:::
+<!-- ## Option 2: Should You Buy an Extra Ball? {.smaller} -->
+
+<!-- ::: incremental -->
+<!-- - We need to average over uncertainty of the red vs green ball -->
+<!-- - Instead of $f(\theta) = 1/3$, we use $f(\theta \mid y)$, where y is 6 reds out of 10 -->
+<!-- - Compute the probability of red on the next draw (LOTP conditional on $y$): -->
+<!-- ::: -->
+
+<!-- ::: {.fragment} -->
+<!-- $$ -->
+<!-- \begin{eqnarray*} -->
+<!-- \P(\tilde{y} = \text{red} \mid y) &=& \sum_{i=1}^{3} f(\tilde{y} = \text{red}, \ \theta_i \mid y) = \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i, \ y) f(\theta_i \mid y) \\ -->
+<!-- &=& \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i) f(\theta_i \mid y) \\ -->
+<!--  \P(\tilde{y} = \text{red} \mid y) &=& 0.25 \times 0.044  +0.5 \times 0.559  + 0.75 \times 0.397  \\ -->
+<!--   &\approx& 0.589 -->
+<!-- \end{eqnarray*} -->
+<!-- $$ -->
+<!-- ::: -->
+
+<!-- ::: {.fragment} -->
+<!-- - Posterior predictive probability of green: $\P(\text{green}) = 1 - \P(\text{red})  \approx 0.411$ -->
+<!-- ::: -->
 
 
-## Updating Beliefs With the Extra Ball
+<!-- ## Updating Beliefs With the Extra Ball {.tiny} -->
 
-### Case 1: Extra Ball is Red
+<!-- ### Case 1: Extra Ball is Red -->
 
-- **Update:** Multiply the original posterior for each $\theta$ by $\theta$:
-  - For $\theta=0.25$: $$0.044 \times 0.25 = 0.011.$$
-  - For $\theta=0.50$: $$0.559 \times 0.5 = 0.280.$$
-  - For $\theta=0.75$: $$0.397 \times 0.75 = 0.298.$$
+<!-- - **Update:** Multiply the original posterior for each $\theta$ by $\theta$: -->
+<!--   - For $\theta=0.25$: $0.044 \times 0.25 = 0.011$ -->
+<!--   - For $\theta=0.50$: $0.559 \times 0.5 = 0.280$ -->
+<!--   - For $\theta=0.75$: $0.397 \times 0.75 = 0.298$ -->
 
-- **Normalized probabilities:**
-  - $$p(0.25|\text{red}) \approx \frac{0.011}{0.589} \approx 0.019,$$
-  - $$p(0.50|\text{red}) \approx \frac{0.280}{0.589} \approx 0.475,$$
-  - $$p(0.75|\text{red}) \approx \frac{0.298}{0.589} \approx 0.506.$$
+<!-- - **Normalized probabilities:** -->
+<!--   - $\P(0.25|\text{red}) \approx \frac{0.011}{0.589} \approx 0.019$ -->
+<!--   - $\P(0.50|\text{red}) \approx \frac{0.280}{0.589} \approx 0.475$ -->
+<!--   - $\P(0.75|\text{red}) \approx \frac{0.298}{0.589} \approx 0.506$ -->
 
-- **Expected prizes:**
-  - Bet on $\theta=0.25$: $$0.019 \times 3 \approx 0.057.$$
-  - Bet on $\theta=0.50$: $$0.475 \times 5 \approx 2.375.$$
-  - Bet on $\theta=0.75$: $$0.506 \times 15 \approx 7.593.$$
+<!-- - **Expected prizes:** -->
+<!--   - Bet on $\theta=0.25$: $0.019 \times 3 \approx 0.057$ -->
+<!--   - Bet on $\theta=0.50$: $0.475 \times 5 \approx 2.375$ -->
+<!--   - Bet on $\theta=0.75$: $0.506 \times 15 \approx 7.593$ -->
 
-- **Best choice in this case:** Bet on $\theta=0.75$ (expected prize \$7.59).
+<!-- ## Case 2: Extra Ball is Green {.tiny} -->
 
----
+<!-- - **Update:** Multiply the original posterior by $(1-\theta)$: -->
+<!--   - For $\theta=0.25$: $0.044 \times 0.75 = 0.033$ -->
+<!--   - For $\theta=0.50$: $0.559 \times 0.5 = 0.280$ -->
+<!--   - For $\theta=0.75$: $0.397 \times 0.25 = 0.099$ -->
 
-### Case 2: Extra Ball is Green
+<!-- - **Normalized probabilities:** -->
+<!--   - $\P(0.25|\text{green}) \approx \frac{0.033}{0.412} \approx 0.080$ -->
+<!--   - $\P(0.50|\text{green}) \approx \frac{0.280}{0.412} \approx 0.680$ -->
+<!--   - $\P(0.75|\text{green}) \approx \frac{0.099}{0.412} \approx 0.240$ -->
 
-- **Update:** Multiply the original posterior by $(1-\theta)$:
-  - For $\theta=0.25$: $$0.044 \times 0.75 = 0.033.$$
-  - For $\theta=0.50$: $$0.559 \times 0.5 = 0.280.$$
-  - For $\theta=0.75$: $$0.397 \times 0.25 = 0.099.$$
+<!-- - **Expected prizes:** -->
+<!--   - Bet on $\theta=0.25$: $0.080 \times 3 \approx 0.240$ -->
+<!--   - Bet on $\theta=0.50$: $0.680 \times 5 \approx 3.400$ -->
+<!--   - Bet on $\theta=0.75$: $0.240 \times 15 \approx 3.600$ -->
 
-- **Normalized probabilities:**
-  - $$p(0.25|\text{green}) \approx \frac{0.033}{0.412} \approx 0.080,$$
-  - $$p(0.50|\text{green}) \approx \frac{0.280}{0.412} \approx 0.680,$$
-  - $$p(0.75|\text{green}) \approx \frac{0.099}{0.412} \approx 0.240.$$
 
-- **Expected prizes:**
-  - Bet on $\theta=0.25$: $$0.080 \times 3 \approx 0.240.$$
-  - Bet on $\theta=0.50$: $$0.680 \times 5 \approx 3.400.$$
-  - Bet on $\theta=0.75$: $$0.240 \times 15 \approx 3.600.$$
+<!-- ## Overall Expected Prize With the Extra Ball {.smaller} -->
 
-- **Best choice in this case:** Slightly better to bet on $\theta=0.75$ (expected prize \$3.60).
+<!-- - **Combine the two cases:** -->
 
----
+<!--   $$ -->
+<!--   \begin{align*} -->
+<!--   \E_\text{extra_ball}({\text{payoff}}) =& \P(\text{red})\times7.593 + \P(\text{green})\times3.600 \\ -->
+<!--   =& 0.589 \times 7.593 + 0.411 \times 3.600 \approx 5.95 -->
+<!--   \end{align*} -->
+<!--   $$ -->
 
-## Overall Expected Prize With the Extra Ball
+<!-- - **Net Expected Payoff (including costs):** -->
 
-- **Combine the two cases:**
+<!--   - Extra ball cost: \$1 -->
+<!--   - Play cost: \$2 -->
 
-  $$
-  EV_{\text{extra}} = P(\text{red})\times7.593 + P(\text{green})\times3.600.
-  $$
+<!--   $$ -->
+<!--   \E_\text{extra_ball}({\text{payoff}}) = 5.95 - 3 = \$2.95. -->
+<!--   $$ -->
 
-- **Calculation:**
+<!-- - **Without the extra ball:** Net EV $\approx \$3.96$. -->
+<!-- - **With the extra ball:** Net EV $\approx \$2.95$. -->
 
-  - $$0.589 \times 7.593 \approx 4.465,$$
-  - $$0.411 \times 3.600 \approx 1.480.$$
-
-- **Thus:**
-
-  $$
-  EV_{\text{extra}} \approx 4.465 + 1.480 = 5.945.
-  $$
-
-- **Net Expected Payoff (including costs):**
-
-  - Extra ball cost: \$1
-  - Play cost: \$2
-  - Total cost: \$3
-  
-  $$
-  5.945 - 3 = \$2.945.
-  $$
-
----
-
-## Conclusion
-
-- **Without the extra ball:** Net EV $\approx \$3.96$.
-- **With the extra ball:** Net EV $\approx \$2.95$.
-
-**Decision:** It is better to pay \$2 and play immediately rather than buying an extra ball.
-
----
-
-## Summary
-
-- **Game Parameters:** $\theta \in \{0.25,\,0.50,\,0.75\}$, observed 6 red out of 10.
-- **Posterior:** Best bet is on $\theta=0.75$.
-- **Costs vs. Payoffs:**
-  - **Without extra ball:** Net expected gain $\approx \$3.96$.
-  - **With extra ball:** Net expected gain $\approx \$2.95$.
-- **Final Recommendation:** **Do not pay \$1 for the extra ball.** Pay \$2 to play immediately.
+<!-- **Decision:** It is better to pay \$2 and play immediately rather than buying an extra ball. -->
 
