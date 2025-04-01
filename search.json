@@ -1103,7 +1103,91 @@
     "href": "bayes-course/01-lecture/01-lecture.html#mystery-box-game-analysis",
     "title": "Bayesian Inference",
     "section": "Mystery Box Game Analysis",
-    "text": "Mystery Box Game Analysis\n\n\n\n\nGame Setup:\n\nYou are offered to bet on the proportion of red balls in a box\nTrue proportions: \\(\\theta \\in \\{0.25,\\, 0.50,\\, 0.75\\}\\)\nYou are allowed to draw 10 balls from the box with replacement\nPayoffs if your chosen \\(\\theta\\) is correct:\n\nFor \\(\\theta=0.25\\): $3\nFor \\(\\theta=0.50\\): $5\nFor \\(\\theta=0.75\\): $15\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour options are: A) Don’t play; B) Draw 10 balls, and pay $2 to play; C) Pay $1 to buy an extra ball (11th), then pay $2 to play\nWarmup: Before drawing 10 balls what is the expected value of each bet? Which one should we choose? (still have to pay $2 to play)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n–&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;\n\n–&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;  –&gt;\n\n–&gt;  –&gt;  –&gt;  –&gt;"
+    "text": "Mystery Box Game Analysis\n\n\n\n\nGame Setup:\n\nYou are offered to bet on the proportion of red balls in a box\nTrue proportions: \\(\\theta \\in \\{0.25,\\, 0.50,\\, 0.75\\}\\)\nYou are allowed to draw 10 balls from the box with replacement\nPayoffs if your chosen \\(\\theta\\) is correct:\n\nFor \\(\\theta=0.25\\): $3\nFor \\(\\theta=0.50\\): $5\nFor \\(\\theta=0.75\\): $15\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour options are: A) Don’t play; B) Draw 10 balls, and pay $2 to play; C) Pay $1 to buy an extra ball (11th), then pay $2 to play\nWarmup: Before drawing 10 balls what is the expected value of each bet? Which one should we choose? (still have to pay $2 to play)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#example-prior-model",
+    "href": "bayes-course/01-lecture/01-lecture.html#example-prior-model",
+    "title": "Bayesian Inference",
+    "section": "Example Prior Model",
+    "text": "Example Prior Model\n\n\n\n\nWhat does it mean to put a uniform prior on \\(\\theta\\)?\nWhat are we assuming about the game design under this prior?\nIs that a reasonable assumption, given the payoffs?\nWe take one ball from the box; what is \\(\\P(y = \\text{red})\\)?\nLaw of Total Probability (LOTP):\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\n\\begin{eqnarray*}\n\\P(y = \\text{red}) &=& \\sum_{i=1}^{3} f(y = \\text{red}, \\theta_i) = \\sum_{i=1}^{3} f(y = \\text{red} \\mid \\theta_i) f(\\theta_i) \\\\\n&=& (0.25) \\cdot \\left(\\frac{1}{3}\\right) + (0.50) \\cdot \\left(\\frac{1}{3}\\right) + (0.75) \\cdot \\left(\\frac{1}{3}\\right)\n\\end{eqnarray*}\n\\]"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#data-model-before-drawing-10-balls",
+    "href": "bayes-course/01-lecture/01-lecture.html#data-model-before-drawing-10-balls",
+    "title": "Bayesian Inference",
+    "section": "Data Model: Before Drawing 10 Balls",
+    "text": "Data Model: Before Drawing 10 Balls\n\n\nTake red ball as success, so \\(y\\) successes out of \\(N = 10\\) trials \\[\ny | \\theta \\sim \\text{Bin}(N,\\theta) = \\text{Bin}(10,\\theta)\n\\]\n\\(f(y \\mid \\theta) = \\text{Bin} (y \\mid 10,\\theta) = \\binom{10}{y} \\theta^y (1 - \\theta)^{10 - y}\\) for \\(y \\in \\{0,1,\\ldots,10\\}\\)\nIs this a valid probability distribution as a function of \\(y\\)?\n\n\n\nN = 10; y &lt;- 0:N\nf_y &lt;- dbinom(x = y, size = N, prob = 0.50)\nsum(f_y)\n\n[1] 1"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#visualizing-the-likelihood-function",
+    "href": "bayes-course/01-lecture/01-lecture.html#visualizing-the-likelihood-function",
+    "title": "Bayesian Inference",
+    "section": "Visualizing the Likelihood Function",
+    "text": "Visualizing the Likelihood Function\n\n\n\n\n\n\n\n\n\n\nCompare with the data model:"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#putting-it-all-together",
+    "href": "bayes-course/01-lecture/01-lecture.html#putting-it-all-together",
+    "title": "Bayesian Inference",
+    "section": "Putting It All Together",
+    "text": "Putting It All Together\n\n\nWe observe 6 red balls, so we can condition on \\(y = 6\\)\nLet’s turn the Bayesian crank\n\n\n\n\\[\n\\begin{eqnarray*}\nf(\\theta \\mid y) &=& \\frac{f(y \\mid \\theta) f(\\theta)}{f(y)} =\n\\frac{f(y \\mid \\theta) f(\\theta)}{\\sum_{i=1}^{3} f(y, \\, \\theta_i)} =\n\\frac{f(y \\mid \\theta) f(\\theta)}{\\sum_{i=1}^{3} f(y \\mid \\theta_i) f(\\theta_i)} \\\\ &\\propto&\nf(y \\mid \\theta) f(\\theta) \\propto\n\\theta^6 (1 - \\theta)^{4}\n\\end{eqnarray*}\n\\]\n\n\n\nHow many elements in \\(f(\\theta)\\)?\nHow many elements in \\(f(\\theta \\mid y)\\)?"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#compute-the-posterior",
+    "href": "bayes-course/01-lecture/01-lecture.html#compute-the-posterior",
+    "title": "Bayesian Inference",
+    "section": "Compute the Posterior",
+    "text": "Compute the Posterior\n\nWe observed \\(y = 6\\), so \\(f(y \\mid \\theta) \\propto \\theta^6 (1 - \\theta)^{4}\\)\n\n\n\n\n\nFor \\(\\theta = 0.25\\): (we can drop \\(\\binom{10}{6}\\) term) \\[\nf(y | 0.25) = \\binom{10}{6} (0.25)^6 (0.75)^4 \\approx 0.02\n\\]\nFor \\(\\theta = 0.50\\): \\[\nf(y | 0.50) = \\binom{10}{6} (0.5)^{10} \\approx 0.21\n\\]\nFor \\(\\theta = 0.75\\): \\[\nf(y| 0.75 ) = \\binom{10}{6} (0.75)^6 (0.25)^4 \\approx 0.15\n\\]\n\n\n\n\n\nN &lt;- 10; y &lt;- 6\ntheta &lt;- c(0.25, 0.50, 0.75)\nprior &lt;- c(1/3, 1/3, 1/3)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlxp\npost\n\n\n\n\n0.25\n0.33\n0.02\n0.01\n0.04\n\n\n0.5\n0.33\n0.21\n0.07\n0.56\n\n\n0.75\n0.33\n0.15\n0.05\n0.40\n\n\nTotal\n1.00\n0.37\n0.12\n1.00"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#option-1-play-immediately",
+    "href": "bayes-course/01-lecture/01-lecture.html#option-1-play-immediately",
+    "title": "Bayesian Inference",
+    "section": "Option 1: Play Immediately",
+    "text": "Option 1: Play Immediately\n\n\nLet \\(x_i\\) represent the payoffs for each option \\(i\\)\nYou want to choose \\(\\theta^*\\), such that the utility is maximized; here we take it to be linear in the payoffs:\n\n\n\n\\[\n\\theta^* = \\textrm{arg max}_{\\theta} \\left\\{ x_i \\times f(\\theta_i \\mid y) - \\text{Cost} \\right\\}\n\\]\n\n\n\nBet on \\(\\theta=0.25\\): \\(3 \\times 0.044 - 2 \\approx -\\$1.87\\)\nBet on \\(\\theta=0.50\\): \\(5 \\times 0.559 - 2 \\approx  \\$0.80\\)\nBet on \\(\\theta=0.75\\): \\(15 \\times 0.397 - 2 \\approx \\$3.96\\)\nWe bet on \\(\\theta^*=0.75\\) with expected payoff of $3.96, compared with $3 before we drew 10 balls\n\n\n\n\n\n\n\n\n\nWarning\n\n\nThe bet on the most likely outcome, \\(\\theta=0.50\\) (MLE), is suboptimal!"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#option-2-should-you-buy-an-extra-ball",
+    "href": "bayes-course/01-lecture/01-lecture.html#option-2-should-you-buy-an-extra-ball",
+    "title": "Bayesian Inference",
+    "section": "Option 2: Should You Buy an Extra Ball?",
+    "text": "Option 2: Should You Buy an Extra Ball?\n\n\nWe need to average over uncertainty of the red vs green ball\nInstead of \\(f(\\theta) = 1/3\\), we use \\(f(\\theta \\mid y)\\), where y is 6 reds out of 10\nCompute the probability of red on the next draw (LOTP conditional on \\(y\\)):\n\n\n\n\\[\n\\begin{eqnarray*}\n\\P(\\tilde{y} = \\text{red} \\mid y) &=& \\sum_{i=1}^{3} f(\\tilde{y} = \\text{red}, \\ \\theta_i \\mid y) = \\sum_{i=1}^{3} f(\\tilde{y} = \\text{red} \\mid \\theta_i, \\ y) f(\\theta_i \\mid y) \\\\\n&=& \\sum_{i=1}^{3} f(\\tilde{y} = \\text{red} \\mid \\theta_i) f(\\theta_i \\mid y) \\\\\n\\P(\\tilde{y} = \\text{red} \\mid y) &=& 0.25 \\times 0.044  +0.5 \\times 0.559  + 0.75 \\times 0.397  \\\\\n  &\\approx& 0.589\n\\end{eqnarray*}\n\\]\n\n\n\nPosterior predictive probability of green: \\(\\P(\\text{green}) = 1 - \\P(\\text{red})  \\approx 0.411\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#updating-beliefs-with-the-extra-ball",
+    "href": "bayes-course/01-lecture/01-lecture.html#updating-beliefs-with-the-extra-ball",
+    "title": "Bayesian Inference",
+    "section": "Updating Beliefs With the Extra Ball",
+    "text": "Updating Beliefs With the Extra Ball\nCase 1: Extra Ball is Red\n\nUpdate: Multiply the original posterior for each \\(\\theta\\) by \\(\\theta\\):\n\nFor \\(\\theta=0.25\\): \\(0.044 \\times 0.25 = 0.011\\)\nFor \\(\\theta=0.50\\): \\(0.559 \\times 0.5 = 0.280\\)\nFor \\(\\theta=0.75\\): \\(0.397 \\times 0.75 = 0.298\\)\n\nNormalized probabilities:\n\n\\(\\P(0.25|\\text{red}) \\approx \\frac{0.011}{0.589} \\approx 0.019\\)\n\\(\\P(0.50|\\text{red}) \\approx \\frac{0.280}{0.589} \\approx 0.475\\)\n\\(\\P(0.75|\\text{red}) \\approx \\frac{0.298}{0.589} \\approx 0.506\\)\n\nExpected prizes:\n\nBet on \\(\\theta=0.25\\): \\(0.019 \\times 3 \\approx 0.057\\)\nBet on \\(\\theta=0.50\\): \\(0.475 \\times 5 \\approx 2.375\\)\nBet on \\(\\theta=0.75\\): \\(0.506 \\times 15 \\approx 7.593\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#case-2-extra-ball-is-green",
+    "href": "bayes-course/01-lecture/01-lecture.html#case-2-extra-ball-is-green",
+    "title": "Bayesian Inference",
+    "section": "Case 2: Extra Ball is Green",
+    "text": "Case 2: Extra Ball is Green\n\nUpdate: Multiply the original posterior by \\((1-\\theta)\\):\n\nFor \\(\\theta=0.25\\): \\(0.044 \\times 0.75 = 0.033\\)\nFor \\(\\theta=0.50\\): \\(0.559 \\times 0.5 = 0.280\\)\nFor \\(\\theta=0.75\\): \\(0.397 \\times 0.25 = 0.099\\)\n\nNormalized probabilities:\n\n\\(\\P(0.25|\\text{green}) \\approx \\frac{0.033}{0.412} \\approx 0.080\\)\n\\(\\P(0.50|\\text{green}) \\approx \\frac{0.280}{0.412} \\approx 0.680\\)\n\\(\\P(0.75|\\text{green}) \\approx \\frac{0.099}{0.412} \\approx 0.240\\)\n\nExpected prizes:\n\nBet on \\(\\theta=0.25\\): \\(0.080 \\times 3 \\approx 0.240\\)\nBet on \\(\\theta=0.50\\): \\(0.680 \\times 5 \\approx 3.400\\)\nBet on \\(\\theta=0.75\\): \\(0.240 \\times 15 \\approx 3.600\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#overall-expected-prize-with-the-extra-ball",
+    "href": "bayes-course/01-lecture/01-lecture.html#overall-expected-prize-with-the-extra-ball",
+    "title": "Bayesian Inference",
+    "section": "Overall Expected Prize With the Extra Ball",
+    "text": "Overall Expected Prize With the Extra Ball\n\nCombine the two cases:\n\\[\n\\begin{align*}\n\\E_\\text{extra_ball}({\\text{payoff}}) =& \\P(\\text{red})\\times7.593 + \\P(\\text{green})\\times3.600 \\\\\n=& 0.589 \\times 7.593 + 0.411 \\times 3.600 \\approx 5.95\n\\end{align*}\n\\]\nNet Expected Payoff (including costs):\n\nExtra ball cost: $1\nPlay cost: $2\n\n\\[\n\\E_\\text{extra_ball}({\\text{payoff}}) = 5.95 - 3 = \\$2.95.\n\\]\nWithout the extra ball: Net EV \\(\\approx \\$3.96\\).\nWith the extra ball: Net EV \\(\\approx \\$2.95\\).\n\nDecision: It is better to pay $2 and play immediately rather than buying an extra ball."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#what-about-for-all-possible-outcomes",
+    "href": "bayes-course/01-lecture/01-lecture.html#what-about-for-all-possible-outcomes",
+    "title": "Bayesian Inference",
+    "section": "What About For All Possible Outcomes?",
+    "text": "What About For All Possible Outcomes?"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture.html#net-payoffs-with-and-without-extra-ball",
+    "href": "bayes-course/01-lecture/01-lecture.html#net-payoffs-with-and-without-extra-ball",
+    "title": "Bayesian Inference",
+    "section": "Net Payoffs With and Without Extra Ball?",
+    "text": "Net Payoffs With and Without Extra Ball?"
   },
   {
     "objectID": "bayes-course.html",
@@ -1379,13 +1463,6 @@
     "text": "Conjugate models and Beta-Binomial\n\n\nBayesian workflow\nBeta distribution\nGreat expectations\nTuning the prior model for the clinical trial analysis\nBinomial likelihood with continuous \\(\\theta\\)\nDeriving the conjugate posterior\nAnalysis of the sex ratio\nCompromise between priors and data model\nCoherence of Bayesian inference\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
   },
   {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#homework",
-    "href": "bayes-course/02-lecture/02-lecture.html#homework",
-    "title": "Bayesian Inference",
-    "section": "Homework",
-    "text": "Homework\n\nHow did you find the homework?\nHomework review"
-  },
-  {
     "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
     "href": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
     "title": "Bayesian Inference",
@@ -1414,13 +1491,6 @@
     "text": "On with the show…\n\n\n\n\nLast time, we presented the discretized version of the prior\nIn practice, we are typically working in continuous space\nIn general, the prior model can be arbitrarily complex\nThere is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior\nThis is called conjugacy\nIn practice, we seldom rely on conjugate relationships\nBeta distribution is conjugate to Binomial"
   },
   {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#continous-probability-distributions",
-    "href": "bayes-course/02-lecture/02-lecture.html#continous-probability-distributions",
-    "title": "Bayesian Inference",
-    "section": "Continous Probability Distributions",
-    "text": "Continous Probability Distributions\n\n\nRecall that for the continuous RVs we have, the CDF is defined as \\[\n\\begin{eqnarray}\nF(x) & = & \\int_{-\\infty}^{x} f(t) \\, \\text{d}t, \\, \\text{and} \\\\\nf(x) & = & \\frac{\\text{d}}{\\text{d}x}F(x), \\, \\text{where } F \\text{ is differentiable}\n\\end{eqnarray}\n\\]\nTo compute event probabilities: \\[\n\\begin{eqnarray}\n\\P(a \\le X \\leq b) & = & F(b) − F(a) = \\int_{a}^{b} f(x) \\, \\text{d}x \\\\\n\\P(X \\in A) & = & \\int_{A} f(x) \\, \\text{d}x\n\\end{eqnarray}\n\\]\nAs in the case of PMFs: \\[\n\\begin{eqnarray}\nf(x) \\geq 0 \\\\\n\\int_{-\\infty}^{\\infty} f(x) \\, \\text{d}x = 1\n\\end{eqnarray}\n\\]"
-  },
-  {
     "objectID": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "href": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "title": "Bayesian Inference",
@@ -1446,7 +1516,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
     "title": "Bayesian Inference",
     "section": "What to expect from Beta",
-    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial:\n\n\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, \\text{d}\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, \\text{d}\\theta \\\\\n\\end{eqnarray}\n\\]\n\n\n\\[\n\\begin{eqnarray}\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}\n\\end{eqnarray}\n\\]\n\n\n\nWhat is the value of \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
+    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial:\n\n\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, \\text{d}\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, \\text{d}\\theta \\\\\n\\end{eqnarray}\n\\]\n\n\n\\[\n\\begin{eqnarray}\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}\n\\end{eqnarray}\n\\]\n\n\n\nWhat is the value of \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using SymPy"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
@@ -1474,7 +1544,7 @@
     "href": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
     "title": "Bayesian Inference",
     "section": "Deriving the Posterior Distribution",
-    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\n\\(f(\\theta)\\): \\(\\alpha - 1\\) prior successes and \\(\\beta - 1\\) prior failures\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using Wolfram Alpha"
+    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\n\\(f(\\theta)\\): \\(\\alpha - 1\\) prior successes and \\(\\beta - 1\\) prior failures\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using SymPy"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
@@ -1484,11 +1554,11 @@
     "text": "Posterior Expectations\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\n\nNote that the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid y) = \\E(\\theta \\mid y)\\), when \\(\\alpha = \\beta\\)"
   },
   {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate",
-    "href": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate-example",
+    "href": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate-example",
     "title": "Bayesian Inference",
-    "section": "Variance Reduction Rate",
-    "text": "Variance Reduction Rate\n\npost_v &lt;- function(a, b, y, n) {\n  ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))\n}\nn &lt;- seq(10, 500, by = 2)\ny &lt;- 1:246\nv &lt;- post_v(1, 1, y = y, n = n)\nggplot(aes(n, v), data = data.frame(n, v)) +\n  geom_line() + ylab(\"Var\")"
+    "section": "Variance Reduction Rate Example",
+    "text": "Variance Reduction Rate Example\n\npost_var &lt;- function(a, b, y, n) {\n  ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))\n}\nn &lt;- seq(10, 500, by = 2)\ny &lt;- n/2 # keep success rate at 1/2\npv &lt;- post_var(a = 1, b = 1, y = y, n = n)\npsd &lt;- sqrt(pv)\nggplot(aes(n, psd), data = data.frame(n, psd)) +\n  geom_line() + ylab(\"Posterior SD\")"
   },
   {
     "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",

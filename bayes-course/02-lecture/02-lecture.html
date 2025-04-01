@@ -209,9 +209,6 @@ Eric Novik
         <p class="quarto-title-affiliation">
             New York University
           </p>
-        <p class="quarto-title-affiliation">
-            Generable Inc.
-          </p>
     </div>
 </div>
 
@@ -240,13 +237,6 @@ Eric Novik
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \]</span></p>
-</section>
-<section id="homework" class="slide level2">
-<h2>Homework</h2>
-<ul>
-<li><p><a href="https://www.polleverywhere.com/multiple_choice_polls/kUTq6uk2aGiYLbBG2Hr8e">How did you find the homework</a>?</p></li>
-<li><p>Homework review</p></li>
-</ul>
 </section>
 <section id="bayesian-workflow" class="slide level2 smaller">
 <h2>Bayesian Workflow</h2>
@@ -356,31 +346,6 @@ Eric Novik
 </figure>
 </div>
 </div></div>
-</section>
-<section id="continous-probability-distributions" class="slide level2 smaller">
-<h2>Continous Probability Distributions</h2>
-<div>
-<ul>
-<li class="fragment"><p>Recall that for the continuous RVs we have, the CDF is defined as <span class="math display">\[
-\begin{eqnarray}
-F(x) &amp; = &amp; \int_{-\infty}^{x} f(t) \, \text{d}t, \, \text{and} \\
-f(x) &amp; = &amp; \frac{\text{d}}{\text{d}x}F(x), \, \text{where } F \text{ is differentiable}
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>To compute event probabilities: <span class="math display">\[
-\begin{eqnarray}
-\P(a \le X \leq b) &amp; = &amp; F(b) − F(a) = \int_{a}^{b} f(x) \, \text{d}x \\
-\P(X \in A) &amp; = &amp; \int_{A} f(x) \, \text{d}x
-\end{eqnarray}
-\]</span></p></li>
-<li class="fragment"><p>As in the case of PMFs: <span class="math display">\[
-\begin{eqnarray}
-f(x) \geq 0 \\
-\int_{-\infty}^{\infty} f(x) \, \text{d}x = 1
-\end{eqnarray}
-\]</span></p></li>
-</ul>
-</div>
 </section>
 <section id="introducing-beta" class="slide level2 smaller">
 <h2>Introducing Beta</h2>
@@ -500,7 +465,7 @@ f(x) \geq 0 \\
 </ul>
 </div>
 <div class="footer">
-<p>Check the integral <span class="math inline">\(\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta\)</span> using <a href="https://www.wolframalpha.com/input?i=integrate+x%5Ea+*+%281+-+x%29%5E%28b+-+1%29+dx+from+0+to+1">Wolfram Alpha</a></p>
+<p>Check the integral <span class="math inline">\(\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta\)</span> using <a href="https://live.sympy.org/">SymPy</a></p>
 </div>
 </section>
 <section id="what-to-expect-from-beta-1" class="slide level2 smaller">
@@ -586,7 +551,7 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </ul>
 </div>
 <div class="footer">
-<p>Check the kernel integral, <span class="math inline">\(\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta\)</span> using <a href="https://www.wolframalpha.com/input?i=integrate+x%5E%28y+%2B+a+-+1%29+*+%281+-+x%29%5E%28n+%2B+b+-+y+-+1%29+dx+from+0+to+1+">Wolfram Alpha</a></p>
+<p>Check the kernel integral, <span class="math inline">\(\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta\)</span> using <a href="https://live.sympy.org/">SymPy</a></p>
 </div>
 </section>
 <section id="posterior-expectations" class="slide level2 smaller">
@@ -608,17 +573,18 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </ul>
 </div>
 </section>
-<section id="variance-reduction-rate" class="slide level2 smaller">
-<h2>Variance Reduction Rate</h2>
+<section id="variance-reduction-rate-example" class="slide level2 smaller">
+<h2>Variance Reduction Rate Example</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>post_v <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, y, n) {</span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>post_var <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, y, n) {</span>
 <span id="cb5-2"><a></a>  ((a <span class="sc">+</span> y) <span class="sc">*</span> (b <span class="sc">+</span> n <span class="sc">-</span> y)) <span class="sc">/</span> ((a <span class="sc">+</span> b <span class="sc">+</span> n)<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (a <span class="sc">+</span> b <span class="sc">+</span> n <span class="sc">+</span> <span class="dv">1</span>))</span>
 <span id="cb5-3"><a></a>}</span>
 <span id="cb5-4"><a></a>n <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">500</span>, <span class="at">by =</span> <span class="dv">2</span>)</span>
-<span id="cb5-5"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">246</span></span>
-<span id="cb5-6"><a></a>v <span class="ot">&lt;-</span> <span class="fu">post_v</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="at">y =</span> y, <span class="at">n =</span> n)</span>
-<span id="cb5-7"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(n, v), <span class="at">data =</span> <span class="fu">data.frame</span>(n, v)) <span class="sc">+</span></span>
-<span id="cb5-8"><a></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Var"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a></a>y <span class="ot">&lt;-</span> n<span class="sc">/</span><span class="dv">2</span> <span class="co"># keep success rate at 1/2</span></span>
+<span id="cb5-6"><a></a>pv <span class="ot">&lt;-</span> <span class="fu">post_var</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">1</span>, <span class="at">y =</span> y, <span class="at">n =</span> n)</span>
+<span id="cb5-7"><a></a>psd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(pv)</span>
+<span id="cb5-8"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(n, psd), <span class="at">data =</span> <span class="fu">data.frame</span>(n, psd)) <span class="sc">+</span></span>
+<span id="cb5-9"><a></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Posterior SD"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="432"></section>
