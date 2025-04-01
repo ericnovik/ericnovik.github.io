@@ -6,7 +6,6 @@ author:
    email: "Spring 2025 | Lecture 2"
    affiliations: 
     - name: New York University
-    - name: Generable Inc.
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -117,12 +116,6 @@ $$
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 $$
-
-## Homework
-
-- [How did you find the homework](https://www.polleverywhere.com/multiple_choice_polls/kUTq6uk2aGiYLbBG2Hr8e)?
-
-- Homework review
 
 ## Bayesian Workflow {.smaller}
 
@@ -239,33 +232,6 @@ $$
 :::
 :::
 
-## Continous Probability Distributions {.smaller}
-
-::: incremental
-- Recall that for the continuous RVs we have, the CDF is defined as
-$$
-\begin{eqnarray}
-F(x) & = & \int_{-\infty}^{x} f(t) \, \text{d}t, \, \text{and} \\
-f(x) & = & \frac{\text{d}}{\text{d}x}F(x), \, \text{where } F \text{ is differentiable}
-\end{eqnarray}
-$$
-
-- To compute event probabilities:
-$$
-\begin{eqnarray}
-\P(a \le X \leq b) & = & F(b) − F(a) = \int_{a}^{b} f(x) \, \text{d}x \\
-\P(X \in A) & = & \int_{A} f(x) \, \text{d}x
-\end{eqnarray}
-$$
-
-- As in the case of PMFs:
-$$
-\begin{eqnarray}
-f(x) \geq 0 \\ 
-\int_{-\infty}^{\infty} f(x) \, \text{d}x = 1
-\end{eqnarray}
-$$
-:::
 
 ## Introducing Beta {.smaller}
 
@@ -396,7 +362,7 @@ $$
 :::
 
 ::: footer
-Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta$ using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5Ea+*+%281+-+x%29%5E%28b+-+1%29+dx+from+0+to+1)
+Check the integral $\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta$ using [SymPy](https://live.sympy.org/)
 :::
 
 
@@ -498,7 +464,7 @@ $$
 :::
 
 ::: footer
-Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta$  using [Wolfram Alpha](https://www.wolframalpha.com/input?i=integrate+x%5E%28y+%2B+a+-+1%29+*+%281+-+x%29%5E%28n+%2B+b+-+y+-+1%29+dx+from+0+to+1+)
+Check the kernel integral, $\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta$  using [SymPy](https://live.sympy.org/)
 :::
 
 ## Posterior Expectations {.smaller}
@@ -519,7 +485,7 @@ $$
 - As before, $\text{Mode}(\theta \mid y) = \E(\theta \mid y)$, when $\alpha = \beta$
 :::
 
-## Variance Reduction Rate {.smaller}
+## Variance Reduction Rate Example {.smaller}
 
 ```{r}
 #| fig-width: 4.5
@@ -527,14 +493,15 @@ $$
 #| fig-align: center
 #| echo: true
 #| output-location: default
-post_v <- function(a, b, y, n) {
+post_var <- function(a, b, y, n) {
   ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))
 }
 n <- seq(10, 500, by = 2)
-y <- 1:246
-v <- post_v(1, 1, y = y, n = n)
-ggplot(aes(n, v), data = data.frame(n, v)) +
-  geom_line() + ylab("Var")
+y <- n/2 # keep success rate at 1/2
+pv <- post_var(a = 1, b = 1, y = y, n = n)
+psd <- sqrt(pv)
+ggplot(aes(n, psd), data = data.frame(n, psd)) +
+  geom_line() + ylab("Posterior SD")
   
 ```
 
