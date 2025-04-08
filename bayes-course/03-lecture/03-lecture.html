@@ -204,13 +204,10 @@
 Eric Novik 
 </div>
 <div class="quarto-title-author-email">
-<a href="mailto:Spring 2025 | Lecture 2">Spring 2025 | Lecture 2</a>
+<a href="mailto:Spring 2025 | Lecture 3">Spring 2025 | Lecture 3</a>
 </div>
         <p class="quarto-title-affiliation">
             New York University
-          </p>
-        <p class="quarto-title-affiliation">
-            Generable Inc.
           </p>
     </div>
 </div>
@@ -370,21 +367,25 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </ul>
 </div>
 </section>
-<section id="checking-the-constant" class="slide level2">
+<section id="checking-the-constant" class="slide level2 small">
 <h2>Checking the Constant</h2>
 <div>
 <ul>
 <li class="fragment">Gamma prior integration constant: <span class="math inline">\(\frac{\beta^{\alpha}}{\Gamma(\alpha)}\)</span></li>
 <li class="fragment">The posterior kernel integration constant is the reciprocal of: <span class="math inline">\(\frac{\Gamma(\alpha + \sum y_i)}{(\beta + n)^{\alpha + \sum y_i}}\)</span>. Why?</li>
-<li class="fragment">We can sanity check this in Mathematica where <span class="math inline">\(t = \sum y_i\)</span></li>
+<li class="fragment">We can sanity check this in SymPy, by integrating <span class="math inline">\(\lambda^{\color{red}{\alpha + \sum_{i=1}^{n} y_i} - 1} \cdot e^{-\color{red}{(\beta + n)} \lambda}\)</span>, and letting <span class="math inline">\(t = \sum y_i\)</span></li>
 </ul>
 </div>
 <div class="fragment">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/gamma.png" class="quarto-figure quarto-figure-center"></p>
-</figure>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">from</span> sympy <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-2"><a></a>a, b <span class="op">=</span> symbols(<span class="st">'a b'</span>, positive<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-3"><a></a>t, n <span class="op">=</span> symbols(<span class="st">'t n'</span>, positive<span class="op">=</span><span class="va">True</span>, integer<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-4"><a></a>λ    <span class="op">=</span> symbols(<span class="st">'λ'</span>, nonnegative<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-5"><a></a>expr <span class="op">=</span> λ<span class="op">**</span>(t <span class="op">+</span> a <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> exp(<span class="op">-</span>(n <span class="op">+</span> b) <span class="op">*</span> λ)</span>
+<span id="cb1-6"><a></a>result <span class="op">=</span> simplify(integrate(expr, (λ, <span class="dv">0</span>, oo)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><span class="math display">\[\left(b + n\right)^{- a - t} \Gamma\left(a + t\right)\]</span></p>
 </div>
 </section>
 <section id="posterior-mean-and-variance" class="slide level2">
@@ -410,9 +411,9 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(gt)</span>
-<span id="cb1-2"><a></a>d <span class="ot">&lt;-</span> vroom<span class="sc">::</span><span class="fu">vroom</span>(<span class="st">"data/horsekicks.csv"</span>)</span>
-<span id="cb1-3"><a></a>d <span class="sc">|&gt;</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">1883</span>) <span class="sc">|&gt;</span> <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(gt)</span>
+<span id="cb2-2"><a></a>d <span class="ot">&lt;-</span> vroom<span class="sc">::</span><span class="fu">vroom</span>(<span class="st">"data/horsekicks.csv"</span>)</span>
+<span id="cb2-3"><a></a>d <span class="sc">|&gt;</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">1883</span>) <span class="sc">|&gt;</span> <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="xhvnbyunfo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#xhvnbyunfo table {
@@ -1033,20 +1034,20 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 <h2>Prussian Army Hourse Kicks</h2>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># this flattens the data frame into a vector</span></span>
-<span id="cb2-2"><a></a>dd <span class="ot">&lt;-</span> <span class="fu">unlist</span>(d[, <span class="sc">-</span><span class="dv">1</span>]) </span>
-<span id="cb2-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(y), <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">y =</span> dd))</span>
-<span id="cb2-4"><a></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
-<span id="cb2-5"><a></a>  <span class="fu">xlab</span>(<span class="st">"Number of deaths reported"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb2-6"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Total reported counts of deaths"</span>)</span>
-<span id="cb2-7"><a></a>p2 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..count..<span class="sc">/</span><span class="fu">sum</span>(..count..))) <span class="sc">+</span></span>
-<span id="cb2-8"><a></a>  <span class="fu">xlab</span>(<span class="st">"Number of deaths reported"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb2-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Proportion of reported counts of deaths"</span>)</span>
-<span id="cb2-10"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># this flattens the data frame into a vector</span></span>
+<span id="cb3-2"><a></a>dd <span class="ot">&lt;-</span> <span class="fu">unlist</span>(d[, <span class="sc">-</span><span class="dv">1</span>]) </span>
+<span id="cb3-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(y), <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">y =</span> dd))</span>
+<span id="cb3-4"><a></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb3-5"><a></a>  <span class="fu">xlab</span>(<span class="st">"Number of deaths reported"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Total reported counts of deaths"</span>)</span>
+<span id="cb3-7"><a></a>p2 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..count..<span class="sc">/</span><span class="fu">sum</span>(..count..))) <span class="sc">+</span></span>
+<span id="cb3-8"><a></a>  <span class="fu">xlab</span>(<span class="st">"Number of deaths reported"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb3-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Proportion of reported counts of deaths"</span>)</span>
+<span id="cb3-10"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1067,18 +1068,18 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>N <span class="ot">&lt;-</span> <span class="fu">length</span>(dd)</span>
-<span id="cb3-2"><a></a>sum_yi <span class="ot">&lt;-</span> <span class="fu">sum</span>(dd)</span>
-<span id="cb3-3"><a></a>y_bar <span class="ot">&lt;-</span> sum_yi<span class="sc">/</span>N</span>
-<span id="cb3-4"><a></a><span class="fu">cat</span>(<span class="st">"Total number of observations N ="</span>, N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>N <span class="ot">&lt;-</span> <span class="fu">length</span>(dd)</span>
+<span id="cb4-2"><a></a>sum_yi <span class="ot">&lt;-</span> <span class="fu">sum</span>(dd)</span>
+<span id="cb4-3"><a></a>y_bar <span class="ot">&lt;-</span> sum_yi<span class="sc">/</span>N</span>
+<span id="cb4-4"><a></a><span class="fu">cat</span>(<span class="st">"Total number of observations N ="</span>, N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Total number of observations N = 280</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">cat</span>(<span class="st">"Total number of deaths ="</span>, sum_yi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">cat</span>(<span class="st">"Total number of deaths ="</span>, sum_yi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Total number of deaths = 196</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">cat</span>(<span class="st">"Average number of deaths ="</span>, y_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">cat</span>(<span class="st">"Average number of deaths ="</span>, y_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Average number of deaths = 0.7</code></pre>
 </div>
@@ -1094,7 +1095,7 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1114,12 +1115,12 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">plot_gamma_poisson</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="at">sum_y =</span> sum_yi, <span class="at">n =</span> N) <span class="sc">+</span> </span>
-<span id="cb9-2"><a></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">plot_gamma_poisson</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="at">sum_y =</span> sum_yi, <span class="at">n =</span> N) <span class="sc">+</span> </span>
+<span id="cb10-2"><a></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1128,17 +1129,17 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>mean_post <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">+</span> sum_yi) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> N) </span>
-<span id="cb10-2"><a></a>sd_post <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((<span class="dv">1</span> <span class="sc">+</span> sum_yi) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> N)<span class="sc">^</span><span class="dv">2</span>) </span>
-<span id="cb10-3"><a></a><span class="fu">cat</span>(<span class="st">"Posterior mean ="</span>, mean_post <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>mean_post <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">+</span> sum_yi) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> N) </span>
+<span id="cb11-2"><a></a>sd_post <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((<span class="dv">1</span> <span class="sc">+</span> sum_yi) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> N)<span class="sc">^</span><span class="dv">2</span>) </span>
+<span id="cb11-3"><a></a><span class="fu">cat</span>(<span class="st">"Posterior mean ="</span>, mean_post <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Posterior mean = 0.7</code></pre>
+<pre><code>Posterior mean = 0.701</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">cat</span>(<span class="st">"Average rate ="</span>, y_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">cat</span>(<span class="st">"Average rate ="</span>, y_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Average rate = 0.7</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">cat</span>(<span class="st">"Posterior sd ="</span>, sd_post <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">cat</span>(<span class="st">"Posterior sd ="</span>, sd_post <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Posterior sd = 0.05</code></pre>
 </div>
@@ -1155,10 +1156,10 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>mean_post <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">+</span> sum_yi) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> N)</span>
-<span id="cb16-2"><a></a>deaths <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span></span>
-<span id="cb16-3"><a></a>pred <span class="ot">&lt;-</span> <span class="fu">dpois</span>(deaths, <span class="at">lambda =</span> mean_post)</span>
-<span id="cb16-4"><a></a>actual <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">table</span>(dd) <span class="sc">/</span> N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>mean_post <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">+</span> sum_yi) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> N)</span>
+<span id="cb17-2"><a></a>deaths <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span></span>
+<span id="cb17-3"><a></a>pred <span class="ot">&lt;-</span> <span class="fu">dpois</span>(deaths, <span class="at">lambda =</span> mean_post)</span>
+<span id="cb17-4"><a></a>actual <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">table</span>(dd) <span class="sc">/</span> N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
@@ -1166,7 +1167,7 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="864"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="864"></p>
 </figure>
 </div>
 </div>
@@ -1212,7 +1213,7 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma} \left( \alpha + \sum_{i=1}^{n} y_i,
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1230,39 +1231,39 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma} \left( \alpha + \sum_{i=1}^{n} y_i,
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="sourceCode cell-code" id="cb17" data-code-line-numbers="|2|3|4|5|6|8|10|17|19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>plot_xbar <span class="ot">&lt;-</span> <span class="cf">function</span>(n_repl, n_samples) {</span>
-<span id="cb17-2"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.6</span>, <span class="fl">1.4</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
-<span id="cb17-3"><a></a>  xbar <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_repl, </span>
-<span id="cb17-4"><a></a>                    <span class="fu">mean</span>(<span class="fu">rexp</span>(n_samples, <span class="at">rate =</span> <span class="dv">1</span>)))</span>
-<span id="cb17-5"><a></a>  mu <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(n_samples))</span>
-<span id="cb17-6"><a></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> xbar), </span>
-<span id="cb17-7"><a></a>              <span class="at">data =</span> <span class="fu">tibble</span>(xbar))</span>
-<span id="cb17-8"><a></a>  p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), </span>
-<span id="cb17-9"><a></a>                     <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb17-10"><a></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> mu), </span>
-<span id="cb17-11"><a></a>              <span class="at">color =</span> <span class="st">'red'</span>, </span>
-<span id="cb17-12"><a></a>              <span class="at">linewidth =</span> <span class="fl">0.3</span>, </span>
-<span id="cb17-13"><a></a>              <span class="at">data =</span> <span class="fu">tibble</span>(x, y)) <span class="sc">+</span></span>
-<span id="cb17-14"><a></a>    <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb17-15"><a></a>}</span>
-<span id="cb17-16"><a></a></span>
-<span id="cb17-17"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_xbar</span>(<span class="fl">1e4</span>, <span class="dv">100</span>) <span class="sc">+</span> </span>
-<span id="cb17-18"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Sampling means from rexp(100, 1)"</span>)</span>
-<span id="cb17-19"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_xbar</span>(<span class="fl">1e4</span>, <span class="dv">300</span>) <span class="sc">+</span> </span>
-<span id="cb17-20"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Sampling means from rexp(300, 1)"</span>)</span>
-<span id="cb17-21"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18" data-code-line-numbers="|2|3|4|5|6|8|10|17|19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>plot_xbar <span class="ot">&lt;-</span> <span class="cf">function</span>(n_repl, n_samples) {</span>
+<span id="cb18-2"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.6</span>, <span class="fl">1.4</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb18-3"><a></a>  xbar <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_repl, </span>
+<span id="cb18-4"><a></a>                    <span class="fu">mean</span>(<span class="fu">rexp</span>(n_samples, <span class="at">rate =</span> <span class="dv">1</span>)))</span>
+<span id="cb18-5"><a></a>  mu <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(n_samples))</span>
+<span id="cb18-6"><a></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> xbar), </span>
+<span id="cb18-7"><a></a>              <span class="at">data =</span> <span class="fu">tibble</span>(xbar))</span>
+<span id="cb18-8"><a></a>  p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), </span>
+<span id="cb18-9"><a></a>                     <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb18-10"><a></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> mu), </span>
+<span id="cb18-11"><a></a>              <span class="at">color =</span> <span class="st">'red'</span>, </span>
+<span id="cb18-12"><a></a>              <span class="at">linewidth =</span> <span class="fl">0.3</span>, </span>
+<span id="cb18-13"><a></a>              <span class="at">data =</span> <span class="fu">tibble</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb18-14"><a></a>    <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb18-15"><a></a>}</span>
+<span id="cb18-16"><a></a></span>
+<span id="cb18-17"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_xbar</span>(<span class="fl">1e4</span>, <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb18-18"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Sampling means from rexp(100, 1)"</span>)</span>
+<span id="cb18-19"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_xbar</span>(<span class="fl">1e4</span>, <span class="dv">300</span>) <span class="sc">+</span> </span>
+<span id="cb18-20"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Sampling means from rexp(300, 1)"</span>)</span>
+<span id="cb18-21"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
 </div></div>
 </div>
 </section>
-<section id="joint-normal-likelihood" class="slide level2 smaller">
+<section id="joint-normal-likelihood" class="slide level2 tinier">
 <h2>Joint Normal Likelihood</h2>
 <div>
 <ul>
@@ -1276,6 +1277,7 @@ f(y \mid \mu) &amp; = &amp; \prod_{i=1}^{n}\frac{1}{\sqrt{2 \pi} \
 \end{eqnarray}
 \]</span></p></li>
 <li class="fragment"><p>The last line is derived by expanding the square and dropping terms that don’t depend on <span class="math inline">\(\mu\)</span>; <span class="math inline">\(\bar{y} = \frac{1}{n} \sum_{i=1}^{n} y_i\)</span></p></li>
+<li class="fragment"><p>Expansion: <span class="math inline">\(\sum_{i=1}^n (y_i - \mu)^2 = \sum_{i=1}^n \left[(y_i - \bar{y}) + (\bar{y} - \mu)\right]^2\)</span></p></li>
 </ul>
 </div>
 </section>
@@ -1354,20 +1356,16 @@ f(\mu \mid y) &amp;\propto&amp; \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \
 <div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment">Most posterior distributions do not have an analytical form</li>
-<li class="fragment">In those cases, we must resort to sampling methods</li>
+<li class="fragment">Most posterior distributions <em>do not have an analytical form</em></li>
+<li class="fragment">In those cases, we must resort to <em>sampling methods</em></li>
 <li class="fragment">Sampling in high dimensions requires specialized algorithms</li>
-<li class="fragment">Here, we will look at one-dimensional sampling on the grid (of parameter values)</li>
-<li class="fragment">At the end of this lecture, we look at some output of a state-of-the-art HMC NUTS sampler</li>
-<li class="fragment">Next week, we will examine the Metropolis-Hastings-Rosenbluth algorithm</li>
+<li class="fragment">Here, we will look at one-dimensional <em>sampling on a grid</em> (of parameter values)</li>
+<li class="fragment">At the end of this lecture, we look at some output of a state-of-the-art <em>HMC NUTS sampler</em></li>
+<li class="fragment">Next week, we will examine the <em>Metropolis-Hastings-Rosenbluth</em> algorithm</li>
 </ul>
 </div>
 </div><div class="column" style="width:50%;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/ball-on-a-grid.webp" class="quarto-figure quarto-figure-center"></p>
-</figure>
-</div>
+<p><a href="https://avehtari.github.io/BDA_R_demos/demos_ch11/demo11_1.html">An example</a> of Gibbs sampling of a Bivariate Normal by Aki Vehtari and Markus Paasiniemi. <img data-src="images/gibbs.gif" class="quarto-figure quarto-figure-center"></p>
 </div></div>
 </section>
 <section id="grid-approximation-1" class="slide level2 smaller scrollable">
@@ -1388,8 +1386,8 @@ f(\mu \mid y) &amp;\propto&amp; \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \
 </ul>
 </div>
 </section>
-<section id="early-clinical-trial-example" class="slide level2 smaller">
-<h2>Early Clinical Trial Example</h2>
+<section id="back-to-the-binomial" class="slide level2 smaller">
+<h2>Back to the Binomial</h2>
 <div class="panel-tabset">
 <ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Deriving <span class="math inline">\(f(\theta, y)\)</span></a></li><li><a href="#tabset-3-2">R Implementation</a></li><li><a href="#tabset-3-3">Graphs</a></li></ul>
 <div class="tab-content">
@@ -1411,31 +1409,31 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <div id="tabset-3-2">
 <div>
 <ul>
-<li class="fragment">Recall we had 3 responders out of 5 patients</li>
+<li class="fragment">Suppose that 3 out of 5 patients responded to treatment</li>
 <li class="fragment">Model: <span class="math inline">\(\text{lp}(\theta) = \log(\theta) \cdot\sum_{i=1}^{n} y_i + \log(1 - \theta) \cdot\sum_{i=1}^{n} (1-y_i)\)</span></li>
 </ul>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>lp <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, data) {</span>
-<span id="cb18-2"><a></a><span class="co"># log(theta) * sum(data$y) + log(1 - theta) * sum(1 - data$y)</span></span>
-<span id="cb18-3"><a></a>  lp <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb18-4"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>data<span class="sc">$</span>N) {</span>
-<span id="cb18-5"><a></a>    lp <span class="ot">&lt;-</span> lp <span class="sc">+</span> <span class="fu">log</span>(theta) <span class="sc">*</span> data<span class="sc">$</span>y[i] <span class="sc">+</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> theta) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data<span class="sc">$</span>y[i])</span>
-<span id="cb18-6"><a></a>  }</span>
-<span id="cb18-7"><a></a>  <span class="fu">return</span>(lp)</span>
-<span id="cb18-8"><a></a>}</span>
-<span id="cb18-9"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb18-10"><a></a><span class="co"># generate theta parameter grid</span></span>
-<span id="cb18-11"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
-<span id="cb18-12"><a></a><span class="co"># compute log likelihood and prior for every value of the grid</span></span>
-<span id="cb18-13"><a></a>log_lik <span class="ot">&lt;-</span> <span class="fu">lp</span>(theta, data); log_prior <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fu">dbeta</span>(theta, <span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb18-14"><a></a><span class="co"># compute log posterior</span></span>
-<span id="cb18-15"><a></a>log_post <span class="ot">&lt;-</span> log_lik <span class="sc">+</span> log_prior</span>
-<span id="cb18-16"><a></a><span class="co"># convert back to the original scale and normalize</span></span>
-<span id="cb18-17"><a></a>post <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_post); post <span class="ot">&lt;-</span> post <span class="sc">/</span> <span class="fu">sum</span>(post)</span>
-<span id="cb18-18"><a></a><span class="co"># sample theta in proportion to the posterior probability</span></span>
-<span id="cb18-19"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">sample</span>(theta, <span class="at">size =</span> <span class="fl">1e5</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> post)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>lp <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, data) {</span>
+<span id="cb19-2"><a></a><span class="co"># log(theta) * sum(data$y) + log(1 - theta) * sum(1 - data$y)</span></span>
+<span id="cb19-3"><a></a>  lp <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb19-4"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>data<span class="sc">$</span>N) {</span>
+<span id="cb19-5"><a></a>    lp <span class="ot">&lt;-</span> lp <span class="sc">+</span> <span class="fu">log</span>(theta) <span class="sc">*</span> data<span class="sc">$</span>y[i] <span class="sc">+</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> theta) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data<span class="sc">$</span>y[i])</span>
+<span id="cb19-6"><a></a>  }</span>
+<span id="cb19-7"><a></a>  <span class="fu">return</span>(lp)</span>
+<span id="cb19-8"><a></a>}</span>
+<span id="cb19-9"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb19-10"><a></a><span class="co"># generate theta parameter grid</span></span>
+<span id="cb19-11"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb19-12"><a></a><span class="co"># compute log likelihood and prior for every value of the grid</span></span>
+<span id="cb19-13"><a></a>log_lik <span class="ot">&lt;-</span> <span class="fu">lp</span>(theta, data); log_prior <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fu">dbeta</span>(theta, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb19-14"><a></a><span class="co"># compute log posterior</span></span>
+<span id="cb19-15"><a></a>log_post <span class="ot">&lt;-</span> log_lik <span class="sc">+</span> log_prior</span>
+<span id="cb19-16"><a></a><span class="co"># convert back to the original scale and normalize</span></span>
+<span id="cb19-17"><a></a>post <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_post); post <span class="ot">&lt;-</span> post <span class="sc">/</span> <span class="fu">sum</span>(post)</span>
+<span id="cb19-18"><a></a><span class="co"># sample theta in proportion to the posterior probability</span></span>
+<span id="cb19-19"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">sample</span>(theta, <span class="at">size =</span> <span class="fl">1e5</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> post)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1448,8 +1446,8 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>beta_dens <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">4</span>, <span class="dv">3</span>)</span>
-<span id="cb19-2"><a></a>(mle <span class="ot">&lt;-</span> <span class="fu">sum</span>(data<span class="sc">$</span>y) <span class="sc">/</span> data<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>beta_dens <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">4</span>, <span class="dv">3</span>)</span>
+<span id="cb20-2"><a></a>(mle <span class="ot">&lt;-</span> <span class="fu">sum</span>(data<span class="sc">$</span>y) <span class="sc">/</span> data<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6</code></pre>
 </div>
@@ -1460,7 +1458,7 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1508,13 +1506,13 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>N <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb21-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)          <span class="co"># draw theta from N(0, 1)</span></span>
-<span id="cb21-3"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)   <span class="co"># E(theta),   same as mean(theta)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>N <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb22-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)          <span class="co"># draw theta from N(0, 1)</span></span>
+<span id="cb22-3"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)   <span class="co"># E(theta),   same as mean(theta)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>) <span class="co"># E(theta^2), same as mean(theta^2)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>) <span class="co"># E(theta^2), same as mean(theta^2)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
@@ -1536,13 +1534,13 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">pnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)          <span class="co"># Evalute N(0, 1) CDF at 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">pnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)          <span class="co"># Evalute N(0, 1) CDF at 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.84</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>N <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb27-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)             <span class="co"># draw theta from N(0, 1)</span></span>
-<span id="cb27-3"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta <span class="sc">&lt;</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)  <span class="co"># same as mean(theta &lt; 1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>N <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb28-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)             <span class="co"># draw theta from N(0, 1)</span></span>
+<span id="cb28-3"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta <span class="sc">&lt;</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)  <span class="co"># same as mean(theta &lt; 1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.84</code></pre>
 </div>
@@ -1592,26 +1590,7 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell" data-output.var="stan1">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb29-1"><a></a><span class="co">// 01-bernoulli.stan</span></span>
-<span id="cb29-2"><a></a><span class="kw">data</span> {</span>
-<span id="cb29-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
-<span id="cb29-4"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
-<span id="cb29-5"><a></a>}</span>
-<span id="cb29-6"><a></a><span class="kw">parameters</span> {</span>
-<span id="cb29-7"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
-<span id="cb29-8"><a></a>}</span>
-<span id="cb29-9"><a></a><span class="kw">model</span> {</span>
-<span id="cb29-10"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
-<span id="cb29-11"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
-<span id="cb29-12"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
-<span id="cb29-13"><a></a>  }</span>
-<span id="cb29-14"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="fragment">
-<div class="cell" data-output.var="stan2">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb30-1"><a></a><span class="co">// 02-bernoulli.stan</span></span>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb30-1"><a></a><span class="co">// 01-bernoulli.stan</span></span>
 <span id="cb30-2"><a></a><span class="kw">data</span> {</span>
 <span id="cb30-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
 <span id="cb30-4"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
@@ -1620,9 +1599,28 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <span id="cb30-7"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
 <span id="cb30-8"><a></a>}</span>
 <span id="cb30-9"><a></a><span class="kw">model</span> {</span>
-<span id="cb30-10"><a></a>  theta ~ beta(<span class="dv">1</span>, <span class="dv">1</span>);</span>
-<span id="cb30-11"><a></a>  y ~ bernoulli(theta);</span>
-<span id="cb30-12"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-10"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb30-11"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
+<span id="cb30-12"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
+<span id="cb30-13"><a></a>  }</span>
+<span id="cb30-14"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-output.var="stan2">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb31-1"><a></a><span class="co">// 02-bernoulli.stan</span></span>
+<span id="cb31-2"><a></a><span class="kw">data</span> {</span>
+<span id="cb31-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb31-4"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
+<span id="cb31-5"><a></a>}</span>
+<span id="cb31-6"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb31-7"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
+<span id="cb31-8"><a></a>}</span>
+<span id="cb31-9"><a></a><span class="kw">model</span> {</span>
+<span id="cb31-10"><a></a>  theta ~ beta(<span class="dv">1</span>, <span class="dv">1</span>);</span>
+<span id="cb31-11"><a></a>  y ~ bernoulli(theta);</span>
+<span id="cb31-12"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div></div>
@@ -1630,20 +1628,20 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <section id="running-stan" class="slide level2 smaller">
 <h2>Running Stan</h2>
 <div class="fragment">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">library</span>(cmdstanr)</span>
-<span id="cb31-2"><a></a></span>
-<span id="cb31-3"><a></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/01-bernoulli.stan"</span>) <span class="co"># compile the model</span></span>
-<span id="cb31-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb31-5"><a></a>f1 <span class="ot">&lt;-</span> m1<span class="sc">$</span><span class="fu">sample</span>(       <span class="co"># for other options to sample, help(sample)</span></span>
-<span id="cb31-6"><a></a>  <span class="at">data =</span> data,         <span class="co"># pass data as a list, match the vars name to Stan</span></span>
-<span id="cb31-7"><a></a>  <span class="at">seed =</span> <span class="dv">123</span>,          <span class="co"># to reproduce results, Stan does not rely on R's seed</span></span>
-<span id="cb31-8"><a></a>  <span class="at">chains =</span> <span class="dv">4</span>,          <span class="co"># total chains, the more, the better</span></span>
-<span id="cb31-9"><a></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="co"># for multi-processor CPUs</span></span>
-<span id="cb31-10"><a></a>  <span class="at">refresh =</span> <span class="dv">0</span>,         <span class="co"># number of iterations printed on the screen</span></span>
-<span id="cb31-11"><a></a>  <span class="at">iter_warmup =</span> <span class="dv">500</span>,   <span class="co"># number of draws for warmup (per chain)</span></span>
-<span id="cb31-12"><a></a>  <span class="at">iter_sampling =</span> <span class="dv">500</span>  <span class="co"># number of draws for samples (per chain)</span></span>
-<span id="cb31-13"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center" data-warnings="false">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb32-2"><a></a></span>
+<span id="cb32-3"><a></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/01-bernoulli.stan"</span>) <span class="co"># compile the model</span></span>
+<span id="cb32-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb32-5"><a></a>f1 <span class="ot">&lt;-</span> m1<span class="sc">$</span><span class="fu">sample</span>(       <span class="co"># for other options to sample, help(sample)</span></span>
+<span id="cb32-6"><a></a>  <span class="at">data =</span> data,         <span class="co"># pass data as a list, match the vars name to Stan</span></span>
+<span id="cb32-7"><a></a>  <span class="at">seed =</span> <span class="dv">123</span>,          <span class="co"># to reproduce results, Stan does not rely on R's seed</span></span>
+<span id="cb32-8"><a></a>  <span class="at">chains =</span> <span class="dv">4</span>,          <span class="co"># total chains, the more, the better</span></span>
+<span id="cb32-9"><a></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="co"># for multi-processor CPUs</span></span>
+<span id="cb32-10"><a></a>  <span class="at">refresh =</span> <span class="dv">0</span>,         <span class="co"># number of iterations printed on the screen</span></span>
+<span id="cb32-11"><a></a>  <span class="at">iter_warmup =</span> <span class="dv">500</span>,   <span class="co"># number of draws for warmup (per chain)</span></span>
+<span id="cb32-12"><a></a>  <span class="at">iter_sampling =</span> <span class="dv">500</span>  <span class="co"># number of draws for samples (per chain)</span></span>
+<span id="cb32-13"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 parallel chains...
 
@@ -1654,15 +1652,15 @@ Chain 4 finished in 0.0 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
-Total execution time: 0.2 seconds.</code></pre>
+Total execution time: 0.3 seconds.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>f1<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>f1<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 10
   variable   mean median    sd   mad     q5    q95  rhat ess_bulk ess_tail
   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 lp__     -5.27  -4.99  0.683 0.291 -6.67  -4.78   1.00     865.    1012.
-2 theta     0.579  0.584 0.167 0.182  0.288  0.843  1.00     749.     933.</code></pre>
+1 lp__     -5.30  -5.02  0.734 0.320 -6.82  -4.78   1.00     800.    1024.
+2 theta     0.566  0.577 0.173 0.187  0.273  0.833  1.01     860.     986.</code></pre>
 </div>
 </div>
 </div>
@@ -1673,71 +1671,71 @@ Total execution time: 0.2 seconds.</code></pre>
 <div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">library</span>(tidybayes)</span>
-<span id="cb35-2"><a></a></span>
-<span id="cb35-3"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">gather_draws</span>(f1, theta, lp__)</span>
-<span id="cb35-4"><a></a><span class="fu">tail</span>(draws) <span class="co"># draws is a tidy long format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">library</span>(tidybayes)</span>
+<span id="cb36-2"><a></a></span>
+<span id="cb36-3"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">gather_draws</span>(f1, theta, lp__)</span>
+<span id="cb36-4"><a></a><span class="fu">tail</span>(draws) <span class="co"># draws is a tidy long format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
 # Groups:   .variable [1]
   .chain .iteration .draw .variable .value
    &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
-1      4        495  1995 lp__       -5.27
-2      4        496  1996 lp__       -4.90
-3      4        497  1997 lp__       -4.78
-4      4        498  1998 lp__       -4.90
-5      4        499  1999 lp__       -4.90
-6      4        500  2000 lp__       -5.70</code></pre>
+1      4        495  1995 lp__       -4.84
+2      4        496  1996 lp__       -4.85
+3      4        497  1997 lp__       -4.83
+4      4        498  1998 lp__       -5.04
+5      4        499  1999 lp__       -4.78
+6      4        500  2000 lp__       -4.78</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>draws <span class="sc">|&gt;</span> </span>
-<span id="cb37-2"><a></a>  <span class="fu">group_by</span>(.variable) <span class="sc">|&gt;</span> </span>
-<span id="cb37-3"><a></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(.value))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>draws <span class="sc">|&gt;</span> </span>
+<span id="cb38-2"><a></a>  <span class="fu">group_by</span>(.variable) <span class="sc">|&gt;</span> </span>
+<span id="cb38-3"><a></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(.value))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   .variable   mean
   &lt;chr&gt;      &lt;dbl&gt;
-1 lp__      -5.27 
-2 theta      0.579</code></pre>
+1 lp__      -5.30 
+2 theta      0.566</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="fu">median_qi</span>(draws, <span class="at">.width =</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">median_qi</span>(draws, <span class="at">.width =</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 7
   .variable .value .lower .upper .width .point .interval
   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
-1 lp__      -4.99  -6.67  -4.78     0.9 median qi       
-2 theta      0.584  0.288  0.843    0.9 median qi       </code></pre>
+1 lp__      -5.02  -6.82  -4.78     0.9 median qi       
+2 theta      0.577  0.273  0.833    0.9 median qi       </code></pre>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">spread_draws</span>(f1, theta, lp__)</span>
-<span id="cb41-2"><a></a><span class="fu">tail</span>(draws) <span class="co"># draws is a tidy wide format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">spread_draws</span>(f1, theta, lp__)</span>
+<span id="cb42-2"><a></a><span class="fu">tail</span>(draws) <span class="co"># draws is a tidy wide format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   .chain .iteration .draw theta  lp__
    &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-1      4        495  1995 0.386 -5.27
-2      4        496  1996 0.661 -4.90
-3      4        497  1997 0.576 -4.78
-4      4        498  1998 0.477 -4.90
-5      4        499  1999 0.659 -4.90
-6      4        500  2000 0.322 -5.70</code></pre>
+1      4        495  1995 0.505 -4.84
+2      4        496  1996 0.503 -4.85
+3      4        497  1997 0.510 -4.83
+4      4        498  1998 0.436 -5.04
+5      4        499  1999 0.568 -4.78
+6      4        500  2000 0.582 -4.78</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
-<span id="cb43-2"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(theta), <span class="at">data =</span> draws)</span>
-<span id="cb43-3"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), </span>
-<span id="cb43-4"><a></a>                   <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb43-5"><a></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(theta, beta_dens), </span>
-<span id="cb43-6"><a></a>              <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">'red'</span>,</span>
-<span id="cb43-7"><a></a>              <span class="at">data =</span> <span class="fu">tibble</span>(theta, beta_dens)) <span class="sc">+</span></span>
-<span id="cb43-8"><a></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
-<span id="cb43-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Posterior draws from Stan"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb44-2"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(theta), <span class="at">data =</span> draws)</span>
+<span id="cb44-3"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), </span>
+<span id="cb44-4"><a></a>                   <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb44-5"><a></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(theta, beta_dens), </span>
+<span id="cb44-6"><a></a>              <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">'red'</span>,</span>
+<span id="cb44-7"><a></a>              <span class="at">data =</span> <span class="fu">tibble</span>(theta, beta_dens)) <span class="sc">+</span></span>
+<span id="cb44-8"><a></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
+<span id="cb44-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Posterior draws from Stan"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
@@ -1745,9 +1743,17 @@ Total execution time: 0.2 seconds.</code></pre>
 </div>
 </div></div>
 </section>
-<section id="whats-a-chain" class="slide level2">
+<section id="whats-a-chain" class="slide level2 smaller">
 <h2>What’s a Chain</h2>
 <iframe data-external="1" src="https://www.youtube.com/embed/1TKhH81k7QA" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+<p>A is a sequence of random variables <span class="math inline">\(\{X_n\}_{n \geq 0}\)</span> defined on a state space <span class="math inline">\(S\)</span> such that for all <span class="math inline">\(n \geq 0\)</span> and for any states <span class="math inline">\(i_0, i_1, \dots, i_{n+1} \in S\)</span>, the Markov property holds:</p>
+<p><span class="math display">\[
+\mathbb{P}(X_{n+1}=j \mid X_0=i_0, X_{n-1}=i_{n-1}, \dots, X_n=i_n) = \mathbb{P}(X_{n+1}=j \mid X_n=i)
+\]</span></p>
+<p>The transition probabilities are represented by a matrix <span class="math inline">\(Q\)</span>, where:</p>
+<p><span class="math display">\[
+q_{ij} = \mathbb{P}(X_{n+1} = j \mid X_n = i)
+\]</span></p>
 </section>
 <section id="dynamic-simulation" class="slide level2">
 <h2>Dynamic Simulation</h2>
@@ -1766,11 +1772,7 @@ Total execution time: 0.2 seconds.</code></pre>
 </ul>
 </div>
 </div><div class="column" style="width:50%;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/chains.png" class="quarto-figure quarto-figure-center" height="600"></p>
-</figure>
-</div>
+<p>Example of bad markov chains, page 283, Figure 11.3, BDA 3. <img data-src="images/mc1.png" class="quarto-figure quarto-figure-center" height="260"> <img data-src="images/mc2.png" class="quarto-figure quarto-figure-center" height="260"></p>
 </div></div>
 </section>
 <section id="good-chain-bad-chain" class="slide level2">
@@ -1781,16 +1783,16 @@ Total execution time: 0.2 seconds.</code></pre>
 <div id="tabset-5-1">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">library</span>(bayesplot)</span>
-<span id="cb44-2"><a></a>draws <span class="ot">&lt;-</span> f1<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"theta"</span>)</span>
-<span id="cb44-3"><a></a><span class="fu">color_scheme_set</span>(<span class="st">"viridis"</span>)</span>
-<span id="cb44-4"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(draws, <span class="at">pars =</span> <span class="st">"theta"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
-<span id="cb44-5"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Good Chain"</span>)</span>
-<span id="cb44-6"><a></a>bad_post <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/bad_post.rds"</span>)</span>
-<span id="cb44-7"><a></a>bad_draws <span class="ot">&lt;-</span> bad_post<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"mu"</span>)</span>
-<span id="cb44-8"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(bad_draws, <span class="at">pars =</span> <span class="st">"mu"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
-<span id="cb44-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Bad Chain"</span>)</span>
-<span id="cb44-10"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb45-2"><a></a>draws <span class="ot">&lt;-</span> f1<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"theta"</span>)</span>
+<span id="cb45-3"><a></a><span class="fu">color_scheme_set</span>(<span class="st">"viridis"</span>)</span>
+<span id="cb45-4"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(draws, <span class="at">pars =</span> <span class="st">"theta"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
+<span id="cb45-5"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Good Chain"</span>)</span>
+<span id="cb45-6"><a></a>bad_post <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/bad_post.rds"</span>)</span>
+<span id="cb45-7"><a></a>bad_draws <span class="ot">&lt;-</span> bad_post<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"mu"</span>)</span>
+<span id="cb45-8"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(bad_draws, <span class="at">pars =</span> <span class="st">"mu"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
+<span id="cb45-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Bad Chain"</span>)</span>
+<span id="cb45-10"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1800,7 +1802,7 @@ Total execution time: 0.2 seconds.</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1828,12 +1830,12 @@ Total execution time: 0.2 seconds.</code></pre>
 </div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a><span class="fu">neff_ratio</span>(f1, <span class="at">pars =</span> <span class="st">"theta"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">neff_ratio</span>(f1, <span class="at">pars =</span> <span class="st">"theta"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>theta 
- 0.38 </code></pre>
+ 0.43 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a><span class="fu">neff_ratio</span>(bad_post, <span class="at">pars =</span> <span class="st">"mu"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="fu">neff_ratio</span>(bad_post, <span class="at">pars =</span> <span class="st">"mu"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  mu 
 0.09 </code></pre>
@@ -1847,7 +1849,7 @@ Total execution time: 0.2 seconds.</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1874,12 +1876,12 @@ Total execution time: 0.2 seconds.</code></pre>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>bayesplot<span class="sc">::</span><span class="fu">rhat</span>(f1, <span class="at">pars =</span> <span class="st">"theta"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>bayesplot<span class="sc">::</span><span class="fu">rhat</span>(f1, <span class="at">pars =</span> <span class="st">"theta"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>theta 
-1.002 </code></pre>
+1.006 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a>bayesplot<span class="sc">::</span><span class="fu">rhat</span>(bad_post, <span class="at">pars =</span> <span class="st">"sigma"</span>)  <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>bayesplot<span class="sc">::</span><span class="fu">rhat</span>(bad_post, <span class="at">pars =</span> <span class="st">"sigma"</span>)  <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>sigma 
 1.043 </code></pre>
@@ -1898,19 +1900,19 @@ Total execution time: 0.2 seconds.</code></pre>
 <li>Hint: For #2, pass parameters a and b in the data block</li>
 </ul>
 <div class="cell" data-output.var="stan3">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb53-1"><a></a><span class="kw">data</span> {</span>
-<span id="cb53-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
-<span id="cb53-3"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
-<span id="cb53-4"><a></a>}</span>
-<span id="cb53-5"><a></a><span class="kw">parameters</span> {</span>
-<span id="cb53-6"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
-<span id="cb53-7"><a></a>}</span>
-<span id="cb53-8"><a></a><span class="kw">model</span> {</span>
-<span id="cb53-9"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
-<span id="cb53-10"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
-<span id="cb53-11"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
-<span id="cb53-12"><a></a>  }</span>
-<span id="cb53-13"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb54-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb54-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb54-3"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
+<span id="cb54-4"><a></a>}</span>
+<span id="cb54-5"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb54-6"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
+<span id="cb54-7"><a></a>}</span>
+<span id="cb54-8"><a></a><span class="kw">model</span> {</span>
+<span id="cb54-9"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb54-10"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
+<span id="cb54-11"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
+<span id="cb54-12"><a></a>  }</span>
+<span id="cb54-13"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
