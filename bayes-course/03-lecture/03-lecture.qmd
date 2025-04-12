@@ -315,12 +315,12 @@ $$
 ```{python}
 #| echo: true
 #| cache: false
-from sympy import *
-a, b = symbols('a b', positive=True)
-t, n = symbols('t n', positive=True, integer=True)
-λ    = symbols('λ', nonnegative=True)
-expr = λ**(t + a - 1) * exp(-(n + b) * λ)
-result = simplify(integrate(expr, (λ, 0, oo)))
+import sympy as sp
+a, b = sp.symbols('a b', positive=True)
+t, n = sp.symbols('t n', positive=True, integer=True)
+λ    = sp.symbols('λ', nonnegative=True)
+expr = λ**(t + a - 1) * sp.exp(-(n + b) * λ)
+result = sp.simplify(sp.integrate(expr, (λ, 0, sp.oo)))
 ```
 
 ```{python}

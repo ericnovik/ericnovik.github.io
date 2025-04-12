@@ -1,9 +1,18 @@
-library(latex2exp)
-library(glue)
+library(ggplot2)
 library(gganimate)
+library(ggplot2)
+library(gganimate)
+library(dplyr)
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
 
 metropolis_iteration <- function(y, current_mean, proposal_scale, sd,
-                                     prior_mean, prior_sd) {
+                                 prior_mean, prior_sd) {
   # assume prior ~ N(pm, psd)
   # proposal sampling distribution q = N(mu, proposal_scale)
   proposal_mean <- rnorm(1, current_mean,  proposal_scale)        
@@ -43,60 +52,25 @@ mhr <- function(y, f, N, start, ...) {
   return(draws)
 }
 
-make_anim <- function(proposal, accepted, yscale_l, yscale_h, ...) {
-  accepted <- as.factor(accepted)
-  iter <- 1:length(proposal)
-  anim <- ggplot(data.frame(iter, proposal), aes(iter, proposal)) +
-    geom_line(aes(color = accepted), size = 0.1) + 
-    geom_point(aes(seq_along(iter), color = accepted)) +
-    geom_point(aes(y = proposal, color = accepted)) +
-    ylim(yscale_l, yscale_h) +
-    xlab("Iteration") + ylab(expression(mu)) +
-    transition_reveal(iter)
+make_plot <- function(df, title, ...) {
+  p <- ggplot(df, aes(x = iteration)) +
+    geom_line(aes(y = `next`), size = 0.1, color = "green") +
+    geom_point(aes(y = proposal, color = factor(accepted)), size = 0.2) +
+    scale_color_manual(
+      values = c("0" = "red", "1" = "green"),
+      labels = NULL,
+      name = NULL
+    ) +
+    ylab("μ") +
+    xlab("Iteration") +
+    ggtitle(title) + theme(thm, legend.position = "none")
+  return(p)
+}
+animate_mcmc <- function(p) {
+  anim <- p + transition_manual(iteration, cumulative = TRUE)
   return(anim)
 }
-
-library(ggplot2)
-library(gganimate)
-
-make_anim_2 <- function(proposal, accepted, yscale_l, yscale_h, ...) {
-  # Convert accepted to a factor to control color changes
-  accepted <- as.factor(accepted)
-  
-  # Create a data frame for plotting
-  iter <- 1:length(proposal)
-  data <- data.frame(iter, proposal, accepted)
-  
-  # Build the ggplot
-  anim <- ggplot(data, aes(x = iter, y = proposal, group = 1)) +
-    geom_path(aes(color = accepted), size = 1) +  # Draw a single path that changes color
-    scale_color_manual(values = c("1" = "red", "2" = "green")) +  # Color coding
-    ylim(yscale_l, yscale_h) +  # Set y-axis limits
-    xlab("Iteration") + ylab(expression(mu)) +  # Set axis labels
-    transition_reveal(iter)  # Animate the path revealing over iterations
-  
-  return(anim)
-}
-
-y <- 5
-N <- 500
-start <- 3
-ps <- 0.1
-d1 <- mhr(y, N, f = metropolis_iteration, 
-         start, proposal_scale = ps, sd = 0.5,  
-         prior_mean = 0, prior_sd = 2)
-
-ps <- 10
-d2 <- mhr(y, N, f = metropolis_iteration, 
-          start, proposal_scale = ps, sd = 0.5,  
-          prior_mean = 0, prior_sd = 2)
-
-ps <- 2
-d3 <- mhr(y, N, f = metropolis_iteration, 
-          start, proposal_scale = ps, sd = 0.5,  
-          prior_mean = 0, prior_sd = 2)
-
-save_anim <- function(d, ps, ysl, ysh) {
+make_acf <- function(d, ps, ysl, ysh) {
   # str <- glue("Proposal distribution q: $Normal(\\mu' | \\mu, \\sigma = {ps})$")
   # anim <- make_anim(d[, 'proposal'],
   #                   d[, 'accepted'], ysl, ysh) + ggtitle(TeX(str))
@@ -109,17 +83,44 @@ save_anim <- function(d, ps, ysl, ysh) {
   acf(d[, 1], ylab = "", main = "")
   dev.off()
 }
+y <- 5
+N <- 500
+start <- 3
+ps <- c(0.1, 10, 2)
+d1 <- mhr(y, N, f = metropolis_iteration, 
+          start, proposal_scale = ps[1], sd = 0.5,  
+          prior_mean = 0, prior_sd = 2)
+d2 <- mhr(y, N, f = metropolis_iteration, 
+          start, proposal_scale = ps[2], sd = 0.5,  
+          prior_mean = 0, prior_sd = 2)
+d3 <- mhr(y, N, f = metropolis_iteration, 
+          start, proposal_scale = ps[3], sd = 0.5,  
+          prior_mean = 0, prior_sd = 2)
 
-str <- glue("Proposal distribution q: $Normal(\\mu' | \\mu, \\sigma = {ps})$")
-anim <- make_anim_2(d1[, 'proposal'],
-                  d1[, 'accepted'], 2.5, 6) + ggtitle(TeX(str))
-animate(anim, fps = 5, detail = 3, height = 600, width = 800, res = 150)
-anim_save('anin_test.png', animation = last_animation())
-str <- glue("$Normal(\\mu' | \\mu, \\sigma = {ps})$")
+d1 <- d1 |> as.data.frame() |> mutate(iteration = row_number())
+d2 <- d2 |> as.data.frame() |> mutate(iteration = row_number())
+d3 <- d3 |> as.data.frame() |> mutate(iteration = row_number())
 
+ttl <- glue("Proposal distribution q: Normal(μ' | μ, σ = {ps[1]})")
+p <- make_plot(d1, title = TeX(ttl))
+chain_anim <- animate_mcmc(p)
+anim_save("bayes-course/04-lecture/anim/mcmc_chain_1.gif", 
+          animation = chain_anim, bg = "#f0f1eb",
+          fps = 10, detail = 3, height = 600, width = 800, res = 150)
 
-save_anim(d1, ps = 0.1, ysl = 2.5, ysh = 6)
-save_anim(d2, ps = 10, ysl = -10, ysh = 20)
-save_anim(d3, ps = 2, ysl = -10, ysh = 20)
+ttl <- glue("Proposal distribution q: Normal(μ' | μ, σ = {ps[2]})")
+p <- make_plot(d2, title = TeX(ttl))
+chain_anim <- animate_mcmc(p)
+anim_save("bayes-course/04-lecture/anim/mcmc_chain_2.gif", 
+          animation = chain_anim, bg = "#f0f1eb",
+          fps = 10, detail = 3, height = 600, width = 800, res = 150)
+
+ttl <- glue("Proposal distribution q: Normal(μ' | μ, σ = {ps[3]})")
+p <- make_plot(d3, title = TeX(ttl))
+chain_anim <- animate_mcmc(p)
+anim_save("bayes-course/04-lecture/anim/mcmc_chain_3.gif", 
+          animation = chain_anim, bg = "#f0f1eb",
+          fps = 10, detail = 3, height = 600, width = 800, res = 150)
+
 
 
