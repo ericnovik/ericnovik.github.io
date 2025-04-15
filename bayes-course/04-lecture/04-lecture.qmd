@@ -318,6 +318,7 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
 ## MHR for N Iterations
 ```{r}
 #| echo: true
+#| cache: true
 #| code-line-numbers: "|8|9|11|12|18|19|"
 
 mhr <- function(y, f, N, start, ...) {
@@ -337,7 +338,7 @@ mhr <- function(y, f, N, start, ...) {
   return(draws)
 }
 
-y <- 5; N <- 5e3; start <- 3
+y <- 5; N <- 1e6; start <- 3
 d <- mhr(y, N, f = metropolis_iteration_1, start, proposal_scale = 2, sd = 0.5,  
          prior_mean = 0, prior_sd = 2)
 ```
@@ -368,7 +369,6 @@ Autocorrelation function (ACF)
 #| fig-align: center
 #| output-location: column
 #| echo: true
-
 np <- normal_normal_post(y = y, 
                          sd = 0.5, 
                          prior_mu = 0, 
@@ -383,7 +383,7 @@ dn <- dnorm(theta, mean = np$post_mu,
 
 p <- ggplot(aes(d), data = tibble(d = d))
 p + geom_histogram(aes(y = after_stat(density)), 
-                   bins = 25, alpha = 0.6) +
+                   bins = 40, alpha = 0.6) +
   geom_line(aes(theta, dn), linewidth = 0.5, 
             color = 'red', 
             data = tibble(theta, dn)) + 
@@ -427,7 +427,7 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
 ```
 :::
 
-## What if Y is a vector? {.smaller}
+## What if Y is a vector? {.tiny}
 
 ::: {.incremental}
 - Recall the likelihood of many independent observations, is the product of their individual likelihoods
