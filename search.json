@@ -630,263 +630,452 @@
     "text": "Quantifying Model Accuracy\n\nlibrary(loo)\nlm2 &lt;- loo(m2)\nlm2\n\n\nComputed from 1200 by 544 log-likelihood matrix.\n\n         Estimate   SE\nelpd_loo  -1648.7 14.3\np_loo         3.0  0.3\nlooic      3297.3 28.6\n------\nMCSE of elpd_loo is 0.1.\nMCSE and ESS estimates assume MCMC draws (r_eff in [0.6, 1.0]).\n\nAll Pareto k estimates are good (k &lt; 0.68).\nSee help('pareto-k-diagnostic') for details.\n\nplot(lm2)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
-    "href": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
-    "title": "Bayesian Inference",
-    "section": "Conjugate Models and Posterior Sampling",
-    "text": "Conjugate Models and Posterior Sampling\n\n\nGamma-Poisson family\nNormal-Normal family\nIntroduction to posterior sampling on a grid\nIntroduction to Stan\nBasic Markov Chain diagnostics\nEffective sample size\nComputing the R-Hat statistic\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
+    "objectID": "bayes-course/03-lecture/markov-chains.html",
+    "href": "bayes-course/03-lecture/markov-chains.html",
+    "title": "Markov Chains",
+    "section": "",
+    "text": "A Markov chain is a stochastic process represented by a sequence of random variables \\(Y = Y_0, Y_1, \\dots\\) that obeys a Markov property. In words, the Markov property says that the future is independent of the past, conditioned on the present.\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\P(Y_{t+1}=y_{t+1} \\mid Y_t=y_t, Y_{t-1}=y_{t-1}, \\dots, Y_0=y_0) = \\P(Y_{t+1}=y_{t+1} \\mid Y_t=y_t)\n\\]\nYou can think of a Markov Chain as a process that evolves in time according to some rule governed by probabilities of moving around its state space.\nA discrete state space of a Markov Chain is a collection of all possible states that this chain can visit, which can be finite or infinite.\nConsider a simple Markov chain with infinite but discrete state space. You start with $100 in your account and every day, you can either make $1 with probability \\(1/2\\), or lose $1. If you are allowed to overdraft the account, the state space is all integers. The Markov property is satisfied since, on any given day, you only need to know the balance during the previous day, not the whole history of transactions. We can visualize this process with a simulation.\nlibrary(ggplot2)\nlibrary(tidyr)\nlibrary(dplyr)\n\nset.seed(1234)\nW &lt;- 100L\nPr &lt;- 0.5\nN &lt;- 365L * 10L # 10 years\nn &lt;- 50L        # compute 50 possible futures\nrun_chain &lt;- function(N, p) {\n  s &lt;- sample(c(-1, 1), size = N, prob = c(p, 1-p), replace = TRUE)\n  balance &lt;- 100 + cumsum(s)\n  return(balance)\n}\nchains &lt;- replicate(n, run_chain(N, Pr))\nchains_df &lt;- as.data.frame(chains) |&gt;\n  mutate(Time = 1:n())\nchains_df &lt;- chains_df |&gt;\n  pivot_longer(\n    cols = -Time,        \n    names_to = \"Chain\", \n    values_to = \"Value\" \n  )\n# color more extreme futures more red and less extreme more green\nextremeness &lt;- chains_df |&gt;\n  group_by(Chain) |&gt;\n  summarize(extreme = max(abs(Value - 100)), .groups = \"drop\")\nchains_df &lt;- left_join(chains_df, extremeness, by = \"Chain\")\nggplot(chains_df, aes(x = Time/365, y = Value, group = Chain, color = extreme)) +\n  geom_line(linewidth = 0.1) +\n  labs(title = \"Evolution of $100 assuming Pr(Up $1) = 1/2 = Pr(Down $1)\", \n       x = \"Time (years)\", y = \"Balance\") +\n  scale_color_gradient(low = \"green\", high = \"red\") +\n  theme_minimal() +\n  theme(legend.position = \"none\")\nAs an example of a finite, discrete state space, consider a market that could go up or down daily. If it is an up day, we assume that tomorrow will be an up day with probability 3/5 and a down day with probability 2/5. If it is a down day, tomorrow will be a down day with probability 2/3 and an up day with probability 1/3. This kind of mild memory encodes the fact that there is a slightly higher probability of going down if we are in the down day than going up if we are in the up day.\nThis chain has only two states, Up and Down, and it can be visualized using a graph and encoded using a matrix, which we will call a transition matrix Q.\nThe following transition matrix \\(Q = \\begin{pmatrix} \\frac{3}{5} & \\frac{2}{5} \\\\ \\frac{1}{3} & \\frac{2}{3} \\end{pmatrix}\\), correspods to the above tranisiton graph.\n\\[\nQ = \\begin{array}{c|cc}\n      & \\text{Up}   & \\text{Down} \\\\ \\hline\n\\text{Up} & \\frac{3}{5} & \\frac{2}{5} \\\\\n\\text{Down} & \\frac{1}{3} & \\frac{2}{3}\n\\end{array}\n\\]\nThis matrix has a property that all rows sum to one. Each entry of the matrix can specified by \\(q_{y_t,\\, y_{t+1}} = \\P(Y_{t+1}=y_{t+1} \\mid Y_t=y_t)\\) which is the probability of transitioning from state \\(y_t\\) to state \\(y_{t+1}\\). For example suppose we are at \\(y_t = \\text{Up}\\), then \\(q_{t,\\, t+1} = 3/5\\) is the probability of another up day tomorrow (at time \\(t+1\\)) and \\(q_{t,\\, t+1} = 2/5\\) is the probability of a down day tomorrow. To simplify the notation we will label \\(y_t = i\\), and \\(y_{t+1} = j\\), following the usual matrix notation, with \\(q_{ij}\\), indexing each entry in \\(Q\\).\nLet’s say we start in \\(y_t = \\text{Up}\\) and run the process for 10,000. What proportion of time will we spend in a happy Up state? We will run a simulation first and then check the result analytically.\nlibrary(expm)\n\nT &lt;- 1e5\nstates &lt;- c(1, 0) # 1: up day, 0: down day\ny &lt;- numeric(T)\nQ &lt;- matrix(c(3/5, 2/5, \n              1/3, 2/3), ncol = 2, byrow = TRUE)\ny[1] &lt;- 1 # start in the up day\nfor (t in 2:T) {\n  if (y[t-1] == 1) {\n    y[t] &lt;- sample(states, size = 1, prob = c(Q[1, 1], Q[1, 2]))\n  } else {\n    y[t] &lt;- sample(states, size = 1, prob = c(Q[2, 1], Q[2, 2]))\n  }\n}\ncat(\"Proportion of happy Up days:\", mean(y) |&gt; round(3))\n\nProportion of happy Up days: 0.455"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#poisson",
-    "href": "bayes-course/03-lecture/03-lecture.html#poisson",
-    "title": "Bayesian Inference",
-    "section": "Poisson",
-    "text": "Poisson\n\n\nPoisson distribution arises when we are interested in counts\nIn practice, we rarely use Poisson due to its restrictive nature\nPoisson RV \\(Y\\) is paremeterized with a rate of occurance \\(\\lambda\\): \\(Y|\\lambda \\sim \\text{Pois}(\\lambda)\\)\n\\[\nf(y \\mid \\lambda) =  \\frac{e^{-\\lambda} \\lambda^y}{y!}\\;\\; \\text{ for } y \\in \\{0,1,2,\\ldots\\}\n\\]\nNotice, the Tailor series for \\(e^\\lambda = \\sum_{y=0}^{\\infty} \\frac{\\lambda^y}{y!}\\) immediately validates that \\(f\\) is a PDF\nAlso, \\(\\E(Y | \\lambda) = \\V(Y | \\lambda) = \\lambda\\), which is the restrictive case mentioned about — real count data seldom satisfied this constraint"
+    "objectID": "bayes-course/03-lecture/markov-chains.html#powers-of-q",
+    "href": "bayes-course/03-lecture/markov-chains.html#powers-of-q",
+    "title": "Markov Chains",
+    "section": "Powers of Q",
+    "text": "Powers of Q\nThe long-term equilibrium is reached when the proportions have stabilized, and the distribution over states at that time is called a stationary distribution of the Markov chain, which, in this case, will be in the form of a PMF. For the type of chain we are considering, it can be shown that the stationary distribution exists and is unique."
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#visualizing-poission",
-    "href": "bayes-course/03-lecture/03-lecture.html#visualizing-poission",
-    "title": "Bayesian Inference",
-    "section": "Visualizing Poission",
-    "text": "Visualizing Poission\n\n\nNotice that as the rate increases, so does the expected number of events as well as variance, which immediately follows from \\(\\E(Y) = \\V(Y) = \\lambda\\)"
+    "objectID": "bayes-course/03-lecture/markov-chains.html#solving-with-the-eigen-decomposition",
+    "href": "bayes-course/03-lecture/markov-chains.html#solving-with-the-eigen-decomposition",
+    "title": "Markov Chains",
+    "section": "Solving with the Eigen decomposition",
+    "text": "Solving with the Eigen decomposition\n\n# Compute eigenvalues and eigenvectors of the transpose of Q.\neigen_res &lt;- eigen(t(Q))\n\nprint(eigen_res)\n\neigen() decomposition\n$values\n[1] 1.0000000 0.2666667\n\n$vectors\n           [,1]       [,2]\n[1,] -0.6401844 -0.7071068\n[2,] -0.7682213  0.7071068\n\nstationary_vec &lt;- eigen_res$vectors[, 1]\n\n# Normalize to ensure the elements sum to 1\nstationary_distribution &lt;- stationary_vec / sum(stationary_vec)\nnames(stationary_distribution) &lt;- c(\"Up\", \"Down\")\nprint(stationary_distribution |&gt; round(2))\n\n  Up Down \n0.45 0.55"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#example-hourse-kicks",
-    "href": "bayes-course/03-lecture/03-lecture.html#example-hourse-kicks",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#conjugate-models-and-beta-binomial",
+    "href": "bayes-course/02-lecture/02-lecture.html#conjugate-models-and-beta-binomial",
     "title": "Bayesian Inference",
-    "section": "Example: Hourse Kicks",
-    "text": "Example: Hourse Kicks\n\n\nServing in Prussian cavalry in the 1800s was a perilous affair\nAside from the usual dangers of military service, you were at risk of being killed by a horse kick\nData from the book The Law of Small Numbers by Ladislaus Bortkiewicz (1898)\nBortkiewicz was a Russian economist and statistician of Polish ancestry"
+    "section": "Conjugate models and Beta-Binomial",
+    "text": "Conjugate models and Beta-Binomial\n\n\nBayesian workflow\nBeta distribution\nGreat expectations\nTuning the prior model for the clinical trial analysis\nBinomial likelihood with continuous \\(\\theta\\)\nDeriving the conjugate posterior\nAnalysis of the sex ratio\nCompromise between priors and data model\nCoherence of Bayesian inference\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#poisson-likelihood",
-    "href": "bayes-course/03-lecture/03-lecture.html#poisson-likelihood",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
+    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
     "title": "Bayesian Inference",
-    "section": "Poisson Likelihood",
-    "text": "Poisson Likelihood\n\n\nAssume we observe \\(Y_1, Y_2, ..., Y_n\\) independant Poisson random variables\nThe joint lilelihood, a function of the parameter \\(\\lambda\\) for \\(y_i \\in \\mathbb{Z}^+\\) and \\(\\lambda &gt; 0\\), is given by: \\[\n\\begin{eqnarray}\nf(y \\mid \\lambda) & = & \\prod_{i=1}^n f(y_i \\mid \\lambda) = f(y_1 \\mid \\lambda)  f(y_2 \\mid \\lambda) \\cdots f(y_n \\mid \\lambda)  =  \\prod_{i=1}^{n}\\frac{\\lambda^{y_i}e^{-\\lambda}}{y_i!} \\\\\n& = &\\frac{\\lambda^{y_1}e^{-\\lambda}}{y_1!} \\cdot \\frac{\\lambda^{y_2}e^{-\\lambda}}{y_2!} \\cdots \\frac{\\lambda^{y_n}e^{-\\lambda}}{y_n!} \\\\\n& =  &\\frac{\\left(\\lambda^{y_1}\\lambda^{y_2} \\cdots \\lambda^{y_n}\\right) \\left(e^{-\\lambda}e^{-\\lambda} \\cdots e^{-\\lambda}\\right)}{y_1! y_2! \\cdots y_n!} \\\\\n& = &\\frac{\\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda}}{\\prod_{i=1}^n y_i!} \\propto\n\\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda}\n\\end{eqnarray}\n\\]\nWe call \\(\\sum_{i=1}^{n} y_i\\) a sufficient statistic"
+    "section": "Bayesian Workflow",
+    "text": "Bayesian Workflow\n\n\n\n\nStatistics is like building a bridge — we first simulate the conditions under which our bridge should withstand various forces, then we build a bridge, and once built, we test it before letting people drive on it.\nPrior knowledge (not just prior distributions) here would be strength properties of concrete, optimal shape for the length, expected wind conditions, expected load of traffic, and maybe even expected momentum (mass * velocity) of an out-of-control tanker ramming into one of the supporting columns. The more important our “bridge,” the more testing we do."
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-prior-for-poisson",
-    "href": "bayes-course/03-lecture/03-lecture.html#conjugate-prior-for-poisson",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-inference-vs-bayesian-workflow1",
+    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-inference-vs-bayesian-workflow1",
     "title": "Bayesian Inference",
-    "section": "Conjugate Prior for Poisson",
-    "text": "Conjugate Prior for Poisson\n\n\nThe likelihood has a form of \\(\\lambda^{a} e^{-b\\lambda}\\) so we expect the conjugate prior to be of the same form\nGamma PDF satisfied this condition: \\(f(\\lambda) \\propto \\lambda^{\\alpha - 1} e^{-\\beta\\lambda}\\)\nMatching up the exponents, we can interpret \\((\\alpha - 1)\\) as the total number of incidents \\(\\sum y_i\\) out of \\(\\beta\\) prior observations\nFull Gamma density is \\(\\text{Gamma}(\\lambda|\\alpha,\\beta)=\\frac{\\beta^{\\alpha}}   {\\Gamma(\\alpha)} \\, \\lambda^{\\alpha - 1}e^{-\\beta \\, \\lambda}\\) for \\(\\lambda, \\alpha, \\beta \\in \\mathbb{R}^+\\) \\[\n\\begin{equation}\n\\begin{split}\n\\E(\\lambda) & = \\frac{\\alpha}{\\beta} \\\\\n\\text{Mode}(\\lambda) & = \\frac{\\alpha - 1}{\\beta} \\;\\; \\text{ for } \\alpha \\ge 1 \\\\\n\\V(\\lambda) & = \\frac{\\alpha}{\\beta^2} \\\\\n\\end{split}\n\\end{equation}\n\\]\nWhen \\(\\alpha = 1\\), \\(\\lambda \\sim \\text{Dist}(\\beta)\\). What is \\(\\text{Dist}\\)? Work in pairs."
+    "section": "Bayesian Inference vs Bayesian Workflow1",
+    "text": "Bayesian Inference vs Bayesian Workflow1\n\n\n\n\nBayesian inference is concerned with computing \\(f(\\theta \\mid y) \\propto f(\\theta) f(y \\mid \\theta)\\)\nBayesian workflow covers all aspects of data analysis:\n\nGather prior information\nBuild the initial model\nRun an inference algorithm (Bayesian inference)\nAdd model complexity, try a different model, perform model selection\nMake a decision\n\n\n\n\n\n\n\n\n\n\n\n\n\nGelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., Kennedy, L., Gabry, J., Bürkner, P.-C., & Modrák, M. (2020). Bayesian Workflow. arXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#visualizing-gamma",
-    "href": "bayes-course/03-lecture/03-lecture.html#visualizing-gamma",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#why-do-we-need-workflow",
+    "href": "bayes-course/02-lecture/02-lecture.html#why-do-we-need-workflow",
     "title": "Bayesian Inference",
-    "section": "Visualizing Gamma",
-    "text": "Visualizing Gamma\n\n\nNotice that variance, mean, and mode are increasing with \\(\\alpha\\)"
+    "section": "Why do we need workflow",
+    "text": "Why do we need workflow\n\n\n\n\nFollowing the principle of engineering, we start with a simple model\nIt will likely fit the data (no guarantees) and will not take too long to run\nThe simple model will likely not be very good, but now we:\n\nHave a straw man against which better models can be evaluated\nCan code the full cycle of data selection, model build, model test, and model diagnostics\n\nWe gradually add components and rerun the tests\nIf data are large, we can subsample the data to test our model\n\n\n\n\n\n\n\n\n\n\nWe want to compare models as we add features\nWe calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#gamma-posterior",
-    "href": "bayes-course/03-lecture/03-lecture.html#gamma-posterior",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#on-with-the-show",
+    "href": "bayes-course/02-lecture/02-lecture.html#on-with-the-show",
     "title": "Bayesian Inference",
-    "section": "Gamma Posterior",
-    "text": "Gamma Posterior\n\n\nPrior is \\(f(\\lambda) \\propto \\lambda^{\\alpha - 1} e^{-\\beta\\lambda}\\)\nLikelihood is \\(f(y | \\lambda) \\propto \\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda}\\) \\[\n\\begin{eqnarray}\nf(\\lambda \\mid y) & \\propto & \\text{prior} \\cdot \\text{likelihood} \\\\\n& = & \\lambda^{\\alpha - 1} e^{-\\beta\\lambda} \\cdot  \\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda} \\\\\n& = & \\lambda^{\\alpha + \\sum_{i=1}^{n} y_i - 1} \\cdot e^{-\\beta\\lambda - n\\lambda} \\\\\n& = & \\lambda^{\\color{red}{\\alpha + \\sum_{i=1}^{n} y_i} - 1} \\cdot e^{-\\color{red}{(\\beta + n)} \\lambda} \\\\\nf(\\lambda \\mid y) & = & \\text{Gamma}\\left( \\alpha + \\sum_{i=1}^{n} y_i, \\, \\beta + n \\right)\n\\end{eqnarray}\n\\]\nAs before, we can match the Gamma kernel without doing the integration"
+    "section": "On with the show…",
+    "text": "On with the show…\n\n\n\n\nLast time, we presented the discretized version of the prior\nIn practice, we are typically working in continuous space\nIn general, the prior model can be arbitrarily complex\nThere is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior\nThis is called conjugacy\nIn practice, we seldom rely on conjugate relationships\nBeta distribution is conjugate to Binomial"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#checking-the-constant",
-    "href": "bayes-course/03-lecture/03-lecture.html#checking-the-constant",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
+    "href": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
     "title": "Bayesian Inference",
-    "section": "Checking the Constant",
-    "text": "Checking the Constant\n\n\nGamma prior integration constant: \\(\\frac{\\beta^{\\alpha}}{\\Gamma(\\alpha)}\\)\nThe posterior kernel integration constant is the reciprocal of: \\(\\frac{\\Gamma(\\alpha + \\sum y_i)}{(\\beta + n)^{\\alpha + \\sum y_i}}\\). Why?\nWe can sanity check this in SymPy, by integrating \\(\\lambda^{\\color{red}{\\alpha + \\sum_{i=1}^{n} y_i} - 1} \\cdot e^{-\\color{red}{(\\beta + n)} \\lambda}\\), and letting \\(t = \\sum y_i\\)\n\n\n\n\nfrom sympy import *\na, b = symbols('a b', positive=True)\nt, n = symbols('t n', positive=True, integer=True)\nλ    = symbols('λ', nonnegative=True)\nexpr = λ**(t + a - 1) * exp(-(n + b) * λ)\nresult = simplify(integrate(expr, (λ, 0, oo)))\n\n\\[\\left(b + n\\right)^{- a - t} \\Gamma\\left(a + t\\right)\\]"
+    "section": "Introducing Beta",
+    "text": "Introducing Beta\n\n\n\n\nBeta distribution has the following functional form for \\(\\alpha &gt; 0, \\, \\beta &gt; 0, \\, \\theta \\in (0, 1)\\) \\[\n\\begin{eqnarray}\n\\text{Beta}(\\theta \\mid \\alpha,\\beta) & = &\n\\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta^{\\alpha - 1} \\, (1 -\n\\theta)^{\\beta - 1} \\\\\n\\text{B}(a,b) \\ & = & \\ \\int_0^1 u^{a - 1} (1 - u)^{b - 1} \\,\n\\text{d}u \\ \\\\\n& = & \\ \\frac{\\Gamma(a) \\, \\Gamma(b)}{\\Gamma(a+b)} \\\\\n\\Gamma(x) & = &\n\\int_0^{\\infty} u^{x - 1} \\exp(-u) \\, \\text{d}u\n\\end{eqnarray}\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nfactorial(0:9)\n\n [1]      1      1      2      6     24    120    720   5040  40320 362880\n\ngamma(1:10)\n\n [1]      1      1      2      6     24    120    720   5040  40320 362880\n\n\n\n\n\n\nFor positive integrers \\(n\\): \\(\\, \\Gamma(n+1) = n!\\) and in general \\(\\Gamma(z + 1) = z \\Gamma(z)\\)\n\\(\\text{Beta}(1, 1)\\) is equivalent to \\(\\text{Unif(0, 1)}\\). Why? (work it out)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#posterior-mean-and-variance",
-    "href": "bayes-course/03-lecture/03-lecture.html#posterior-mean-and-variance",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
+    "href": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
     "title": "Bayesian Inference",
-    "section": "Posterior Mean and Variance",
-    "text": "Posterior Mean and Variance\nPosterior mean and variance follow from the updated prior mean and variance:\n\n\\[\n\\begin{eqnarray}\n\\E(\\lambda \\mid y) &=& \\frac{\\alpha'}{\\beta'} = \\frac{\\alpha + \\sum_{i=1}^{n} y_i}{\\beta + n} \\\\\n\\V(\\lambda \\mid y) &=& \\frac{\\alpha'}{(\\beta')^2} = \\frac{\\alpha + \\sum_{i=1}^{n} y_i}{(\\beta + n)^2}\n\\end{eqnarray}\n\\]"
+    "section": "Visualizing Beta",
+    "text": "Visualizing Beta\n\n\nThe mode of Beta, \\(\\text{Mode}(\\theta) = \\argmax_\\theta \\text{Beta}(\\theta \\mid \\alpha, \\beta)\\) is shown in red and the function maximum in blue"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks",
-    "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#expectations",
+    "href": "bayes-course/02-lecture/02-lecture.html#expectations",
     "title": "Bayesian Inference",
-    "section": "Prussian Army Hourse Kicks",
-    "text": "Prussian Army Hourse Kicks\n\n\nFrom 1875 to 1894, there were 14 different cavalry corps\nEach reported a number of deaths by horse kick every year\nThere are 20 years x 14 corps making 280 observations\n\n\n\n\nlibrary(gt)\nd &lt;- vroom::vroom(\"data/horsekicks.csv\")\nd |&gt; filter(Year &lt; 1883) |&gt; gt()\n\n\n\n\n\n\n\nYear\nGC\nC1\nC2\nC3\nC4\nC5\nC6\nC7\nC8\nC9\nC10\nC11\nC14\nC15\n\n\n\n\n1875\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n1\n0\n\n\n1876\n2\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n1\n1\n\n\n1877\n2\n0\n0\n0\n0\n0\n1\n1\n0\n0\n1\n0\n2\n0\n\n\n1878\n1\n2\n2\n1\n1\n0\n0\n0\n0\n0\n1\n0\n1\n0\n\n\n1879\n0\n0\n0\n1\n1\n2\n2\n0\n1\n0\n0\n2\n1\n0\n\n\n1880\n0\n3\n2\n1\n1\n1\n0\n0\n0\n2\n1\n4\n3\n0\n\n\n1881\n1\n0\n0\n2\n1\n0\n0\n1\n0\n1\n0\n0\n0\n0\n\n\n1882\n1\n2\n0\n0\n0\n0\n1\n0\n1\n1\n2\n1\n4\n1"
+    "section": "Expectations",
+    "text": "Expectations\n\n\nRecall the definition of expectations for continuous random variables\nWe often write \\(\\mu\\) or \\(\\mu_X\\) for expected value of \\(X\\) \\[\n\\mu_X = \\E(X) = \\int x \\cdot f(x) \\, \\text{d}x\n\\]\nVariance is a type of expectation, which we often denote by \\(\\sigma^2\\) \\[\n\\sigma_X = \\V(X) = \\E(X - \\mu)^2 = \\int (X - \\mu)^2 f(x) \\, \\text{d}x\n\\]\nIt is often more convenient to write the variance as \\[\n\\V(X) = \\E(X^2) - \\mu^2\n\\]"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-1",
-    "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-1",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
+    "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
     "title": "Bayesian Inference",
-    "section": "Prussian Army Hourse Kicks",
-    "text": "Prussian Army Hourse Kicks\n\n\n# this flattens the data frame into a vector\ndd &lt;- unlist(d[, -1]) \np &lt;- ggplot(aes(y), data = data.frame(y = dd))\np1 &lt;- p + geom_histogram() +\n  xlab(\"Number of deaths reported\") + ylab(\"\") +\n  ggtitle(\"Total reported counts of deaths\")\np2 &lt;- p + geom_histogram(aes(y = ..count../sum(..count..))) +\n  xlab(\"Number of deaths reported\") + ylab(\"\") +\n  ggtitle(\"Proportion of reported counts of deaths\")\ngrid.arrange(p1, p2, nrow = 1)"
+    "section": "What to expect from Beta",
+    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial:\n\n\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, \\text{d}\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, \\text{d}\\theta \\\\\n\\end{eqnarray}\n\\]\n\n\n\\[\n\\begin{eqnarray}\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}\n\\end{eqnarray}\n\\]\n\n\n\nWhat is the value of \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using SymPy"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-2",
-    "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-2",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
+    "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
     "title": "Bayesian Inference",
-    "section": "Prussian Army Hourse Kicks",
-    "text": "Prussian Army Hourse Kicks\n\nPrior and PosteriorPlots\n\n\n\n\nLet’s assume that before seeing the data, your friend told you that last year, in 1874, there were no deaths reported in his corps\nThat would imply \\(\\beta = 1\\) and \\(\\alpha - 1 = 0\\) or \\(\\alpha = 1\\)\nThe prior on lambda would therefore be \\(\\text{Gamma}(1, 1)\\)\n\n\n\nN &lt;- length(dd)\nsum_yi &lt;- sum(dd)\ny_bar &lt;- sum_yi/N\ncat(\"Total number of observations N =\", N)\n\nTotal number of observations N = 280\n\ncat(\"Total number of deaths =\", sum_yi)\n\nTotal number of deaths = 196\n\ncat(\"Average number of deaths =\", y_bar)\n\nAverage number of deaths = 0.7\n\n\n\n\nThe posterior is \\(\\text{Gamma}\\left( \\alpha + \\sum y_i, \\, \\beta + N \\right) = \\text{Gamma}(197, \\, 281)\\)"
+    "section": "What to expect from Beta",
+    "text": "What to expect from Beta\n\n\nWe can find the mode of this distribution by taking the log, differentiating with respect to \\(\\theta\\), and setting the derivative function to zero \\[\n\\begin{eqnarray}\n\\E(\\theta) & = & \\frac{\\alpha}{\\alpha + \\beta} \\\\\n\\text{Mode}(\\theta) & = & \\frac{\\alpha - 1}{\\alpha + \\beta - 2} \\;\\; \\text{ when } \\; \\alpha, \\beta &gt; 1. \\\\\n\\end{eqnarray}\n\\]\nThe variance of \\(\\theta\\) can be derived using the definition of the variance operator \\[\n\\begin{eqnarray}\n\\V(\\theta) & = & \\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}\n\\end{eqnarray}\n\\]\nNotice when \\(\\alpha = \\beta\\), \\(\\E(\\theta) = \\text{Mode}(\\theta)\\)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#likelihood-dominates",
-    "href": "bayes-course/03-lecture/03-lecture.html#likelihood-dominates",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa",
+    "href": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa",
     "title": "Bayesian Inference",
-    "section": "Likelihood Dominates",
-    "text": "Likelihood Dominates\n\n\n\n\nWith so much data relative to prior observations, the likelihood completely dominates the prior\n\n\n\n\nplot_gamma_poisson(1, 1, sum_y = sum_yi, n = N) + \n  xlim(0, 3)\n\n\n\n\n\n\n\n\n\n\n\n\nmean_post &lt;- (1 + sum_yi) / (1 + N) \nsd_post &lt;- sqrt((1 + sum_yi) / (1 + N)^2) \ncat(\"Posterior mean =\", mean_post |&gt; round(3))\n\nPosterior mean = 0.701\n\ncat(\"Average rate =\", y_bar)\n\nAverage rate = 0.7\n\ncat(\"Posterior sd =\", sd_post |&gt; round(3))\n\nPosterior sd = 0.05"
+    "section": "Example: Placenta Previa",
+    "text": "Example: Placenta Previa\n\n\n\n\nWe borrow an example from BDA3: the probability of girl birth given placenta previa (PP)\nPlacenta previa is a condition when the placenta completely or partially covers the opening of the uterus\nA PP study in Germany found that out of 980 births, 437 or \\(\\approx 45\\%\\) were female\nSex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%1\nOur task is to assess the evidence for \\(\\P(\\text{ratio} &lt; .485 \\mid \\text{PP})\\)\n\n\n\n\n\n\n\n\n\nGelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#checking-the-fit",
-    "href": "bayes-course/03-lecture/03-lecture.html#checking-the-fit",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#biomomial-likelihood",
+    "href": "bayes-course/02-lecture/02-lecture.html#biomomial-likelihood",
     "title": "Bayesian Inference",
-    "section": "Checking the Fit",
-    "text": "Checking the Fit\n\n\nWe can plug the posterior mean for \\(\\lambda\\) into the Poisson PMF\n\n\n\n\nmean_post &lt;- (1 + sum_yi) / (1 + N)\ndeaths &lt;- 0:4\npred &lt;- dpois(deaths, lambda = mean_post)\nactual &lt;- as.numeric(table(dd) / N)"
+    "section": "Biomomial Likelihood",
+    "text": "Biomomial Likelihood\n\n\nRecall that Likelihood is the function of the parameter \\(\\theta\\), assuming \\(\\theta \\in [0,1]\\) \\[\n\\text{Bin}(y \\mid \\theta) = \\binom{N}{y}\n\\theta^y (1 - \\theta)^{N - y} \\propto \\theta^y (1 - \\theta)^{N - y}\n\\]\nAssuming \\(N = 10\\), the likelihood for \\(\\theta\\), given a few possible values of \\(y\\) successes"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#adding-exposure",
-    "href": "bayes-course/03-lecture/03-lecture.html#adding-exposure",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
+    "href": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
     "title": "Bayesian Inference",
-    "section": "Adding Exposure",
-    "text": "Adding Exposure\n\n\nPoisson likelihood seems to work well for these data\nIt is likely that each of the 16 corps had about the same number of soldier-horses, a common military practice\nSuppose each corps has a different number of cavalrymen\nWe need to introduce an exposure variable \\(x_i\\) for each corps unit \\[\n\\begin{eqnarray}\ny_i & \\sim & \\text{Poisson}(x_i \\lambda)\\\\\n\\lambda & \\sim & \\text{Gamma}(\\alpha, \\beta) \\\\\nf(y \\mid \\lambda) & \\propto & \\lambda^{\\sum_{i=1}^{n} y_i}e^{- (\\sum_{i=1}^{n} x_i) \\lambda} \\\\\nf(\\lambda \\mid y) & = & \\text{Gamma} \\left( \\alpha + \\sum_{i=1}^{n} y_i, \\, \\beta + \\sum_{i=1}^{n} x_i \\right)\n\\end{eqnarray}\n\\]"
+    "section": "Deriving the Posterior Distribution",
+    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\n\\(f(\\theta)\\): \\(\\alpha - 1\\) prior successes and \\(\\beta - 1\\) prior failures\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using SymPy"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-pdf",
-    "href": "bayes-course/03-lecture/03-lecture.html#normal-pdf",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
+    "href": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
     "title": "Bayesian Inference",
-    "section": "Normal PDF",
-    "text": "Normal PDF\n\n\nThe last conjugate distribution we will introduce is Normal\nWe will only consider a somewhat unrealistic case of known variance \\(\\sigma \\in \\mathbb{R}^+\\) and unknown mean \\(\\mu \\in \\mathbb{R}\\)\nNormal PDF is for one observation \\(y\\) is given by: \\[\n\\begin{eqnarray}\n\\text{Normal}(y \\mid \\mu,\\sigma) & = &\\frac{1}{\\sqrt{2 \\pi} \\\n\\sigma} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y - \\mu}{\\sigma} \\right)^2     \\right) \\\\\n\\E(Y) & = & \\text{ Mode}(Y) = \\mu \\\\\n\\V(Y) & = & \\sigma^2 \\\\\n\\end{eqnarray}\n\\]"
+    "section": "Posterior Expectations",
+    "text": "Posterior Expectations\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\n\nNote that the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid y) = \\E(\\theta \\mid y)\\), when \\(\\alpha = \\beta\\)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-pdf-1",
-    "href": "bayes-course/03-lecture/03-lecture.html#normal-pdf-1",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate-example",
+    "href": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate-example",
     "title": "Bayesian Inference",
-    "section": "Normal PDF",
-    "text": "Normal PDF\n\n\nNormal arises when many independent small contributions are added up\nIt is a limiting distribution of means of an arbitrary distribution\n\n\n\n\n\nplot_xbar &lt;- function(n_repl, n_samples) {\n  x &lt;- seq(0.6, 1.4, len = 100)\n  xbar &lt;- replicate(n_repl, \n                    mean(rexp(n_samples, rate = 1)))\n  mu &lt;- dnorm(x, mean = 1, sd = 1/sqrt(n_samples))\n  p &lt;- ggplot(aes(x = xbar), \n              data = tibble(xbar))\n  p + geom_histogram(aes(y = ..density..), \n                     bins = 30, alpha = 0.6) +\n    geom_line(aes(x = x, y = mu), \n              color = 'red', \n              linewidth = 0.3, \n              data = tibble(x, y)) +\n    ylab(\"\") + theme(axis.text.y = element_blank())\n}\n\np1 &lt;- plot_xbar(1e4, 100) + \n  ggtitle(\"Sampling means from rexp(100, 1)\")\np2 &lt;- plot_xbar(1e4, 300) + \n  ggtitle(\"Sampling means from rexp(300, 1)\")\ngrid.arrange(p1, p2, nrow = 2)"
+    "section": "Variance Reduction Rate Example",
+    "text": "Variance Reduction Rate Example\n\npost_var &lt;- function(a, b, y, n) {\n  ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))\n}\nn &lt;- seq(10, 500, by = 2)\ny &lt;- n/2 # keep success rate at 1/2\npv &lt;- post_var(a = 1, b = 1, y = y, n = n)\npsd &lt;- sqrt(pv)\nggplot(aes(n, psd), data = data.frame(n, psd)) +\n  geom_line() + ylab(\"Posterior SD\")"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#joint-normal-likelihood",
-    "href": "bayes-course/03-lecture/03-lecture.html#joint-normal-likelihood",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
+    "href": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
     "title": "Bayesian Inference",
-    "section": "Joint Normal Likelihood",
-    "text": "Joint Normal Likelihood\n\n\nAfter observing data \\(y\\), we can compute the joint normal likelihood, assuming \\(\\sigma\\) is known \\[\n\\begin{eqnarray}\nf(y \\mid \\mu) & = & \\prod_{i=1}^{n}\\frac{1}{\\sqrt{2 \\pi} \\\n\\sigma} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y_i - \\mu}{\\sigma} \\right)^2     \\right) \\\\\n& \\propto & \\prod_{i=1}^{n} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y_i - \\mu}{\\sigma} \\right)^2 \\right) \\\\  \n& = & \\exp \\left( {-\\frac{\\sum_{i=1}^n(y_i-\\mu)^2}{2\\sigma^2}}\\right) \\\\\n&\\propto& \\exp\\left({-\\frac{(\\bar{y}-\\mu)^2}{2\\sigma^2/n}}\\right)\n\\end{eqnarray}\n\\]\nThe last line is derived by expanding the square and dropping terms that don’t depend on \\(\\mu\\); \\(\\bar{y} = \\frac{1}{n} \\sum_{i=1}^{n} y_i\\)\nExpansion: \\(\\sum_{i=1}^n (y_i - \\mu)^2 = \\sum_{i=1}^n \\left[(y_i - \\bar{y}) + (\\bar{y} - \\mu)\\right]^2\\)"
+    "section": "Example: Placenta Previa",
+    "text": "Example: Placenta Previa\n\n\nLet’s derive the analytical posterior and compare it with the samples from the posterior distribution\nFirst, we will consider the uniform \\(\\text{Beta}(1, 1)\\) prior\nWe are told that data are \\(N = 980\\) and \\(y = 437\\) female births\nThe posterior is \\(\\text{Beta}(1 + 437, 1 + 980 - 437) = \\text{Beta}(438, 544)\\)\n\\(\\E(\\theta \\mid Y=437) = \\frac{\\alpha + 437}{\\alpha + \\beta + 980} = \\frac{438}{982} \\approx 0.446\\)\n\\(\\sqrt{\\V(\\theta \\mid Y=y)} \\approx\\) 0.016\n\n\n\nint &lt;- 0.95; l &lt;- (1 - int)/2; u &lt;- 1 - l\nupper &lt;- qbeta(u, 438, 544) |&gt; round(3)\nlower &lt;- qbeta(l, 438, 544) |&gt; round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.415, 0.477]\n\nevent_prob &lt;- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 438, shape2 = 544)[[1]]\ncat(\"Probability that the ratio &lt; 0.485 under uniform prior =\", round(event_prob, 3))\n\nProbability that the ratio &lt; 0.485 under uniform prior = 0.993\n\npbeta(0.485, shape1 = 438, shape2 = 544) |&gt; round(3)\n\n[1] 0.993"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-prior",
-    "href": "bayes-course/03-lecture/03-lecture.html#normal-prior",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
+    "href": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
     "title": "Bayesian Inference",
-    "section": "Normal Prior",
-    "text": "Normal Prior\n\n\nWe can now define the prior on \\(\\mu\\)\nWe will choose \\(\\mu\\) to be normal: \\(\\mu \\sim \\text{Normal}(\\theta, \\tau^2)\\) \\[\n\\begin{eqnarray}\nf(\\mu \\mid \\theta, \\tau) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{\\mu - \\theta}{\\tau} \\right)^2 \\right) \\\\\n\\end{eqnarray}\n\\]"
+    "section": "Obtaining Quantiles by Sampling",
+    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws &lt;- rbeta(n = 1e5, 438, 544)\np &lt;- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |&gt; round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio &lt; 0.485 under uniform prior =\", mean(draws &lt; 0.485) |&gt; round(3))\n\nProbability that the ratio &lt; 0.485 under uniform prior = 0.993"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-posterior",
-    "href": "bayes-course/03-lecture/03-lecture.html#normal-posterior",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#population-priors",
+    "href": "bayes-course/02-lecture/02-lecture.html#population-priors",
     "title": "Bayesian Inference",
-    "section": "Normal Posterior",
-    "text": "Normal Posterior\n\nFor one observation \\(y\\):\n\n\\[\n\\begin{eqnarray}\nf(y \\mid \\mu) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y - \\mu}{\\sigma} \\right)^2 \\right) \\\\\nf(\\mu) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{\\mu - \\theta}{\\tau} \\right)^2 \\right) \\\\\nf(\\mu \\mid y) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{\\mu - \\theta}{\\tau} \\right)^2 - \\frac{1}{2} \\left(  \\frac{y - \\mu}{\\sigma} \\right)^2 \\right) \\\\\n& = & \\exp \\left( -\\frac{1}{2} \\left(  \\frac{(\\mu - \\theta)^2}{\\tau^2} + \\frac{(y - \\mu)^2}{\\sigma^2} \\right)\\right) \\\\\n& = &  \\exp \\left(  -\\frac{1}{2\\tau_1^2} \\left( \\mu - \\mu_1 \\right)^2    \\right)\n\\end{eqnarray}\n\\]"
+    "section": "Population Priors",
+    "text": "Population Priors\n\n\n\n\nWhat priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?\nWe know that the population mean is 0.485 and the standard deviation is about 0.01\nBack out the parameters of the population Beta distribution\n\n\n\n\\[\n\\begin{eqnarray}\n\\begin{cases}\n\\frac{\\alpha}{\\alpha + \\beta} & = & 0.485 \\\\\n\\sqrt{\\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}} & = & 0.01\n\\end{cases}\n\\end{eqnarray}\n\\]\n\n\n\n\\(\\alpha \\approx 1211\\) and \\(\\beta \\approx 1286\\)\n\n\n\n\n\nCheck the result with the simulation\n\n\n\n\nx &lt;- rbeta(1e4, 1211, 1286)\nmean(x) |&gt; round(3)\n\n[1] 0.485\n\nsd(x) |&gt; round(3)\n\n[1] 0.01\n\n\n\n\n\nWe can let Mathematica do the algebra"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-posterior-1",
-    "href": "bayes-course/03-lecture/03-lecture.html#normal-posterior-1",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-with-population-priors",
+    "href": "bayes-course/02-lecture/02-lecture.html#posterior-with-population-priors",
     "title": "Bayesian Inference",
-    "section": "Normal Posterior",
-    "text": "Normal Posterior\n\nFor one observation: \\[\n\\begin{eqnarray}\nf(\\mu \\mid y) &\\propto& \\exp \\left(  -\\frac{1}{2\\tau_1^2} \\left( \\mu - \\mu_1 \\right)^2    \\right) \\text{ i.e. } \\mu \\mid y \\sim \\text{Normal}(\\mu_1, \\tau_1) \\\\\n\\mu_1 &=& \\frac{\\frac{1}{\\tau^2} \\theta + \\frac{1}{\\sigma^2} y}{\\frac{1}{\\tau^2} + \\frac{1}{\\sigma^2}} \\\\\n\\frac{1}{\\tau_1^2} &=& \\frac{1}{\\tau^2} + \\frac{1}{\\sigma^2}\n\\end{eqnarray}\n\\]\nFor multiple observations: \\[\n\\mu_1 = \\frac{\\frac{1}{\\tau^2} \\theta + \\frac{n}{\\sigma^2} \\overline{y}}{\\frac{1}{\\tau^2} + \\frac{n}{\\sigma^2}} \\\\\n\\frac{1}{\\tau_1^2} = \\frac{1}{\\tau^2} + \\frac{n}{\\sigma^2}\n\\]"
+    "section": "Posterior with Population Priors",
+    "text": "Posterior with Population Priors\n\n\n\\(f(\\theta | y) = \\text{Beta}(1211 + 437, 1286 + 543) = \\text{Beta}(1648,1829)\\)\nWe can compare the prior and posterior using summarize_beta_binomial() in the bayesrules package\n\n\n\nlibrary(bayesrules)\nsummarize_beta_binomial(alpha = 1211, beta = 1286, y = 437, n = 980)\n\n      model alpha beta      mean      mode          var          sd\n1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489\n2 posterior  1648 1829 0.4739718 0.4739568 7.168560e-05 0.008466735\n\n\n\n\n\nint &lt;- 0.95; l &lt;- (1 - int)/2; u &lt;- 1 - l\nupper &lt;- qbeta(u, 1648, 1829) |&gt; round(3)\nlower &lt;- qbeta(l, 1648, 1829) |&gt; round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.457, 0.491]\n\n\n\n\n\nevent_prob &lt;- pbeta(0.485, shape1 = 1648, shape2 = 1829)\ncat(\"Probability that the ratio &lt; 0.485 under population prior =\", round(event_prob, 3))\n\nProbability that the ratio &lt; 0.485 under population prior = 0.904\n\n\n\n\nUnder uniform prior 95% posterior interval was [0.415, 0.477]\nAnd probability that the ratio &lt; 0.485 under uniform prior = 0.993"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#posterior-simulation",
-    "href": "bayes-course/03-lecture/03-lecture.html#posterior-simulation",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
+    "href": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
     "title": "Bayesian Inference",
-    "section": "Posterior Simulation",
-    "text": "Posterior Simulation\n\nAriannaThe Paper\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nArianna Rosenbluth Dies at 93, The New York Times"
+    "section": "Visualizing Bayesian Rebalancing",
+    "text": "Visualizing Bayesian Rebalancing\n\n\nThe following uses \\(\\text{Beta}(5, 5)\\) prior and N = 10. Guess what color is likelihood, prior, and posterior."
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#grid-approximation",
-    "href": "bayes-course/03-lecture/03-lecture.html#grid-approximation",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
+    "href": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
     "title": "Bayesian Inference",
-    "section": "Grid approximation",
-    "text": "Grid approximation\n\n\n\n\nMost posterior distributions do not have an analytical form\nIn those cases, we must resort to sampling methods\nSampling in high dimensions requires specialized algorithms\nHere, we will look at one-dimensional sampling on a grid (of parameter values)\nAt the end of this lecture, we look at some output of a state-of-the-art HMC NUTS sampler\nNext week, we will examine the Metropolis-Hastings-Rosenbluth algorithm\n\n\n\nAn example of Gibbs sampling of a Bivariate Normal by Aki Vehtari and Markus Paasiniemi."
+    "section": "Data Order and Batch Invariance",
+    "text": "Data Order and Batch Invariance\n\n\nIn Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)\nThis is a general result, not just for Beta Binomial (see Section 4.5)\nIn practice, when we don’t have analytic posteriors, this is not so easy to do\nSuppose we observe \\(y = y_1 + y_2\\) and \\(N = N_1 + N_2\\) trials all at once\nFor all at once case, the posterior is in \\(f(\\theta \\mid y) = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\) as before\nNow, suppose we observe \\(y_1\\) successes in \\(n_1\\) trials first\nThe posterior is \\(f(\\theta \\mid y_1) = \\text{Beta}(\\alpha + y_1, \\,\\beta + N_1 - y_1)\\)\nWe now observe, \\(y_2\\) successes in \\(n_2\\) trials. The posterior is \\(f(\\theta \\mid y= y_1 + y_2) = \\text{Beta}(\\alpha + y_1 + y_2, \\,\\beta + N_1 - y_1 + N_2 - y_2)\\\\ = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#grid-approximation-1",
-    "href": "bayes-course/03-lecture/03-lecture.html#grid-approximation-1",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#general-case",
+    "href": "bayes-course/02-lecture/02-lecture.html#general-case",
     "title": "Bayesian Inference",
-    "section": "Grid approximation",
-    "text": "Grid approximation\n\n\nWe already saw how given samples from the target distribution, we could compute quantities of interest\nThe grid approach to getting samples:\n\nGenerate discreet points in parameter space \\(\\theta\\)\nDefine our likelihood function \\(f(y|\\theta)\\) and prior \\(f(\\theta)\\)\nFor each point on the grid, compute the product \\(f(y|\\theta)f(\\theta)\\)\nNormalize the product to sum to 1\nSample from the resulting distribution in proportion to the posterior probability\n\nHere, \\(\\theta\\) is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the clinical trial example.\nWhat are some limitations of this approach?"
+    "section": "General Case",
+    "text": "General Case\n\n\nSuppose we observe data point \\(y_1\\), and then data point \\(y_2\\)1\n\n\n\n\\[\n\\begin{eqnarray}\nf(\\theta \\mid y_1) &=&  \\frac{f(\\theta)f(y_1 \\mid \\theta)}{f(y_1)} \\\\\nf(\\theta \\mid y_2) &=&  \\frac{\\frac{f(\\theta)f(y_1 \\mid \\theta)}{f(y_1)} f(y_2 \\mid \\theta)}{f(y_2)} \\\\\n&=& \\frac{f(\\theta)f(y_1 \\mid \\theta) f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{eqnarray}\n\\]\n\n\n\nObserving data point \\(y_2\\), and then data point \\(y_1\\), will results in the same distribution\nWhat if we observed both points at once?\n\n\n\n\\[\n\\begin{split}\nf(\\theta \\mid y_1,y_2)\n& = \\frac{f(\\theta)f(y_1,y_2 \\mid \\theta)}{f(y_1)f(y_2)} \\\\\n& = \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{split}\n\\]\n\nThis comes directly from Bayes Rules!: 4.5 Proving data order invariance"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#back-to-the-binomial",
-    "href": "bayes-course/03-lecture/03-lecture.html#back-to-the-binomial",
+    "objectID": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
+    "href": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
     "title": "Bayesian Inference",
-    "section": "Back to the Binomial",
-    "text": "Back to the Binomial\n\nDeriving \\(f(\\theta, y)\\)R ImplementationGraphs\n\n\n\n\nFor simplicity we will assume uniform \\(\\text{Beta}(1, 1)\\) prior \\[\n\\begin{eqnarray}\nf(\\theta)f(y\\mid \\theta) &\\propto& \\theta^{a -1}(1 - \\theta)^{b-1} \\cdot \\prod_{i=1}^{n} \\theta^{y_i} (1 - \\theta)^{1 - y_i} \\\\\n&=& \\theta^0(1 - \\theta)^0 \\cdot \\prod_{i=1}^{n} \\theta^{y_i} (1 - \\theta)^{1 - y_i} \\\\\n&=& \\prod_{i=1}^{n} \\theta^{y_i} (1 - \\theta)^{1 - y_i} \\\\\n&=& \\theta^{\\sum_{i=1}^{n} y_i} \\cdot (1 - \\theta)^{\\sum_{i=1}^{n} (1- y_i)}\n\\end{eqnarray}\n\\]\nOn the log scale: \\(\\log f(\\theta, y) \\propto \\log(\\theta) \\cdot\\sum_{i=1}^{n} y_i + \\log(1 - \\theta) \\cdot\\sum_{i=1}^{n} (1-y_i)\\)\n\n\n\n\n\n\nSuppose that 3 out of 5 patients responded to treatment\nModel: \\(\\text{lp}(\\theta) = \\log(\\theta) \\cdot\\sum_{i=1}^{n} y_i + \\log(1 - \\theta) \\cdot\\sum_{i=1}^{n} (1-y_i)\\)\n\n\n\n\nlp &lt;- function(theta, data) {\n# log(theta) * sum(data$y) + log(1 - theta) * sum(1 - data$y)\n  lp &lt;- 0\n  for (i in 1:data$N) {\n    lp &lt;- lp + log(theta) * data$y[i] + log(1 - theta) * (1 - data$y[i])\n  }\n  return(lp)\n}\ndata &lt;- list(N = 5, y = c(0, 1, 1, 0, 1))\n# generate theta parameter grid\ntheta &lt;- seq(0.01, 0.99, len = 100)\n# compute log likelihood and prior for every value of the grid\nlog_lik &lt;- lp(theta, data); log_prior &lt;- log(dbeta(theta, 1, 1))\n# compute log posterior\nlog_post &lt;- log_lik + log_prior\n# convert back to the original scale and normalize\npost &lt;- exp(log_post); post &lt;- post / sum(post)\n# sample theta in proportion to the posterior probability\ndraws &lt;- sample(theta, size = 1e5, replace = TRUE, prob = post)\n\n\n\n\n\n\nFrom the first lecture, we know the posterior is \\(\\text{Beta}(1 + 3, 1 + 5 - 3) = \\text{Beta}(4, 3)\\)\nWe can compare this density to the posterior draws\n\n\n\n\nbeta_dens &lt;- dbeta(theta, 4, 3)\n(mle &lt;- sum(data$y) / data$N)\n\n[1] 0.6"
+    "section": "The myth of objectivity in science",
+    "text": "The myth of objectivity in science\n\n\nAll of science requires choices, and those choices are, by definition, subjective\nNeither Frequentist nor Bayesian inference imbues objectivity into your analysis\nAll priors are subjective, including no priors, which don’t exist (uniform prior on the real line is not “no prior”)\nRemember that important scientific discoveries were made before Statistics became a thing\nA better alternative to objective vs subjective debate:\n\n\n\n\n…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence1\n\n\n\n\nGelman, A., & Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#monte-carlo-integration-and-mcmc",
-    "href": "bayes-course/03-lecture/03-lecture.html#monte-carlo-integration-and-mcmc",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#introductions",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#introductions",
     "title": "Bayesian Inference",
-    "section": "Monte Carlo Integration and MCMC",
-    "text": "Monte Carlo Integration and MCMC\n\nIntroductionExample 1Example 2MCMC\n\n\n\n\nWe already saw a special case of MC integration\nSuppose we can draw samples from PDF \\(f\\), \\((\\theta^{(1)}, \\theta^{(2)},..., \\theta^{(N)})\\)\nIf we want to compute an expectation of some function \\(h\\): \\[\n\\begin{eqnarray}\n\\E_f[h(\\theta)] &=& \\int h(\\theta)f(\\theta)\\, d\\theta\n&\\approx& \\frac{1}{N} \\sum_{i = 1}^{N} h \\left( \\theta^{(i)} \\right)\n\\end{eqnarray}\n\\]\nThe Law of Large Numbers tells us that these approximations improve with \\(N\\)\nIn practice, the challenge is obtaining draws from \\(f\\)\nThat’s where MCMC comes in\n\n\n\n\n\n\nSuppose we want to estimate the mean and variance of standard normal\nIn case of the mean, \\(h(\\theta) := \\theta\\) and variance, \\(h(\\theta) := \\theta^2\\), and \\(f(\\theta) = \\frac{1}{\\sqrt{2 \\pi} \\ } e^{-\\theta^2/2}\\) \\[\n\\begin{eqnarray}\n\\E[\\theta] &=& \\int_{-\\infty}^{\\infty} \\theta f(\\theta)\\, d\\theta\n&\\approx& \\frac{1}{N} \\sum_{i = 1}^{N} \\theta^{(i)} \\\\\n\\E[\\theta^2] &=& \\int_{-\\infty}^{\\infty} \\theta^2 f(\\theta)\\, d\\theta &\\approx&\n\\frac{1}{N} \\sum_{i = 1}^{N} \\left( \\theta^{(i)} \\right)^2\n\\end{eqnarray}\n\\]\n\n\n\n\nN &lt;- 1e5\ntheta &lt;- rnorm(N, 0, 1)          # draw theta from N(0, 1)\n(1/N * sum(theta)) |&gt; round(2)   # E(theta),   same as mean(theta)\n\n[1] 0\n\n(1/N * sum(theta^2)) |&gt; round(2) # E(theta^2), same as mean(theta^2)\n\n[1] 1\n\n\n\n\n\n\n\nSuppose we want to estimate a CDF of Normal(0, 1) at some point \\(t\\)\nWe let \\(h(\\theta) = \\I(\\theta &lt; t)\\), where \\(\\I\\) is an indicator function that returns 1 when \\(\\theta &lt; t\\) and \\(0\\) otherwise \\[\n\\begin{eqnarray}\n\\E[h(\\theta)] = \\E[\\I(\\theta &lt; t)] &=& \\int_{-\\infty}^{\\infty} \\I(\\theta &lt; t) f(\\theta)\\, d\\theta =\n\\int_{-\\infty}^{t}f(\\theta)\\, d\\theta = \\Phi(t) \\\\\n&\\approx& \\frac{1}{N} \\sum_{i = 1}^{N} \\I(\\theta^{(i)} &lt; t) \\\\\n\\end{eqnarray}\n\\]\n\n\n\n\npnorm(1, 0, 1) |&gt; round(2)          # Evalute N(0, 1) CDF at 1\n\n[1] 0.84\n\nN &lt;- 1e5\ntheta &lt;- rnorm(N, 0, 1)             # draw theta from N(0, 1)\n(1/N * sum(theta &lt; 1)) |&gt; round(2)  # same as mean(theta &lt; 1)\n\n[1] 0.84\n\n\n\n\n\n\n\nMCMC is a very general method for computing expectations (integrals)\nIt produces dependant (autocorrelated) samples, but for a good algorithm, the dependence is manageable\nStan’s MCMC algorithm is very efficient (more on that later) and requires all parameters to be continuous (data can be discrete)\nIt solves the problem of drawing from distribution \\(f(\\theta)\\) where \\(f\\) is not one of the fundamental distributions and \\(\\theta\\) is high dimentional\nWhat is high-dimensional? Modern algorithms like NUTS can jointly sample tens of thousands and more parameters\nThat’s 10,000+ dimensional integrals of complicated functions!\n\n\n\n\n\n\nInclude an example where h(x) is an indicator function, and we want to evaluate Normal CDF at some point t."
+    "section": "Introductions",
+    "text": "Introductions\n\nWhat is the city of your birth?\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#introduction-to-stan",
-    "href": "bayes-course/03-lecture/03-lecture.html#introduction-to-stan",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie1",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie1",
     "title": "Bayesian Inference",
-    "section": "Introduction to Stan",
-    "text": "Introduction to Stan\n\n\nStan is a procedural, statically typed, Turning complete, probabilistic programming language\nStan language expresses a probabilistic model\nStan transpiler converts it to C++\nStan inference algorithms perform parameter estimation\nOur model: \\(\\text{lp}(\\theta) = \\log(\\theta) \\cdot\\sum_{i=1}^{n} y_i + \\log(1 - \\theta) \\cdot\\sum_{i=1}^{n} (1-y_i)\\)\n\n\n\n\n\n\n// 01-bernoulli.stan\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}\n\n\n\n\n\n// 02-bernoulli.stan\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  theta ~ beta(1, 1);\n  y ~ bernoulli(theta);\n}"
+    "section": "Two Truths and a Lie1",
+    "text": "Two Truths and a Lie1\n\n\n\nOne person tells three personal statements, one of which is a lie.\nOthers discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale).\nThe storyteller reveals which was the lie.\nEnter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once.\n\n\n\n\n\n\n\n\nGelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101."
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#running-stan",
-    "href": "bayes-course/03-lecture/03-lecture.html#running-stan",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie",
     "title": "Bayesian Inference",
-    "section": "Running Stan",
-    "text": "Running Stan\n\n\nlibrary(cmdstanr)\n\nm1 &lt;- cmdstan_model(\"stan/01-bernoulli.stan\") # compile the model\ndata &lt;- list(N = 5, y = c(0, 1, 1, 0, 1))\nf1 &lt;- m1$sample(       # for other options to sample, help(sample)\n  data = data,         # pass data as a list, match the vars name to Stan\n  seed = 123,          # to reproduce results, Stan does not rely on R's seed\n  chains = 4,          # total chains, the more, the better\n  parallel_chains = 4, # for multi-processor CPUs\n  refresh = 0,         # number of iterations printed on the screen\n  iter_warmup = 500,   # number of draws for warmup (per chain)\n  iter_sampling = 500  # number of draws for samples (per chain)\n)\n\nRunning MCMC with 4 parallel chains...\n\nChain 1 finished in 0.0 seconds.\nChain 2 finished in 0.0 seconds.\nChain 3 finished in 0.0 seconds.\nChain 4 finished in 0.0 seconds.\n\nAll 4 chains finished successfully.\nMean chain execution time: 0.0 seconds.\nTotal execution time: 0.3 seconds.\n\nf1$summary()\n\n# A tibble: 2 × 10\n  variable   mean median    sd   mad     q5    q95  rhat ess_bulk ess_tail\n  &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;\n1 lp__     -5.30  -5.02  0.734 0.320 -6.82  -4.78   1.00     800.    1024.\n2 theta     0.566  0.577 0.173 0.187  0.273  0.833  1.01     860.     986."
+    "section": "Two Truths and a Lie",
+    "text": "Two Truths and a Lie\nhttps://tinyurl.com/two-truths-and\n\n\nWhat do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves."
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#working-with-posterior-draws",
-    "href": "bayes-course/03-lecture/03-lecture.html#working-with-posterior-draws",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#lecture-1-bayesian-workflow",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#lecture-1-bayesian-workflow",
     "title": "Bayesian Inference",
-    "section": "Working With Posterior Draws",
-    "text": "Working With Posterior Draws\n\n\n\n\nlibrary(tidybayes)\n\ndraws &lt;- gather_draws(f1, theta, lp__)\ntail(draws) # draws is a tidy long format\n\n# A tibble: 6 × 5\n# Groups:   .variable [1]\n  .chain .iteration .draw .variable .value\n   &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;\n1      4        495  1995 lp__       -4.84\n2      4        496  1996 lp__       -4.85\n3      4        497  1997 lp__       -4.83\n4      4        498  1998 lp__       -5.04\n5      4        499  1999 lp__       -4.78\n6      4        500  2000 lp__       -4.78\n\ndraws |&gt; \n  group_by(.variable) |&gt; \n  summarize(mean = mean(.value))\n\n# A tibble: 2 × 2\n  .variable   mean\n  &lt;chr&gt;      &lt;dbl&gt;\n1 lp__      -5.30 \n2 theta      0.566\n\nmedian_qi(draws, .width = 0.90)\n\n# A tibble: 2 × 7\n  .variable .value .lower .upper .width .point .interval\n  &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    \n1 lp__      -5.02  -6.82  -4.78     0.9 median qi       \n2 theta      0.577  0.273  0.833    0.9 median qi       \n\n\n\n\n\n\ndraws &lt;- spread_draws(f1, theta, lp__)\ntail(draws) # draws is a tidy wide format\n\n# A tibble: 6 × 5\n  .chain .iteration .draw theta  lp__\n   &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n1      4        495  1995 0.505 -4.84\n2      4        496  1996 0.503 -4.85\n3      4        497  1997 0.510 -4.83\n4      4        498  1998 0.436 -5.04\n5      4        499  1999 0.568 -4.78\n6      4        500  2000 0.582 -4.78\n\ntheta &lt;- seq(0.01, 0.99, len = 100)\np &lt;- ggplot(aes(theta), data = draws)\np + geom_histogram(aes(y = after_stat(density)), \n                   bins = 30, alpha = 0.6) +\n    geom_line(aes(theta, beta_dens), \n              linewidth = 0.5, color = 'red',\n              data = tibble(theta, beta_dens)) +\n  ylab(\"\") + xlab(expression(theta)) +\n  ggtitle(\"Posterior draws from Stan\")"
+    "section": "Lecture 1: Bayesian Workflow",
+    "text": "Lecture 1: Bayesian Workflow\n\n\n\n\nTwo Truths and a Lie\nStatistics vs AI/ML\nBrief history of Bayesian inference\nReview of basic probability\nIntroduction to Bayesian workflow\nBayes’s rule for events\nBinomial model and the Bayesian Crank\nOverview of the Course"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#whats-a-chain",
-    "href": "bayes-course/03-lecture/03-lecture.html#whats-a-chain",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#statistics-vs.-aiml",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#statistics-vs.-aiml",
     "title": "Bayesian Inference",
-    "section": "What’s a Chain",
-    "text": "What’s a Chain\n\nA is a sequence of random variables \\(\\{X_n\\}_{n \\geq 0}\\) defined on a state space \\(S\\) such that for all \\(n \\geq 0\\) and for any states \\(i_0, i_1, \\dots, i_{n+1} \\in S\\), the Markov property holds:\n\\[\n\\mathbb{P}(X_{n+1}=j \\mid X_0=i_0, X_{n-1}=i_{n-1}, \\dots, X_n=i_n) = \\mathbb{P}(X_{n+1}=j \\mid X_n=i)\n\\]\nThe transition probabilities are represented by a matrix \\(Q\\), where:\n\\[\nq_{ij} = \\mathbb{P}(X_{n+1} = j \\mid X_n = i)\n\\]"
+    "section": "Statistics vs. AI/ML",
+    "text": "Statistics vs. AI/ML\n⚠️ What follows is an oversimplified opinion.\n\n\n\n\nAI is great for automating tasks that humans find easy\n\nRecognizing faces, cats, and other objects\nIdentifying tumors on a radiology scan\nPlaying Chess and Go\nDriving a car\nPost ChatGPT 4: Generating coherent text/images/video, signs of reasoning\n\n\n\n\nStatistics is great at answering questions that humans find hard\n\nHow fast does a drug clear from the body?\nWhat is the expected tumor size two months after treatment?\nHow would patients respond under a different treatment?\nShould I take this drug?\nShould we (FDA/EMA/…) approve this drug?\n\n\n\n\n\n\n\nThese are speaker notes for this slide.\nYou can add multiple lines of notes. You can include bullets and not bullets And latex: \\(y = f(x)\\) \\(z = f(g)\\)\n\n\n\n“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#dynamic-simulation",
-    "href": "bayes-course/03-lecture/03-lecture.html#dynamic-simulation",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#brief-history",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#brief-history",
     "title": "Bayesian Inference",
-    "section": "Dynamic Simulation",
-    "text": "Dynamic Simulation\nMCMC Demo"
+    "section": "Brief History",
+    "text": "Brief History\nSummary of the book The Theory That Would Not Die\n\n\n\n\nThomas Bayes (1702(?) — 1761) is credited with the discovery of the “Bayes’s Rule”\nHis paper was published posthumously by Richard Price in 1763\nLaplace (1749 — 1827) independently discovered the rule and published it in 1774\nScientific context: Newton’s Principia was published in 1687\nBayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, FiveThirtyEight\n\n\n\n\n\n\n\n\n\n\nStephen Stigler gives 3:1 in favor of Nicholas Saunderson for the discovery of Bayes’s [sic] rule."
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#mcmc-diagnostics",
-    "href": "bayes-course/03-lecture/03-lecture.html#mcmc-diagnostics",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#laplaces-demon",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#laplaces-demon",
     "title": "Bayesian Inference",
-    "section": "MCMC Diagnostics",
-    "text": "MCMC Diagnostics\n\n\n\n\nIn general, you want to assess (1) the quality of the draws and (2) the quality of predictions\nThere are no guarantees in either case, but the former is easier than the latter\nThe folk theorem of statistical computing: computational problems often point to problems in the model (AG)\nWe will address the quality of the draws now and the quality of predictions later in the course\n\n\n\nExample of bad markov chains, page 283, Figure 11.3, BDA 3."
+    "section": "Laplace’s Demon",
+    "text": "Laplace’s Demon\n\n\n\nWe may regard the present state of the universe as the effect of its past and the cause of its future. An intellect which at any given moment knew all of the forces that animate nature and the mutual positions of the beings that compose it, if this intellect were vast enough to submit the data to analysis, could condense into a single formula the movement of the greatest bodies of the universe and that of the lightest atom; for such an intellect nothing could be uncertain, and the future just like the past would be present before its eyes.\n\n\n\n\n\n\n\nMarquis Pierre Simon de Laplace (1729 — 1827)\n“Uncertainty is a function of our ignorance, not a property of the world.”"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#good-chain-bad-chain",
-    "href": "bayes-course/03-lecture/03-lecture.html#good-chain-bad-chain",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#modern-examples-of-bayesian-analyses",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#modern-examples-of-bayesian-analyses",
     "title": "Bayesian Inference",
-    "section": "Good Chain Bad Chain",
-    "text": "Good Chain Bad Chain\n\nCodePlot\n\n\n\n\nlibrary(bayesplot)\ndraws &lt;- f1$draws(\"theta\")\ncolor_scheme_set(\"viridis\")\np1 &lt;- mcmc_trace(draws, pars = \"theta\") + ylab(expression(theta)) +\n  ggtitle(\"Good Chain\")\nbad_post &lt;- readRDS(\"data/bad_post.rds\")\nbad_draws &lt;- bad_post$draws(\"mu\")\np2 &lt;- mcmc_trace(bad_draws, pars = \"mu\") + ylab(expression(theta)) +\n  ggtitle(\"Bad Chain\")\ngrid.arrange(p1, p2, nrow = 2)"
+    "section": "Modern Examples of Bayesian Analyses",
+    "text": "Modern Examples of Bayesian Analyses\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLeft: Pierre Simon Laplace in the style of Wassily Kandinsky, by OpenAI DALL·E"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#effective-sample-size-and-autocorrelation",
-    "href": "bayes-course/03-lecture/03-lecture.html#effective-sample-size-and-autocorrelation",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#elasticity-of-demand-stan-with-hierarchical-model",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#elasticity-of-demand-stan-with-hierarchical-model",
     "title": "Bayesian Inference",
-    "section": "Effective Sample Size and Autocorrelation",
-    "text": "Effective Sample Size and Autocorrelation\n\nESSACF\n\n\n\n\nMCMC generates dependent draws from the target distribution\nDependent samples are less efficient as you need more of them to estimate the quantity of interest\nESS or \\(N_{eff}\\) is approximately how many independent samples you have\nTypically, \\(N_{eff} &lt; N\\) for MCMC, as there is some autocorrelation\nESS should be considered relative to \\(N\\): \\(\\frac{N_{eff}}{N}\\)\nGenerally, we don’t like to see \\(\\text{ratio} &lt; 0.10\\)\n\n\n\n\nneff_ratio(f1, pars = \"theta\") |&gt; round(2)\n\ntheta \n 0.43 \n\nneff_ratio(bad_post, pars = \"mu\") |&gt; round(2)\n\n  mu \n0.09"
+    "section": "Elasticity of Demand (Stan with Hierarchical Model)",
+    "text": "Elasticity of Demand (Stan with Hierarchical Model)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#computing-r-hat",
-    "href": "bayes-course/03-lecture/03-lecture.html#computing-r-hat",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#pharmacometrics-stan-with-odes",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#pharmacometrics-stan-with-odes",
     "title": "Bayesian Inference",
-    "section": "Computing R-Hat",
-    "text": "Computing R-Hat\n\n\nAutocorrelation assesses the quality of a single chain\nSplit R-Hat estimates the extent to which the chains are consistent with one another\nIt does it by assessing the mixing of chains by comparing variances within and between chains (technically sequences, as chains are split up) \\[\n\\begin{eqnarray}\n\\hat{R} = \\sqrt{\\frac{\\frac{n-1}{n}\\V_W + \\frac{1}{n}\\V_B}{\\V_W}} = \\sqrt{\\frac{\\V_{\\text{total}}}{\\V_{W}}}\n\\end{eqnarray}\n\\]\n\\(\\V_W\\) is within chain variance and \\(\\V_B\\) is between chain variance\nWe don’t like to see R-hats greater than 1.02 and really don’t like them greater than 1.05\n\n\n\n\nbayesplot::rhat(f1, pars = \"theta\") |&gt; round(3)\n\ntheta \n1.006 \n\nbayesplot::rhat(bad_post, pars = \"sigma\")  |&gt; round(3)\n\nsigma \n1.043"
+    "section": "Pharmacometrics (Stan with ODEs)",
+    "text": "Pharmacometrics (Stan with ODEs)"
   },
   {
-    "objectID": "bayes-course/03-lecture/03-lecture.html#stan-homework",
-    "href": "bayes-course/03-lecture/03-lecture.html#stan-homework",
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#nonparametric-bayes-stan-with-gps",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#nonparametric-bayes-stan-with-gps",
     "title": "Bayesian Inference",
-    "section": "Stan Homework",
-    "text": "Stan Homework\n\nModify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e. using target +=)\nModify the program to account for an arbitrary Beta(a, b) distribution\nVerify that you got the right result in #1 by a) comparing Stan’s posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown here; c) modifying the R code to get a third point of comparison.\n\n\nHint: For #2, pass parameters a and b in the data block\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}"
+    "section": "Nonparametric Bayes (Stan with GPs)",
+    "text": "Nonparametric Bayes (Stan with GPs)\n\n\nTimonen, J., Mannerström, H., Vehtari, A., & Lähdesmäki, H. (2021). lgpr: An interpretable non-parametric method for inferring covariate effects from longitudinal data. Bioinformatics, 37(13), 1860–1867. https://doi.org/10.1093/bioinformatics/btab021"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#review-of-probability",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#review-of-probability",
+    "title": "Bayesian Inference",
+    "section": "Review of Probability",
+    "text": "Review of Probability\n\n\nA set of all possible outcomes is called a sample space and denoted by \\(\\Omega\\)\nAn outcome of an experiment is denoted by \\(\\omega \\in \\Omega\\)\nWe typically denote events by capital letters, say \\(A \\subseteq \\Omega\\)\nAxioms of probability:\n\n\\(\\P(A) \\geq 0, \\, \\text{for all } A\\)\n\\(\\P(\\Omega) = 1\\)\nIf \\(A_1, A_2, A_3, \\ldots\\) are disjoint: \\(\\P(\\cup_{i=1}^{\\infty} A_i) = \\sum_{i=1}^{\\infty} \\P(A_i)\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#example",
+    "title": "Bayesian Inference",
+    "section": "Example",
+    "text": "Example\n\nRolling diceOmega\n\n\n\n\nYou roll a fair six-sided die twice\nGive an example of an \\(\\omega \\in \\Omega\\)\nHow many elements are in \\(\\Omega\\)? What is \\(\\Omega\\)?\nDefine an event \\(A\\) as the sum of the two rolls less than 11\nHow many elements are in \\(A\\)?\nWhat is \\(\\P(A)\\)?\n\n\n\n\n\n\n\n\nouter(1:6, 1:6, FUN = \"+\")\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    2    3    4    5    6    7\n[2,]    3    4    5    6    7    8\n[3,]    4    5    6    7    8    9\n[4,]    5    6    7    8    9   10\n[5,]    6    7    8    9   10   11\n[6,]    7    8    9   10   11   12\n\n\n\n\n\n\\(\\Omega\\) consists of all pairs:\n\n\\(\\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\\}\\)\n\n\n\n\n\n\nThere are 36 such pairs\n33 of those pairs result in a sum of less than 11\n\\(\\P(A) = \\frac{33}{36} = \\frac{11}{12}\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#random-variables-review",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#random-variables-review",
+    "title": "Bayesian Inference",
+    "section": "Random Variables Review",
+    "text": "Random Variables Review\n\nReviewMapping\n\n\n\n\nRandom variable is not random – it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment\nPMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)\nExpectations (Blitzstein and Hwang, Ch. 4)\nJoint Distributions (Blitzstein and Hwang, Ch. 7)\nConditional Expectations (Blitzstein and Hwang, Ch. 9)\n\n\n\n\nRandom variable X for the number of Heads in two flips"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-simulation",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#example-simulation",
+    "title": "Bayesian Inference",
+    "section": "Example Simulation",
+    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(x) expression)\n\n\n\n\n\n\ndie &lt;- 1:6\nroll &lt;- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 4 3\n\nrolls &lt;- replicate(1e4, roll(die, 2))\nrolls[, 1:8] # print first 8 columns\n\n     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]\n[1,]    6    4    1    6    6    2    5    1\n[2,]    6    5    5    3    2    1    1    3\n\nroll_sums &lt;- colSums(rolls)\nhead(roll_sums)\n\n[1] 12  9  6  9  8  3\n\nmean(roll_sums &lt; 11) \n\n[1] 0.9159\n\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y &lt; 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n &lt; 11)\\)\nIn R, roll_sums &lt; 11 creates an indicator variable\nAnd mean() does the average"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-simulation-with-purrr",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#example-simulation-with-purrr",
+    "title": "Bayesian Inference",
+    "section": "Example Simulation with purrr",
+    "text": "Example Simulation with purrr\n\n\n\n\nRoll a die twice, twenty times\n\n\n\n\nsim &lt;- purrr::map(1:20, \\(x) roll(die, 2))\nstr(sim)\n\nList of 20\n $ : int [1:2] 6 2\n $ : int [1:2] 4 4\n $ : int [1:2] 5 2\n $ : int [1:2] 6 2\n $ : int [1:2] 5 2\n $ : int [1:2] 5 1\n $ : int [1:2] 3 6\n $ : int [1:2] 3 4\n $ : int [1:2] 4 4\n $ : int [1:2] 3 2\n $ : int [1:2] 2 2\n $ : int [1:2] 5 6\n $ : int [1:2] 5 2\n $ : int [1:2] 4 2\n $ : int [1:2] 6 1\n $ : int [1:2] 4 1\n $ : int [1:2] 5 4\n $ : int [1:2] 1 2\n $ : int [1:2] 4 2\n $ : int [1:2] 3 2\n\n\n\n\n\n\nRoll a die once, twice, …., twenty times\n\n\n\n\nsim &lt;- purrr::map(1:20, \\(x) roll(die, x))\nstr(sim)\n\nList of 20\n $ : int 6\n $ : int [1:2] 4 1\n $ : int [1:3] 1 2 3\n $ : int [1:4] 1 4 5 2\n $ : int [1:5] 6 2 3 4 4\n $ : int [1:6] 5 3 4 5 4 1\n $ : int [1:7] 1 5 4 5 5 4 3\n $ : int [1:8] 1 6 5 6 4 4 3 4\n $ : int [1:9] 3 3 6 6 5 1 4 1 6\n $ : int [1:10] 1 6 5 5 3 4 5 1 3 5\n $ : int [1:11] 4 4 2 4 6 2 1 2 2 3 ...\n $ : int [1:12] 2 3 2 6 4 2 6 3 3 4 ...\n $ : int [1:13] 2 3 2 2 2 5 1 3 6 2 ...\n $ : int [1:14] 3 2 6 4 2 1 3 2 6 6 ...\n $ : int [1:15] 3 4 3 5 1 6 1 2 5 4 ...\n $ : int [1:16] 6 2 2 6 2 6 3 5 2 6 ...\n $ : int [1:17] 3 5 3 6 5 4 2 1 5 2 ...\n $ : int [1:18] 5 1 3 6 6 6 6 3 4 6 ...\n $ : int [1:19] 5 5 6 1 6 5 1 2 4 3 ...\n $ : int [1:20] 4 6 4 3 4 3 4 3 5 1 ..."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#review-of-conditional-probability",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#review-of-conditional-probability",
+    "title": "Bayesian Inference",
+    "section": "Review of Conditional Probability",
+    "text": "Review of Conditional Probability\n\n\nFor arbitrary \\(A\\) and \\(B\\), if \\(\\P(B) &gt; 0\\):\n\nConditional probability: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)}\\)\nConditional probability: \\(\\P(B \\mid A) = \\frac{\\P(AB)}{\\P(A)}\\)\n\nBayes’s rule: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)} = \\frac{\\P(B \\mid A) \\P(A)}{\\P(B)}\\)\n\\(A\\) and \\(B\\) are independent if observing \\(B\\) does not give you any more information about \\(A\\): \\(\\P(A \\mid B) = \\P(A)\\)\nAnd \\(\\P(A B) = \\P(A) \\P(B)\\) (from Bayes’s rule)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional",
+    "title": "Bayesian Inference",
+    "section": "Joint, Marginal, and Conditional",
+    "text": "Joint, Marginal, and Conditional\n\n\nTitanic carried approximately 2,200 passengers and sank on 15 April 1912\nLet \\(G: \\{m, f\\}\\) represent Gender and \\(S: \\{n, y\\}\\) represent Survival\n\n\n\n\n\nsurv &lt;- apply(Titanic, c(2, 4), sum) \nsurv_prop &lt;- round(surv / sum(surv), 3)\nbind_cols(Sex = c(\"Male\", \"Female\"), surv_prop) |&gt; \n  janitor::adorn_totals(c(\"row\", \"col\")) |&gt;\n  knitr::kable(caption = \n         \"Titanic survival proportions\")\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n\n\n\n\\(\\P(G = m \\cap S = y) =\\) 0.167\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) =\\) ??\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) = 0.323\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional-1",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional-1",
+    "title": "Bayesian Inference",
+    "section": "Joint, Marginal, and Conditional",
+    "text": "Joint, Marginal, and Conditional\n\n\n\n\nWhat is \\(\\P(G = m \\mid S = y)\\), probability of being  male given survival?\nTo compute that, we only consider the column  where Survival = Yes\n\\(\\P(G = m \\mid S = y) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(S = y)} = \\frac{0.167}{0.323} \\\\ \\approx 0.52\\)\nYou want \\(\\P(S = y \\mid G = m)\\), comparing it to \\(\\\\ \\qquad \\ \\ \\ \\ \\ \\ \\P(S = y \\mid G = f)\\)\n\\(\\P(S = y \\mid G = m) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(G = m)} = \\frac{0.167}{0.787} \\\\ \\approx 0.21\\)\n\\(\\P(S = y \\mid G = f) = \\frac{\\P(G = f \\, \\cap \\, S = y)}{\\P(G = f)} = \\frac{0.156}{0.213} \\\\ \\approx 0.73\\)\nHow would you compute \\(\\P(S = n \\mid G = m)\\)?\n\\(\\P(S = n \\mid G = m) = 1 - \\P(S = y \\mid G = m)\\)\n\n\n\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n “Untergang der Titanic”, as conceived by Willy Stöwer, 1912"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#law-of-total-probability-lotp",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#law-of-total-probability-lotp",
+    "title": "Bayesian Inference",
+    "section": "Law of Total Probability (LOTP)",
+    "text": "Law of Total Probability (LOTP)\nLet \\(A\\) be a partition of \\(\\Omega\\), so that each \\(A_i\\) is disjoint, \\(\\P(A_i &gt;0)\\), and \\(\\cup A_i = \\Omega\\). \\[\n\\P(B) = \\sum_{i=1}^{n} \\P(B \\cap A_i) = \\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)\n\\]\n\n\nImage from Blitzstein and Hwang (2019), Page 55"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#bayess-rule-for-events",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#bayess-rule-for-events",
+    "title": "Bayesian Inference",
+    "section": "Bayes’s Rule for Events",
+    "text": "Bayes’s Rule for Events\n\n\nWe can combine the definition of conditional probability with the LOTP to come up with Bayes’s rule for events, assuming \\(\\P(B) \\neq 0\\)\n\n\n\\[\n\\P(A \\mid B) = \\frac{\\P(B \\cap A)}{\\P(B)} =\n               \\frac{\\P(B \\mid A) \\P(A)}{\\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)}\n\\]\n\n\nWe typically think of \\(A\\) is some unknown we wish to learn (e.g., the status of a disease) and \\(B\\) as the data we observe (e.g., the result of a diagnostic test)\nWe call \\(\\P(A)\\) prior probability of A (e.g., how prevalent is the disease in the population)\nWe call \\(\\P(A \\mid B)\\), the posterior probability of the unknown \\(A\\) given data \\(B\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation",
+    "title": "Bayesian Inference",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\nThe idea is that we can approximate the ratio of the area of an inscribed circle, \\(A_c\\), to the area of the square, \\(A_s\\), by uniformly “throwing darts” at the square with the side \\(2r\\) and counting how many darts land inside the circle versus inside the square.\n\n\\[\n\\begin{align}\nA_{c}& = \\pi r^2 \\\\\nA_{s}& = (2r)^2 = 4r^2 \\\\\n\\frac{A_{c}}{A_{s}}& = \\frac{\\pi r^2}{4r^2} = \\frac{\\pi}{4} \\implies \\pi = \\frac{4A_{c}}{A_{s}}\n\\end{align}\n\\]"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-1",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-1",
+    "title": "Bayesian Inference",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\nTo estimate \\(\\pi\\), we perform the following simulation:\n\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\I(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\nThe numerator is a sum over an indicator function \\(\\I\\), which evaluates to \\(1\\) if the inequality holds and \\(0\\) otherwise."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-2",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-2",
+    "title": "Bayesian Inference",
+    "section": "Estimating \\(\\pi\\) by Simulation",
+    "text": "Estimating \\(\\pi\\) by Simulation\n\nCode and PlotEstimate\n\n\n\n\nn &lt;- 1e3\nx &lt;- runif(n, -1, 1); y &lt;- runif(n, -1, 1)\ninside &lt;- x^2 + y^2 &lt; 1\ndata &lt;- tibble(x, y, inside)\np &lt;- ggplot(aes(x = x, y = y), data = data)\np + geom_point(aes(color = inside)) + theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Estimated value of pi =\", 4*sum(inside) / n)\n\nEstimated value of pi = 3.16\n\n\n\n\n\n\n\n\nx\ny\ninside\n\n\n\n\n-0.8929639\n-0.5403777\nFALSE\n\n\n0.1237117\n0.0664457\nTRUE\n\n\n-0.3972574\n0.6440530\nTRUE\n\n\n-0.5569671\n-0.9873628\nFALSE\n\n\n-0.7640633\n-0.0044610\nTRUE"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-bayesian-analysis",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#example-bayesian-analysis",
+    "title": "Bayesian Inference",
+    "section": "Example Bayesian Analysis",
+    "text": "Example Bayesian Analysis\n\n\n\n\nSuppose we enrolled five people in an early cancer clinical trial\nEach person was given an active treatment\nFrom previous trials, we have some idea of historical response rates (proportion of people responding)\nAt the end of the trial, \\(Y = y \\in \\{0,1,...,5 \\}\\) people will have responded1 to the treatment\nWe are interested in estimating the probability that the response rate is greater or equal to 50%\n\n\n\n Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: RECIST 1.1 - and more\n\nPartial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#notation",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#notation",
+    "title": "Bayesian Inference",
+    "section": "Notation",
+    "text": "Notation\nGreek letters will be used for latent parameters, and English letters will be used for observables.\n\n\n\\(\\theta\\): unknowns or parameters to be estimated; could be multivariate, discrete, and continuous (your book uses \\(\\pi\\))\n\\(y\\): observations or measurements to be modelled (\\(y_1, y_2, ...\\))\n\\(\\widetilde{y}\\) : unobserved but observable quantities (in your book \\(y'\\))\n\\(x\\): covariates\n\\(f( \\theta )\\): a prior model, P[DM]F of \\(\\theta\\)\n\\(f_y(y \\mid \\theta, x)\\): an observational model, P[DM]F when it is a function of \\(y\\) (in your book: \\(f(y \\mid \\pi)\\)); we typically drop the \\(x\\) to simplify the notation.\n\\(f_{\\theta}(y \\mid \\theta)\\): is a likelihood function when it is a function of \\(\\theta\\) (in your book: \\(\\L(\\pi \\mid y)\\))\nSome people write \\(\\L(\\theta; y)\\) or simply \\(\\L(\\theta)\\)"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#general-approach",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#general-approach",
+    "title": "Bayesian Inference",
+    "section": "General Approach",
+    "text": "General Approach\n\n\nBefore observing the data, we need to specify a prior model \\(f(\\theta)\\) on all unknowns \\(\\theta\\)1\nPick a data model \\(f(y \\mid \\theta, x)\\) — this is typically more important than the prior; this includes the model for the conditional mean: \\(\\E(y \\mid x)\\)\nFor more complex models, we construct a prior predictive distribution, \\(f(y)\\)\n\nWe will define this quantity later — it will help us assess if our choice of priors makes sense on the observational scale\n\nAfter we observe data \\(y\\), we treat \\(f(y \\mid \\theta, x)\\) as the likelihood of observing \\(y\\) under all plausible values of \\(\\theta\\), conditioning on \\(x\\) if necessary\nDerive a posterior model for \\(\\theta\\), \\(\\, f(\\theta \\mid y, x)\\) using Bayes’s rule or by simulation\nEvaluate model quality: 1) quality of the inferences; 2) quality of predictions. Revise the model if necessary\nCompute all the quantities of interest from the posterior, such as event probabilities, e.g., \\(\\P(\\theta &gt; 0.5)\\), posterior predictive distribution \\(f(\\widetilde{y} \\mid y)\\), decision functions, etc.\n\n\n\nFor a more complete workflow, see Bayesian Workflow by Gelman et al. (2020)\n\nThere is always a prior, even in frequentist inference."
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-prior-model",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#example-prior-model",
+    "title": "Bayesian Inference",
+    "section": "Example Prior Model",
+    "text": "Example Prior Model\n\n\nWe will construct a prior model for our clinical trial\nFrom previous trials, we construct a discretized version of the prior distribution of the response rate\nThe most likely value for response rate is 30%\n\n\n\n\n\ndot_plot &lt;- function(x, y) {\n  p &lt;- ggplot(data.frame(x, y), aes(x, y))\n  p + geom_point(aes(x = x, y = y), size = 0.5) +\n    geom_segment(aes(x = x, y = 0, xend = x, \n                     yend = y), linewidth = 0.2) +\n    xlab(expression(theta)) + \n    ylab(expression(f(theta)))\n}\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.05, 0.45, 0.30, 0.15, 0.05)\ndot_plot(theta, prior) +\n  ggtitle(\"Prior probability of response\")\n\n\n\n\n\n\n\n\n\n\n\n\nEven though \\(\\theta\\) is a continuous parameter, we can still specify a discrete prior\nThe posterior will also be discrete and of the same cardinality"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#data-model",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#data-model",
+    "title": "Bayesian Inference",
+    "section": "Data Model",
+    "text": "Data Model\n\n\nWe consider each person’s response rate to be independent, given the treatment\nWe have a fixed number of people in the trial, \\(N = 5\\), and \\(0\\) to \\(5\\) successes\nWe will therefore consider: \\(y | \\theta \\sim \\text{Bin}(N,\\theta) = \\text{Bin}(5,\\theta)\\)\n\\(f(y \\mid \\theta) = \\text{Bin} (y \\mid 5,\\theta) = \\binom{5}{y} \\theta^y (1 - \\theta)^{5 - y}\\) for \\(y \\in \\{0,1,\\ldots,5\\}\\)\nIs this a valid probability distribution as a function of \\(y\\)?\n\n\n\nN = 5; y &lt;- 0:N; theta &lt;- 0.5\n(f_y &lt;- dbinom(x = y, size = N, prob = theta) |&gt;\n    fractions())\n\n[1] 1/32 5/32 5/16 5/16 5/32 1/32\n\nsum(dbinom(x = y, size = N, prob = theta))\n\n[1] 1"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function",
+    "title": "Bayesian Inference",
+    "section": "Likelihood Function",
+    "text": "Likelihood Function\n\n\nWe ran the trial and observed 3 out of 5 responders\nWe can now construct a likelihood function for \\(y = 3\\) as a function of \\(\\theta\\)\nLet’s check if this function is a probability distribution: \\[\nf (y) = \\int_{0}^{1} \\binom{N}{y} \\theta^y (1 - \\theta)^{N - y}\\, d\\theta = \\frac{1}{N + 1}\n\\]\n\n\n\n\ndbinom_theta &lt;- function(theta, N, y) {\n  choose(N, y) * theta^y * (1 - theta)^(N - y) \n}\nintegrate(dbinom_theta, lower = 0, upper = 1, \n          N = 5, y = 3)[[1]] |&gt; fractions()\n\n[1] 1/6\n\n\n\n\n\n\\(f(y)\\) is called marginal distribution of the data or, more aptly, prior predictive distribution\nIt tells us that prior to observing \\(y\\), all values of \\(y\\) are equally likely"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function-1",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function-1",
+    "title": "Bayesian Inference",
+    "section": "Likelihood Function",
+    "text": "Likelihood Function\n\n\n\n\n\n\n\n\n\n\nCompare with the data model:"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#compute-the-posterior",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#compute-the-posterior",
+    "title": "Bayesian Inference",
+    "section": "Compute the Posterior",
+    "text": "Compute the Posterior\n\n\n\n\nCompute the likelihood\n\n\\(\\binom{5}{3} \\theta^3 (1 - \\theta)^{2}\\) for \\(\\theta \\in \\{0.10, 0.30, 0.50, 0.70, 0.90\\}\\)\n\nMultiply the likelihood by the prior to compute the numerator\n\n\\(f(y = 3 \\mid \\theta) f(\\theta)\\)\n\nSum the numerator to get the marginal likelihood\n\n\\(f(y = 3) = \\\\ \\sum_{\\theta} f(y = 3 | \\theta) f(\\theta) \\approx 0.2\\)\n\nFinally, compute the posterior\n\n\\(f(\\theta \\mid y = 3) = \\frac{f(y = 3 \\mid \\theta) f(\\theta)}{\\sum_{\\theta} f(y = 3 | \\theta) f(\\theta)}\\)\n\n\n\n\n\n\nN &lt;- 5; y &lt;- 3\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.05, 0.45, 0.30, 0.15, 0.05)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.05\n0.01\n0.00\n0.00\n\n\n0.3\n0.45\n0.13\n0.06\n0.29\n\n\n0.5\n0.30\n0.31\n0.09\n0.46\n\n\n0.7\n0.15\n0.31\n0.05\n0.23\n\n\n0.9\n0.05\n0.07\n0.00\n0.02\n\n\nTotal\n1.00\n0.83\n0.20\n1.00"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#computing-event-probability",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#computing-event-probability",
+    "title": "Bayesian Inference",
+    "section": "Computing Event Probability",
+    "text": "Computing Event Probability\n\n\n\n\nTo compute event probabilities, we integrate (or sum) the relevant regions of the parameter space \\[\n\\P(\\theta \\geq 0.5) = \\int_{0.5}^{1} f(\\theta \\mid y) \\, d\\theta\n\\]\nIn this case, we only have discrete quantities, so we sum:\n\n\n\n\nprobs &lt;- d |&gt;\n  filter(theta &gt;= 0.50) |&gt;\n  dplyr::select(prior, post) |&gt;\n  colSums() |&gt;\n  round(2)\nprobs\n\nprior  post \n 0.50  0.71 \n\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.05\n0.01\n0.00\n0.00\n\n\n0.3\n0.45\n0.13\n0.06\n0.29\n\n\n0.5\n0.30\n0.31\n0.09\n0.46\n\n\n0.7\n0.15\n0.31\n0.05\n0.23\n\n\n0.9\n0.05\n0.07\n0.00\n0.02\n\n\nTotal\n1.00\n0.83\n0.20\n1.00\n\n\n\n\n\n\n\n\n\n\n\n\\(\\P(\\theta \\geq 0.50) =\\) 0.5 and \\(\\P(\\theta | y \\geq 0.50) =\\) 0.71"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#what-if-we-used-a-flat-prior",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#what-if-we-used-a-flat-prior",
+    "title": "Bayesian Inference",
+    "section": "What If We Used a Flat Prior?",
+    "text": "What If We Used a Flat Prior?\n\n\nFlat or uniform prior means that we consider all values of \\(\\theta\\) equality likely\n\n\n\n\nN &lt;- 5; y &lt;- 3\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.20, 0.20, 0.20, 0.20, 0.20)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.2\n0.01\n0.00\n0.01\n\n\n0.3\n0.2\n0.13\n0.03\n0.16\n\n\n0.5\n0.2\n0.31\n0.06\n0.37\n\n\n0.7\n0.2\n0.31\n0.06\n0.37\n\n\n0.9\n0.2\n0.07\n0.01\n0.09\n\n\nTotal\n1.0\n0.83\n0.17\n1.00\n\n\n\n\n\n\n\n\n\n\n\n\n\n\\(\\P(\\theta \\geq 0.50) =\\) 0.6 and \\(\\P(\\theta | y \\geq 0.50) =\\) 0.83"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#bayesian-workflow",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#bayesian-workflow",
+    "title": "Bayesian Inference",
+    "section": "Bayesian Workflow",
+    "text": "Bayesian Workflow\n\n\nGelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
+  },
+  {
+    "objectID": "bayes-course/01-lecture/01-lecture-old.html#overview-of-the-class",
+    "href": "bayes-course/01-lecture/01-lecture-old.html#overview-of-the-class",
+    "title": "Bayesian Inference",
+    "section": "Overview of the class",
+    "text": "Overview of the class\n\nSyllabus"
+  },
+  {
+    "objectID": "bayes-course.html",
+    "href": "bayes-course.html",
+    "title": "APSTA-GE 2123: Bayesian Inference",
+    "section": "",
+    "text": "This is the home of the Spring 2025 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignments will be posted on Brightspace.\nThis is the current version of the syllabus. Please check the date, as it is subject to change."
+  },
+  {
+    "objectID": "bayes-course.html#footnotes",
+    "href": "bayes-course.html#footnotes",
+    "title": "APSTA-GE 2123: Bayesian Inference",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nTo my frequentist friends: don’t take this the wrong way, I still love you! Also, see this claim from a Bayesian that Bayesians are frequentists.↩︎"
   },
   {
     "objectID": "bayes-course/01-lecture/01-lecture.html#introductions",
@@ -1190,431 +1379,263 @@
     "text": "Net Payoffs With and Without Extra Ball?"
   },
   {
-    "objectID": "bayes-course.html",
-    "href": "bayes-course.html",
-    "title": "APSTA-GE 2123: Bayesian Inference",
-    "section": "",
-    "text": "This is the home of the Spring 2025 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignments will be posted on Brightspace.\nThis is the current version of the syllabus. Please check the date, as it is subject to change."
-  },
-  {
-    "objectID": "bayes-course.html#footnotes",
-    "href": "bayes-course.html#footnotes",
-    "title": "APSTA-GE 2123: Bayesian Inference",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\nTo my frequentist friends: don’t take this the wrong way, I still love you! Also, see this claim from a Bayesian that Bayesians are frequentists.↩︎"
-  },
-  {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#introductions",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#introductions",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
+    "href": "bayes-course/03-lecture/03-lecture.html#conjugate-models-and-posterior-sampling",
     "title": "Bayesian Inference",
-    "section": "Introductions",
-    "text": "Introductions\n\nWhat is the city of your birth?\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "section": "Conjugate Models and Posterior Sampling",
+    "text": "Conjugate Models and Posterior Sampling\n\n\nGamma-Poisson family\nNormal-Normal family\nIntroduction to posterior sampling on a grid\nIntroduction to Stan\nBasic Markov Chain diagnostics\nEffective sample size\nComputing the R-Hat statistic\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie1",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie1",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#poisson",
+    "href": "bayes-course/03-lecture/03-lecture.html#poisson",
     "title": "Bayesian Inference",
-    "section": "Two Truths and a Lie1",
-    "text": "Two Truths and a Lie1\n\n\n\nOne person tells three personal statements, one of which is a lie.\nOthers discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale).\nThe storyteller reveals which was the lie.\nEnter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once.\n\n\n\n\n\n\n\n\nGelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101."
+    "section": "Poisson",
+    "text": "Poisson\n\n\nPoisson distribution arises when we are interested in counts\nIn practice, we rarely use Poisson due to its restrictive nature\nPoisson RV \\(Y\\) is paremeterized with a rate of occurance \\(\\lambda\\): \\(Y|\\lambda \\sim \\text{Pois}(\\lambda)\\)\n\\[\nf(y \\mid \\lambda) =  \\frac{e^{-\\lambda} \\lambda^y}{y!}\\;\\; \\text{ for } y \\in \\{0,1,2,\\ldots\\}\n\\]\nNotice, the Tailor series for \\(e^\\lambda = \\sum_{y=0}^{\\infty} \\frac{\\lambda^y}{y!}\\) immediately validates that \\(f\\) is a PDF\nAlso, \\(\\E(Y | \\lambda) = \\V(Y | \\lambda) = \\lambda\\), which is the restrictive case mentioned about — real count data seldom satisfied this constraint"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#two-truths-and-a-lie",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#visualizing-poission",
+    "href": "bayes-course/03-lecture/03-lecture.html#visualizing-poission",
     "title": "Bayesian Inference",
-    "section": "Two Truths and a Lie",
-    "text": "Two Truths and a Lie\nhttps://tinyurl.com/two-truths-and\n\n\nWhat do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves."
+    "section": "Visualizing Poission",
+    "text": "Visualizing Poission\n\n\nNotice that as the rate increases, so does the expected number of events as well as variance, which immediately follows from \\(\\E(Y) = \\V(Y) = \\lambda\\)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#lecture-1-bayesian-workflow",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#lecture-1-bayesian-workflow",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#example-hourse-kicks",
+    "href": "bayes-course/03-lecture/03-lecture.html#example-hourse-kicks",
     "title": "Bayesian Inference",
-    "section": "Lecture 1: Bayesian Workflow",
-    "text": "Lecture 1: Bayesian Workflow\n\n\n\n\nTwo Truths and a Lie\nStatistics vs AI/ML\nBrief history of Bayesian inference\nReview of basic probability\nIntroduction to Bayesian workflow\nBayes’s rule for events\nBinomial model and the Bayesian Crank\nOverview of the Course"
+    "section": "Example: Hourse Kicks",
+    "text": "Example: Hourse Kicks\n\n\nServing in Prussian cavalry in the 1800s was a perilous affair\nAside from the usual dangers of military service, you were at risk of being killed by a horse kick\nData from the book The Law of Small Numbers by Ladislaus Bortkiewicz (1898)\nBortkiewicz was a Russian economist and statistician of Polish ancestry"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#statistics-vs.-aiml",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#statistics-vs.-aiml",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#poisson-likelihood",
+    "href": "bayes-course/03-lecture/03-lecture.html#poisson-likelihood",
     "title": "Bayesian Inference",
-    "section": "Statistics vs. AI/ML",
-    "text": "Statistics vs. AI/ML\n⚠️ What follows is an oversimplified opinion.\n\n\n\n\nAI is great for automating tasks that humans find easy\n\nRecognizing faces, cats, and other objects\nIdentifying tumors on a radiology scan\nPlaying Chess and Go\nDriving a car\nPost ChatGPT 4: Generating coherent text/images/video, signs of reasoning\n\n\n\n\nStatistics is great at answering questions that humans find hard\n\nHow fast does a drug clear from the body?\nWhat is the expected tumor size two months after treatment?\nHow would patients respond under a different treatment?\nShould I take this drug?\nShould we (FDA/EMA/…) approve this drug?\n\n\n\n\n\n\n\nThese are speaker notes for this slide.\nYou can add multiple lines of notes. You can include bullets and not bullets And latex: \\(y = f(x)\\) \\(z = f(g)\\)\n\n\n\n“Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense.” — Andrew Gelman"
+    "section": "Poisson Likelihood",
+    "text": "Poisson Likelihood\n\n\nAssume we observe \\(Y_1, Y_2, ..., Y_n\\) independant Poisson random variables\nThe joint lilelihood, a function of the parameter \\(\\lambda\\) for \\(y_i \\in \\mathbb{Z}^+\\) and \\(\\lambda &gt; 0\\), is given by: \\[\n\\begin{eqnarray}\nf(y \\mid \\lambda) & = & \\prod_{i=1}^n f(y_i \\mid \\lambda) = f(y_1 \\mid \\lambda)  f(y_2 \\mid \\lambda) \\cdots f(y_n \\mid \\lambda)  =  \\prod_{i=1}^{n}\\frac{\\lambda^{y_i}e^{-\\lambda}}{y_i!} \\\\\n& = &\\frac{\\lambda^{y_1}e^{-\\lambda}}{y_1!} \\cdot \\frac{\\lambda^{y_2}e^{-\\lambda}}{y_2!} \\cdots \\frac{\\lambda^{y_n}e^{-\\lambda}}{y_n!} \\\\\n& =  &\\frac{\\left(\\lambda^{y_1}\\lambda^{y_2} \\cdots \\lambda^{y_n}\\right) \\left(e^{-\\lambda}e^{-\\lambda} \\cdots e^{-\\lambda}\\right)}{y_1! y_2! \\cdots y_n!} \\\\\n& = &\\frac{\\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda}}{\\prod_{i=1}^n y_i!} \\propto\n\\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda}\n\\end{eqnarray}\n\\]\nWe call \\(\\sum_{i=1}^{n} y_i\\) a sufficient statistic"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#brief-history",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#brief-history",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#conjugate-prior-for-poisson",
+    "href": "bayes-course/03-lecture/03-lecture.html#conjugate-prior-for-poisson",
     "title": "Bayesian Inference",
-    "section": "Brief History",
-    "text": "Brief History\nSummary of the book The Theory That Would Not Die\n\n\n\n\nThomas Bayes (1702(?) — 1761) is credited with the discovery of the “Bayes’s Rule”\nHis paper was published posthumously by Richard Price in 1763\nLaplace (1749 — 1827) independently discovered the rule and published it in 1774\nScientific context: Newton’s Principia was published in 1687\nBayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, FiveThirtyEight\n\n\n\n\n\n\n\n\n\n\nStephen Stigler gives 3:1 in favor of Nicholas Saunderson for the discovery of Bayes’s [sic] rule."
+    "section": "Conjugate Prior for Poisson",
+    "text": "Conjugate Prior for Poisson\n\n\nThe likelihood has a form of \\(\\lambda^{a} e^{-b\\lambda}\\) so we expect the conjugate prior to be of the same form\nGamma PDF satisfied this condition: \\(f(\\lambda) \\propto \\lambda^{\\alpha - 1} e^{-\\beta\\lambda}\\)\nMatching up the exponents, we can interpret \\((\\alpha - 1)\\) as the total number of incidents \\(\\sum y_i\\) out of \\(\\beta\\) prior observations\nFull Gamma density is \\(\\text{Gamma}(\\lambda|\\alpha,\\beta)=\\frac{\\beta^{\\alpha}}   {\\Gamma(\\alpha)} \\, \\lambda^{\\alpha - 1}e^{-\\beta \\, \\lambda}\\) for \\(\\lambda, \\alpha, \\beta \\in \\mathbb{R}^+\\) \\[\n\\begin{equation}\n\\begin{split}\n\\E(\\lambda) & = \\frac{\\alpha}{\\beta} \\\\\n\\text{Mode}(\\lambda) & = \\frac{\\alpha - 1}{\\beta} \\;\\; \\text{ for } \\alpha \\ge 1 \\\\\n\\V(\\lambda) & = \\frac{\\alpha}{\\beta^2} \\\\\n\\end{split}\n\\end{equation}\n\\]\nWhen \\(\\alpha = 1\\), \\(\\lambda \\sim \\text{Dist}(\\beta)\\). What is \\(\\text{Dist}\\)? Work in pairs."
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#laplaces-demon",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#laplaces-demon",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#visualizing-gamma",
+    "href": "bayes-course/03-lecture/03-lecture.html#visualizing-gamma",
     "title": "Bayesian Inference",
-    "section": "Laplace’s Demon",
-    "text": "Laplace’s Demon\n\n\n\nWe may regard the present state of the universe as the effect of its past and the cause of its future. An intellect which at any given moment knew all of the forces that animate nature and the mutual positions of the beings that compose it, if this intellect were vast enough to submit the data to analysis, could condense into a single formula the movement of the greatest bodies of the universe and that of the lightest atom; for such an intellect nothing could be uncertain, and the future just like the past would be present before its eyes.\n\n\n\n\n\n\n\nMarquis Pierre Simon de Laplace (1729 — 1827)\n“Uncertainty is a function of our ignorance, not a property of the world.”"
+    "section": "Visualizing Gamma",
+    "text": "Visualizing Gamma\n\n\nNotice that variance, mean, and mode are increasing with \\(\\alpha\\)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#modern-examples-of-bayesian-analyses",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#modern-examples-of-bayesian-analyses",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#gamma-posterior",
+    "href": "bayes-course/03-lecture/03-lecture.html#gamma-posterior",
     "title": "Bayesian Inference",
-    "section": "Modern Examples of Bayesian Analyses",
-    "text": "Modern Examples of Bayesian Analyses\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLeft: Pierre Simon Laplace in the style of Wassily Kandinsky, by OpenAI DALL·E"
+    "section": "Gamma Posterior",
+    "text": "Gamma Posterior\n\n\nPrior is \\(f(\\lambda) \\propto \\lambda^{\\alpha - 1} e^{-\\beta\\lambda}\\)\nLikelihood is \\(f(y | \\lambda) \\propto \\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda}\\) \\[\n\\begin{eqnarray}\nf(\\lambda \\mid y) & \\propto & \\text{prior} \\cdot \\text{likelihood} \\\\\n& = & \\lambda^{\\alpha - 1} e^{-\\beta\\lambda} \\cdot  \\lambda^{\\sum_{i=1}^{n} y_i}e^{-n\\lambda} \\\\\n& = & \\lambda^{\\alpha + \\sum_{i=1}^{n} y_i - 1} \\cdot e^{-\\beta\\lambda - n\\lambda} \\\\\n& = & \\lambda^{\\color{red}{\\alpha + \\sum_{i=1}^{n} y_i} - 1} \\cdot e^{-\\color{red}{(\\beta + n)} \\lambda} \\\\\nf(\\lambda \\mid y) & = & \\text{Gamma}\\left( \\alpha + \\sum_{i=1}^{n} y_i, \\, \\beta + n \\right)\n\\end{eqnarray}\n\\]\nAs before, we can match the Gamma kernel without doing the integration"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#elasticity-of-demand-stan-with-hierarchical-model",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#elasticity-of-demand-stan-with-hierarchical-model",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#checking-the-constant",
+    "href": "bayes-course/03-lecture/03-lecture.html#checking-the-constant",
     "title": "Bayesian Inference",
-    "section": "Elasticity of Demand (Stan with Hierarchical Model)",
-    "text": "Elasticity of Demand (Stan with Hierarchical Model)"
+    "section": "Checking the Constant",
+    "text": "Checking the Constant\n\n\nGamma prior integration constant: \\(\\frac{\\beta^{\\alpha}}{\\Gamma(\\alpha)}\\)\nThe posterior kernel integration constant is the reciprocal of: \\(\\frac{\\Gamma(\\alpha + \\sum y_i)}{(\\beta + n)^{\\alpha + \\sum y_i}}\\). Why?\nWe can sanity check this in SymPy, by integrating \\(\\lambda^{\\color{red}{\\alpha + \\sum_{i=1}^{n} y_i} - 1} \\cdot e^{-\\color{red}{(\\beta + n)} \\lambda}\\), and letting \\(t = \\sum y_i\\)\n\n\n\n\nimport sympy as sp\na, b = sp.symbols('a b', positive=True)\nt, n = sp.symbols('t n', positive=True, integer=True)\nλ    = sp.symbols('λ', nonnegative=True)\nexpr = λ**(t + a - 1) * sp.exp(-(n + b) * λ)\nresult = sp.simplify(sp.integrate(expr, (λ, 0, sp.oo)))\n\n\\[\\left(b + n\\right)^{- a - t} \\Gamma\\left(a + t\\right)\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#pharmacometrics-stan-with-odes",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#pharmacometrics-stan-with-odes",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#posterior-mean-and-variance",
+    "href": "bayes-course/03-lecture/03-lecture.html#posterior-mean-and-variance",
     "title": "Bayesian Inference",
-    "section": "Pharmacometrics (Stan with ODEs)",
-    "text": "Pharmacometrics (Stan with ODEs)"
+    "section": "Posterior Mean and Variance",
+    "text": "Posterior Mean and Variance\nPosterior mean and variance follow from the updated prior mean and variance:\n\n\\[\n\\begin{eqnarray}\n\\E(\\lambda \\mid y) &=& \\frac{\\alpha'}{\\beta'} = \\frac{\\alpha + \\sum_{i=1}^{n} y_i}{\\beta + n} \\\\\n\\V(\\lambda \\mid y) &=& \\frac{\\alpha'}{(\\beta')^2} = \\frac{\\alpha + \\sum_{i=1}^{n} y_i}{(\\beta + n)^2}\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#nonparametric-bayes-stan-with-gps",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#nonparametric-bayes-stan-with-gps",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks",
+    "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks",
     "title": "Bayesian Inference",
-    "section": "Nonparametric Bayes (Stan with GPs)",
-    "text": "Nonparametric Bayes (Stan with GPs)\n\n\nTimonen, J., Mannerström, H., Vehtari, A., & Lähdesmäki, H. (2021). lgpr: An interpretable non-parametric method for inferring covariate effects from longitudinal data. Bioinformatics, 37(13), 1860–1867. https://doi.org/10.1093/bioinformatics/btab021"
+    "section": "Prussian Army Hourse Kicks",
+    "text": "Prussian Army Hourse Kicks\n\n\nFrom 1875 to 1894, there were 14 different cavalry corps\nEach reported a number of deaths by horse kick every year\nThere are 20 years x 14 corps making 280 observations\n\n\n\n\nlibrary(gt)\nd &lt;- vroom::vroom(\"data/horsekicks.csv\")\nd |&gt; filter(Year &lt; 1883) |&gt; gt()\n\n\n\n\n\n\n\nYear\nGC\nC1\nC2\nC3\nC4\nC5\nC6\nC7\nC8\nC9\nC10\nC11\nC14\nC15\n\n\n\n\n1875\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n1\n0\n\n\n1876\n2\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n1\n1\n\n\n1877\n2\n0\n0\n0\n0\n0\n1\n1\n0\n0\n1\n0\n2\n0\n\n\n1878\n1\n2\n2\n1\n1\n0\n0\n0\n0\n0\n1\n0\n1\n0\n\n\n1879\n0\n0\n0\n1\n1\n2\n2\n0\n1\n0\n0\n2\n1\n0\n\n\n1880\n0\n3\n2\n1\n1\n1\n0\n0\n0\n2\n1\n4\n3\n0\n\n\n1881\n1\n0\n0\n2\n1\n0\n0\n1\n0\n1\n0\n0\n0\n0\n\n\n1882\n1\n2\n0\n0\n0\n0\n1\n0\n1\n1\n2\n1\n4\n1"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#review-of-probability",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#review-of-probability",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-1",
+    "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-1",
     "title": "Bayesian Inference",
-    "section": "Review of Probability",
-    "text": "Review of Probability\n\n\nA set of all possible outcomes is called a sample space and denoted by \\(\\Omega\\)\nAn outcome of an experiment is denoted by \\(\\omega \\in \\Omega\\)\nWe typically denote events by capital letters, say \\(A \\subseteq \\Omega\\)\nAxioms of probability:\n\n\\(\\P(A) \\geq 0, \\, \\text{for all } A\\)\n\\(\\P(\\Omega) = 1\\)\nIf \\(A_1, A_2, A_3, \\ldots\\) are disjoint: \\(\\P(\\cup_{i=1}^{\\infty} A_i) = \\sum_{i=1}^{\\infty} \\P(A_i)\\)"
+    "section": "Prussian Army Hourse Kicks",
+    "text": "Prussian Army Hourse Kicks\n\n\n# this flattens the data frame into a vector\ndd &lt;- unlist(d[, -1]) \np &lt;- ggplot(aes(y), data = data.frame(y = dd))\np1 &lt;- p + geom_histogram() +\n  xlab(\"Number of deaths reported\") + ylab(\"\") +\n  ggtitle(\"Total reported counts of deaths\")\np2 &lt;- p + geom_histogram(aes(y = ..count../sum(..count..))) +\n  xlab(\"Number of deaths reported\") + ylab(\"\") +\n  ggtitle(\"Proportion of reported counts of deaths\")\ngrid.arrange(p1, p2, nrow = 1)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#example",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-2",
+    "href": "bayes-course/03-lecture/03-lecture.html#prussian-army-hourse-kicks-2",
     "title": "Bayesian Inference",
-    "section": "Example",
-    "text": "Example\n\nRolling diceOmega\n\n\n\n\nYou roll a fair six-sided die twice\nGive an example of an \\(\\omega \\in \\Omega\\)\nHow many elements are in \\(\\Omega\\)? What is \\(\\Omega\\)?\nDefine an event \\(A\\) as the sum of the two rolls less than 11\nHow many elements are in \\(A\\)?\nWhat is \\(\\P(A)\\)?\n\n\n\n\n\n\n\n\nouter(1:6, 1:6, FUN = \"+\")\n\n     [,1] [,2] [,3] [,4] [,5] [,6]\n[1,]    2    3    4    5    6    7\n[2,]    3    4    5    6    7    8\n[3,]    4    5    6    7    8    9\n[4,]    5    6    7    8    9   10\n[5,]    6    7    8    9   10   11\n[6,]    7    8    9   10   11   12\n\n\n\n\n\n\\(\\Omega\\) consists of all pairs:\n\n\\(\\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\\}\\)\n\n\n\n\n\n\nThere are 36 such pairs\n33 of those pairs result in a sum of less than 11\n\\(\\P(A) = \\frac{33}{36} = \\frac{11}{12}\\)"
+    "section": "Prussian Army Hourse Kicks",
+    "text": "Prussian Army Hourse Kicks\n\nPrior and PosteriorPlots\n\n\n\n\nLet’s assume that before seeing the data, your friend told you that last year, in 1874, there were no deaths reported in his corps\nThat would imply \\(\\beta = 1\\) and \\(\\alpha - 1 = 0\\) or \\(\\alpha = 1\\)\nThe prior on lambda would therefore be \\(\\text{Gamma}(1, 1)\\)\n\n\n\nN &lt;- length(dd)\nsum_yi &lt;- sum(dd)\ny_bar &lt;- sum_yi/N\ncat(\"Total number of observations N =\", N)\n\nTotal number of observations N = 280\n\ncat(\"Total number of deaths =\", sum_yi)\n\nTotal number of deaths = 196\n\ncat(\"Average number of deaths =\", y_bar)\n\nAverage number of deaths = 0.7\n\n\n\n\nThe posterior is \\(\\text{Gamma}\\left( \\alpha + \\sum y_i, \\, \\beta + N \\right) = \\text{Gamma}(197, \\, 281)\\)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#random-variables-review",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#random-variables-review",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#likelihood-dominates",
+    "href": "bayes-course/03-lecture/03-lecture.html#likelihood-dominates",
     "title": "Bayesian Inference",
-    "section": "Random Variables Review",
-    "text": "Random Variables Review\n\nReviewMapping\n\n\n\n\nRandom variable is not random – it is a deterministic mapping from the sample space onto the real line; randomness comes from the experiment\nPMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)\nExpectations (Blitzstein and Hwang, Ch. 4)\nJoint Distributions (Blitzstein and Hwang, Ch. 7)\nConditional Expectations (Blitzstein and Hwang, Ch. 9)\n\n\n\n\nRandom variable X for the number of Heads in two flips"
+    "section": "Likelihood Dominates",
+    "text": "Likelihood Dominates\n\n\n\n\nWith so much data relative to prior observations, the likelihood completely dominates the prior\n\n\n\n\nplot_gamma_poisson(1, 1, sum_y = sum_yi, n = N) + \n  xlim(0, 3)\n\n\n\n\n\n\n\n\n\n\n\n\nmean_post &lt;- (1 + sum_yi) / (1 + N) \nsd_post &lt;- sqrt((1 + sum_yi) / (1 + N)^2) \ncat(\"Posterior mean =\", mean_post |&gt; round(3))\n\nPosterior mean = 0.701\n\ncat(\"Average rate =\", y_bar)\n\nAverage rate = 0.7\n\ncat(\"Posterior sd =\", sd_post |&gt; round(3))\n\nPosterior sd = 0.05"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-simulation",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#example-simulation",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#checking-the-fit",
+    "href": "bayes-course/03-lecture/03-lecture.html#checking-the-fit",
     "title": "Bayesian Inference",
-    "section": "Example Simulation",
-    "text": "Example Simulation\n\n\nWe will use R’s sample() function to simulate rolls of a die and replicate() function to repeat the rolling process many times\nModern approach: purrr::map(1:n, \\(x) expression)\n\n\n\n\n\n\ndie &lt;- 1:6\nroll &lt;- function(x, n) {\n  sample(x, size = n, replace = TRUE)\n}\nroll(die, 2) # roll the die twice\n\n[1] 4 3\n\nrolls &lt;- replicate(1e4, roll(die, 2))\nrolls[, 1:8] # print first 8 columns\n\n     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]\n[1,]    6    4    1    6    6    2    5    1\n[2,]    6    5    5    3    2    1    1    3\n\nroll_sums &lt;- colSums(rolls)\nhead(roll_sums)\n\n[1] 12  9  6  9  8  3\n\nmean(roll_sums &lt; 11) \n\n[1] 0.9159\n\n\n\n\n\n\nGiven a Random Variable \\(Y\\), \\(y^{(1)}, y^{(2)}, y^{(3)}, \\ldots, y^N\\) are simulations or draws from \\(Y\\)\nFundamental bridge (Blitzstein & Hwang p. 164): \\(\\P(A) = \\E(\\I_A)\\)\nComputationally: \\(\\P(Y &lt; 11) \\approx \\frac{1}{N} \\sum^{N}_{n=1} \\I(y^n &lt; 11)\\)\nIn R, roll_sums &lt; 11 creates an indicator variable\nAnd mean() does the average"
+    "section": "Checking the Fit",
+    "text": "Checking the Fit\n\n\nWe can plug the posterior mean for \\(\\lambda\\) into the Poisson PMF\n\n\n\n\nmean_post &lt;- (1 + sum_yi) / (1 + N)\ndeaths &lt;- 0:4\npred &lt;- dpois(deaths, lambda = mean_post)\nactual &lt;- as.numeric(table(dd) / N)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-simulation-with-purrr",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#example-simulation-with-purrr",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#adding-exposure",
+    "href": "bayes-course/03-lecture/03-lecture.html#adding-exposure",
     "title": "Bayesian Inference",
-    "section": "Example Simulation with purrr",
-    "text": "Example Simulation with purrr\n\n\n\n\nRoll a die twice, twenty times\n\n\n\n\nsim &lt;- purrr::map(1:20, \\(x) roll(die, 2))\nstr(sim)\n\nList of 20\n $ : int [1:2] 6 2\n $ : int [1:2] 4 4\n $ : int [1:2] 5 2\n $ : int [1:2] 6 2\n $ : int [1:2] 5 2\n $ : int [1:2] 5 1\n $ : int [1:2] 3 6\n $ : int [1:2] 3 4\n $ : int [1:2] 4 4\n $ : int [1:2] 3 2\n $ : int [1:2] 2 2\n $ : int [1:2] 5 6\n $ : int [1:2] 5 2\n $ : int [1:2] 4 2\n $ : int [1:2] 6 1\n $ : int [1:2] 4 1\n $ : int [1:2] 5 4\n $ : int [1:2] 1 2\n $ : int [1:2] 4 2\n $ : int [1:2] 3 2\n\n\n\n\n\n\nRoll a die once, twice, …., twenty times\n\n\n\n\nsim &lt;- purrr::map(1:20, \\(x) roll(die, x))\nstr(sim)\n\nList of 20\n $ : int 6\n $ : int [1:2] 4 1\n $ : int [1:3] 1 2 3\n $ : int [1:4] 1 4 5 2\n $ : int [1:5] 6 2 3 4 4\n $ : int [1:6] 5 3 4 5 4 1\n $ : int [1:7] 1 5 4 5 5 4 3\n $ : int [1:8] 1 6 5 6 4 4 3 4\n $ : int [1:9] 3 3 6 6 5 1 4 1 6\n $ : int [1:10] 1 6 5 5 3 4 5 1 3 5\n $ : int [1:11] 4 4 2 4 6 2 1 2 2 3 ...\n $ : int [1:12] 2 3 2 6 4 2 6 3 3 4 ...\n $ : int [1:13] 2 3 2 2 2 5 1 3 6 2 ...\n $ : int [1:14] 3 2 6 4 2 1 3 2 6 6 ...\n $ : int [1:15] 3 4 3 5 1 6 1 2 5 4 ...\n $ : int [1:16] 6 2 2 6 2 6 3 5 2 6 ...\n $ : int [1:17] 3 5 3 6 5 4 2 1 5 2 ...\n $ : int [1:18] 5 1 3 6 6 6 6 3 4 6 ...\n $ : int [1:19] 5 5 6 1 6 5 1 2 4 3 ...\n $ : int [1:20] 4 6 4 3 4 3 4 3 5 1 ..."
+    "section": "Adding Exposure",
+    "text": "Adding Exposure\n\n\nPoisson likelihood seems to work well for these data\nIt is likely that each of the 16 corps had about the same number of soldier-horses, a common military practice\nSuppose each corps has a different number of cavalrymen\nWe need to introduce an exposure variable \\(x_i\\) for each corps unit \\[\n\\begin{eqnarray}\ny_i & \\sim & \\text{Poisson}(x_i \\lambda)\\\\\n\\lambda & \\sim & \\text{Gamma}(\\alpha, \\beta) \\\\\nf(y \\mid \\lambda) & \\propto & \\lambda^{\\sum_{i=1}^{n} y_i}e^{- (\\sum_{i=1}^{n} x_i) \\lambda} \\\\\nf(\\lambda \\mid y) & = & \\text{Gamma} \\left( \\alpha + \\sum_{i=1}^{n} y_i, \\, \\beta + \\sum_{i=1}^{n} x_i \\right)\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#review-of-conditional-probability",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#review-of-conditional-probability",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-pdf",
+    "href": "bayes-course/03-lecture/03-lecture.html#normal-pdf",
     "title": "Bayesian Inference",
-    "section": "Review of Conditional Probability",
-    "text": "Review of Conditional Probability\n\n\nFor arbitrary \\(A\\) and \\(B\\), if \\(\\P(B) &gt; 0\\):\n\nConditional probability: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)}\\)\nConditional probability: \\(\\P(B \\mid A) = \\frac{\\P(AB)}{\\P(A)}\\)\n\nBayes’s rule: \\(\\P(A \\mid B) = \\frac{\\P(AB)}{\\P(B)} = \\frac{\\P(B \\mid A) \\P(A)}{\\P(B)}\\)\n\\(A\\) and \\(B\\) are independent if observing \\(B\\) does not give you any more information about \\(A\\): \\(\\P(A \\mid B) = \\P(A)\\)\nAnd \\(\\P(A B) = \\P(A) \\P(B)\\) (from Bayes’s rule)"
+    "section": "Normal PDF",
+    "text": "Normal PDF\n\n\nThe last conjugate distribution we will introduce is Normal\nWe will only consider a somewhat unrealistic case of known variance \\(\\sigma \\in \\mathbb{R}^+\\) and unknown mean \\(\\mu \\in \\mathbb{R}\\)\nNormal PDF is for one observation \\(y\\) is given by: \\[\n\\begin{eqnarray}\n\\text{Normal}(y \\mid \\mu,\\sigma) & = &\\frac{1}{\\sqrt{2 \\pi} \\\n\\sigma} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y - \\mu}{\\sigma} \\right)^2     \\right) \\\\\n\\E(Y) & = & \\text{ Mode}(Y) = \\mu \\\\\n\\V(Y) & = & \\sigma^2 \\\\\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-pdf-1",
+    "href": "bayes-course/03-lecture/03-lecture.html#normal-pdf-1",
     "title": "Bayesian Inference",
-    "section": "Joint, Marginal, and Conditional",
-    "text": "Joint, Marginal, and Conditional\n\n\nTitanic carried approximately 2,200 passengers and sank on 15 April 1912\nLet \\(G: \\{m, f\\}\\) represent Gender and \\(S: \\{n, y\\}\\) represent Survival\n\n\n\n\n\nsurv &lt;- apply(Titanic, c(2, 4), sum) \nsurv_prop &lt;- round(surv / sum(surv), 3)\nbind_cols(Sex = c(\"Male\", \"Female\"), surv_prop) |&gt; \n  janitor::adorn_totals(c(\"row\", \"col\")) |&gt;\n  knitr::kable(caption = \n         \"Titanic survival proportions\")\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n\n\n\n\\(\\P(G = m \\cap S = y) =\\) 0.167\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) =\\) ??\n\\(\\P(S = y) = \\sum_{i \\in \\{m, f\\}} \\P(S = y \\, \\cap G = i) = 0.323\\)"
+    "section": "Normal PDF",
+    "text": "Normal PDF\n\n\nNormal arises when many independent small contributions are added up\nIt is a limiting distribution of means of an arbitrary distribution\n\n\n\n\n\nplot_xbar &lt;- function(n_repl, n_samples) {\n  x &lt;- seq(0.6, 1.4, len = 100)\n  xbar &lt;- replicate(n_repl, \n                    mean(rexp(n_samples, rate = 1)))\n  mu &lt;- dnorm(x, mean = 1, sd = 1/sqrt(n_samples))\n  p &lt;- ggplot(aes(x = xbar), \n              data = tibble(xbar))\n  p + geom_histogram(aes(y = ..density..), \n                     bins = 30, alpha = 0.6) +\n    geom_line(aes(x = x, y = mu), \n              color = 'red', \n              linewidth = 0.3, \n              data = tibble(x, y)) +\n    ylab(\"\") + theme(axis.text.y = element_blank())\n}\n\np1 &lt;- plot_xbar(1e4, 100) + \n  ggtitle(\"Sampling means from rexp(100, 1)\")\np2 &lt;- plot_xbar(1e4, 300) + \n  ggtitle(\"Sampling means from rexp(300, 1)\")\ngrid.arrange(p1, p2, nrow = 2)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional-1",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#joint-marginal-and-conditional-1",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#joint-normal-likelihood",
+    "href": "bayes-course/03-lecture/03-lecture.html#joint-normal-likelihood",
     "title": "Bayesian Inference",
-    "section": "Joint, Marginal, and Conditional",
-    "text": "Joint, Marginal, and Conditional\n\n\n\n\nWhat is \\(\\P(G = m \\mid S = y)\\), probability of being  male given survival?\nTo compute that, we only consider the column  where Survival = Yes\n\\(\\P(G = m \\mid S = y) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(S = y)} = \\frac{0.167}{0.323} \\\\ \\approx 0.52\\)\nYou want \\(\\P(S = y \\mid G = m)\\), comparing it to \\(\\\\ \\qquad \\ \\ \\ \\ \\ \\ \\P(S = y \\mid G = f)\\)\n\\(\\P(S = y \\mid G = m) = \\frac{\\P(G = m \\, \\cap \\, S = y)}{\\P(G = m)} = \\frac{0.167}{0.787} \\\\ \\approx 0.21\\)\n\\(\\P(S = y \\mid G = f) = \\frac{\\P(G = f \\, \\cap \\, S = y)}{\\P(G = f)} = \\frac{0.156}{0.213} \\\\ \\approx 0.73\\)\nHow would you compute \\(\\P(S = n \\mid G = m)\\)?\n\\(\\P(S = n \\mid G = m) = 1 - \\P(S = y \\mid G = m)\\)\n\n\n\n\n\n\nTitanic survival proportions\n\n\nSex\nNo\nYes\nTotal\n\n\n\n\nMale\n0.620\n0.167\n0.787\n\n\nFemale\n0.057\n0.156\n0.213\n\n\nTotal\n0.677\n0.323\n1.000\n\n\n\n\n\n “Untergang der Titanic”, as conceived by Willy Stöwer, 1912"
+    "section": "Joint Normal Likelihood",
+    "text": "Joint Normal Likelihood\n\n\nAfter observing data \\(y\\), we can compute the joint normal likelihood, assuming \\(\\sigma\\) is known \\[\n\\begin{eqnarray}\nf(y \\mid \\mu) & = & \\prod_{i=1}^{n}\\frac{1}{\\sqrt{2 \\pi} \\\n\\sigma} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y_i - \\mu}{\\sigma} \\right)^2     \\right) \\\\\n& \\propto & \\prod_{i=1}^{n} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y_i - \\mu}{\\sigma} \\right)^2 \\right) \\\\  \n& = & \\exp \\left( {-\\frac{\\sum_{i=1}^n(y_i-\\mu)^2}{2\\sigma^2}}\\right) \\\\\n&\\propto& \\exp\\left({-\\frac{(\\bar{y}-\\mu)^2}{2\\sigma^2/n}}\\right)\n\\end{eqnarray}\n\\]\nThe last line is derived by expanding the square and dropping terms that don’t depend on \\(\\mu\\); \\(\\bar{y} = \\frac{1}{n} \\sum_{i=1}^{n} y_i\\)\nExpansion: \\(\\sum_{i=1}^n (y_i - \\mu)^2 = \\sum_{i=1}^n \\left[(y_i - \\bar{y}) + (\\bar{y} - \\mu)\\right]^2\\)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#law-of-total-probability-lotp",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#law-of-total-probability-lotp",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-prior",
+    "href": "bayes-course/03-lecture/03-lecture.html#normal-prior",
     "title": "Bayesian Inference",
-    "section": "Law of Total Probability (LOTP)",
-    "text": "Law of Total Probability (LOTP)\nLet \\(A\\) be a partition of \\(\\Omega\\), so that each \\(A_i\\) is disjoint, \\(\\P(A_i &gt;0)\\), and \\(\\cup A_i = \\Omega\\). \\[\n\\P(B) = \\sum_{i=1}^{n} \\P(B \\cap A_i) = \\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)\n\\]\n\n\nImage from Blitzstein and Hwang (2019), Page 55"
+    "section": "Normal Prior",
+    "text": "Normal Prior\n\n\nWe can now define the prior on \\(\\mu\\)\nWe will choose \\(\\mu\\) to be normal: \\(\\mu \\sim \\text{Normal}(\\theta, \\tau^2)\\) \\[\n\\begin{eqnarray}\nf(\\mu \\mid \\theta, \\tau) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{\\mu - \\theta}{\\tau} \\right)^2 \\right) \\\\\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#bayess-rule-for-events",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#bayess-rule-for-events",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-posterior",
+    "href": "bayes-course/03-lecture/03-lecture.html#normal-posterior",
     "title": "Bayesian Inference",
-    "section": "Bayes’s Rule for Events",
-    "text": "Bayes’s Rule for Events\n\n\nWe can combine the definition of conditional probability with the LOTP to come up with Bayes’s rule for events, assuming \\(\\P(B) \\neq 0\\)\n\n\n\\[\n\\P(A \\mid B) = \\frac{\\P(B \\cap A)}{\\P(B)} =\n               \\frac{\\P(B \\mid A) \\P(A)}{\\sum_{i=1}^{n} \\P(B \\mid A_i) \\P(A_i)}\n\\]\n\n\nWe typically think of \\(A\\) is some unknown we wish to learn (e.g., the status of a disease) and \\(B\\) as the data we observe (e.g., the result of a diagnostic test)\nWe call \\(\\P(A)\\) prior probability of A (e.g., how prevalent is the disease in the population)\nWe call \\(\\P(A \\mid B)\\), the posterior probability of the unknown \\(A\\) given data \\(B\\)"
+    "section": "Normal Posterior",
+    "text": "Normal Posterior\n\nFor one observation \\(y\\):\n\n\\[\n\\begin{eqnarray}\nf(y \\mid \\mu) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{y - \\mu}{\\sigma} \\right)^2 \\right) \\\\\nf(\\mu) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{\\mu - \\theta}{\\tau} \\right)^2 \\right) \\\\\nf(\\mu \\mid y) & \\propto &  \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{\\mu - \\theta}{\\tau} \\right)^2 - \\frac{1}{2} \\left(  \\frac{y - \\mu}{\\sigma} \\right)^2 \\right) \\\\\n& = & \\exp \\left( -\\frac{1}{2} \\left(  \\frac{(\\mu - \\theta)^2}{\\tau^2} + \\frac{(y - \\mu)^2}{\\sigma^2} \\right)\\right) \\\\\n& = &  \\exp \\left(  -\\frac{1}{2\\tau_1^2} \\left( \\mu - \\mu_1 \\right)^2    \\right)\n\\end{eqnarray}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#normal-posterior-1",
+    "href": "bayes-course/03-lecture/03-lecture.html#normal-posterior-1",
     "title": "Bayesian Inference",
-    "section": "Estimating \\(\\pi\\) by Simulation",
-    "text": "Estimating \\(\\pi\\) by Simulation\nThe idea is that we can approximate the ratio of the area of an inscribed circle, \\(A_c\\), to the area of the square, \\(A_s\\), by uniformly “throwing darts” at the square with the side \\(2r\\) and counting how many darts land inside the circle versus inside the square.\n\n\\[\n\\begin{align}\nA_{c}& = \\pi r^2 \\\\\nA_{s}& = (2r)^2 = 4r^2 \\\\\n\\frac{A_{c}}{A_{s}}& = \\frac{\\pi r^2}{4r^2} = \\frac{\\pi}{4} \\implies \\pi = \\frac{4A_{c}}{A_{s}}\n\\end{align}\n\\]"
+    "section": "Normal Posterior",
+    "text": "Normal Posterior\n\nFor one observation: \\[\n\\begin{eqnarray}\nf(\\mu \\mid y) &\\propto& \\exp \\left(  -\\frac{1}{2\\tau_1^2} \\left( \\mu - \\mu_1 \\right)^2    \\right) \\text{ i.e. } \\mu \\mid y \\sim \\text{Normal}(\\mu_1, \\tau_1) \\\\\n\\mu_1 &=& \\frac{\\frac{1}{\\tau^2} \\theta + \\frac{1}{\\sigma^2} y}{\\frac{1}{\\tau^2} + \\frac{1}{\\sigma^2}} \\\\\n\\frac{1}{\\tau_1^2} &=& \\frac{1}{\\tau^2} + \\frac{1}{\\sigma^2}\n\\end{eqnarray}\n\\]\nFor multiple observations: \\[\n\\mu_1 = \\frac{\\frac{1}{\\tau^2} \\theta + \\frac{n}{\\sigma^2} \\overline{y}}{\\frac{1}{\\tau^2} + \\frac{n}{\\sigma^2}} \\\\\n\\frac{1}{\\tau_1^2} = \\frac{1}{\\tau^2} + \\frac{n}{\\sigma^2}\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-1",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-1",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#posterior-simulation",
+    "href": "bayes-course/03-lecture/03-lecture.html#posterior-simulation",
     "title": "Bayesian Inference",
-    "section": "Estimating \\(\\pi\\) by Simulation",
-    "text": "Estimating \\(\\pi\\) by Simulation\nTo estimate \\(\\pi\\), we perform the following simulation:\n\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\I(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\nThe numerator is a sum over an indicator function \\(\\I\\), which evaluates to \\(1\\) if the inequality holds and \\(0\\) otherwise."
+    "section": "Posterior Simulation",
+    "text": "Posterior Simulation\n\nAriannaThe Paper\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nArianna Rosenbluth Dies at 93, The New York Times"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-2",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#estimating-pi-by-simulation-2",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#grid-approximation",
+    "href": "bayes-course/03-lecture/03-lecture.html#grid-approximation",
     "title": "Bayesian Inference",
-    "section": "Estimating \\(\\pi\\) by Simulation",
-    "text": "Estimating \\(\\pi\\) by Simulation\n\nCode and PlotEstimate\n\n\n\n\nn &lt;- 1e3\nx &lt;- runif(n, -1, 1); y &lt;- runif(n, -1, 1)\ninside &lt;- x^2 + y^2 &lt; 1\ndata &lt;- tibble(x, y, inside)\np &lt;- ggplot(aes(x = x, y = y), data = data)\np + geom_point(aes(color = inside)) + theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\n\n\ncat(\"Estimated value of pi =\", 4*sum(inside) / n)\n\nEstimated value of pi = 3.16\n\n\n\n\n\n\n\n\nx\ny\ninside\n\n\n\n\n-0.8929639\n-0.5403777\nFALSE\n\n\n0.1237117\n0.0664457\nTRUE\n\n\n-0.3972574\n0.6440530\nTRUE\n\n\n-0.5569671\n-0.9873628\nFALSE\n\n\n-0.7640633\n-0.0044610\nTRUE"
+    "section": "Grid approximation",
+    "text": "Grid approximation\n\n\n\n\nMost posterior distributions do not have an analytical form\nIn those cases, we must resort to sampling methods\nSampling in high dimensions requires specialized algorithms\nHere, we will look at one-dimensional sampling on a grid (of parameter values)\nAt the end of this lecture, we look at some output of a state-of-the-art HMC NUTS sampler\nNext week, we will examine the Metropolis-Hastings-Rosenbluth algorithm\n\n\n\nAn example of Gibbs sampling of a Bivariate Normal by Aki Vehtari and Markus Paasiniemi."
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-bayesian-analysis",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#example-bayesian-analysis",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#grid-approximation-1",
+    "href": "bayes-course/03-lecture/03-lecture.html#grid-approximation-1",
     "title": "Bayesian Inference",
-    "section": "Example Bayesian Analysis",
-    "text": "Example Bayesian Analysis\n\n\n\n\nSuppose we enrolled five people in an early cancer clinical trial\nEach person was given an active treatment\nFrom previous trials, we have some idea of historical response rates (proportion of people responding)\nAt the end of the trial, \\(Y = y \\in \\{0,1,...,5 \\}\\) people will have responded1 to the treatment\nWe are interested in estimating the probability that the response rate is greater or equal to 50%\n\n\n\n Image from Fokko Smits, Martijn Dirksen, and Ivo Schoots: RECIST 1.1 - and more\n\nPartial response is a decrease in the sum of the longest diameters of target lesions of at least 30% compared to the baseline measurement."
+    "section": "Grid approximation",
+    "text": "Grid approximation\n\n\nWe already saw how given samples from the target distribution, we could compute quantities of interest\nThe grid approach to getting samples:\n\nGenerate discreet points in parameter space \\(\\theta\\)\nDefine our likelihood function \\(f(y|\\theta)\\) and prior \\(f(\\theta)\\)\nFor each point on the grid, compute the product \\(f(y|\\theta)f(\\theta)\\)\nNormalize the product to sum to 1\nSample from the resulting distribution in proportion to the posterior probability\n\nHere, \\(\\theta\\) is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the clinical trial example.\nWhat are some limitations of this approach?"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#notation",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#notation",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#back-to-the-binomial",
+    "href": "bayes-course/03-lecture/03-lecture.html#back-to-the-binomial",
     "title": "Bayesian Inference",
-    "section": "Notation",
-    "text": "Notation\nGreek letters will be used for latent parameters, and English letters will be used for observables.\n\n\n\\(\\theta\\): unknowns or parameters to be estimated; could be multivariate, discrete, and continuous (your book uses \\(\\pi\\))\n\\(y\\): observations or measurements to be modelled (\\(y_1, y_2, ...\\))\n\\(\\widetilde{y}\\) : unobserved but observable quantities (in your book \\(y'\\))\n\\(x\\): covariates\n\\(f( \\theta )\\): a prior model, P[DM]F of \\(\\theta\\)\n\\(f_y(y \\mid \\theta, x)\\): an observational model, P[DM]F when it is a function of \\(y\\) (in your book: \\(f(y \\mid \\pi)\\)); we typically drop the \\(x\\) to simplify the notation.\n\\(f_{\\theta}(y \\mid \\theta)\\): is a likelihood function when it is a function of \\(\\theta\\) (in your book: \\(\\L(\\pi \\mid y)\\))\nSome people write \\(\\L(\\theta; y)\\) or simply \\(\\L(\\theta)\\)"
+    "section": "Back to the Binomial",
+    "text": "Back to the Binomial\n\nDeriving \\(f(\\theta, y)\\)R ImplementationGraphs\n\n\n\n\nFor simplicity we will assume uniform \\(\\text{Beta}(1, 1)\\) prior \\[\n\\begin{eqnarray}\nf(\\theta)f(y\\mid \\theta) &\\propto& \\theta^{a -1}(1 - \\theta)^{b-1} \\cdot \\prod_{i=1}^{n} \\theta^{y_i} (1 - \\theta)^{1 - y_i} \\\\\n&=& \\theta^0(1 - \\theta)^0 \\cdot \\prod_{i=1}^{n} \\theta^{y_i} (1 - \\theta)^{1 - y_i} \\\\\n&=& \\prod_{i=1}^{n} \\theta^{y_i} (1 - \\theta)^{1 - y_i} \\\\\n&=& \\theta^{\\sum_{i=1}^{n} y_i} \\cdot (1 - \\theta)^{\\sum_{i=1}^{n} (1- y_i)}\n\\end{eqnarray}\n\\]\nOn the log scale: \\(\\log f(\\theta, y) \\propto \\log(\\theta) \\cdot\\sum_{i=1}^{n} y_i + \\log(1 - \\theta) \\cdot\\sum_{i=1}^{n} (1-y_i)\\)\n\n\n\n\n\n\nSuppose that 3 out of 5 patients responded to treatment\nModel: \\(\\text{lp}(\\theta) = \\log(\\theta) \\cdot\\sum_{i=1}^{n} y_i + \\log(1 - \\theta) \\cdot\\sum_{i=1}^{n} (1-y_i)\\)\n\n\n\n\nlp &lt;- function(theta, data) {\n# log(theta) * sum(data$y) + log(1 - theta) * sum(1 - data$y)\n  lp &lt;- 0\n  for (i in 1:data$N) {\n    lp &lt;- lp + log(theta) * data$y[i] + log(1 - theta) * (1 - data$y[i])\n  }\n  return(lp)\n}\ndata &lt;- list(N = 5, y = c(0, 1, 1, 0, 1))\n# generate theta parameter grid\ntheta &lt;- seq(0.01, 0.99, len = 100)\n# compute log likelihood and prior for every value of the grid\nlog_lik &lt;- lp(theta, data); log_prior &lt;- log(dbeta(theta, 1, 1))\n# compute log posterior\nlog_post &lt;- log_lik + log_prior\n# convert back to the original scale and normalize\npost &lt;- exp(log_post); post &lt;- post / sum(post)\n# sample theta in proportion to the posterior probability\ndraws &lt;- sample(theta, size = 1e5, replace = TRUE, prob = post)\n\n\n\n\n\n\nFrom the first lecture, we know the posterior is \\(\\text{Beta}(1 + 3, 1 + 5 - 3) = \\text{Beta}(4, 3)\\)\nWe can compare this density to the posterior draws\n\n\n\n\nbeta_dens &lt;- dbeta(theta, 4, 3)\n(mle &lt;- sum(data$y) / data$N)\n\n[1] 0.6"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#general-approach",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#general-approach",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#monte-carlo-integration-and-mcmc",
+    "href": "bayes-course/03-lecture/03-lecture.html#monte-carlo-integration-and-mcmc",
     "title": "Bayesian Inference",
-    "section": "General Approach",
-    "text": "General Approach\n\n\nBefore observing the data, we need to specify a prior model \\(f(\\theta)\\) on all unknowns \\(\\theta\\)1\nPick a data model \\(f(y \\mid \\theta, x)\\) — this is typically more important than the prior; this includes the model for the conditional mean: \\(\\E(y \\mid x)\\)\nFor more complex models, we construct a prior predictive distribution, \\(f(y)\\)\n\nWe will define this quantity later — it will help us assess if our choice of priors makes sense on the observational scale\n\nAfter we observe data \\(y\\), we treat \\(f(y \\mid \\theta, x)\\) as the likelihood of observing \\(y\\) under all plausible values of \\(\\theta\\), conditioning on \\(x\\) if necessary\nDerive a posterior model for \\(\\theta\\), \\(\\, f(\\theta \\mid y, x)\\) using Bayes’s rule or by simulation\nEvaluate model quality: 1) quality of the inferences; 2) quality of predictions. Revise the model if necessary\nCompute all the quantities of interest from the posterior, such as event probabilities, e.g., \\(\\P(\\theta &gt; 0.5)\\), posterior predictive distribution \\(f(\\widetilde{y} \\mid y)\\), decision functions, etc.\n\n\n\nFor a more complete workflow, see Bayesian Workflow by Gelman et al. (2020)\n\nThere is always a prior, even in frequentist inference."
+    "section": "Monte Carlo Integration and MCMC",
+    "text": "Monte Carlo Integration and MCMC\n\nIntroductionExample 1Example 2MCMC\n\n\n\n\nWe already saw a special case of MC integration\nSuppose we can draw samples from PDF \\(f\\), \\((\\theta^{(1)}, \\theta^{(2)},..., \\theta^{(N)})\\)\nIf we want to compute an expectation of some function \\(h\\): \\[\n\\begin{eqnarray}\n\\E_f[h(\\theta)] &=& \\int h(\\theta)f(\\theta)\\, d\\theta\n&\\approx& \\frac{1}{N} \\sum_{i = 1}^{N} h \\left( \\theta^{(i)} \\right)\n\\end{eqnarray}\n\\]\nThe Law of Large Numbers tells us that these approximations improve with \\(N\\)\nIn practice, the challenge is obtaining draws from \\(f\\)\nThat’s where MCMC comes in\n\n\n\n\n\n\nSuppose we want to estimate the mean and variance of standard normal\nIn case of the mean, \\(h(\\theta) := \\theta\\) and variance, \\(h(\\theta) := \\theta^2\\), and \\(f(\\theta) = \\frac{1}{\\sqrt{2 \\pi} \\ } e^{-\\theta^2/2}\\) \\[\n\\begin{eqnarray}\n\\E[\\theta] &=& \\int_{-\\infty}^{\\infty} \\theta f(\\theta)\\, d\\theta\n&\\approx& \\frac{1}{N} \\sum_{i = 1}^{N} \\theta^{(i)} \\\\\n\\E[\\theta^2] &=& \\int_{-\\infty}^{\\infty} \\theta^2 f(\\theta)\\, d\\theta &\\approx&\n\\frac{1}{N} \\sum_{i = 1}^{N} \\left( \\theta^{(i)} \\right)^2\n\\end{eqnarray}\n\\]\n\n\n\n\nN &lt;- 1e5\ntheta &lt;- rnorm(N, 0, 1)          # draw theta from N(0, 1)\n(1/N * sum(theta)) |&gt; round(2)   # E(theta),   same as mean(theta)\n\n[1] 0\n\n(1/N * sum(theta^2)) |&gt; round(2) # E(theta^2), same as mean(theta^2)\n\n[1] 1\n\n\n\n\n\n\n\nSuppose we want to estimate a CDF of Normal(0, 1) at some point \\(t\\)\nWe let \\(h(\\theta) = \\I(\\theta &lt; t)\\), where \\(\\I\\) is an indicator function that returns 1 when \\(\\theta &lt; t\\) and \\(0\\) otherwise \\[\n\\begin{eqnarray}\n\\E[h(\\theta)] = \\E[\\I(\\theta &lt; t)] &=& \\int_{-\\infty}^{\\infty} \\I(\\theta &lt; t) f(\\theta)\\, d\\theta =\n\\int_{-\\infty}^{t}f(\\theta)\\, d\\theta = \\Phi(t) \\\\\n&\\approx& \\frac{1}{N} \\sum_{i = 1}^{N} \\I(\\theta^{(i)} &lt; t) \\\\\n\\end{eqnarray}\n\\]\n\n\n\n\npnorm(1, 0, 1) |&gt; round(2)          # Evalute N(0, 1) CDF at 1\n\n[1] 0.84\n\nN &lt;- 1e5\ntheta &lt;- rnorm(N, 0, 1)             # draw theta from N(0, 1)\n(1/N * sum(theta &lt; 1)) |&gt; round(2)  # same as mean(theta &lt; 1)\n\n[1] 0.84\n\n\n\n\n\n\n\nMCMC is a very general method for computing expectations (integrals)\nIt produces dependant (autocorrelated) samples, but for a good algorithm, the dependence is manageable\nStan’s MCMC algorithm is very efficient (more on that later) and requires all parameters to be continuous (data can be discrete)\nIt solves the problem of drawing from distribution \\(f(\\theta)\\) where \\(f\\) is not one of the fundamental distributions and \\(\\theta\\) is high dimentional\nWhat is high-dimensional? Modern algorithms like NUTS can jointly sample tens of thousands and more parameters\nThat’s 10,000+ dimensional integrals of complicated functions!\n\n\n\n\n\n\nInclude an example where h(x) is an indicator function, and we want to evaluate Normal CDF at some point t."
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#example-prior-model",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#example-prior-model",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#introduction-to-stan",
+    "href": "bayes-course/03-lecture/03-lecture.html#introduction-to-stan",
     "title": "Bayesian Inference",
-    "section": "Example Prior Model",
-    "text": "Example Prior Model\n\n\nWe will construct a prior model for our clinical trial\nFrom previous trials, we construct a discretized version of the prior distribution of the response rate\nThe most likely value for response rate is 30%\n\n\n\n\n\ndot_plot &lt;- function(x, y) {\n  p &lt;- ggplot(data.frame(x, y), aes(x, y))\n  p + geom_point(aes(x = x, y = y), size = 0.5) +\n    geom_segment(aes(x = x, y = 0, xend = x, \n                     yend = y), linewidth = 0.2) +\n    xlab(expression(theta)) + \n    ylab(expression(f(theta)))\n}\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.05, 0.45, 0.30, 0.15, 0.05)\ndot_plot(theta, prior) +\n  ggtitle(\"Prior probability of response\")\n\n\n\n\n\n\n\n\n\n\n\n\nEven though \\(\\theta\\) is a continuous parameter, we can still specify a discrete prior\nThe posterior will also be discrete and of the same cardinality"
+    "section": "Introduction to Stan",
+    "text": "Introduction to Stan\n\n\nStan is a procedural, statically typed, Turning complete, probabilistic programming language\nStan language expresses a probabilistic model\nStan transpiler converts it to C++\nStan inference algorithms perform parameter estimation\nOur model: \\(\\text{lp}(\\theta) = \\log(\\theta) \\cdot\\sum_{i=1}^{n} y_i + \\log(1 - \\theta) \\cdot\\sum_{i=1}^{n} (1-y_i)\\)\n\n\n\n\n\n\n// 01-bernoulli.stan\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}\n\n\n\n\n\n// 02-bernoulli.stan\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  theta ~ beta(1, 1);\n  y ~ bernoulli(theta);\n}"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#data-model",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#data-model",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#running-stan",
+    "href": "bayes-course/03-lecture/03-lecture.html#running-stan",
     "title": "Bayesian Inference",
-    "section": "Data Model",
-    "text": "Data Model\n\n\nWe consider each person’s response rate to be independent, given the treatment\nWe have a fixed number of people in the trial, \\(N = 5\\), and \\(0\\) to \\(5\\) successes\nWe will therefore consider: \\(y | \\theta \\sim \\text{Bin}(N,\\theta) = \\text{Bin}(5,\\theta)\\)\n\\(f(y \\mid \\theta) = \\text{Bin} (y \\mid 5,\\theta) = \\binom{5}{y} \\theta^y (1 - \\theta)^{5 - y}\\) for \\(y \\in \\{0,1,\\ldots,5\\}\\)\nIs this a valid probability distribution as a function of \\(y\\)?\n\n\n\nN = 5; y &lt;- 0:N; theta &lt;- 0.5\n(f_y &lt;- dbinom(x = y, size = N, prob = theta) |&gt;\n    fractions())\n\n[1] 1/32 5/32 5/16 5/16 5/32 1/32\n\nsum(dbinom(x = y, size = N, prob = theta))\n\n[1] 1"
+    "section": "Running Stan",
+    "text": "Running Stan\n\n\nlibrary(cmdstanr)\n\nm1 &lt;- cmdstan_model(\"stan/01-bernoulli.stan\") # compile the model\ndata &lt;- list(N = 5, y = c(0, 1, 1, 0, 1))\nf1 &lt;- m1$sample(       # for other options to sample, help(sample)\n  data = data,         # pass data as a list, match the vars name to Stan\n  seed = 123,          # to reproduce results, Stan does not rely on R's seed\n  chains = 4,          # total chains, the more, the better\n  parallel_chains = 4, # for multi-processor CPUs\n  refresh = 0,         # number of iterations printed on the screen\n  iter_warmup = 500,   # number of draws for warmup (per chain)\n  iter_sampling = 500  # number of draws for samples (per chain)\n)\n\nRunning MCMC with 4 parallel chains...\n\nChain 1 finished in 0.0 seconds.\nChain 2 finished in 0.0 seconds.\nChain 3 finished in 0.0 seconds.\nChain 4 finished in 0.0 seconds.\n\nAll 4 chains finished successfully.\nMean chain execution time: 0.0 seconds.\nTotal execution time: 0.3 seconds.\n\nf1$summary()\n\n# A tibble: 2 × 10\n  variable   mean median    sd   mad     q5    q95  rhat ess_bulk ess_tail\n  &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;\n1 lp__     -5.30  -5.02  0.734 0.320 -6.82  -4.78   1.00     800.    1024.\n2 theta     0.566  0.577 0.173 0.187  0.273  0.833  1.01     860.     986."
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#working-with-posterior-draws",
+    "href": "bayes-course/03-lecture/03-lecture.html#working-with-posterior-draws",
     "title": "Bayesian Inference",
-    "section": "Likelihood Function",
-    "text": "Likelihood Function\n\n\nWe ran the trial and observed 3 out of 5 responders\nWe can now construct a likelihood function for \\(y = 3\\) as a function of \\(\\theta\\)\nLet’s check if this function is a probability distribution: \\[\nf (y) = \\int_{0}^{1} \\binom{N}{y} \\theta^y (1 - \\theta)^{N - y}\\, d\\theta = \\frac{1}{N + 1}\n\\]\n\n\n\n\ndbinom_theta &lt;- function(theta, N, y) {\n  choose(N, y) * theta^y * (1 - theta)^(N - y) \n}\nintegrate(dbinom_theta, lower = 0, upper = 1, \n          N = 5, y = 3)[[1]] |&gt; fractions()\n\n[1] 1/6\n\n\n\n\n\n\\(f(y)\\) is called marginal distribution of the data or, more aptly, prior predictive distribution\nIt tells us that prior to observing \\(y\\), all values of \\(y\\) are equally likely"
+    "section": "Working With Posterior Draws",
+    "text": "Working With Posterior Draws\n\n\n\n\nlibrary(tidybayes)\n\ndraws &lt;- gather_draws(f1, theta, lp__)\ntail(draws) # draws is a tidy long format\n\n# A tibble: 6 × 5\n# Groups:   .variable [1]\n  .chain .iteration .draw .variable .value\n   &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;\n1      4        495  1995 lp__       -4.84\n2      4        496  1996 lp__       -4.85\n3      4        497  1997 lp__       -4.83\n4      4        498  1998 lp__       -5.04\n5      4        499  1999 lp__       -4.78\n6      4        500  2000 lp__       -4.78\n\ndraws |&gt; \n  group_by(.variable) |&gt; \n  summarize(mean = mean(.value))\n\n# A tibble: 2 × 2\n  .variable   mean\n  &lt;chr&gt;      &lt;dbl&gt;\n1 lp__      -5.30 \n2 theta      0.566\n\nmedian_qi(draws, .width = 0.90)\n\n# A tibble: 2 × 7\n  .variable .value .lower .upper .width .point .interval\n  &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    \n1 lp__      -5.02  -6.82  -4.78     0.9 median qi       \n2 theta      0.577  0.273  0.833    0.9 median qi       \n\n\n\n\n\n\ndraws &lt;- spread_draws(f1, theta, lp__)\ntail(draws) # draws is a tidy wide format\n\n# A tibble: 6 × 5\n  .chain .iteration .draw theta  lp__\n   &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n1      4        495  1995 0.505 -4.84\n2      4        496  1996 0.503 -4.85\n3      4        497  1997 0.510 -4.83\n4      4        498  1998 0.436 -5.04\n5      4        499  1999 0.568 -4.78\n6      4        500  2000 0.582 -4.78\n\ntheta &lt;- seq(0.01, 0.99, len = 100)\np &lt;- ggplot(aes(theta), data = draws)\np + geom_histogram(aes(y = after_stat(density)), \n                   bins = 30, alpha = 0.6) +\n    geom_line(aes(theta, beta_dens), \n              linewidth = 0.5, color = 'red',\n              data = tibble(theta, beta_dens)) +\n  ylab(\"\") + xlab(expression(theta)) +\n  ggtitle(\"Posterior draws from Stan\")"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function-1",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#likelihood-function-1",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#whats-a-chain",
+    "href": "bayes-course/03-lecture/03-lecture.html#whats-a-chain",
     "title": "Bayesian Inference",
-    "section": "Likelihood Function",
-    "text": "Likelihood Function\n\n\n\n\n\n\n\n\n\n\nCompare with the data model:"
+    "section": "What’s a Chain",
+    "text": "What’s a Chain\n\nA is a sequence of random variables \\(\\{X_n\\}_{n \\geq 0}\\) defined on a state space \\(S\\) such that for all \\(n \\geq 0\\) and for any states \\(i_0, i_1, \\dots, i_{n+1} \\in S\\), the Markov property holds:\n\\[\n\\mathbb{P}(X_{n+1}=j \\mid X_0=i_0, X_{n-1}=i_{n-1}, \\dots, X_n=i_n) = \\mathbb{P}(X_{n+1}=j \\mid X_n=i)\n\\]\nThe transition probabilities are represented by a matrix \\(Q\\), where:\n\\[\nq_{ij} = \\mathbb{P}(X_{n+1} = j \\mid X_n = i)\n\\]"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#compute-the-posterior",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#compute-the-posterior",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#dynamic-simulation",
+    "href": "bayes-course/03-lecture/03-lecture.html#dynamic-simulation",
     "title": "Bayesian Inference",
-    "section": "Compute the Posterior",
-    "text": "Compute the Posterior\n\n\n\n\nCompute the likelihood\n\n\\(\\binom{5}{3} \\theta^3 (1 - \\theta)^{2}\\) for \\(\\theta \\in \\{0.10, 0.30, 0.50, 0.70, 0.90\\}\\)\n\nMultiply the likelihood by the prior to compute the numerator\n\n\\(f(y = 3 \\mid \\theta) f(\\theta)\\)\n\nSum the numerator to get the marginal likelihood\n\n\\(f(y = 3) = \\\\ \\sum_{\\theta} f(y = 3 | \\theta) f(\\theta) \\approx 0.2\\)\n\nFinally, compute the posterior\n\n\\(f(\\theta \\mid y = 3) = \\frac{f(y = 3 \\mid \\theta) f(\\theta)}{\\sum_{\\theta} f(y = 3 | \\theta) f(\\theta)}\\)\n\n\n\n\n\n\nN &lt;- 5; y &lt;- 3\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.05, 0.45, 0.30, 0.15, 0.05)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.05\n0.01\n0.00\n0.00\n\n\n0.3\n0.45\n0.13\n0.06\n0.29\n\n\n0.5\n0.30\n0.31\n0.09\n0.46\n\n\n0.7\n0.15\n0.31\n0.05\n0.23\n\n\n0.9\n0.05\n0.07\n0.00\n0.02\n\n\nTotal\n1.00\n0.83\n0.20\n1.00"
+    "section": "Dynamic Simulation",
+    "text": "Dynamic Simulation\nMCMC Demo"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#computing-event-probability",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#computing-event-probability",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#mcmc-diagnostics",
+    "href": "bayes-course/03-lecture/03-lecture.html#mcmc-diagnostics",
     "title": "Bayesian Inference",
-    "section": "Computing Event Probability",
-    "text": "Computing Event Probability\n\n\n\n\nTo compute event probabilities, we integrate (or sum) the relevant regions of the parameter space \\[\n\\P(\\theta \\geq 0.5) = \\int_{0.5}^{1} f(\\theta \\mid y) \\, d\\theta\n\\]\nIn this case, we only have discrete quantities, so we sum:\n\n\n\n\nprobs &lt;- d |&gt;\n  filter(theta &gt;= 0.50) |&gt;\n  dplyr::select(prior, post) |&gt;\n  colSums() |&gt;\n  round(2)\nprobs\n\nprior  post \n 0.50  0.71 \n\n\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.05\n0.01\n0.00\n0.00\n\n\n0.3\n0.45\n0.13\n0.06\n0.29\n\n\n0.5\n0.30\n0.31\n0.09\n0.46\n\n\n0.7\n0.15\n0.31\n0.05\n0.23\n\n\n0.9\n0.05\n0.07\n0.00\n0.02\n\n\nTotal\n1.00\n0.83\n0.20\n1.00\n\n\n\n\n\n\n\n\n\n\n\n\\(\\P(\\theta \\geq 0.50) =\\) 0.5 and \\(\\P(\\theta | y \\geq 0.50) =\\) 0.71"
+    "section": "MCMC Diagnostics",
+    "text": "MCMC Diagnostics\n\n\n\n\nIn general, you want to assess (1) the quality of the draws and (2) the quality of predictions\nThere are no guarantees in either case, but the former is easier than the latter\nThe folk theorem of statistical computing: computational problems often point to problems in the model (AG)\nWe will address the quality of the draws now and the quality of predictions later in the course\n\n\n\nExample of bad markov chains, page 283, Figure 11.3, BDA 3."
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#what-if-we-used-a-flat-prior",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#what-if-we-used-a-flat-prior",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#good-chain-bad-chain",
+    "href": "bayes-course/03-lecture/03-lecture.html#good-chain-bad-chain",
     "title": "Bayesian Inference",
-    "section": "What If We Used a Flat Prior?",
-    "text": "What If We Used a Flat Prior?\n\n\nFlat or uniform prior means that we consider all values of \\(\\theta\\) equality likely\n\n\n\n\nN &lt;- 5; y &lt;- 3\ntheta &lt;- c(0.10, 0.30, 0.50, 0.70, 0.90)\nprior &lt;- c(0.20, 0.20, 0.20, 0.20, 0.20)\nlik &lt;- dbinom(y, N, theta)\nlik_x_prior &lt;-  lik * prior\nconstant &lt;- sum(lik_x_prior)\npost &lt;- lik_x_prior / constant\n\n\n\n\n\n\n\n\ntheta\nprior\nlik\nlik_x_prior\npost\n\n\n\n\n0.1\n0.2\n0.01\n0.00\n0.01\n\n\n0.3\n0.2\n0.13\n0.03\n0.16\n\n\n0.5\n0.2\n0.31\n0.06\n0.37\n\n\n0.7\n0.2\n0.31\n0.06\n0.37\n\n\n0.9\n0.2\n0.07\n0.01\n0.09\n\n\nTotal\n1.0\n0.83\n0.17\n1.00\n\n\n\n\n\n\n\n\n\n\n\n\n\n\\(\\P(\\theta \\geq 0.50) =\\) 0.6 and \\(\\P(\\theta | y \\geq 0.50) =\\) 0.83"
+    "section": "Good Chain Bad Chain",
+    "text": "Good Chain Bad Chain\n\nCodePlot\n\n\n\n\nlibrary(bayesplot)\ndraws &lt;- f1$draws(\"theta\")\ncolor_scheme_set(\"viridis\")\np1 &lt;- mcmc_trace(draws, pars = \"theta\") + ylab(expression(theta)) +\n  ggtitle(\"Good Chain\")\nbad_post &lt;- readRDS(\"data/bad_post.rds\")\nbad_draws &lt;- bad_post$draws(\"mu\")\np2 &lt;- mcmc_trace(bad_draws, pars = \"mu\") + ylab(expression(theta)) +\n  ggtitle(\"Bad Chain\")\ngrid.arrange(p1, p2, nrow = 2)"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#bayesian-workflow",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#bayesian-workflow",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#effective-sample-size-and-autocorrelation",
+    "href": "bayes-course/03-lecture/03-lecture.html#effective-sample-size-and-autocorrelation",
     "title": "Bayesian Inference",
-    "section": "Bayesian Workflow",
-    "text": "Bayesian Workflow\n\n\nGelman, A. et al. (2020). Bayesian Workflow. ArXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
+    "section": "Effective Sample Size and Autocorrelation",
+    "text": "Effective Sample Size and Autocorrelation\n\nESSACF\n\n\n\n\nMCMC generates dependent draws from the target distribution\nDependent samples are less efficient as you need more of them to estimate the quantity of interest\nESS or \\(N_{eff}\\) is approximately how many independent samples you have\nTypically, \\(N_{eff} &lt; N\\) for MCMC, as there is some autocorrelation\nESS should be considered relative to \\(N\\): \\(\\frac{N_{eff}}{N}\\)\nGenerally, we don’t like to see \\(\\text{ratio} &lt; 0.10\\)\n\n\n\n\nneff_ratio(f1, pars = \"theta\") |&gt; round(2)\n\ntheta \n 0.43 \n\nneff_ratio(bad_post, pars = \"mu\") |&gt; round(2)\n\n  mu \n0.09"
   },
   {
-    "objectID": "bayes-course/01-lecture/01-lecture-old.html#overview-of-the-class",
-    "href": "bayes-course/01-lecture/01-lecture-old.html#overview-of-the-class",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#computing-r-hat",
+    "href": "bayes-course/03-lecture/03-lecture.html#computing-r-hat",
     "title": "Bayesian Inference",
-    "section": "Overview of the class",
-    "text": "Overview of the class\n\nSyllabus"
+    "section": "Computing R-Hat",
+    "text": "Computing R-Hat\n\n\nAutocorrelation assesses the quality of a single chain\nSplit R-Hat estimates the extent to which the chains are consistent with one another\nIt does it by assessing the mixing of chains by comparing variances within and between chains (technically sequences, as chains are split up) \\[\n\\begin{eqnarray}\n\\hat{R} = \\sqrt{\\frac{\\frac{n-1}{n}\\V_W + \\frac{1}{n}\\V_B}{\\V_W}} = \\sqrt{\\frac{\\V_{\\text{total}}}{\\V_{W}}}\n\\end{eqnarray}\n\\]\n\\(\\V_W\\) is within chain variance and \\(\\V_B\\) is between chain variance\nWe don’t like to see R-hats greater than 1.02 and really don’t like them greater than 1.05\n\n\n\n\nbayesplot::rhat(f1, pars = \"theta\") |&gt; round(3)\n\ntheta \n1.006 \n\nbayesplot::rhat(bad_post, pars = \"sigma\")  |&gt; round(3)\n\nsigma \n1.043"
   },
   {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#conjugate-models-and-beta-binomial",
-    "href": "bayes-course/02-lecture/02-lecture.html#conjugate-models-and-beta-binomial",
+    "objectID": "bayes-course/03-lecture/03-lecture.html#stan-homework",
+    "href": "bayes-course/03-lecture/03-lecture.html#stan-homework",
     "title": "Bayesian Inference",
-    "section": "Conjugate models and Beta-Binomial",
-    "text": "Conjugate models and Beta-Binomial\n\n\nBayesian workflow\nBeta distribution\nGreat expectations\nTuning the prior model for the clinical trial analysis\nBinomial likelihood with continuous \\(\\theta\\)\nDeriving the conjugate posterior\nAnalysis of the sex ratio\nCompromise between priors and data model\nCoherence of Bayesian inference\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathcal{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\DeclareMathOperator*{\\argmax}{arg\\,max}\n\\DeclareMathOperator*{\\argmin}{arg\\,min}\n\\]"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
-    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-workflow",
-    "title": "Bayesian Inference",
-    "section": "Bayesian Workflow",
-    "text": "Bayesian Workflow\n\n\n\n\nStatistics is like building a bridge — we first simulate the conditions under which our bridge should withstand various forces, then we build a bridge, and once built, we test it before letting people drive on it.\nPrior knowledge (not just prior distributions) here would be strength properties of concrete, optimal shape for the length, expected wind conditions, expected load of traffic, and maybe even expected momentum (mass * velocity) of an out-of-control tanker ramming into one of the supporting columns. The more important our “bridge,” the more testing we do."
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#bayesian-inference-vs-bayesian-workflow1",
-    "href": "bayes-course/02-lecture/02-lecture.html#bayesian-inference-vs-bayesian-workflow1",
-    "title": "Bayesian Inference",
-    "section": "Bayesian Inference vs Bayesian Workflow1",
-    "text": "Bayesian Inference vs Bayesian Workflow1\n\n\n\n\nBayesian inference is concerned with computing \\(f(\\theta \\mid y) \\propto f(\\theta) f(y \\mid \\theta)\\)\nBayesian workflow covers all aspects of data analysis:\n\nGather prior information\nBuild the initial model\nRun an inference algorithm (Bayesian inference)\nAdd model complexity, try a different model, perform model selection\nMake a decision\n\n\n\n\n\n\n\n\n\n\n\n\n\nGelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., Kennedy, L., Gabry, J., Bürkner, P.-C., & Modrák, M. (2020). Bayesian Workflow. arXiv:2011.01808 [Stat]. http://arxiv.org/abs/2011.01808"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#why-do-we-need-workflow",
-    "href": "bayes-course/02-lecture/02-lecture.html#why-do-we-need-workflow",
-    "title": "Bayesian Inference",
-    "section": "Why do we need workflow",
-    "text": "Why do we need workflow\n\n\n\n\nFollowing the principle of engineering, we start with a simple model\nIt will likely fit the data (no guarantees) and will not take too long to run\nThe simple model will likely not be very good, but now we:\n\nHave a straw man against which better models can be evaluated\nCan code the full cycle of data selection, model build, model test, and model diagnostics\n\nWe gradually add components and rerun the tests\nIf data are large, we can subsample the data to test our model\n\n\n\n\n\n\n\n\n\n\nWe want to compare models as we add features\nWe calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#on-with-the-show",
-    "href": "bayes-course/02-lecture/02-lecture.html#on-with-the-show",
-    "title": "Bayesian Inference",
-    "section": "On with the show…",
-    "text": "On with the show…\n\n\n\n\nLast time, we presented the discretized version of the prior\nIn practice, we are typically working in continuous space\nIn general, the prior model can be arbitrarily complex\nThere is a family of distributions called the exponential family, for which the prior has the same kernel as the posterior\nThis is called conjugacy\nIn practice, we seldom rely on conjugate relationships\nBeta distribution is conjugate to Binomial"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
-    "href": "bayes-course/02-lecture/02-lecture.html#introducing-beta",
-    "title": "Bayesian Inference",
-    "section": "Introducing Beta",
-    "text": "Introducing Beta\n\n\n\n\nBeta distribution has the following functional form for \\(\\alpha &gt; 0, \\, \\beta &gt; 0, \\, \\theta \\in (0, 1)\\) \\[\n\\begin{eqnarray}\n\\text{Beta}(\\theta \\mid \\alpha,\\beta) & = &\n\\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta^{\\alpha - 1} \\, (1 -\n\\theta)^{\\beta - 1} \\\\\n\\text{B}(a,b) \\ & = & \\ \\int_0^1 u^{a - 1} (1 - u)^{b - 1} \\,\n\\text{d}u \\ \\\\\n& = & \\ \\frac{\\Gamma(a) \\, \\Gamma(b)}{\\Gamma(a+b)} \\\\\n\\Gamma(x) & = &\n\\int_0^{\\infty} u^{x - 1} \\exp(-u) \\, \\text{d}u\n\\end{eqnarray}\n\\]\n\n\n\n\n\n\n\n\n\n\n\n\nfactorial(0:9)\n\n [1]      1      1      2      6     24    120    720   5040  40320 362880\n\ngamma(1:10)\n\n [1]      1      1      2      6     24    120    720   5040  40320 362880\n\n\n\n\n\n\nFor positive integrers \\(n\\): \\(\\, \\Gamma(n+1) = n!\\) and in general \\(\\Gamma(z + 1) = z \\Gamma(z)\\)\n\\(\\text{Beta}(1, 1)\\) is equivalent to \\(\\text{Unif(0, 1)}\\). Why? (work it out)"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
-    "href": "bayes-course/02-lecture/02-lecture.html#visualizing-beta",
-    "title": "Bayesian Inference",
-    "section": "Visualizing Beta",
-    "text": "Visualizing Beta\n\n\nThe mode of Beta, \\(\\text{Mode}(\\theta) = \\argmax_\\theta \\text{Beta}(\\theta \\mid \\alpha, \\beta)\\) is shown in red and the function maximum in blue"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#expectations",
-    "href": "bayes-course/02-lecture/02-lecture.html#expectations",
-    "title": "Bayesian Inference",
-    "section": "Expectations",
-    "text": "Expectations\n\n\nRecall the definition of expectations for continuous random variables\nWe often write \\(\\mu\\) or \\(\\mu_X\\) for expected value of \\(X\\) \\[\n\\mu_X = \\E(X) = \\int x \\cdot f(x) \\, \\text{d}x\n\\]\nVariance is a type of expectation, which we often denote by \\(\\sigma^2\\) \\[\n\\sigma_X = \\V(X) = \\E(X - \\mu)^2 = \\int (X - \\mu)^2 f(x) \\, \\text{d}x\n\\]\nIt is often more convenient to write the variance as \\[\n\\V(X) = \\E(X^2) - \\mu^2\n\\]"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
-    "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta",
-    "title": "Bayesian Inference",
-    "section": "What to expect from Beta",
-    "text": "What to expect from Beta\n\n\nKeeping in mind that a Gamma function is a continuous analog of the factorial:\n\n\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta) &=& \\int_{0}^{1} \\frac{1}{\\mathrm{B}(\\alpha,\\beta)} \\, \\theta \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\, \\text{d}\\theta \\\\\n&=& \\frac{1}{\\mathrm{B}(\\alpha,\\beta)}\\int_{0}^{1}  \\color{red}{\\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1}} \\, \\text{d}\\theta \\\\\n\\end{eqnarray}\n\\]\n\n\n\\[\n\\begin{eqnarray}\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha) \\, \\Gamma(\\beta)} \\cdot\n\\color{red}{\\frac{\\Gamma(1 + \\alpha) \\Gamma(\\beta)}{\\Gamma(1 + a + b)}} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{\\Gamma(1 + \\alpha)}{\\Gamma(1 + \\alpha + \\beta)} \\\\\n&=& \\frac{\\Gamma(\\alpha + \\beta)}{\\Gamma(\\alpha)} \\cdot\n\\frac{a \\Gamma(\\alpha)}{(\\alpha + \\beta) \\Gamma(\\alpha + \\beta)} \\\\\n&=& \\frac{\\alpha}{\\alpha + \\beta}\n\\end{eqnarray}\n\\]\n\n\n\nWhat is the value of \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta} \\, d\\theta\\)\n\n\n\nCheck the integral \\(\\int_{0}^{1}  \\, \\theta^\\alpha \\, (1 - \\theta)^{\\beta - 1} \\, d\\theta\\) using SymPy"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
-    "href": "bayes-course/02-lecture/02-lecture.html#what-to-expect-from-beta-1",
-    "title": "Bayesian Inference",
-    "section": "What to expect from Beta",
-    "text": "What to expect from Beta\n\n\nWe can find the mode of this distribution by taking the log, differentiating with respect to \\(\\theta\\), and setting the derivative function to zero \\[\n\\begin{eqnarray}\n\\E(\\theta) & = & \\frac{\\alpha}{\\alpha + \\beta} \\\\\n\\text{Mode}(\\theta) & = & \\frac{\\alpha - 1}{\\alpha + \\beta - 2} \\;\\; \\text{ when } \\; \\alpha, \\beta &gt; 1. \\\\\n\\end{eqnarray}\n\\]\nThe variance of \\(\\theta\\) can be derived using the definition of the variance operator \\[\n\\begin{eqnarray}\n\\V(\\theta) & = & \\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}\n\\end{eqnarray}\n\\]\nNotice when \\(\\alpha = \\beta\\), \\(\\E(\\theta) = \\text{Mode}(\\theta)\\)"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa",
-    "href": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa",
-    "title": "Bayesian Inference",
-    "section": "Example: Placenta Previa",
-    "text": "Example: Placenta Previa\n\n\n\n\nWe borrow an example from BDA3: the probability of girl birth given placenta previa (PP)\nPlacenta previa is a condition when the placenta completely or partially covers the opening of the uterus\nA PP study in Germany found that out of 980 births, 437 or \\(\\approx 45\\%\\) were female\nSex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%1\nOur task is to assess the evidence for \\(\\P(\\text{ratio} &lt; .485 \\mid \\text{PP})\\)\n\n\n\n\n\n\n\n\n\nGelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#biomomial-likelihood",
-    "href": "bayes-course/02-lecture/02-lecture.html#biomomial-likelihood",
-    "title": "Bayesian Inference",
-    "section": "Biomomial Likelihood",
-    "text": "Biomomial Likelihood\n\n\nRecall that Likelihood is the function of the parameter \\(\\theta\\), assuming \\(\\theta \\in [0,1]\\) \\[\n\\text{Bin}(y \\mid \\theta) = \\binom{N}{y}\n\\theta^y (1 - \\theta)^{N - y} \\propto \\theta^y (1 - \\theta)^{N - y}\n\\]\nAssuming \\(N = 10\\), the likelihood for \\(\\theta\\), given a few possible values of \\(y\\) successes"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
-    "href": "bayes-course/02-lecture/02-lecture.html#deriving-the-posterior-distribution",
-    "title": "Bayesian Inference",
-    "section": "Deriving the Posterior Distribution",
-    "text": "Deriving the Posterior Distribution\n\n\nThe denominator is constant in \\(\\theta\\); we will derive the posterior up to a proportion \\[\n\\begin{eqnarray}\nf(y \\mid \\theta) & \\propto & \\theta^y (1 - \\theta)^{N - y} \\\\\nf(\\theta) & \\propto & \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\nf(\\theta \\mid y) & \\propto & f(y \\mid \\theta) f(\\theta) \\\\\n& = & \\theta^y (1 - \\theta)^{N - y} \\cdot \\theta^{\\alpha - 1} \\, (1 - \\theta)^{\\beta - 1} \\\\\n& = & \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\\\\nf(\\theta \\mid y) & = & \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\n\\end{eqnarray}\n\\]\n\\(f(\\theta)\\): \\(\\alpha - 1\\) prior successes and \\(\\beta - 1\\) prior failures\nThe last equality comes from matching the kernel \\(\\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1}\\) to the normalized Beta PDF which has a normalizing constant \\(\\frac{\\Gamma (\\alpha +\\beta + N)}{\\Gamma (\\alpha + y) \\Gamma (\\beta + N - y)}\\)\nSince the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial\n\n\n\nCheck the kernel integral, \\(\\int_{0}^{1} \\theta^{y + \\alpha - 1} (1 - \\theta)^{N - y + \\beta - 1} \\, d\\theta\\) using SymPy"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
-    "href": "bayes-course/02-lecture/02-lecture.html#posterior-expectations",
-    "title": "Bayesian Inference",
-    "section": "Posterior Expectations",
-    "text": "Posterior Expectations\n\n\\[\n\\begin{eqnarray}\n\\E(\\theta \\mid y)  & = & \\frac{\\alpha + y}{\\alpha + \\beta + n} = \\frac{\\alpha + \\beta}{\\alpha + \\beta + n}\\cdot \\E(\\theta) + \\frac{n}{\\alpha + \\beta + n}\\cdot\\frac{y}{n} \\\\\n\\V(\\theta \\mid y)  & = & \\frac{(\\alpha + y)(\\beta + n - y)}{(\\alpha + \\beta + n)^2(\\alpha + \\beta + n + 1)} \\\\\n\\text{Mode}(\\theta \\mid y) & = & \\frac{\\alpha + y - 1}{\\alpha + \\beta + n - 2} = \\frac{\\alpha + \\beta - 2}{\\alpha + \\beta + n - 2} \\cdot\\text{Mode}(\\theta) + \\frac{n}{\\alpha + \\beta + n - 2} \\cdot\\frac{y}{n}\n\\end{eqnarray}\n\\]\n\n\n\nNote that the posterior expectation is between \\(y/n\\) and \\(\\frac{\\alpha}{\\alpha + \\beta}\\)\nAlso note that as sample becomes very large \\(\\E(\\theta \\mid y) \\rightarrow \\frac{y}{n}\\) and \\(\\V(\\theta \\mid y) \\rightarrow 0\\)\nAs before, \\(\\text{Mode}(\\theta \\mid y) = \\E(\\theta \\mid y)\\), when \\(\\alpha = \\beta\\)"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate-example",
-    "href": "bayes-course/02-lecture/02-lecture.html#variance-reduction-rate-example",
-    "title": "Bayesian Inference",
-    "section": "Variance Reduction Rate Example",
-    "text": "Variance Reduction Rate Example\n\npost_var &lt;- function(a, b, y, n) {\n  ((a + y) * (b + n - y)) / ((a + b + n)^2 * (a + b + n + 1))\n}\nn &lt;- seq(10, 500, by = 2)\ny &lt;- n/2 # keep success rate at 1/2\npv &lt;- post_var(a = 1, b = 1, y = y, n = n)\npsd &lt;- sqrt(pv)\nggplot(aes(n, psd), data = data.frame(n, psd)) +\n  geom_line() + ylab(\"Posterior SD\")"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
-    "href": "bayes-course/02-lecture/02-lecture.html#example-placenta-previa-1",
-    "title": "Bayesian Inference",
-    "section": "Example: Placenta Previa",
-    "text": "Example: Placenta Previa\n\n\nLet’s derive the analytical posterior and compare it with the samples from the posterior distribution\nFirst, we will consider the uniform \\(\\text{Beta}(1, 1)\\) prior\nWe are told that data are \\(N = 980\\) and \\(y = 437\\) female births\nThe posterior is \\(\\text{Beta}(1 + 437, 1 + 980 - 437) = \\text{Beta}(438, 544)\\)\n\\(\\E(\\theta \\mid Y=437) = \\frac{\\alpha + 437}{\\alpha + \\beta + 980} = \\frac{438}{982} \\approx 0.446\\)\n\\(\\sqrt{\\V(\\theta \\mid Y=y)} \\approx\\) 0.016\n\n\n\nint &lt;- 0.95; l &lt;- (1 - int)/2; u &lt;- 1 - l\nupper &lt;- qbeta(u, 438, 544) |&gt; round(3)\nlower &lt;- qbeta(l, 438, 544) |&gt; round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.415, 0.477]\n\nevent_prob &lt;- integrate(dbeta, lower = 0, upper = 0.485, shape1 = 438, shape2 = 544)[[1]]\ncat(\"Probability that the ratio &lt; 0.485 under uniform prior =\", round(event_prob, 3))\n\nProbability that the ratio &lt; 0.485 under uniform prior = 0.993\n\npbeta(0.485, shape1 = 438, shape2 = 544) |&gt; round(3)\n\n[1] 0.993"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
-    "href": "bayes-course/02-lecture/02-lecture.html#obtaining-quantiles-by-sampling",
-    "title": "Bayesian Inference",
-    "section": "Obtaining Quantiles by Sampling",
-    "text": "Obtaining Quantiles by Sampling\n\n\nWe can use R’s rbeta() RNG to generate draws from the posterior\n\n\n\n\n\ndraws &lt;- rbeta(n = 1e5, 438, 544)\np &lt;- ggplot(aes(draws), data = data.frame(draws))\np + geom_histogram(bins = 30) + ylab(\"\") +\n  geom_vline(xintercept = 0.485, \n             colour = \"red\", size = 0.3) +\n  ggtitle(\"Draws from Beta(438, 544)\") + \n  theme(axis.text.y = element_blank()) + \n  xlab(expression(theta))\n\n\n\n\n\n\n\n\n\n\n\n\nWe can use the quantile() function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before\n\n\n\n\nquantile(draws, probs = c(0.025, 0.5, 0.975)) |&gt; round(3)\n\n 2.5%   50% 97.5% \n0.415 0.446 0.477 \n\ncat(\"Probability that the ratio &lt; 0.485 under uniform prior =\", mean(draws &lt; 0.485) |&gt; round(3))\n\nProbability that the ratio &lt; 0.485 under uniform prior = 0.993"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#population-priors",
-    "href": "bayes-course/02-lecture/02-lecture.html#population-priors",
-    "title": "Bayesian Inference",
-    "section": "Population Priors",
-    "text": "Population Priors\n\n\n\n\nWhat priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?\nWe know that the population mean is 0.485 and the standard deviation is about 0.01\nBack out the parameters of the population Beta distribution\n\n\n\n\\[\n\\begin{eqnarray}\n\\begin{cases}\n\\frac{\\alpha}{\\alpha + \\beta} & = & 0.485 \\\\\n\\sqrt{\\frac{\\alpha \\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}} & = & 0.01\n\\end{cases}\n\\end{eqnarray}\n\\]\n\n\n\n\\(\\alpha \\approx 1211\\) and \\(\\beta \\approx 1286\\)\n\n\n\n\n\nCheck the result with the simulation\n\n\n\n\nx &lt;- rbeta(1e4, 1211, 1286)\nmean(x) |&gt; round(3)\n\n[1] 0.485\n\nsd(x) |&gt; round(3)\n\n[1] 0.01\n\n\n\n\n\nWe can let Mathematica do the algebra"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#posterior-with-population-priors",
-    "href": "bayes-course/02-lecture/02-lecture.html#posterior-with-population-priors",
-    "title": "Bayesian Inference",
-    "section": "Posterior with Population Priors",
-    "text": "Posterior with Population Priors\n\n\n\\(f(\\theta | y) = \\text{Beta}(1211 + 437, 1286 + 543) = \\text{Beta}(1648,1829)\\)\nWe can compare the prior and posterior using summarize_beta_binomial() in the bayesrules package\n\n\n\nlibrary(bayesrules)\nsummarize_beta_binomial(alpha = 1211, beta = 1286, y = 437, n = 980)\n\n      model alpha beta      mean      mode          var          sd\n1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489\n2 posterior  1648 1829 0.4739718 0.4739568 7.168560e-05 0.008466735\n\n\n\n\n\nint &lt;- 0.95; l &lt;- (1 - int)/2; u &lt;- 1 - l\nupper &lt;- qbeta(u, 1648, 1829) |&gt; round(3)\nlower &lt;- qbeta(l, 1648, 1829) |&gt; round(3)\ncat(\"95% posterior interval is [\", lower, \", \", upper, \"]\", sep = \"\")\n\n95% posterior interval is [0.457, 0.491]\n\n\n\n\n\nevent_prob &lt;- pbeta(0.485, shape1 = 1648, shape2 = 1829)\ncat(\"Probability that the ratio &lt; 0.485 under population prior =\", round(event_prob, 3))\n\nProbability that the ratio &lt; 0.485 under population prior = 0.904\n\n\n\n\nUnder uniform prior 95% posterior interval was [0.415, 0.477]\nAnd probability that the ratio &lt; 0.485 under uniform prior = 0.993"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
-    "href": "bayes-course/02-lecture/02-lecture.html#visualizing-bayesian-rebalancing",
-    "title": "Bayesian Inference",
-    "section": "Visualizing Bayesian Rebalancing",
-    "text": "Visualizing Bayesian Rebalancing\n\n\nThe following uses \\(\\text{Beta}(5, 5)\\) prior and N = 10. Guess what color is likelihood, prior, and posterior."
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
-    "href": "bayes-course/02-lecture/02-lecture.html#data-order-and-batch-invariance",
-    "title": "Bayesian Inference",
-    "section": "Data Order and Batch Invariance",
-    "text": "Data Order and Batch Invariance\n\n\nIn Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)\nThis is a general result, not just for Beta Binomial (see Section 4.5)\nIn practice, when we don’t have analytic posteriors, this is not so easy to do\nSuppose we observe \\(y = y_1 + y_2\\) and \\(N = N_1 + N_2\\) trials all at once\nFor all at once case, the posterior is in \\(f(\\theta \\mid y) = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\) as before\nNow, suppose we observe \\(y_1\\) successes in \\(n_1\\) trials first\nThe posterior is \\(f(\\theta \\mid y_1) = \\text{Beta}(\\alpha + y_1, \\,\\beta + N_1 - y_1)\\)\nWe now observe, \\(y_2\\) successes in \\(n_2\\) trials. The posterior is \\(f(\\theta \\mid y= y_1 + y_2) = \\text{Beta}(\\alpha + y_1 + y_2, \\,\\beta + N_1 - y_1 + N_2 - y_2)\\\\ = \\text{Beta}(\\alpha + y, \\,\\beta + N - y)\\)"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#general-case",
-    "href": "bayes-course/02-lecture/02-lecture.html#general-case",
-    "title": "Bayesian Inference",
-    "section": "General Case",
-    "text": "General Case\n\n\nSuppose we observe data point \\(y_1\\), and then data point \\(y_2\\)1\n\n\n\n\\[\n\\begin{eqnarray}\nf(\\theta \\mid y_1) &=&  \\frac{f(\\theta)f(y_1 \\mid \\theta)}{f(y_1)} \\\\\nf(\\theta \\mid y_2) &=&  \\frac{\\frac{f(\\theta)f(y_1 \\mid \\theta)}{f(y_1)} f(y_2 \\mid \\theta)}{f(y_2)} \\\\\n&=& \\frac{f(\\theta)f(y_1 \\mid \\theta) f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{eqnarray}\n\\]\n\n\n\nObserving data point \\(y_2\\), and then data point \\(y_1\\), will results in the same distribution\nWhat if we observed both points at once?\n\n\n\n\\[\n\\begin{split}\nf(\\theta \\mid y_1,y_2)\n& = \\frac{f(\\theta)f(y_1,y_2 \\mid \\theta)}{f(y_1)f(y_2)} \\\\\n& = \\frac{f(\\theta)f(y_1 \\mid \\theta)f(y_2 \\mid \\theta)}{f(y_1)f(y_2)}\n\\end{split}\n\\]\n\nThis comes directly from Bayes Rules!: 4.5 Proving data order invariance"
-  },
-  {
-    "objectID": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
-    "href": "bayes-course/02-lecture/02-lecture.html#the-myth-of-objectivity-in-science",
-    "title": "Bayesian Inference",
-    "section": "The myth of objectivity in science",
-    "text": "The myth of objectivity in science\n\n\nAll of science requires choices, and those choices are, by definition, subjective\nNeither Frequentist nor Bayesian inference imbues objectivity into your analysis\nAll priors are subjective, including no priors, which don’t exist (uniform prior on the real line is not “no prior”)\nRemember that important scientific discoveries were made before Statistics became a thing\nA better alternative to objective vs subjective debate:\n\n\n\n\n…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence1\n\n\n\n\nGelman, A., & Hennig, C. (2015). Beyond subjective and objective in statistics. arXiv:1508.05453 [Stat]. http://arxiv.org/abs/1508.05453"
+    "section": "Stan Homework",
+    "text": "Stan Homework\n\nModify the program to incorporate Beta(2, 2) without using theta ~ beta(2, 2) (i.e. using target +=)\nModify the program to account for an arbitrary Beta(a, b) distribution\nVerify that you got the right result in #1 by a) comparing Stan’s posterior means and posterior standard deviations to the means and standard deviations under the conjugate model; b) modifying the Stan program using beta(2, 2) prior and Bernoulli likelihood shown here; c) modifying the R code to get a third point of comparison.\n\n\nHint: For #2, pass parameters a and b in the data block\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real&lt;lower=0, upper=1&gt; theta;\n}\nmodel {\n  for (i in 1:N) {\n    target += log(theta * y[i] + \n              log(1 - theta) * (1 - y[i]);\n  }\n}"
   },
   {
     "objectID": "bayes-course/04-lecture/04-lecture.html#mcmc-posterior-inference-and-prediction",
@@ -1649,7 +1670,7 @@
     "href": "bayes-course/04-lecture/04-lecture.html#mhr-in-r",
     "title": "Bayesian Inference",
     "section": "MHR in R",
-    "text": "MHR in R\n\nMHR IterationMHR for N Iterations\n\n\n\nmetropolis_iteration_1 &lt;- function(y, current_mean, proposal_scale, \n                                   sd, prior_mean, prior_sd) {\n# assume prior ~ N(prior_mean, prior_sd) and sd is known\n# proposal sampling distribution q = N(current_mean, proposal_scale)\n\n  proposal_mean &lt;- rnorm(n = 1, mean = current_mean,  sd = proposal_scale) # q(mu' | mu)  \n  f_proposal    &lt;- dnorm(proposal_mean, mean = prior_mean, # proposal prior, f(theta')\n                         sd = prior_sd) *                  \n                   dnorm(y, mean = proposal_mean, sd = sd) # proposal lik, f(y | theta')\n  f_current     &lt;- dnorm(current_mean, mean = prior_mean,  # current prior, f(theta)\n                         sd = prior_sd) *        \n                   dnorm(y, mean = current_mean, sd = sd)  # current lik, f(y | theta)\n\n  ratio &lt;- f_proposal / f_current # [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]\n  alpha &lt;- min(ratio, 1)     \n  \n  if (alpha &gt; runif(1)) {         # this is just another way of flipping a coint\n    next_value &lt;- proposal_mean  \n  } else {\n    next_value &lt;- current_mean\n  }\n  return(next_value)\n}\n\n\n\n\nmhr &lt;- function(y, f, N, start, ...) {\n# y: new observation\n# f: function that implements one MHR iteration\n# N: number of iterations\n# start: initial value of the chain\n# ...: additional arguments to f\n  \n  draws &lt;- numeric(N)\n  draws[1] &lt;- f(y, current_mean = start, ...)\n  \n  for (i in 2:N) {\n    draws[i] &lt;- f(y, current_mean = draws[i - 1], ...)\n  }\n  \n  return(draws)\n}\n\ny &lt;- 5; N &lt;- 5e3; start &lt;- 3\nd &lt;- mhr(y, N, f = metropolis_iteration_1, start, proposal_scale = 2, sd = 0.5,  \n         prior_mean = 0, prior_sd = 2)"
+    "text": "MHR in R\n\nMHR IterationMHR for N Iterations\n\n\n\nmetropolis_iteration_1 &lt;- function(y, current_mean, proposal_scale, \n                                   sd, prior_mean, prior_sd) {\n# assume prior ~ N(prior_mean, prior_sd) and sd is known\n# proposal sampling distribution q = N(current_mean, proposal_scale)\n\n  proposal_mean &lt;- rnorm(n = 1, mean = current_mean,  sd = proposal_scale) # q(mu' | mu)  \n  f_proposal    &lt;- dnorm(proposal_mean, mean = prior_mean, # proposal prior, f(theta')\n                         sd = prior_sd) *                  \n                   dnorm(y, mean = proposal_mean, sd = sd) # proposal lik, f(y | theta')\n  f_current     &lt;- dnorm(current_mean, mean = prior_mean,  # current prior, f(theta)\n                         sd = prior_sd) *        \n                   dnorm(y, mean = current_mean, sd = sd)  # current lik, f(y | theta)\n\n  ratio &lt;- f_proposal / f_current # [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]\n  alpha &lt;- min(ratio, 1)     \n  \n  if (alpha &gt; runif(1)) {         # this is just another way of flipping a coint\n    next_value &lt;- proposal_mean  \n  } else {\n    next_value &lt;- current_mean\n  }\n  return(next_value)\n}\n\n\n\n\nmhr &lt;- function(y, f, N, start, ...) {\n# y: new observation\n# f: function that implements one MHR iteration\n# N: number of iterations\n# start: initial value of the chain\n# ...: additional arguments to f\n  \n  draws &lt;- numeric(N)\n  draws[1] &lt;- f(y, current_mean = start, ...)\n  \n  for (i in 2:N) {\n    draws[i] &lt;- f(y, current_mean = draws[i - 1], ...)\n  }\n  \n  return(draws)\n}\n\ny &lt;- 5; N &lt;- 1e6; start &lt;- 3\nd &lt;- mhr(y, N, f = metropolis_iteration_1, start, proposal_scale = 2, sd = 0.5,  \n         prior_mean = 0, prior_sd = 2)"
   },
   {
     "objectID": "bayes-course/04-lecture/04-lecture.html#markov-chain-animation",
@@ -1663,7 +1684,7 @@
     "href": "bayes-course/04-lecture/04-lecture.html#comparing-samples-to-the-true-posterior",
     "title": "Bayesian Inference",
     "section": "Comparing Samples to the True Posterior",
-    "text": "Comparing Samples to the True Posterior\n\n\n\n\nnp &lt;- normal_normal_post(y = y, \n                         sd = 0.5, \n                         prior_mu = 0, \n                         prior_sd = 2)\n\ntheta &lt;- seq(np$post_mu + 3*np$post_sd, \n             np$post_mu - 3*np$post_sd, \n             len = 100)\n\ndn &lt;- dnorm(theta, mean = np$post_mu, \n                     sd = np$post_sd)\n\np &lt;- ggplot(aes(d), data = tibble(d = d))\np + geom_histogram(aes(y = after_stat(density)), \n                   bins = 25, alpha = 0.6) +\n  geom_line(aes(theta, dn), linewidth = 0.5, \n            color = 'red', \n            data = tibble(theta, dn)) + \n  ylab(\"\") + xlab(expression(theta)) + \n  ggtitle(\"MHR draws vs Normal(4.71, 0.49)\")"
+    "text": "Comparing Samples to the True Posterior\n\n\n\n\nnp &lt;- normal_normal_post(y = y, \n                         sd = 0.5, \n                         prior_mu = 0, \n                         prior_sd = 2)\n\ntheta &lt;- seq(np$post_mu + 3*np$post_sd, \n             np$post_mu - 3*np$post_sd, \n             len = 100)\n\ndn &lt;- dnorm(theta, mean = np$post_mu, \n                     sd = np$post_sd)\n\np &lt;- ggplot(aes(d), data = tibble(d = d))\np + geom_histogram(aes(y = after_stat(density)), \n                   bins = 40, alpha = 0.6) +\n  geom_line(aes(theta, dn), linewidth = 0.5, \n            color = 'red', \n            data = tibble(theta, dn)) + \n  ylab(\"\") + xlab(expression(theta)) + \n  ggtitle(\"MHR draws vs Normal(4.71, 0.49)\")"
   },
   {
     "objectID": "bayes-course/04-lecture/04-lecture.html#what-is-wrong-with-this-code",

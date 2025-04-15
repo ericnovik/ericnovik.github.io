@@ -401,7 +401,7 @@ Eric Novik
 <span id="cb8-15"><a></a>  <span class="fu">return</span>(draws)</span>
 <span id="cb8-16"><a></a>}</span>
 <span id="cb8-17"><a></a></span>
-<span id="cb8-18"><a></a>y <span class="ot">&lt;-</span> <span class="dv">5</span>; N <span class="ot">&lt;-</span> <span class="fl">5e3</span>; start <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb8-18"><a></a>y <span class="ot">&lt;-</span> <span class="dv">5</span>; N <span class="ot">&lt;-</span> <span class="fl">1e6</span>; start <span class="ot">&lt;-</span> <span class="dv">3</span></span>
 <span id="cb8-19"><a></a>d <span class="ot">&lt;-</span> <span class="fu">mhr</span>(y, N, <span class="at">f =</span> metropolis_iteration_1, start, <span class="at">proposal_scale =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.5</span>,  </span>
 <span id="cb8-20"><a></a>         <span class="at">prior_mean =</span> <span class="dv">0</span>, <span class="at">prior_sd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -411,8 +411,8 @@ Eric Novik
 </section>
 <section id="markov-chain-animation" class="slide level2 smaller">
 <h2>Markov Chain Animation</h2>
-<p><img data-src="anim/anim-0.1.gif" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-10.gif" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-2.gif" class="quarto-figure quarto-figure-left" height="255"> Autocorrelation function (ACF)</p>
-<p><img data-src="anim/anim-0.1.png" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-10.png" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/anim-2.png" class="quarto-figure quarto-figure-left" height="255"></p>
+<p><img data-src="anim/mcmc_chain_1.gif" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/mcmc_chain_2.gif" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/mcmc_chain_3.gif" class="quarto-figure quarto-figure-left" height="255"> Autocorrelation function (ACF)</p>
+<p><img data-src="anim/acf_1.png" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/acf_2.png" class="quarto-figure quarto-figure-left" height="255"> <img data-src="anim/acf_3.png" class="quarto-figure quarto-figure-left" height="255"></p>
 </section>
 <section id="comparing-samples-to-the-true-posterior" class="slide level2 smaller">
 <h2>Comparing Samples to the True Posterior</h2>
@@ -434,7 +434,7 @@ Eric Novik
 <span id="cb9-12"><a></a></span>
 <span id="cb9-13"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(d), <span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">d =</span> d))</span>
 <span id="cb9-14"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), </span>
-<span id="cb9-15"><a></a>                   <span class="at">bins =</span> <span class="dv">25</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb9-15"><a></a>                   <span class="at">bins =</span> <span class="dv">40</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
 <span id="cb9-16"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(theta, dn), <span class="at">linewidth =</span> <span class="fl">0.5</span>, </span>
 <span id="cb9-17"><a></a>            <span class="at">color =</span> <span class="st">'red'</span>, </span>
 <span id="cb9-18"><a></a>            <span class="at">data =</span> <span class="fu">tibble</span>(theta, dn)) <span class="sc">+</span> </span>
@@ -482,7 +482,7 @@ Eric Novik
 </div>
 </div>
 </section>
-<section id="what-if-y-is-a-vector" class="slide level2 smaller">
+<section id="what-if-y-is-a-vector" class="slide level2 tiny">
 <h2>What if Y is a vector?</h2>
 <div>
 <ul>
