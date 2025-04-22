@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Eric Novik">
 
-<title>APSTA-GE 2123: Bayesian Inference – Eric Novik</title>
+<title>From Entropy to Model Evaluation and LOO-CV – Eric Novik</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,25 +21,79 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-79108a0fc1995748cbd19a5b0e3e3e7c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -97,17 +152,16 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Eric Novik</span>
     </a>
   </div>
@@ -118,15 +172,15 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./smac.html"> 
+    <a class="nav-link" href="../../smac.html"> 
 <span class="menu-text">APSTA-GE 2006: Math, Statistics and R Programming</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./bayes-course.html" aria-current="page"> 
+    <a class="nav-link" href="../../bayes-course.html"> 
 <span class="menu-text">APSTA-GE 2123: Bayesian Inference</span></a>
   </li>  
 </ul>
@@ -140,29 +194,25 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#lectures" id="toc-lectures" class="nav-link active" data-scroll-target="#lectures">Lectures</a></li>
-  <li><a href="#background-resources" id="toc-background-resources" class="nav-link" data-scroll-target="#background-resources">Background Resources</a></li>
-  <li><a href="#additional-bayesian-resources" id="toc-additional-bayesian-resources" class="nav-link" data-scroll-target="#additional-bayesian-resources">Additional Bayesian Resources</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">APSTA-GE 2123: Bayesian Inference</h1>
+<h1 class="title">From Entropy to Model Evaluation and LOO-CV</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Eric Novik </p>
+          </div>
+  </div>
     
   
     
@@ -173,76 +223,116 @@ window.Quarto = {
 </header>
 
 
+<p>This case study is based on Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC <span class="citation" data-cites="vehtari2017">(<a href="#ref-vehtari2017" role="doc-biblioref">Vehtari, Gelman, and Gabry 2017</a>)</span> and Information Theory, Inference and Learning Algorithms <span class="citation" data-cites="mackay2003">(<a href="#ref-mackay2003" role="doc-biblioref">MacKay 2003</a>)</span>.</p>
+<p><span class="math display">\[
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\d}{text{d}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathcal{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\]</span></p>
+<p>Before discussing LOO-CV, it is helpful to to review the its information-theoretic justification for model selection. We will start with the concept of information entropy and cross-entropy that will lead is to relative enrtopy, which also goes by the name of KL divergence (KLD) and finally to how minimizing KLD naturally leads to LOO-CV.</p>
+<section id="entropy" class="level2">
+<h2 class="anchored" data-anchor-id="entropy">Entropy</h2>
+<p>Entropy is sometimes decribed as a measure of disorder in a system, but this is not a very helpful description. One way to think of information entropy is a measure of surprise. Let’s take a simple system that can either be in state 0 or state 1. If every time we observe the system it is either state 1 or 0 and never changes, we can’t be surprised by what we see, or another way of saying that is that this system can only be arranged in one way, so our surprise or entropy is 0 in either case. Suppose that the system can be state 1 (or 0) with probability of <span class="math inline">\(p = 1/2\)</span>. In this case, my surprise should be at its maximum, compared with any other value of <span class="math inline">\(p\)</span>.</p>
+<p>Let’s take a particular PMF for this Bernoulli with <span class="math inline">\(p(X = 1) = 0.9\)</span> and <span class="math inline">\(p(X = 2) = 0.1\)</span>. Shannon called the information content of X = 1 of this system:</p>
+<p><span class="math display">\[
+h(x) = \log_2 \frac{1}{p(x)} = -\log_2(p(x))
+\\
+h(1) \approx 0.15 \text{ and } h(0) \approx 3.32
+\]</span> This function has a property that the higher the probability (of seeing 1), the lower is the surprise that you see it.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>H <span class="ot">&lt;-</span> <span class="cf">function</span>(p) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># p is a PMF expressed as a row vector</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># compute H(x) = sum(p(x) * log2(1 / p(x)))</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">length</span>(p)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (n <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (p[n] <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      H[n] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      H[n] <span class="ot">&lt;-</span> <span class="sc">-</span>p[n] <span class="sc">*</span> <span class="fu">log2</span>(p[n]) </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>(H))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">p =</span> p, <span class="at">q =</span> <span class="dv">1</span> <span class="sc">-</span> p)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">|&gt;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">h =</span> <span class="fu">H</span>(<span class="fu">c_across</span>(<span class="fu">everything</span>()))) <span class="sc">|&gt;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> p, <span class="at">y =</span> h), <span class="at">data =</span> p) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="bayes-course/dalle-fish.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="300"></p>
+<p><img src="model-eval-loocv_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="432"></p>
 </figure>
 </div>
-<p>This is the home of the Spring 2025 Bayesian Inference class at NYU Steinhardt. If you are enrolled in the course, the assignments will be posted on <a href="https://brightspace.nyu.edu/">Brightspace</a>.</p>
-<p><a href="bayes-course/syllabus.pdf">This</a> is the current version of the syllabus. Please check the date, as it is subject to change.</p>
-<section id="lectures" class="level3">
-<h3 class="anchored" data-anchor-id="lectures">Lectures</h3>
-<p>The following is a preliminary lecture plan. We will add the links after each lecture.</p>
-<ul>
-<li>Lecture 01: <a href="bayes-course/01-lecture/01-lecture.html">Introduction and Bayesian Workflow</a></li>
-<li>Lecture 02: <a href="bayes-course/02-lecture/02-lecture.html">Conjugate Models and Beta-Binomial</a></li>
-<li>Lecture 03: <a href="bayes-course/03-lecture/03-lecture.html">More Conjugate Models and Introduction to Posterior Sampling</a></li>
-<li>Lecture 04: <a href="bayes-course/04-lecture/04-lecture.html">MCMC, Posterior Inference, and Prediction</a></li>
-<li>Lecture 05: <a href="bayes-course/05-lecture/05-lecture.html">Linear Regression and Model Evaluation</a></li>
-<li>Lecture 06: Expanding the Linear Model and Modeling Counts</li>
-<li>Lecture 07: Logistic regression and introduction to hierarchical models</li>
-</ul>
+</div>
+</div>
 </section>
-<section id="background-resources" class="level3">
-<h3 class="anchored" data-anchor-id="background-resources">Background Resources</h3>
-<p>The following resources may be helpful to those who need a refresher on the prerequisites.</p>
-<ul>
-<li><p><a href="https://projects.iq.harvard.edu/stat110/home">Intoduction to Probability</a>, Blitzstein et al.</p>
-<p>Introduction to Probability is a pedagogical masterpiece, and the corresponding <a href="https://www.youtube.com/playlist?list=PL2SOU6wwxB0uwwH80KTQ6ht66KWxbzTIo">YouTube videos</a> are great as well. Bayesian inference takes probability seriously, and the students should be familiar with chapters 1 through 10.</p></li>
-<li><p><a href="https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf">Introduction to Probability Cheatsheet v2</a>, Chen et al.</p>
-<p>A 10-page summary of a 600-page book.</p></li>
-<li><p><a href="https://r4ds.hadley.nz/">R for Data Science 2e</a>, Wickham et al.</p>
-<p>R is excellent for data manipulation, exploratory data analysis, and statistical graphics. This book covers it all. Note that their definition of <a href="https://r4ds.hadley.nz/whole-game">workflow</a> is different from <a href="http://www.stat.columbia.edu/~gelman/research/unpublished/Bayesian_Workflow_article.pdf">Bayesian workflow</a>, as the latter is focused a lot more on model building and model checking.</p></li>
-<li><p><a href="http://calculusmadeeasy.org/">Calculus Made Easy</a>, Thompson</p>
-<p>This timeless classic was originally published in 1910, which demystifies calculus and includes gems like the following.</p>
-<blockquote class="blockquote">
-<p>Thus <span class="math inline">\(\int \text{d}x\)</span> means the sum of all the little bits of <span class="math inline">\(x\)</span> ; or <span class="math inline">\(\int \text{d}t\)</span> means the sum of all the little bits of <span class="math inline">\(t\)</span>. Ordinary mathematicians call this symbol “the integral of.” Now any fool can see that if <span class="math inline">\(x\)</span> is considered as made up of a lot of little bits, each of which is called <span class="math inline">\(\text{d}x\)</span>, if you add them all up together you get the sum of all the <span class="math inline">\(\text{d}x\)</span>’s, (which is the same thing as the whole of <span class="math inline">\(x\)</span>). The word “integral” simply means “the whole.”</p>
-</blockquote></li>
-<li><p><a href="https://intellectualmathematics.com/calculus/">Intuitive Infintesical Calculus</a>, Blåsjö</p>
-<p>Viktor Blåsjö doesn’t like how Calculus is currently taught (too much early formalism), so he wrote a short book covering everything from single to multivariable, differential equations, vector calculus, and more. The book reminds me of Morris Kline’s <a href="https://store.doverpublications.com/products/9780486404530">famous book</a> but has the benefit of being 126 vs ~ 1,000 pages long. You may also enjoy his sardonic podcast <a href="https://intellectualmathematics.com/opinionated-history-of-mathematics/">Opinionated History of Mathematics</a>.</p></li>
-<li><p><a href="https://openstax.org/details/books/calculus-volume-2">Calculus 2 and 3</a>, Strang et al.</p>
-<p>This is a traditional calculus textbook written by pedagogical masters like Gilbert Strang of the linear algebra fame, and is offered for free by OpenStax. <a href="https://openstax.org/books/calculus-volume-3/">Multivariate calculus</a> book is useful for developing an intuition for multi-dimensional integrals, which is central to Bayesian statistics in the same way as partial derivatives are central to frequentist estimators.</p></li>
-<li><p><a href="https://bit.ly/calc-3blue1brown">YouTube: Essence of Calculus</a>, Sanderson</p>
-<p>Grant Sanderson is the owner and operator of the <code>3blue1brown</code> YouTube channel, which contains very pretty visualizations of complex mathematical concepts. Even if you are familiar with Calculus, Essense of Calculus will likely give you a more enlightening perspective on the subject.</p></li>
-</ul>
+<section id="kl-divergence" class="level2">
+<h2 class="anchored" data-anchor-id="kl-divergence">KL Divergence</h2>
+<p>The theoretical justification of the methods described in this case study has it’s underpinnnings in information theory measuring distance between distribution called Kullback–Leibler divergence that is sometimes called relative entropy. Suppose <span class="math inline">\(P\)</span> is the true distribution with PDF <span class="math inline">\(p(y)\)</span>. We want to know how close in KL sense <span class="math inline">\(Q\)</span> with PDF <span class="math inline">\(q(y)\)</span> is to <span class="math inline">\(P\)</span>. KL is not a metric since <span class="math inline">\(D_{\mathrm{KL}}(P \,\|\, Q) \ne D_{\mathrm{KL}}(Q \,\|\, P)\)</span>.</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+D_{\mathrm{KL}}(P\|Q)
+&amp;=&amp; \mathbb{E}_{Y\sim P}\!\biggl[\log \!\biggl( \frac{p(Y)}{q(Y)} \biggr) \biggr] \\
+&amp;=&amp; \int p(y)\,\log\!\biggl(\frac{p(y)}{q(y)}\biggr)\,\text{d}y
+\end{eqnarray}
+\]</span></p>
+<p>As an exmaple suppose <span class="math inline">\(P\)</span> is <span class="math inline">\(\text{Normal}(0, 1)\)</span> and Q is <span class="math inline">\(\text{Normal}(\mu, 1)\)</span>. We will compute the expectation using SymPy.</p>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> sp</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>y, μ <span class="op">=</span> sp.symbols(<span class="st">'x μ'</span>, real<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>sp.sqrt(<span class="dv">2</span><span class="op">*</span>sp.pi) <span class="op">*</span> sp.exp(<span class="op">-</span>y<span class="op">**</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>sp.sqrt(<span class="dv">2</span><span class="op">*</span>sp.pi) <span class="op">*</span> sp.exp(<span class="op">-</span>(y <span class="op">-</span> μ)<span class="op">**</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>integrand <span class="op">=</span> p <span class="op">*</span> sp.log(p<span class="op">/</span>q)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>kl <span class="op">=</span> sp.integrate(integrand, (y, <span class="op">-</span>sp.oo, sp.oo))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>kl <span class="op">=</span> sp.simplify(kl)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>latex_expr <span class="op">=</span> <span class="st">"$$"</span> <span class="op">+</span> <span class="st">"D_{</span><span class="ch">\\</span><span class="st">text</span><span class="sc">{KL}</span><span class="st">}(</span><span class="ch">\\</span><span class="st">text</span><span class="sc">{Normal}</span><span class="st">(0, 1) \| </span><span class="ch">\\</span><span class="st">text</span><span class="sc">{Normal}</span><span class="st">(\mu, 1)) = "</span> <span class="op">+</span> sp.latex(kl) <span class="op">+</span> <span class="st">"$$"</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(latex_expr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><span class="math display">\[D_{\text{KL}}(\text{Normal}(0, 1) \| \text{Normal}(\mu, 1)) = \frac{μ^{2}}{2}\]</span></p>
+<p>The <span class="math inline">\(D_{\mathrm{KL}}(P\|Q)\)</span> grows with the square of the mean in this case, and is zero, when the <span class="math inline">\(\mu = 0\)</span> as expected.</p>
 </section>
-<section id="additional-bayesian-resources" class="level3">
-<h3 class="anchored" data-anchor-id="additional-bayesian-resources">Additional Bayesian Resources</h3>
-<ul>
-<li><p><a href="https://xcelab.net/rm/statistical-rethinking/">Statistical Rethinking</a>, McElreath</p>
-<p>We recommend this book to people who want to learn statistics the right way, which is to say by using the rules of conditional probability without confusing and often misused constructs like p-values and hypothesis tests. Most examples are drawn from evolutionary anthropology, Richard’s field of study. It relies heavily on the R language and Richard’s <a href="https://github.com/rmcelreath/rethinking">rethinking</a> R package.</p></li>
-<li><p><a href="https://ben-lambert.com/a-students-guide-to-bayesian-statistics/">A Student’s Guide to Bayesian Statistics</a>, Lambert</p>
-<p>Ben Lambert’s is a depth-first approach to Bayes. He doesn’t rely on high-level interface packages like <code>rethinking</code>, <code>rstanarm</code>, or <code>brms</code>, but instead goes right into Stan, which has the benefit of understanding what the model is doing. Ben also provides a helpful comparison to frequentist inference for students who first learned statistics the wrong way<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. His corresponding <a href="https://www.youtube.com/playlist?list=PLwJRxp3blEvZ8AKMXOy0fc0cqT61GsKCG">video course</a> is excellent as well.</p></li>
-<li><p><a href="http://stat.columbia.edu/~gelman/book/">Bayesian Data Analysis</a>, Gelman et al.</p>
-<p>BDA3, as the book is called among friends, is an advanced treatment of the subject, not because of the technical content per se, but because of what it assumes the reader knows prior to opening the book. So if your <span class="math inline">\(p(\theta)\)</span> is moderately informative, your <span class="math inline">\(p(\theta \mid y)\)</span> should be pretty tight.</p></li>
-<li><p><a href="https://mc-stan.org/docs/stan-users-guide/index.html">Stan User’s Guide</a>, Stan Development Team</p>
-<p>Stan User’s Guide is a modest name for the best instruction manual to coding statistical models in Stan starting with a simple <a href="https://mc-stan.org/docs/stan-users-guide/regression.html#linear-regression">linear regression</a> and covering advanced topics like <a href="https://mc-stan.org/docs/stan-users-guide/odes.html">Ordinary Differential Equation (ODE) models</a>, <a href="https://mc-stan.org/docs/stan-users-guide/cross-validation.html">model evaluation</a>, <a href="https://mc-stan.org/docs/stan-users-guide/poststratification.html">poststratification</a>, <a href="https://mc-stan.org/docs/stan-users-guide/decision-analysis.html">decision analysis</a>, and many others. The latter topic is a particularly natural consequence of Bayesian inference.</p></li>
-<li><p><a href="https://avehtari.github.io/BDA_course_Aalto/">Bayesian Data Analysis Course</a>, Vehtari</p>
-<p>Aki Vehtari teaches a full-semester BDA course at Aalto University in Finland and generously puts all the content online. This is an advanced class for people who like to dig into the details of Bayesian computation. The content is excellent and is highly recommended.</p></li>
-<li><p><a href="https://press.princeton.edu/books/hardcover/9780691174167/ten-great-ideas-about-chance">Ten Great Ideas About Chance</a>, Diaconis and Skyrms</p>
-<p>Ten Great Ideas About Chance is about the history and philosophy of Bayesian thinking. It is targeted at scientists and students familiar with the basic mathematics of probability.</p></li>
-</ul>
+<section id="expected-log-pointwise-predictive-density" class="level2">
+<h2 class="anchored" data-anchor-id="expected-log-pointwise-predictive-density">Expected log pointwise predictive density</h2>
+</section>
+<section id="leave-one-out-cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="leave-one-out-cross-validation">Leave one out cross validation</h2>
+</section>
+<section id="pareto-smoothed-importance-sampling" class="level2">
+<h2 class="anchored" data-anchor-id="pareto-smoothed-importance-sampling">Pareto smoothed importance sampling</h2>
+</section>
+<section id="real-dataset-example" class="level2">
+<h2 class="anchored" data-anchor-id="real-dataset-example">Real dataset example</h2>
+
+
 
 
 </section>
 
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>To my frequentist friends: don’t take this the wrong way, I still love you! Also, see <a href="https://statmodeling.stat.columbia.edu/2024/01/08/bayesians-are-frequentists-2/">this</a> claim from a Bayesian that Bayesians are frequentists.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section></div></main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-mackay2003" class="csl-entry" role="listitem">
+MacKay, David J. C. 2003. <em>Information Theory, Inference and Learning Algorithms</em>. Illustrated edition. Cambridge: Cambridge University Press.
+</div>
+<div id="ref-vehtari2017" class="csl-entry" role="listitem">
+Vehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. <span>“Practical Bayesian Model Evaluation Using Leave-One-Out Cross-Validation and WAIC.”</span> <em>Statistics and Computing</em> 27 (5): 1413–32. <a href="https://doi.org/10.1007/s11222-016-9696-4">https://doi.org/10.1007/s11222-016-9696-4</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

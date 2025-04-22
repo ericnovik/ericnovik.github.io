@@ -9,7 +9,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
-  <meta name="author" content="Eric Novik | Spring 2024 | Lecture 5">
+  <meta name="author" content="Eric Novik">
   <title>Eric Novik – Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -201,18 +201,19 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Spring 2024 | Lecture 5 
+Eric Novik 
 </div>
+<div class="quarto-title-author-email">
+<a href="mailto:Spring 2025 | Lecture 5">Spring 2025 | Lecture 5</a>
 </div>
+        <p class="quarto-title-affiliation">
+            New York University
+          </p>
+    </div>
 </div>
 
 </section>
-<section id="homework-feedback" class="slide level2">
-<h2>Homework Feedback</h2>
-
-<img data-src="images/scared.avif" class="quarto-figure quarto-figure-center r-stretch" width="672"><p><a href="https://www.polleverywhere.com/multiple_choice_polls/XRXD5GmcXM8v0XyE7tgIT">How was Homework 4?</a></p>
-</section>
-<section id="bayesian-linear-regression-and-model-evaluation" class="slide level2">
+<section id="bayesian-linear-regression-and-model-evaluation" class="slide level2 small">
 <h2>Bayesian linear regression and model evaluation</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
@@ -381,15 +382,15 @@ Eric Novik | Spring 2024 | Lecture 5
 <h2>General Approach</h2>
 <div>
 <ol type="1">
-<li class="fragment">Assess the scope of the inferences that you will get with this model</li>
-<li class="fragment">Unless you are doing causal inference, you should interpret your coefficients as comparisons (RAOS, Page 84)</li>
+<li class="fragment">Assess the scope of the inferences</li>
 <li class="fragment">Set up reasonable priors and likelihood</li>
-<li class="fragment">For more complex models, perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See <a href="https://www.generable.com/post/fitting-a-basic-sir-model-in-stan">this</a> example for a standard epidemiological model.</li>
+<li class="fragment">Perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See <a href="https://www.generable.com/post/fitting-a-basic-sir-model-in-stan">this</a> example for a standard epidemiological model.</li>
 <li class="fragment">Perform a prior predictive simulation</li>
 <li class="fragment">Possibly adjust your priors</li>
 <li class="fragment">Fit the model to data</li>
-<li class="fragment">Assess the quality of the inference and the quality of the model</li>
+<li class="fragment">Assess the <strong>quality of the inferences</strong> and the <strong>quality of the model</strong></li>
 <li class="fragment">Improve or fix your model and go back to #3</li>
+<li class="fragment">Unless you are doing causal inference, you should interpret your coefficients as comparisons (RAOS, Page 84)</li>
 </ol>
 </div>
 </section>
@@ -408,9 +409,8 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 \end{eqnarray}
 \]</span></li>
 <li class="fragment">We have to specify <span class="math inline">\(\alpha_{l}\)</span> and <span class="math inline">\(\alpha_s\)</span>, where l and s signify location and scale, and r, the rate of the exponential</li>
-<li class="fragment">If we work on the original scale for <span class="math inline">\(x\)</span>, it is awkward to choose a prior for the intercept : it corresponds to the weight of the person with zero height</li>
+<li class="fragment">If we work on the original scale for <span class="math inline">\(x\)</span>, it is awkward to choose a prior for the intercept . Why? Discuss…</li>
 <li class="fragment">This can be fixed by subtracting the average height from <span class="math inline">\(x\)</span></li>
-<li class="fragment">Why is <span class="math inline">\(\text{Exp}(r)\)</span> is a reasonable prior for <span class="math inline">\(\sigma\)</span>?</li>
 </ul>
 </div>
 </section>
@@ -439,8 +439,8 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <div>
 <ul>
 <li class="fragment">In this dataset, the units of <span class="math inline">\(\beta\)</span> are <span class="math inline">\(\frac{kg}{cm}\)</span>, since the units of height are <span class="math inline">\(cm\)</span></li>
-<li class="fragment">First thing, <span class="math inline">\(\beta\)</span> should be positive. Why?</li>
-<li class="fragment">Second, <span class="math inline">\(\beta\)</span> is likely less than 1. Why?</li>
+<li class="fragment">Should <span class="math inline">\(\beta\)</span> be positive. Why?</li>
+<li class="fragment">Do you think <span class="math inline">\(\beta\)</span> is likely to be less than 1. Why?</li>
 <li class="fragment">We can consult <a href="http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html">height-weight tables</a> for the expected value and variance</li>
 <li class="fragment">In the dataset, <span class="math inline">\(\E(\beta) = 0.55\)</span> with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more <span class="math display">\[
 \begin{eqnarray}
@@ -461,7 +461,11 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <ul>
 <li class="fragment">We know that <span class="math inline">\(\sigma\)</span> must be positive, so a possible choice for the prior is <span class="math inline">\(\text{Normal}^+\)</span>, Exponential, etc.</li>
 <li class="fragment">At this stage, the key is to rule out implausible values, not to get something precise, particularly since we have enough data (&gt; 340 observations)</li>
-<li class="fragment">From the background data, the residual standard error was 4.6, which implies the exponential rate parameter of about 1/5 <span class="math display">\[
+<li class="fragment">From the background data, the residual standard error was 4.6. What’s a reasonable value for <span class="math inline">\(\lambda\)</span>, in <span class="math inline">\(\text{Exp}(\lambda)\)</span>?</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
 \begin{eqnarray}
 y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 \mu_i &amp; = &amp; \alpha + \beta x^c_i \\
@@ -469,18 +473,11 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 \beta &amp; \sim &amp; \text{Normal}(0.55, \, 0.1) \\
 \sigma &amp; \sim &amp; \text{Exp}(0.2) \\
 \end{eqnarray}
-\]</span></li>
-<li class="fragment">We are now ready to perform a prior predictive simulation</li>
-</ul>
+\]</span></p>
 </div>
 </section>
 <section id="prior-predictive-simulation" class="slide level2 smaller">
 <h2>Prior Predictive Simulation</h2>
-<div>
-<ul>
-<li class="fragment">The simulation follows the generative process defined by the model</li>
-</ul>
-</div>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="fragment">
@@ -519,29 +516,29 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
 <span id="cb7-2"><a></a>pr_p <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="at">n =</span> n, <span class="fu">prior_pred</span>(d))</span>
 <span id="cb7-3"><a></a><span class="co"># using library(purrr) functional primitives:</span></span>
 <span id="cb7-4"><a></a><span class="co"># pr_p &lt;- map(1:n, \(i) prior_pred(d))</span></span>
 <span id="cb7-5"><a></a><span class="fu">dim</span>(pr_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 352 100</code></pre>
+<pre><code>[1]  352 1000</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">round</span>(pr_p[<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>], <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]   [,4]  [,5]  [,6]  [,7]  [,8]
- [1,] 75.17 45.38 63.41  79.34 70.60 53.38 59.64 71.54
- [2,] 66.90 43.28 60.23  56.40 64.75 45.41 52.28 61.20
- [3,] 58.87 32.81 34.94  71.38 63.30 73.13 66.56 61.37
- [4,] 64.57 47.99 73.31  40.31 72.81 52.06 29.27 79.36
- [5,] 69.54 41.90 61.59  -4.10 66.94 60.39 44.22 72.73
- [6,] 85.82 53.97 68.87 104.92 76.18 60.51 56.68 76.91
- [7,] 62.48 51.62 68.41  25.53 69.20 64.53 70.15 70.65
- [8,] 77.69 62.25 72.45  63.32 78.10 67.48 63.22 81.76
- [9,] 80.35 43.70 54.51  13.69 68.65 46.92 48.20 70.36
-[10,] 85.94 51.44 66.29 111.06 76.71 64.20 53.96 78.94
-[11,] 85.61 41.28 53.84  60.63 71.72 83.42 47.55 76.78
-[12,] 74.94 55.23 61.77  34.21 70.00 53.53 59.05 68.94</code></pre>
+<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]   [,6]  [,7]  [,8]
+ [1,] 68.38 59.26 58.14 66.40 60.81  74.64 63.45 61.32
+ [2,] 58.37 54.24 53.54 59.84 55.22  87.86 55.47 57.89
+ [3,] 52.38 53.47 52.19 57.18 54.96  77.97 54.15 43.72
+ [4,] 69.70 64.38 60.14 70.26 64.70  75.14 67.81 57.68
+ [5,] 65.08 49.95 55.73 64.01 57.76  85.81 61.81 57.96
+ [6,] 70.73 64.37 63.00 74.97 68.06  99.57 68.37 63.37
+ [7,] 64.99 57.32 57.12 65.58 62.86  86.61 59.94 51.36
+ [8,] 74.55 72.36 64.88 77.58 70.15  73.88 71.09 70.86
+ [9,] 61.22 54.13 56.87 64.44 60.36 107.70 58.71 53.61
+[10,] 74.22 60.27 63.46 75.56 70.47 101.40 67.70 63.77
+[11,] 66.38 54.55 59.17 68.79 67.43  71.89 60.84 60.53
+[12,] 56.37 56.01 57.88 66.41 61.67  63.86 62.86 54.59</code></pre>
 </div>
 </div>
 </div>
@@ -570,26 +567,28 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>intercepts <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
-<span id="cb12-2"><a></a>slopes <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
-<span id="cb12-3"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
-<span id="cb12-4"><a></a>  coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lm</span>(pr_p[, i] <span class="sc">~</span> d<span class="sc">$</span>height_c))</span>
-<span id="cb12-5"><a></a>  intercepts[i] <span class="ot">&lt;-</span> coefs[<span class="dv">1</span>]</span>
-<span id="cb12-6"><a></a>  slopes[i] <span class="ot">&lt;-</span> coefs[<span class="dv">2</span>]</span>
-<span id="cb12-7"><a></a>}</span>
-<span id="cb12-8"><a></a></span>
-<span id="cb12-9"><a></a><span class="co"># using library(purrr) functional primitives:</span></span>
-<span id="cb12-10"><a></a><span class="co"># df &lt;- pr_p |&gt; map_dfr(\(y) coef(lm(y ~ d$height_c)))</span></span>
-<span id="cb12-11"><a></a></span>
-<span id="cb12-12"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(height_c, weight), <span class="at">data =</span> d)</span>
-<span id="cb12-13"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">20</span>, <span class="dv">90</span>) <span class="sc">+</span> </span>
-<span id="cb12-14"><a></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> slopes, </span>
-<span id="cb12-15"><a></a>              <span class="at">intercept =</span> intercepts, </span>
-<span id="cb12-16"><a></a>              <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>) <span class="sc">+</span></span>
-<span id="cb12-17"><a></a>  <span class="fu">ylab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span> </span>
-<span id="cb12-18"><a></a>  <span class="fu">xlab</span>(<span class="st">"Centered Height (cm)"</span>) <span class="sc">+</span></span>
-<span id="cb12-19"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Kalahari !Kung San people"</span>, </span>
-<span id="cb12-20"><a></a>          <span class="at">subtitle =</span> <span class="st">"Prior predictive simulation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb12-2"><a></a>s100 <span class="ot">&lt;-</span> pr_p[, <span class="fu">sample</span>(<span class="fu">ncol</span>(pr_p), N)]</span>
+<span id="cb12-3"><a></a>intercepts <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb12-4"><a></a>slopes <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb12-5"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb12-6"><a></a>  coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lm</span>(s100[, i] <span class="sc">~</span> d<span class="sc">$</span>height_c))</span>
+<span id="cb12-7"><a></a>  intercepts[i] <span class="ot">&lt;-</span> coefs[<span class="dv">1</span>]</span>
+<span id="cb12-8"><a></a>  slopes[i] <span class="ot">&lt;-</span> coefs[<span class="dv">2</span>]</span>
+<span id="cb12-9"><a></a>}</span>
+<span id="cb12-10"><a></a></span>
+<span id="cb12-11"><a></a><span class="co"># using library(purrr) functional primitives:</span></span>
+<span id="cb12-12"><a></a><span class="co"># df &lt;- pr_p |&gt; map_dfr(\(y) coef(lm(y ~ d$height_c)))</span></span>
+<span id="cb12-13"><a></a></span>
+<span id="cb12-14"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(height_c, weight), <span class="at">data =</span> d)</span>
+<span id="cb12-15"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">20</span>, <span class="dv">90</span>) <span class="sc">+</span> </span>
+<span id="cb12-16"><a></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> slopes, </span>
+<span id="cb12-17"><a></a>              <span class="at">intercept =</span> intercepts, </span>
+<span id="cb12-18"><a></a>              <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb12-19"><a></a>  <span class="fu">ylab</span>(<span class="st">"Weight (kg)"</span>) <span class="sc">+</span> </span>
+<span id="cb12-20"><a></a>  <span class="fu">xlab</span>(<span class="st">"Centered Height (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb12-21"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Kalahari !Kung San people"</span>, </span>
+<span id="cb12-22"><a></a>          <span class="at">subtitle =</span> <span class="st">"Prior predictive simulation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -600,18 +599,13 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 </div>
 </div></div>
 </div>
-<div>
-<ul>
-<li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/ktA65I0m27uUAnCn44Cui">What do you notice about this prior?</a></li>
-</ul>
-</div>
 </section>
 <section id="deriving-a-posterior-distribution" class="slide level2 smaller">
 <h2>Deriving a Posterior Distribution</h2>
 <div>
 <ul>
 <li class="fragment">We have seen how to derive the posterior and posterior predictive distribution</li>
-<li class="fragment">Three dimentional posterior: <span class="math inline">\(f(\alpha, \beta, \sigma)\)</span>. <a href="https://www.polleverywhere.com/free_text_polls/Uj05I36LJbqhNiOylx6Wa">What happened</a> to <span class="math inline">\(\mu\)</span>?</li>
+<li class="fragment">Three dimentional posterior: <span class="math inline">\(f(\alpha, \beta, \sigma)\)</span>. Where is <span class="math inline">\(\mu\)</span>?</li>
 <li class="fragment">We construct the posterior from the prior and data likelihood (for each <span class="math inline">\(y_i\)</span>): <span class="math display">\[
 \begin{eqnarray}
 &amp;\text{Prior: }f(\alpha, \beta, \sigma) = f_1(\alpha) f_2(\beta) f_3(\sigma) \\
@@ -664,7 +658,6 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \, \sigma)\\
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       gaussian [identity]
  formula:      weight ~ height_c
@@ -1193,14 +1186,14 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div>
 <ul>
 <li class="fragment">There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions</li>
-<li class="fragment">There is also a question of model fairness
+<li class="fragment">There is also a question of model appropriateness -&gt; fairness
 <ul>
-<li class="fragment">How were the data collected?</li>
+<li class="fragment">How were the data collected? Who ended up in your sample?</li>
 <li class="fragment">People will likely interpret the results causally, even if not appropriate</li>
 <li class="fragment">How will the model be used?</li>
 <li class="fragment">Example: Correctional Offender Management Profiling for Alternative Sanctions (<a href="https://en.wikipedia.org/wiki/COMPAS_(software)">COMPAS</a>)</li>
 </ul></li>
-<li class="fragment">Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well</li>
+<li class="fragment">Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will predict well</li>
 <li class="fragment">Model performance is assessed on how well it can make predictions, minimize costs and/or maximize benefits. Predictive accuracy is a common way of evaluating model performance.</li>
 </ul>
 </div>
@@ -1359,6 +1352,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 <div>
 <ul>
+<li class="fragment"><code>Mean</code> and <code>sd</code> are not good test statistics in this case!</li>
 <li class="fragment"><code>ppc_stat</code> is a shorthand for computation on each posterior (predictive) draw</li>
 <li class="fragment">For example, <code>ppc_stat(d$weight, yrep, stat = "mean")</code> is equivalent to:
 <ul>
@@ -1431,7 +1425,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <li class="fragment">One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
 <ul>
 <li class="fragment"><span class="math inline">\(\text{RMSE} = \sqrt{\frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2}\)</span></li>
-<li class="fragment">Or its scaled version, which divides the summand by <span class="math inline">\(\V(y_i | \theta)\)</span></li>
+<li class="fragment">Or its scaled version, which divides the summand by <span class="math inline">\(\V(y_n | \theta)\)</span></li>
 </ul></li>
 <li class="fragment">These measures do not work well for non-normal models</li>
 <li class="fragment">On the plus side, it is intuitive (why?) and computation is easy</li>
@@ -1503,7 +1497,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 \]</span></li>
 <li class="fragment">To compute this quantity, fit the model N times, dropping one point at a time (-n)</li>
 <li class="fragment">S is the number of posterior samples, and <span class="math inline">\(\theta_{-n, s}\)</span>, is the s-th sample without the n-th data point</li>
-<li class="fragment"><a href="https://arxiv.org/abs/1507.04544">PSIS-LOO</a> (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times</li>
+<li class="fragment"><a href="https://arxiv.org/abs/1507.04544">Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</a> provides a computationally efficient way to approximate LOO, without refitting the model N times.</li>
 </ul>
 </div>
 </section>
