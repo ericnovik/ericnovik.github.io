@@ -1,7 +1,11 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2024 | Lecture 5"
+author:
+ - name: "Eric Novik"
+   email: "Spring 2025 | Lecture 5"
+   affiliations: 
+    - name: New York University
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -16,14 +20,7 @@ editor: source
 always_allow_html: true
 ---
 
-##  Homework Feedback
-
-![](images/scared.avif){fig-align="center" width="672"}
-
-
-[How was Homework 4?](https://www.polleverywhere.com/multiple_choice_polls/XRXD5GmcXM8v0XyE7tgIT)
-
-## Bayesian linear regression and model evaluation
+## Bayesian linear regression and model evaluation {.small}
 
 ::: columns
 ::: {.column width="60%"}
@@ -194,15 +191,15 @@ p + geom_point(size = 0.2) +
 
 ## General Approach {.smaller}
 ::: incremental
-1. Assess the scope of the inferences that you will get with this model
-1. Unless you are doing causal inference, you should interpret your coefficients as comparisons (RAOS, Page 84)
+1. Assess the scope of the inferences
 1. Set up reasonable priors and likelihood
-1. For more complex models, perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See [this](https://www.generable.com/post/fitting-a-basic-sir-model-in-stan) example for a standard epidemiological model.
+1. Perform a forward simulation with fixed parameter values and try to recover them by running an inference algorithm. See [this](https://www.generable.com/post/fitting-a-basic-sir-model-in-stan) example for a standard epidemiological model.
 1. Perform a prior predictive simulation
 1. Possibly adjust your priors
 1. Fit the model to data
-1. Assess the quality of the inference and the quality of the model
+1. Assess the **quality of the inferences** and the **quality of the model**
 1. Improve or fix your model and go back to #3
+1. Unless you are doing causal inference, you should interpret your coefficients as comparisons (RAOS, Page 84)
 :::
 
 ## Howell Regression {.smaller}
@@ -219,9 +216,8 @@ y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
 \end{eqnarray}
 $$
 - We have to specify $\alpha_{l}$ and $\alpha_s$, where l and s signify location and scale, and r, the rate of the exponential
-- If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha: it corresponds to the weight of the person with zero height
+- If we work on the original scale for $x$, it is awkward to choose a prior for the intercept \alpha. Why? Discuss...
 - This can be fixed by subtracting the average height from $x$
-- Why is $\text{Exp}(r)$ is a reasonable prior for $\sigma$?
 :::
 
 ## Howell Regression {.smaller}
@@ -246,8 +242,8 @@ $$
 ## Howell Regression {.smaller}
 ::: incremental
 - In this dataset, the units of $\beta$ are $\frac{kg}{cm}$, since the units of height are $cm$
-- First thing, $\beta$ should be positive. Why?
-- Second, $\beta$ is likely less than 1. Why?
+- Should $\beta$ be positive. Why?
+- Do you think $\beta$ is likely to be less than 1. Why?
 - We can consult [height-weight tables](http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html) for the expected value and variance
 - In the dataset, $\E(\beta) = 0.55$ with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more
 $$
@@ -266,7 +262,10 @@ $$
 ::: incremental
 - We know that $\sigma$ must be positive, so a possible choice for the prior is $\text{Normal}^+$, Exponential, etc.
 - At this stage, the key is to rule out implausible values, not to get something precise, particularly since we have enough data (> 340 observations)
-- From the background data, the residual standard error was 4.6, which implies the exponential rate parameter of about 1/5
+- From the background data, the residual standard error was 4.6. What's a reasonable value for $\lambda$, in $\text{Exp}(\lambda)$?
+:::
+
+::: {.fragment}
 $$
 \begin{eqnarray}
 y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
@@ -276,22 +275,15 @@ y_i & \sim & \text{Normal}(\mu_i, \, \sigma)\\
 \sigma & \sim & \text{Exp}(0.2) \\
 \end{eqnarray}
 $$
-- We are now ready to perform a prior predictive simulation
-
 :::
 
 ## Prior Predictive Simulation {.smaller}
-
-::: incremental
-- The simulation follows the generative process defined by the model
-:::
 
 ::: columns
 ::: {.column width="50%"}
 
 ::: {.fragment}
 ```{r}
-#| cache: true
 #| echo: true
 
 d <- d |>
@@ -321,7 +313,7 @@ prior_pred <- function(data) {
 ```{r}
 #| cache: true
 #| echo: true
-n <- 100
+n <- 1000
 pr_p <- replicate(n = n, prior_pred(d))
 # using library(purrr) functional primitives:
 # pr_p <- map(1:n, \(i) prior_pred(d))
@@ -365,10 +357,12 @@ ggplot(data.frame(data_mean, mean_dist), aes(mean_dist)) +
 #| output-location: column
 #| echo: true
 
-intercepts <- numeric(n)
-slopes <- numeric(n)
-for (i in 1:n) {
-  coefs <- coef(lm(pr_p[, i] ~ d$height_c))
+N <- 100
+s100 <- pr_p[, sample(ncol(pr_p), N)]
+intercepts <- numeric(N)
+slopes <- numeric(N)
+for (i in 1:N) {
+  coefs <- coef(lm(s100[, i] ~ d$height_c))
   intercepts[i] <- coefs[1]
   slopes[i] <- coefs[2]
 }
@@ -388,15 +382,11 @@ p + geom_point(size = 0.5) + ylim(20, 90) +
 ```
 :::
 
-::: incremental
-- [What do you notice about this prior?](https://www.polleverywhere.com/free_text_polls/ktA65I0m27uUAnCn44Cui)
-:::
-
 ## Deriving a Posterior Distribution {.smaller}
 
 ::: incremental
 - We have seen how to derive the posterior and posterior predictive distribution
-- Three dimentional posterior: $f(\alpha, \beta, \sigma)$. [What happened](https://www.polleverywhere.com/free_text_polls/Uj05I36LJbqhNiOylx6Wa) to $\mu$?
+- Three dimentional posterior: $f(\alpha, \beta, \sigma)$. Where is $\mu$?
 - We construct the posterior from the prior and data likelihood (for each $y_i$):
 $$
 \begin{eqnarray}
@@ -775,12 +765,12 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 
 ::: incremental
 - There are at least two stages of model evaluation: 1) the quality of the draws and 2) the quality of predictions
-- There is also a question of model fairness
-   - How were the data collected? 
+- There is also a question of model appropriateness -> fairness
+   - How were the data collected? Who ended up in your sample?
    - People will likely interpret the results causally, even if not appropriate
    - How will the model be used?
    - Example: Correctional Offender Management Profiling for Alternative Sanctions ([COMPAS](https://en.wikipedia.org/wiki/COMPAS_(software)))
-- Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will perform well
+- Just because the draws have good statistical properties (e.g., good mixing, low auto-correlation, etc.), it does not mean the model will predict well
 - Model performance is assessed on how well it can make predictions, minimize costs and/or maximize benefits. Predictive accuracy is a common way of evaluating model performance.
 :::
 
@@ -909,6 +899,7 @@ grid.arrange(p1, p2, p3, p4, ncol = 4)
 :::
 
 ::: incremental
+- `Mean` and `sd` are not good test statistics in this case!
 - `ppc_stat` is a shorthand for computation on each posterior (predictive) draw
 - For example, `ppc_stat(d$weight, yrep, stat = "mean")` is equivalent to:
    - Setting $T(y) = \text{mean(d\$weight)}$ and $T_{\text{yrep}} = \text{rowMeans(yrep)}$ 
@@ -979,7 +970,7 @@ bayesplot::ppc_intervals(
 ::: incremental
 - One way to assess model accuracy is to compute an average square deviation from point prediction: mean square error
    - $\text{RMSE} = \sqrt{\frac{1}{N} \sum_{n=1}^{N} (y_n - \E(y_n|\theta))^2}$
-   - Or its scaled version, which divides the summand by $\V(y_i | \theta)$
+   - Or its scaled version, which divides the summand by $\V(y_n | \theta)$
 - These measures do not work well for non-normal models 
 - On the plus side, it is intuitive (why?) and computation is easy
 - Note that if we just average the errors, we will get zero by definition
@@ -1040,7 +1031,7 @@ $$
 $$
 - To compute this quantity, fit the model N times, dropping one point at a time (-n)
 - S is the number of posterior samples, and $\theta_{-n, s}$, is the s-th sample without the n-th data point
-- [PSIS-LOO](https://arxiv.org/abs/1507.04544) (Pareto Smoothed Importance Sampling, Vehtari et al, 2017) provides a computationally efficient way to approximate LOO, without refitting the model N times
+- [Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC](https://arxiv.org/abs/1507.04544) provides a computationally efficient way to approximate LOO, without refitting the model N times. 
 :::
 
 ## Quantifying Model Accuracy {.smaller}

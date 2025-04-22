@@ -27,7 +27,7 @@ You can think of a Markov Chain as a process that evolves in time according to s
 
 A discrete state space of a Markov Chain is a collection of all possible states that this chain can visit, which can be finite or infinite. 
 
-Consider a simple Markov chain with infinite but discrete state space. You start with \$100 in your account and every day, you can either make \$1 with probability $1/2$, or lose $1. If you are allowed to overdraft the account, the state space is all integers. The Markov property is satisfied since, on any given day, you only need to know the balance during the previous day, not the whole history of transactions. We can visualize this process with a simulation.
+Consider a Markov chain with infinite but discrete state space. You start with \$100 in your account and every day, you can either make \$1 with probability $1/2$, or lose $1. If you are allowed to overdraft the account, the state space is all integers. The Markov property is satisfied since, on any given day, you only need to know the balance during the previous day, not the whole history of transactions. We can visualize this process with a simulation.
 
 ```{r}
 #| fig-width: 6
@@ -39,10 +39,10 @@ library(tidyr)
 library(dplyr)
 
 set.seed(1234)
-W <- 100L
+W  <- 100L
 Pr <- 0.5
-N <- 365L * 10L # 10 years
-n <- 50L        # compute 50 possible futures
+N  <- 365L * 10L # 10 years
+n  <- 50L        # compute 50 possible futures
 run_chain <- function(N, p) {
   s <- sample(c(-1, 1), size = N, prob = c(p, 1-p), replace = TRUE)
   balance <- 100 + cumsum(s)
@@ -133,6 +133,42 @@ cat("Proportion of happy Up days:", mean(y) |> round(3))
 ## Powers of Q
 
 The long-term equilibrium is reached when the proportions have stabilized, and the distribution over states at that time is called a stationary distribution of the Markov chain, which, in this case, will be in the form of a PMF. For the type of chain we are considering, it can be shown that the stationary distribution exists and is unique. 
+
+```{r}
+#| cache: true
+#| echo: true
+
+library(ggplot2)
+library(gganimate)
+library(dplyr)
+library(purrr)
+
+pairs <- expand.grid(i = -10:10, j = -10:10)
+
+lin_trans <- function(M, x) {
+  stopifnot(diff(dim(M)) != 0) # must be square matrix
+  stopifnot(dim(m)[2] == dim(pairs)[1]) 
+  return(M %*% x)
+}
+
+# animated_data <- map_dfr(angles, ~ rotate_points(.x, pairs))
+# 
+# stopifnot(!any(is.na(animated_data$time)))
+# stopifnot(is.numeric(animated_data$time))
+# 
+# p <- ggplot(animated_data, aes(x = x, y = y)) +
+#   geom_point(size = 0.1, alpha = 0.8) +
+#   geom_vline(xintercept = 0, linewidth = 0.1) +
+#   geom_hline(yintercept = 0, linewidth = 0.1) +
+#   coord_fixed() +
+#   labs(x = "x", y = "y", title = "Rotation: {frame_time}°") +
+#   theme_minimal() +
+#   transition_time(time) +
+#   shadow_mark(past = TRUE, future = FALSE, alpha = 0.2, size = 0.1)
+# 
+# animate(p, fps = 10, width = 500, height = 500, duration = 5)
+```
+
 
 ## Solving with the Eigen decomposition
 
