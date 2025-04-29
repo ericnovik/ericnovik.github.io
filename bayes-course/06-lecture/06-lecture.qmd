@@ -607,7 +607,7 @@ p + geom_density(aes(fill = alc, color = alc),
 #| fig-height: 4.5
 #| fig-align: center
 #| echo: true
-dim <- posterior_predict(m1) # predict at every observation
+yrep1 <- posterior_predict(m1) # predict at every observation
 ppc_dens_overlay(ds$quality, yrep1[sample(nrow(yrep1), 50), ])
 ```
 :::
@@ -956,7 +956,7 @@ yrep <- posterior_predict(m3)
 d <- tibble(y_mu_hat = sqrt(colMeans(yrep)),
             y_var = apply(yrep, 2, sd))
 p <- ggplot(aes(y_mu_hat, y_var), data = d)
-p + geom_point(sixze = 0.5) +
+p + geom_point(size = 0.5) +
   geom_abline(slope = 1, intercept = 0,
               linewidth = 0.2) +
   xlab(TeX(r'($\sqrt{\widehat{E(y_i)}}$)')) +
