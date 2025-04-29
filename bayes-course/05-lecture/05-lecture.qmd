@@ -1027,10 +1027,10 @@ calib(yrep, d$weight, 0.90)
 - We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data-generating process
 - This quantity is approximated by log-pointwise-predictive-density
 $$
-\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n, s}) \right)
+\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n}^{(s)}) \right)
 $$
 - To compute this quantity, fit the model N times, dropping one point at a time (-n)
-- S is the number of posterior samples, and $\theta_{-n, s}$, is the s-th sample without the n-th data point
+- S is the number of posterior samples, and $\theta_{-n}^{(s)}$, is the s-th sample without the n-th data point
 - [Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC](https://arxiv.org/abs/1507.04544) provides a computationally efficient way to approximate LOO, without refitting the model N times. 
 :::
 
