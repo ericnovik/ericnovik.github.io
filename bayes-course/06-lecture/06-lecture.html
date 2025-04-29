@@ -9,7 +9,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
-  <meta name="author" content="Eric Novik | Spring 2024 | Lecture 6">
+  <meta name="author" content="Eric Novik">
   <title>Eric Novik – Bayesian Inference</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -201,9 +201,15 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric Novik | Spring 2024 | Lecture 6 
+Eric Novik 
 </div>
+<div class="quarto-title-author-email">
+<a href="mailto:Spring 2025 | Lecture 6">Spring 2025 | Lecture 6</a>
 </div>
+        <p class="quarto-title-affiliation">
+            New York University
+          </p>
+    </div>
 </div>
 
 </section>
@@ -240,39 +246,70 @@ Eric Novik | Spring 2024 | Lecture 6
 </section>
 <section id="motivating-example" class="slide level2 smaller">
 <h2>Motivating Example</h2>
-<div>
+
+<img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" width="432"><aside class="notes">
 <ul>
-<li class="fragment">At the end of the last lecture, we saw that the linear model did not capture the relationship between height and weight very well</li>
-<li class="fragment">That’s not surprising: the process can’t be linear as it has a natural lower and upper bound</li>
-<li class="fragment">To remedy this situation, we have to think generatively: either biologically or geometrically/physically</li>
-<li class="fragment">The biology of growth is very complex – we would have to think about what causes primate (or animal) growth and how growth translates into height and weight, which is likely affected by genetic and environmental factors</li>
-<li class="fragment">Fortunately, there is a more straightforward geometrical approach</li>
-<li class="fragment">Richard McElreath has a nice presentation in Chapter 16 of his book (2nd edition) – we reproduce a simplified version here</li>
+<li>At the end of the last lecture, we saw that the linear model did not capture the relationship between height and weight very well</li>
+<li>That’s not surprising: the process can’t be linear as it has a natural lower and upper bound</li>
+<li>To remedy this situation, we have to think generatively: either biologically or geometrically/physically</li>
+<li>The biology of growth is very complex – we would have to think about what causes primate (or animal) growth and how growth translates into height and weight, which is likely affected by genetic and environmental factors</li>
+<li>Fortunately, there is a more straightforward geometrical approach</li>
+<li>Richard McElreath has a nice presentation in Chapter 16 of his book (2nd edition) – we reproduce a simplified version here</li>
 </ul>
-</div>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="deriving-the-model" class="slide level2 smaller">
+<section id="deriving-the-model" class="slide level2 small">
 <h2>Deriving the model</h2>
 <div class="columns">
-<div class="column" style="width:60%;">
+<div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment">In the spirit of the <a href="https://en.wikipedia.org/wiki/Spherical_cow">spherical cow</a>, we can think of a person as a cylinder</li>
-<li class="fragment">The volume of the cylinder is: <span class="math inline">\(V = \pi r^2 h\)</span>, where <span class="math inline">\(r\)</span> is a person’s radius and <span class="math inline">\(h\)</span> is the height</li>
-<li class="fragment">It seems reasonable to assume that a person’s width (<span class="math inline">\(2r\)</span>) is proportional to the height <span class="math inline">\(h\)</span>: <span class="math inline">\(r = kh\)</span> where <span class="math inline">\(k\)</span> is the proportionality constant</li>
-<li class="fragment">Therefore: <span class="math inline">\(V = \pi r^2 h = \pi (kh)^2 h = \theta h^3\)</span> where <span class="math inline">\(\theta\)</span> absorbed other constant terms</li>
-<li class="fragment">If the human body has approximately the same density, weight should be proportional to Volume: <span class="math inline">\(w = kV\)</span>, <span class="math inline">\(w = k\theta h^3\)</span></li>
-<li class="fragment">We will absorbe <span class="math inline">\(k\)</span> into <span class="math inline">\(\theta\)</span>, and so <span class="math inline">\(w = \theta h^3\)</span>, so the weight is proportional to the cube of height</li>
+<li class="fragment">From McElreath’s Statistical Rethinking 2nd Ed., Ch 16</li>
+<li class="fragment">The volume of the cylinder is: <span class="math inline">\(V = \pi r^2 h\)</span></li>
+<li class="fragment">Assume width (<span class="math inline">\(2r\)</span>) is proportional to the height <span class="math inline">\(h\)</span>: <span class="math inline">\(r = kh\)</span></li>
+<li class="fragment"><span class="math inline">\(V = \pi r^2 h = \pi (kh)^2 h = \theta h^3\)</span> where <span class="math inline">\(\theta\)</span> absorbed other constant terms</li>
+<li class="fragment">Assume weight is proportional to volume: <span class="math inline">\(w = kV\)</span>, <span class="math inline">\(w = k\theta h^3\)</span></li>
+<li class="fragment">We will absorbe <span class="math inline">\(k\)</span> into <span class="math inline">\(\theta\)</span>, and so <span class="math inline">\(w = \theta h^3\)</span></li>
 </ul>
 </div>
-</div><div class="column" style="width:40%;">
+</div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="images/Spot_the_cow.gif" data-weight="500"></p>
-<figcaption>Keenan Crane; GIF by username:Nepluno - https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/#spot</figcaption>
+<figcaption>Robust fairing via conformal curvature flow, Crane et al.&nbsp;ACM Transactions on Graphics (2013)</figcaption>
 </figure>
 </div>
 </div></div>
+<aside class="notes">
+<ul>
+<li>In the spirit of the <a href="https://en.wikipedia.org/wiki/Spherical_cow">spherical cow</a>, we can think of a person as a cylinder</li>
+<li>The volume of the cylinder is: <span class="math inline">\(V = \pi r^2 h\)</span>, where <span class="math inline">\(r\)</span> is a person’s radius and <span class="math inline">\(h\)</span> is the height</li>
+<li>It seems reasonable to assume that a person’s width (<span class="math inline">\(2r\)</span>) is proportional to the height <span class="math inline">\(h\)</span>: <span class="math inline">\(r = kh\)</span> where <span class="math inline">\(k\)</span> is the proportionality constant</li>
+<li>Therefore: <span class="math inline">\(V = \pi r^2 h = \pi (kh)^2 h = \theta h^3\)</span> where <span class="math inline">\(\theta\)</span> absorbed other constant terms</li>
+<li>If the human body has approximately the same density, weight should be proportional to Volume: <span class="math inline">\(w = kV\)</span>, <span class="math inline">\(w = k\theta h^3\)</span></li>
+<li>We will absorbe <span class="math inline">\(k\)</span> into <span class="math inline">\(\theta\)</span>, and so <span class="math inline">\(w = \theta h^3\)</span>, so the weight is proportional to the cube of height</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="deriving-the-model-1" class="slide level2 smaller">
 <h2>Deriving the model</h2>
@@ -286,9 +323,9 @@ w_i &amp; \sim &amp; \text{LogNormal}(\mu_i, \sigma)  \\
 \sigma &amp; \sim &amp; \text{Exponetial}(1)
 \end{eqnarray}
 \]</span></li>
-<li class="fragment">Weight is a positive quantity, and we give it a LogNormal distribution</li>
-<li class="fragment"><span class="math inline">\(\exp(\mu_i)\)</span> is the median of a LogNormal, which is where we specify our cubic relationship between weight and height</li>
-<li class="fragment">Notice that the model for the conditional median is <span class="math inline">\(\mu_i = \log(\theta) + 3 \log(h_i)\)</span>, in other words, we do not need to estimate the coefficient on height, we only need the intercept</li>
+<li class="fragment">Weight is a positive quantity</li>
+<li class="fragment"><span class="math inline">\(\exp(\mu_i)\)</span> is the median of a LogNormal</li>
+<li class="fragment">Model for the conditional median is <span class="math inline">\(\mu_i = \log(\theta) + 3 \log(h_i)\)</span></li>
 <li class="fragment">In <code>RStanArm</code>, we can estimate a similar model as a linear regression of log weight on log height; (in Stan, we can write this model directly)</li>
 </ul>
 </div>
@@ -358,7 +395,7 @@ w_i &amp; \sim &amp; \text{LogNormal}(\mu_i, \sigma)  \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -383,7 +420,7 @@ w_i &amp; \sim &amp; \text{LogNormal}(\mu_i, \sigma)  \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -425,7 +462,7 @@ w_i &amp; \sim &amp; \text{LogNormal}(\mu_i, \sigma)  \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -472,7 +509,6 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       gaussian [identity]
  formula:      log_w ~ log_h
@@ -519,7 +555,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -539,7 +575,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -561,7 +597,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -611,7 +647,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -677,7 +713,6 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       gaussian [identity]
  formula:      quality ~ alcohol
@@ -754,7 +789,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -794,7 +829,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -805,7 +840,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <h2>Example: Quality of Wine</h2>
 <div>
 <ul>
-<li class="fragment">Naive way to show the posterior predictive check</li>
+<li class="fragment">Naive way to show the posterior predictive check (don’t do this)</li>
 </ul>
 </div>
 <div class="fragment">
@@ -815,7 +850,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -856,7 +891,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -878,7 +913,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -901,7 +936,7 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -933,7 +968,6 @@ y_i \sim \mathsf{Normal}\left(\alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i}, \, \si
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       gaussian [identity]
  formula:      quality ~ .
@@ -1001,7 +1035,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1026,7 +1060,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-29-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1071,7 +1105,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">width</span>(yrep2, <span class="fl">0.25</span>, <span class="fl">0.75</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.89</code></pre>
+<pre><code>[1] 0.9</code></pre>
 </div>
 </div>
 </div>
@@ -1101,7 +1135,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -1197,7 +1231,7 @@ y_i &amp; \sim &amp; \text{Poisson}\left(u_i e^{X_i\beta}\right) \\
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1229,7 +1263,6 @@ y_i &amp; \sim &amp; \text{Poisson}\left(u_i e^{X_i\beta}\right) \\
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       poisson [log]
  formula:      y ~ x
@@ -1287,7 +1320,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-36-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1308,7 +1341,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-38-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1346,7 +1379,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-38-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-39-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1419,7 +1452,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-41-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-42-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1577,7 +1610,6 @@ y_i &amp; \sim &amp; \text{Poisson}(u_i\lambda_i)\\
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       poisson [log]
  formula:      y ~ roach100 + treatment + senior
@@ -1642,7 +1674,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-45-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-46-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1691,7 +1723,6 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
-
  function:     stan_glm
  family:       neg_binomial_2 [log]
  formula:      y ~ roach100 + treatment + senior
@@ -1757,7 +1788,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-47-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-48-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1788,7 +1819,7 @@ m7 -5329.4     703.8</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-49-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-50-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>

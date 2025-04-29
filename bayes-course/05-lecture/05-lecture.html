@@ -1076,8 +1076,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>mqi <span class="ot">&lt;-</span> draws <span class="sc">|&gt;</span> <span class="fu">median_qi</span>(<span class="at">.width =</span> <span class="fl">0.90</span>)</span>
 <span id="cb30-2"><a></a><span class="fu">select</span>(mqi, <span class="fu">contains</span>(<span class="fu">c</span>(<span class="st">'mu'</span>, <span class="st">'y_pred'</span>))) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    mu mu.lower mu.upper y_pred y_pred.lower y_pred.upper
-1 48.4     47.9     48.8   48.2         41.2         55.2</code></pre>
+<pre><code># A tibble: 1 × 6
+     mu mu.lower mu.upper y_pred y_pred.lower y_pred.upper
+  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+1  48.4     47.9     48.8   48.2         41.2         55.2</code></pre>
 </div>
 </div>
 </div>
@@ -1493,10 +1495,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <li class="fragment">This is equivalent to the log predictive density <span class="math inline">\(\log f(y \mid \theta)\)</span></li>
 <li class="fragment">We would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data-generating process</li>
 <li class="fragment">This quantity is approximated by log-pointwise-predictive-density <span class="math display">\[
-\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n, s}) \right)
+\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n}^{(s)}) \right)
 \]</span></li>
 <li class="fragment">To compute this quantity, fit the model N times, dropping one point at a time (-n)</li>
-<li class="fragment">S is the number of posterior samples, and <span class="math inline">\(\theta_{-n, s}\)</span>, is the s-th sample without the n-th data point</li>
+<li class="fragment">S is the number of posterior samples, and <span class="math inline">\(\theta_{-n}^{(s)}\)</span>, is the s-th sample without the n-th data point</li>
 <li class="fragment"><a href="https://arxiv.org/abs/1507.04544">Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</a> provides a computationally efficient way to approximate LOO, without refitting the model N times.</li>
 </ul>
 </div>
