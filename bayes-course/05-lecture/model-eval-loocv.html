@@ -241,9 +241,8 @@ window.Quarto = {
 <p>Let’s take a particular PMF for this Bernoulli with <span class="math inline">\(p(X = 1) = 0.9\)</span> and <span class="math inline">\(p(X = 2) = 0.1\)</span>. Shannon called the information content of X = 1 of this system:</p>
 <p><span class="math display">\[
 h(x) = \log_2 \frac{1}{p(x)} = -\log_2(p(x))
-\\
-h(1) \approx 0.15 \text{ and } h(0) \approx 3.32
-\]</span> This function has a property that the higher the probability (of seeing 1), the lower is the surprise that you see it.</p>
+\]</span> <span class="math inline">\(h(1) \approx 0.15 \text{ and } h(0) \approx 3.32\)</span></p>
+<p>This function has a property that the higher the probability (of seeing 1), the lower is the surprise that you see it.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -308,6 +307,21 @@ D_{\mathrm{KL}}(P\|Q)
 <p><span class="math display">\[D_{\text{KL}}(\text{Normal}(0, 1) \| \text{Normal}(\mu, 1)) = \frac{μ^{2}}{2}\]</span></p>
 <p>The <span class="math inline">\(D_{\mathrm{KL}}(P\|Q)\)</span> grows with the square of the mean in this case, and is zero, when the <span class="math inline">\(\mu = 0\)</span> as expected.</p>
 </section>
+<section id="expected-log-predictive-density-for-a-new-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="expected-log-predictive-density-for-a-new-dataset">Expected log predictive density for a new dataset</h2>
+<p>Suppose that we know that obserations are generated from <span class="math inline">\(\text{Normal}(5, 1)\)</span> distribitions and we observe 5 data points.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="at">mean =</span> mu, <span class="at">sd =</span> sigma)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(y, <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.44 4.77 6.56 5.07 5.13</code></pre>
+</div>
+</div>
+<p>We can compute the posterior predictive distribution analytically, assuming we know <code>sigma</code>. The posterior predictive distribution $f( y) = $</p>
+</section>
 <section id="expected-log-pointwise-predictive-density" class="level2">
 <h2 class="anchored" data-anchor-id="expected-log-pointwise-predictive-density">Expected log pointwise predictive density</h2>
 </section>
@@ -316,6 +330,9 @@ D_{\mathrm{KL}}(P\|Q)
 </section>
 <section id="pareto-smoothed-importance-sampling" class="level2">
 <h2 class="anchored" data-anchor-id="pareto-smoothed-importance-sampling">Pareto smoothed importance sampling</h2>
+</section>
+<section id="whats-the-deal-with-k-0.7" class="level2">
+<h2 class="anchored" data-anchor-id="whats-the-deal-with-k-0.7">What’s the deal with k &lt; 0.7</h2>
 </section>
 <section id="real-dataset-example" class="level2">
 <h2 class="anchored" data-anchor-id="real-dataset-example">Real dataset example</h2>
