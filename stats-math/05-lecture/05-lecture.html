@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.40">
+
+  <meta name="author" content="Eric Novik | Summer 2024 | Session 5">
+  <title>Eric Novik – SMaC: Statistics, Math, and Computing</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-e829f46d6c6374dd212fea2563f89f04.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">SMaC: Statistics, Math, and Computing</h1>
+  <p class="subtitle">Applied Statistics for Social Science Research</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Eric Novik | Summer 2024 | Session 5 
+</div>
+</div>
+</div>
+
+</section>
+<section id="session-5-outline" class="slide level2">
+<h2>Session 5 Outline</h2>
+<div>
+<ul>
+<li class="fragment">Random variables</li>
+<li class="fragment">Bernoulli, Binomial, Geometric</li>
+<li class="fragment">PDF and CDF</li>
+<li class="fragment">LOTUS</li>
+<li class="fragment">Poisson</li>
+<li class="fragment">Expectations, Variance</li>
+<li class="fragment">St.&nbsp;Petersburg Paradox</li>
+<li class="fragment">Normal</li>
+</ul>
+</div>
+<p><span class="math display">\[
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\]</span></p>
+</section>
+<section id="random-variables-are-not-random" class="slide level2 smaller">
+<h2>Random Variables are Not Random</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Story</a></li><li><a href="#tabset-1-2">Picture</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div>
+<ul>
+<li class="fragment"><p>It would be inconvenient to enumerate all possible events to describe a stochastic system</p></li>
+<li class="fragment"><p>A more general approach is to introduce a function that maps sample space <span class="math inline">\(S\)</span> onto the Real line</p></li>
+<li class="fragment"><p>For each possible outcome <span class="math inline">\(s\)</span>, random variable <span class="math inline">\(X(s)\)</span> performs this mapping</p></li>
+<li class="fragment"><p>This mapping is deterministic. The randomness comes from the experiment, not from the random variable (RV)</p></li>
+<li class="fragment"><p>While it makes sense to talk about <span class="math inline">\(\P(A)\)</span>, where <span class="math inline">\(A\)</span> is an event, it does not make sense to talk about <span class="math inline">\(\P(X)\)</span>, but you can say <span class="math inline">\(\P(X(s) = x)\)</span>, which we usually write as <span class="math inline">\(\P(X = x)\)</span></p></li>
+<li class="fragment"><p>Let <span class="math inline">\(X\)</span> be the number of Heads in two coin flips. You flip the coin twice, and you get <span class="math inline">\(HH\)</span>. In this case, <span class="math inline">\(s = {HH}\)</span>, <span class="math inline">\(X(s) = 2\)</span>, while <span class="math inline">\(S = \{TT, TH, HT, HH\}\)</span></p></li>
+</ul>
+</div>
+</div>
+<div id="tabset-1-2">
+<ul>
+<li>Random variable <span class="math inline">\(X\)</span> for the number of Heads in two flips</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/nofheads.png" class="quarto-figure quarto-figure-center" width="800"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="characterising-random-variables" class="slide level2 smaller">
+<h2>Characterising Random Variables</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Introduction</a></li><li><a href="#tabset-2-2">R Conventions</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<div>
+<ul>
+<li class="fragment">Two ways of describing an RV are CDF (Cumulative Distribution Function) and PMF (Probability Mass Function) for discrete RVs and PDF (Probability Density Function) for continuous RVs. There are other ways, but we will stick with CDF and P[D/M]F.</li>
+<li class="fragment">CDF <span class="math inline">\(F_X(x)\)</span> is a function of <span class="math inline">\(x\)</span> and is bounded between 0 and 1:</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+F_X(x) = \P(X \leq x)
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>PMF (for discrete RVs only) <span class="math inline">\(f_X(x)\)</span> is a function of <span class="math inline">\(x\)</span></li>
+</ul>
+<p><span class="math display">\[
+f_X(x) = \P(X = x)
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>You can get from <span class="math inline">\(f_X\)</span> to <span class="math inline">\(F_X\)</span> by summing. Let’s say <span class="math inline">\(x = 4\)</span>. In that case:</li>
+</ul>
+<p><span class="math display">\[
+F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
+\]</span></p>
+</div>
+</div>
+<div id="tabset-2-2">
+<div>
+<ul>
+<li class="fragment"><p>In R, PMFs and PDFs start with the letter <code>d</code>. For example <code>dbinom()</code> and <code>dnormal()</code> refer to binomial PMF and normal PDF</p></li>
+<li class="fragment"><p>CDFs start with <code>p</code>, so <code>pbinom()</code> and <code>pnorm()</code></p></li>
+<li class="fragment"><p>Inverse CDFs or quantile functions, start with <code>q</code> so <code>qbinom()</code> and so on</p></li>
+<li class="fragment"><p>Random number generators start with <code>r</code>, so <code>rbinom()</code></p></li>
+<li class="fragment"><p>A binomial RV, which we will define later, represents the number of successes in N trials. In R, the PMF is <code>dbinom()</code> and CDF is <code>pbinom()</code></p></li>
+<li class="fragment"><p>Here is the full function signature: <code>dbinom(x, size, prob, log = FALSE)</code></p>
+<ul>
+<li class="fragment"><code>x</code> is the number of successes, <code>size</code> is the number of trials N, <code>prob</code> is the probability of success in each trial <span class="math inline">\(\theta\)</span>, and <code>log</code> is a flag asking if we want the results on the log scale.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="binomial-rv" class="slide level2 smaller">
+<h2>Binomial RV</h2>
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Binomial PMF</a></li><li><a href="#tabset-3-2">PMF and CDF Plots</a></li><li><a href="#tabset-3-3">Code to Generate the Plots</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<div>
+<ul>
+<li class="fragment"><p>Bernoulli RV is one coin flip with a set probability of success (say Heads)</p></li>
+<li class="fragment"><p>If <span class="math inline">\(X \sim \text{Bernoulli}(\theta)\)</span>, the PMF can be written directly as <span class="math inline">\(\P(X = x) = \theta^x (1 - \theta)^{1-x}, \, x \in \{0, 1\}\)</span></p></li>
+<li class="fragment"><p>Binomial can be thought of as the sum of <span class="math inline">\(N\)</span> independent Bernoulli trials. We can also write:</p></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\text{Bernoulli}(x~|~\theta) = \left\{ \begin{array}{ll} \theta &amp;
+\text{if } x = 1, \text{ and} \\ 1 - \theta &amp; \text{if } x = 0
+\end{array} \right.
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>We can write the Binomial PMF, <span class="math inline">\(X \sim \text{Binomial}(N, \theta)\)</span> this way:</li>
+</ul>
+<p><span class="math display">\[
+\text{Binomial}(x~|~N,\theta) = \binom{N}{x}
+\theta^x (1 - \theta)^{N - x}
+\]</span></p>
+</div>
+</div>
+<div id="tabset-3-2">
+<p><span class="math inline">\(\text{Binomial}(x~|~N=4,\theta = 1/2)\)</span></p>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-3">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a>N <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># Number of successes out of x trials</span></span>
+<span id="cb1-5"><a></a></span>
+<span id="cb1-6"><a></a><span class="co"># compute and plot the PMF</span></span>
+<span id="cb1-7"><a></a>pmf <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span>N, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb1-8"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span>  <span class="dv">0</span><span class="sc">:</span>N, <span class="at">y =</span> pmf)</span>
+<span id="cb1-9"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, pmf))</span>
+<span id="cb1-10"><a></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> .<span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb1-11"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">fractions</span>(pmf)), <span class="at">nudge_y =</span> <span class="fl">0.02</span>) <span class="sc">+</span></span>
+<span id="cb1-12"><a></a>  <span class="fu">ylab</span>(<span class="st">"P(X = x)"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x = Number of Heads"</span>) <span class="sc">+</span></span>
+<span id="cb1-13"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Binomial(4, 1/2)"</span>,</span>
+<span id="cb1-14"><a></a>          <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span>
+<span id="cb1-15"><a></a></span>
+<span id="cb1-16"><a></a><span class="co"># compute and plot the CDF</span></span>
+<span id="cb1-17"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="at">length =</span> <span class="dv">500</span>)</span>
+<span id="cb1-18"><a></a>cdf <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="at">q =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb1-19"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">q =</span> x, <span class="at">y =</span> cdf)</span>
+<span id="cb1-20"><a></a>dd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="at">by =</span> <span class="dv">1</span>), <span class="at">cdf =</span> <span class="fu">unique</span>(cdf), <span class="at">x_empty =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb1-21"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, cdf)) </span>
+<span id="cb1-22"><a></a>p2 <span class="ot">&lt;-</span> p2 <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb1-23"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(x, cdf, <span class="at">label =</span> <span class="fu">fractions</span>(cdf)), <span class="at">data =</span> dd, <span class="at">nudge_y =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb1-24"><a></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x_empty, cdf), <span class="at">data =</span> dd[<span class="sc">-</span><span class="dv">6</span>, ], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">'white'</span>) <span class="sc">+</span></span>
+<span id="cb1-25"><a></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x_empty, cdf), <span class="at">data =</span> dd[<span class="sc">-</span><span class="dv">6</span>, ], <span class="at">size =</span> <span class="dv">2</span>, <span class="at">shape =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-26"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Binomial(4, 1/2)"</span>,</span>
+<span id="cb1-27"><a></a>          <span class="at">subtitle =</span> <span class="fu">expression</span>(CDF<span class="sc">:</span> F[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">&lt;=</span> x))) <span class="sc">+</span></span>
+<span id="cb1-28"><a></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">&lt;=</span> x))) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x = Number of Heads"</span>)</span>
+<span id="cb1-29"><a></a></span>
+<span id="cb1-30"><a></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="binomial-in-r" class="slide level2 smaller">
+<h2>Binomial in R</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># What is the probability of getting 2 Heads out of 5 fair trials?</span></span>
+<span id="cb2-2"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb2-3"><a></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5/16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># What is the binomial PMF: P(X = x), for N = 5, p = 0.5?</span></span>
+<span id="cb4-2"><a></a>N <span class="ot">&lt;-</span> <span class="dv">5</span>; x <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">7</span> <span class="co"># notice we range x over any integers</span></span>
+<span id="cb4-3"><a></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]    0    0 1/32 5/32 5/16 5/16 5/32 1/32    0    0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># Verify that the PMF sums to 1</span></span>
+<span id="cb6-2"><a></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># What is the probability of 3 heads or fewer</span></span>
+<span id="cb8-2"><a></a><span class="fu">pbinom</span>(<span class="dv">3</span>, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 13/16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># compute the CDF: P(X &lt;= x), for N = 5, p = 0.5</span></span>
+<span id="cb10-2"><a></a><span class="fu">pbinom</span>(x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="co"># get from the PMF to CDF; cumsum() is the cumulative sum function</span></span>
+<span id="cb12-2"><a></a><span class="fu">dbinom</span>(<span class="at">x =</span> x, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> <span class="fu">cumsum</span>() <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1</code></pre>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment"><strong>Your Turn</strong>: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF.</li>
+</ul>
+</div>
+</section>
+<section id="geometric-rv" class="slide level2 smaller">
+<h2>Geometric RV</h2>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">PMF</a></li><li><a href="#tabset-4-2">Check Convergence</a></li><li><a href="#tabset-4-3">Examples</a></li><li><a href="#tabset-4-4">PMF</a></li><li><a href="#tabset-4-5">Summing the Geometric</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<div>
+<ul>
+<li class="fragment">Geometric is a discrete waiting time distribution, and Exponential is its continuous analog</li>
+<li class="fragment">If <span class="math inline">\(X\)</span> is the number of failures before first success <span class="math inline">\(X \sim \text{Geometric}(\theta)\)</span>, where <span class="math inline">\(\theta\)</span> is probability of success</li>
+<li class="fragment">Example: We keep flipping a coin until we get success, say Heads
+<ul>
+<li class="fragment">Say we flip five times, which means we get the following sequence: T T T T H</li>
+<li class="fragment">The probability of this sequence is: <span class="math inline">\((\frac{1}{2})^4 (\frac{1}{2})^1\)</span></li>
+<li class="fragment">Notice this is the only way to get this sequence</li>
+</ul></li>
+<li class="fragment">If <span class="math inline">\(x\)</span> is the number of failures, the PMF is <span class="math inline">\(P(X = x) = (1 - \theta)^x \theta\)</span>, where <span class="math inline">\(x = 0, 1, 2, ...\)</span></li>
+</ul>
+</div>
+</div>
+<div id="tabset-4-2">
+<ul>
+<li>To check if this is a valid PMF, we need to sum over all <span class="math inline">\(x\)</span>:</li>
+</ul>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{align}
+\sum_{x = 0}^{\infty} \theta (1 - \theta)^x  =
+\theta \sum_{x = 0}^{\infty} (1 - \theta)^x \\
+\text{Let } u = 1 - \theta \\
+\theta \sum_{x = 0}^{\infty} u^x = \theta \frac{1}{1-u} = \theta \frac{1}{1-1 + \theta} = \frac{\theta}{\theta} = 1
+\end{align}
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>The last bit comes from geometric series for <span class="math inline">\(|u| &lt; 1\)</span></li>
+</ul>
+</div>
+</div>
+<div id="tabset-4-3">
+<ul>
+<li>The probability of T T T H (x = 3 failures) when <span class="math inline">\(\theta = 1/2\)</span>, has to be <span class="math inline">\((1/2)^4\)</span> or <span class="math inline">\(1/16\)</span></li>
+</ul>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb14-2"><a></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1/16</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>If <span class="math inline">\(\theta = 1/3\)</span>, the probability of the same sequence has to be <span class="math inline">\((2/3)^3 \cdot 1/3 = 8/81\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span>; theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb16-2"><a></a><span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta) <span class="sc">|&gt;</span> <span class="fu">fractions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8/81</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>The PMF is unbounded, but it converges to 1 as demonstrated before</li>
+</ul>
+</div>
+</div>
+<div id="tabset-4-4">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>x <span class="ot">&lt;-</span>  <span class="dv">0</span><span class="sc">:</span><span class="dv">15</span></span>
+<span id="cb18-2"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb18-3"><a></a>y <span class="ot">&lt;-</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta)</span>
+<span id="cb18-4"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
+<span id="cb18-5"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x, y))</span>
+<span id="cb18-6"><a></a>p <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a></a><span class="fu">xlab</span>(<span class="st">"x = Number of failures before first success"</span>) <span class="sc">+</span></span>
+<span id="cb18-8"><a></a> <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span></span>
+<span id="cb18-9"><a></a><span class="fu">ggtitle</span>(<span class="st">"X ~ Geom(1/5)"</span>, </span>
+<span id="cb18-10"><a></a> <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="fu">P</span>(X <span class="sc">==</span> x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div></div>
+</div>
+<div id="tabset-4-5">
+<p>Let’s consider the infinite geometric series:</p>
+<p><span class="math display">\[
+S = \sum_{x=0}^{\infty} u^x = u^0 + u^1 + u^2 + u^3 + \dots
+\]</span> This can be written explicitly as: <span class="math display">\[
+S = 1 + u + u^2 + u^3 + \dots
+\]</span></p>
+<p>Next, multiply the entire series by <span class="math inline">\(u\)</span>:</p>
+<p><span class="math display">\[
+uS = u \cdot (1 + u + u^2 + u^3 + \dots)
+\]</span></p>
+<p>This results in: <span class="math display">\[
+uS = u + u^2 + u^3 + u^4 + \dots
+\]</span></p>
+<p>Now, subtract the equation for <span class="math inline">\(uS\)</span> from the equation for <span class="math inline">\(S\)</span>:</p>
+<p><span class="math display">\[
+S - uS = (1 + u + u^2 + u^3 + \dots) - (u + u^2 + u^3 + u^4 + \dots)
+\]</span></p>
+<p>Notice that all terms on the right-hand side except the first term (which is 1) cancel out:</p>
+<p><span class="math display">\[
+S - uS = 1
+\]</span></p>
+<p>Factor the left-hand side:</p>
+<p><span class="math display">\[
+S(1 - u) = 1
+\]</span></p>
+<p>Finally, solve for <span class="math inline">\(S\)</span>:</p>
+<p><span class="math display">\[
+S = \frac{1}{1 - u}
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="expectations" class="slide level2 smaller">
+<h2>Expectations</h2>
+<div class="panel-tabset">
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Introduction</a></li><li><a href="#tabset-5-2">Examples</a></li><li><a href="#tabset-5-3">R Code</a></li><li><a href="#tabset-5-4">E(X) of Bernoulli and Binomial</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1">
+<div>
+<ul>
+<li class="fragment">An expectation is a kind of average, typically a weighted average</li>
+<li class="fragment">Expectation is a single number summary of the distribution</li>
+<li class="fragment">When computing a weighted average, the weights must add up to one</li>
+<li class="fragment">That’s fortunate for us since the PMF satisfies this property</li>
+<li class="fragment">So, the expectation of a discrete RV is the sum of its values weighted by their respective probabilities</li>
+<li class="fragment">For a discrete RV, we have: <span class="math inline">\(\E(X) = \sum_{x}^{} x f_X(x)\)</span></li>
+<li class="fragment">For continuous RVs we have: <span class="math inline">\(\E(X) = \int x f_X(x)\, dx\)</span></li>
+</ul>
+</div>
+</div>
+<div id="tabset-5-2">
+<div>
+<ul>
+<li class="fragment">Let’s compute the expectation of the Geometric RV, <span class="math inline">\(X \sim \text{Geom}(\theta)\)</span></li>
+<li class="fragment">To solve it analytically, you would have to sum a slightly more complicated series or condition on the outcome of the first experiment</li>
+<li class="fragment">Here, we will just write the answer:</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\E(X) = \sum_{x=0}^{\infty} x \theta (1 - \theta)^x = \frac{1-\theta}{\theta}
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment"><p>In particular, for <span class="math inline">\(X \sim \text{Geom}(1/5)\)</span>, what is the expected number of failures before the first success?</p></li>
+<li class="fragment"><p>The answer is <span class="math inline">\(4 = \frac{(1 - \frac{1}{5})}{\frac{1}{5}}\)</span></p></li>
+</ul>
+</div>
+</div>
+<div id="tabset-5-3">
+<div>
+<ul>
+<li class="fragment">Let’s check computationally:</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb19-2"><a></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">100</span></span>
+<span id="cb19-3"><a></a><span class="fu">sum</span>(x <span class="sc">*</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span></span>
+<span id="cb21-2"><a></a><span class="fu">sum</span>(x <span class="sc">*</span> <span class="fu">dgeom</span>(<span class="at">x =</span> x, <span class="at">prob =</span> theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment"><p>Question: Geometric is unbounded, yet summed a finite number (100) and got the right answer. What’s going on?</p></li>
+<li class="fragment"><p>Geometric decays quickly, and higher terms are negligible for these choices of <span class="math inline">\(\theta\)</span></p></li>
+<li class="fragment"><p>Without doing any calculations at all, what is <span class="math inline">\(\E(X)\)</span>, where <span class="math inline">\(X \sim \text{Geom}(1/8)\)</span></p></li>
+</ul>
+</div>
+</div>
+<div id="tabset-5-4">
+<div>
+<ul>
+<li class="fragment"><p>If <span class="math inline">\(X \sim \text{Bernoulli}(\theta)\)</span>, <span class="math inline">\(\E(X) = \sum_{x=0}^{1} x \theta^x (1 - \theta)^{1-x} = 0 + 1 \cdot \theta \cdot 1 = \theta\)</span></p></li>
+<li class="fragment"><p>For the Binomial, is it easier to think about it as a sum of iid Bernoulli RVs. Each Bernoulli RV has an expectation of <span class="math inline">\(\theta\)</span>, and there are <span class="math inline">\(n\)</span> of them, so the expectation is <span class="math inline">\(n \theta\)</span>.</p></li>
+<li class="fragment"><p>This argument relies on the linearity of expectations: <span class="math inline">\(\E(X_1 + X_2 ... + X_n) = \E(X_1) + \E(X_2) + ... + \E(X_n) = \theta + ... + \theta = n\theta\)</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="st.-petersburg-paradox" class="slide level2 smaller">
+<h2>St.&nbsp;Petersburg paradox</h2>
+<div class="panel-tabset">
+<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">First Success Distribution</a></li><li><a href="#tabset-6-2">The Paradox</a></li><li><a href="#tabset-6-3">Expected Utility</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1">
+<div>
+<ul>
+<li class="fragment">This is a slight modification to Geometric as we are counting the number of failures, including the first success vs.&nbsp;Geometric, where we counted the failures</li>
+<li class="fragment"><span class="math inline">\(X \sim \text{FS}(\theta)\)</span>, if <span class="math inline">\(\P(X = x) = (1 - \theta)^{x - 1} \theta\)</span>, for <span class="math inline">\(x = 1, 2, 3, ...\)</span></li>
+<li class="fragment"><span class="math inline">\(X - 1 \sim \text{Geom}(\theta)\)</span></li>
+<li class="fragment">Say, <span class="math inline">\(Y \sim \text{Geom}(\theta)\)</span>, then <span class="math inline">\(\E(X) = \E(Y + 1) = \E(Y) + 1 = \frac{1 - \theta}{\theta} + \frac{\theta}{\theta} = \frac{1}{\theta}\)</span></li>
+</ul>
+</div>
+</div>
+<div id="tabset-6-2">
+<div>
+<ul>
+<li class="fragment">Suppose you are offered the following game: you flip a coin until heads appear. You get $2 if the game ends after round 1, $4 after two rounds, $8 after three, and so on.</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\E(X) = \sum_{n=1}^{\infty} \frac{1}{2^n} \cdot 2^n =  \sum_{n=1}^{\infty} 1 = \infty
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment">Vote how much are you willing to pay to play this game? (you can’t lose)</li>
+<li class="fragment">How many rounds do we expect to play? If <span class="math inline">\(N\)</span> is the number of rounds, then <span class="math inline">\(N \sim \text{FS}(1/2)\)</span>, and <span class="math inline">\(\E(N) = \frac{1}{1/2} = 2\)</span></li>
+<li class="fragment">In addition, the utility of money has been shown to be non-linear</li>
+</ul>
+</div>
+</div>
+<div id="tabset-6-3">
+<div>
+<ul>
+<li class="fragment">Daniel Bernoulli (1700 - 1782) proposed that <span class="math inline">\(\frac{dU}{dw} \propto \frac{1}{w}\)</span>, where <span class="math inline">\(U\)</span> is the utility function and <span class="math inline">\(w\)</span> is the wealth</li>
+<li class="fragment">This gives rise to the following differential equation <span class="math inline">\(\frac{dU}{dw} = k \frac{1}{w}\)</span>, where <span class="math inline">\(k\)</span> is the constant of proportionality</li>
+<li class="fragment">Integrating both sides: <span class="math inline">\(\int dU = k \int \frac{1}{w} dw\)</span> we get:
+<ul>
+<li class="fragment"><span class="math inline">\(U(w) = k \log(w) + C\)</span>, where <span class="math inline">\(C\)</span> is some initial wealth</li>
+</ul></li>
+<li class="fragment">For simplicity let’s take <span class="math inline">\(k=1\)</span>, and consider <span class="math inline">\(\log = \log_2\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\E(U) = \sum_{n=1}^{\infty} \frac{1}{2^n} \log_2(2^n) =  \sum_{n=1}^{\infty} \frac{n}{2^n} = 2 \neq \infty
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment">The last equality comes from summing the geometric series <span class="math inline">\(\sum_{n=1}^{\infty} \frac{n}{2^n}\)</span> using the same methods we used for Geometric distribution</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="indicator-random-variable" class="slide level2 smaller">
+<h2>Indicator Random Variable</h2>
+<div class="panel-tabset">
+<ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1">Recall our <span class="math inline">\(\pi\)</span> Simulation</a></li><li><a href="#tabset-7-2">Fundamental Bridge</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1">
+<div class="fragment">
+<p><span class="math display">\[
+\I_A(s) = \I(s \in A) = \left\{\begin{matrix}
+1 &amp; \text{if } s \in A \\
+0 &amp; \text{if } s \notin A
+\end{matrix}\right.
+\]</span></p>
+</div>
+<div class="fragment">
+<p>Recall from Lecture 1:</p>
+<p><span class="math display">\[
+\begin{align}
+X&amp; \sim \text{Uniform}(-1, 1) \\
+Y&amp; \sim \text{Uniform}(-1, 1) \\
+\pi&amp; \approx \frac{4 \sum_{i=1}^{N} \text{I}(x_i^2 + y_i^2 &lt; 1)}{N}
+\end{align}
+\]</span></p>
+</div>
+</div>
+<div id="tabset-7-2">
+<div>
+<ul>
+<li class="fragment">There is a link between probability and (expectations of) indicator RVs</li>
+<li class="fragment">Joe Blitzstein calls it the fundamental bridge: <span class="math inline">\(\P(A) = \E(\I_A)\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="co"># Pr of two heads in five trials</span></span>
+<span id="cb23-2"><a></a>(P2 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3125</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Let's create a realization Binom(5, 1/2)</span></span>
+<span id="cb25-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="fl">1e6</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">prob =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb25-3"><a></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0 2 0 0 2 1 3 4 3 2 2 1 2 0 2 2 1 0 3 0 2 3 0 3 2 0 2 2 2 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># indicator RV: if x == 2 Ix = TRUE (1), else Ix = (0)</span></span>
+<span id="cb27-2"><a></a>I2 <span class="ot">&lt;-</span> (x <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb27-3"><a></a>I2[<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>] <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0 1 0 0 1 0 0 0 0 1 1 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 1 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># compute E(Ix) == P2</span></span>
+<span id="cb29-2"><a></a><span class="fu">mean</span>(I2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.312888</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="lotus" class="slide level2 smaller">
+<h2>LOTUS</h2>
+<div>
+<ul>
+<li class="fragment">LOTUS stands for the Law Of The Unconscious Statistician</li>
+<li class="fragment">It allows us to work with PDFs of the original RV <span class="math inline">\(X\)</span>, even though we want to compute an expectation of the function of that RV, say <span class="math inline">\(g(X)\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+E(g(X)) &amp;=&amp; \int_{-\infty}^{\infty} g(x) f_X(x) \, dx \\
+E(g(X)) &amp;=&amp; \sum_{x} g(x) p_X(x)
+\end{eqnarray}
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment">Notice, that we don’t need to compute <span class="math inline">\(f_{g(X)}(x)\)</span> or <span class="math inline">\(p_{g(X)}(x)\)</span></li>
+<li class="fragment">The idea is that even though the <span class="math inline">\(x\)</span>s change from, say <span class="math inline">\(x\)</span> to <span class="math inline">\(x^2\)</span>, reflecting the fact the <span class="math inline">\(g(X) = X^2\)</span>, that did not change their probability assignments, we can still work with <span class="math inline">\(\P(X = x)\)</span> (in case of X discrete)</li>
+</ul>
+</div>
+</section>
+<section id="variance" class="slide level2 smaller">
+<h2>Variance</h2>
+<div class="panel-tabset">
+<ul id="tabset-8" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-8-1">Definitions</a></li><li><a href="#tabset-8-2">Computation</a></li></ul>
+<div class="tab-content">
+<div id="tabset-8-1">
+<div>
+<ul>
+<li class="fragment">Variance is a measure of the spread of the distribution <span class="math inline">\(\V(X) = \E(X - E(X))^2 = \E(X^2) - \E(X)^2\)</span></li>
+<li class="fragment">If we let <span class="math inline">\(\mu = \E(X)\)</span>, this becomes: <span class="math inline">\(\E(X - \mu)^2 = \E(X^2) - \mu^2\)</span></li>
+<li class="fragment">Unlike Expectation, Variance is not a linear operator. In particular, <span class="math inline">\(\V(cX) = c^2 \V(X)\)</span></li>
+<li class="fragment"><span class="math inline">\(\V(c + X) = \V(X)\)</span>: constants don’t vary</li>
+<li class="fragment">If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent <span class="math inline">\(\V(X + Y) = \V(X) + \V(Y)\)</span>, but unlike for Expectations, this is not true in general</li>
+<li class="fragment">Square root of Variance is called a standard deviation <span class="math inline">\(\text{sd} := \sqrt{\V}\)</span>, which is easier to interpret as it is expressed in the same units as data <span class="math inline">\(x\)</span></li>
+</ul>
+</div>
+</div>
+<div id="tabset-8-2">
+<ul>
+<li>In R, estimated Variance can be computed with <code>var()</code> and standard deviation with <code>sd()</code></li>
+<li>For reference, the variance of the Geometric distribution is: <span class="math inline">\((1 - \theta)/\theta^2\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span>; theta1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>; theta2 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb31-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rgeom</span>(n, <span class="at">prob =</span> theta1)</span>
+<span id="cb31-3"><a></a><span class="fu">var</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 29.83</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">rgeom</span>(n, <span class="at">prob =</span> theta2)</span>
+<span id="cb33-2"><a></a><span class="fu">var</span>(y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.01</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>(<span class="fu">var</span>(x) <span class="sc">+</span> <span class="fu">var</span>(y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 35.83</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">var</span>(x <span class="sc">+</span> y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 35.8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="fu">cov</span>(x, y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.01</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>(<span class="fu">var</span>(x) <span class="sc">+</span> <span class="fu">var</span>(y) <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">cov</span>(x, y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 35.8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co"># compare to the analytic result</span></span>
+<span id="cb43-2"><a></a>(<span class="dv">1</span> <span class="sc">-</span> theta1) <span class="sc">/</span> (theta1)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> theta2) <span class="sc">/</span> (theta2)<span class="sc">^</span><span class="dv">2</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 36</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="poisson-random-variable" class="slide level2 smaller">
+<h2>Poisson Random Variable</h2>
+<div>
+<ul>
+<li class="fragment">Poisson distributions arise when we are modeling counts</li>
+<li class="fragment">But not every type of counting can be modeled with Poisson, just like not every kind of waiting can be modeled by Geometric</li>
+<li class="fragment">We write <span class="math inline">\(X \sim \text{Poisson}(\lambda)\)</span></li>
+<li class="fragment">The PDF of Poisson is <span class="math inline">\(\P(X=x) = \frac{{\lambda^x e^{-\lambda}}}{{x!}}\)</span>, where <span class="math inline">\(x = 0, 1, 2, ...\)</span> and <span class="math inline">\(\lambda &gt; 0\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+\sum_{x=0}^{\infty} \frac{{\lambda^x e^{-\lambda}}}{{x!}} = e^{-\lambda} \sum_{x=0}^{\infty} \frac{\lambda^x}{x!} = 1
+\end{eqnarray}
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment">The last equality follows, because: <span class="math inline">\(e^{\lambda} = \sum_{k=0}^{\infty} \frac{\lambda^k}{k!}\)</span>, which is its <a href="https://www.mathsisfun.com/algebra/taylor-series.html">Taylor Series expansion</a></li>
+<li class="fragment">For Poisson, <span class="math inline">\(\E(X) = \lambda\)</span> and <span class="math inline">\(\V(X) = \lambda\)</span>, which is why most real count data do not follow this distribution</li>
+</ul>
+</div>
+</section>
+<section id="poisson-pmf" class="slide level2 smaller">
+<h2>Poisson PMF</h2>
+<ul>
+<li>Notice the location of <span class="math inline">\(\E(X) = \lambda\)</span> in each plot</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">dot_plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">lambda =</span> <span class="dv">3</span>)) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x"</span>) <span class="sc">+</span> </span>
+<span id="cb45-2"><a></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"X ~ Poisson(3)"</span>)</span>
+<span id="cb45-3"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">dot_plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">22</span>, <span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">22</span>, <span class="at">lambda =</span> <span class="dv">10</span>)) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"x"</span>) <span class="sc">+</span> </span>
+<span id="cb45-4"><a></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">P</span>(X <span class="sc">==</span> x))) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"X ~ Poisson(10)"</span>)</span>
+<span id="cb45-5"><a></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="576"></section>
+<section id="continuous-rvs-and-the-uniform" class="slide level2 smaller">
+<h2>Continuous RVs and the Uniform</h2>
+<div class="panel-tabset">
+<ul id="tabset-9" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-9-1">Definitions</a></li><li><a href="#tabset-9-2">Uniform</a></li></ul>
+<div class="tab-content">
+<div id="tabset-9-1">
+<div>
+<ul>
+<li class="fragment">We leave the discrete world and enter continuous RVs</li>
+<li class="fragment">We can no longer say, <span class="math inline">\(\P(X = x)\)</span>, since for a continuous RV <span class="math inline">\(\P(X = x) = 0\)</span> for all <span class="math inline">\(x\)</span></li>
+<li class="fragment">Instead of PMFs, we will be working with PDFs, and we get probability out of them by integrating over the region that we care about</li>
+<li class="fragment">For a continuous RV: <span class="math inline">\(\int_{-\infty}^{\infty} f_X(x)\, dx = 1\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+P(a &lt; X &lt; b) &amp; = &amp; \int_{a}^{b} f_X(x)\, dx \\
+F_X(x) &amp; = &amp; \int_{-\infty}^{x} f_X(u)\, du
+\end{eqnarray}
+\]</span></p>
+</div>
+</div>
+<div id="tabset-9-2">
+<div class="fragment">
+<p>Uniform <span class="math inline">\(X \sim \text{Uniform}(\alpha, \beta)\)</span> has the following PDF:</p>
+<p><span class="math display">\[
+\text{Uniform}(x|\alpha,\beta) =
+\frac{1}{\beta - \alpha}, \,  \text{where } \alpha \in \mathbb{R} \text{ and } \beta \in (\alpha,\infty)
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment"><strong>Your Turn</strong>: Guess the <span class="math inline">\(\E(X)\)</span></li>
+<li class="fragment">Now derive <span class="math inline">\(\E(X)\)</span> using the definition of the Expected Value: <span class="math inline">\(\E(X) = \int x f_X(x)\, dx\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="at">length =</span> <span class="dv">100</span>)</span>
+<span id="cb46-2"><a></a>pdf_x <span class="ot">&lt;-</span> <span class="fu">dunif</span>(x, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
+<span id="cb46-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, pdf_x), <span class="fu">aes</span>(x, pdf_x))</span>
+<span id="cb46-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(p[X](x))) <span class="sc">+</span></span>
+<span id="cb46-5"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"X ~ Unif(0, 1)"</span>, <span class="at">subtitle =</span> <span class="fu">expression</span>(PDF<span class="sc">:</span> p[X](x) <span class="sc">==</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-stick-breaking" class="slide level2 smaller">
+<h2>Example: Stick breaking</h2>
+<div class="panel-tabset">
+<ul id="tabset-10" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-10-1">Analysis</a></li><li><a href="#tabset-10-2">Simulation</a></li></ul>
+<div class="tab-content">
+<div id="tabset-10-1">
+<div>
+<ul>
+<li class="fragment">You break a unit-length stick at a random point</li>
+<li class="fragment">Let <span class="math inline">\(X\)</span> be the breaking point so <span class="math inline">\(X \sim \text{Uniform}(0, 1)\)</span></li>
+<li class="fragment">Let <span class="math inline">\(Y\)</span> be the larger piece. What is <span class="math inline">\(\E(Y)\)</span>?</li>
+<li class="fragment"><a href="https://en.wikipedia.org/wiki/Law_of_the_unconscious_statistician">LOTUS</a>, says that we do not need <span class="math inline">\(f_Y\)</span>, we can work with <span class="math inline">\(f_X\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\E(Y)= \int y(x) f_X(x) dx
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment">This works only if <span class="math inline">\(Y\)</span> is a function of <span class="math inline">\(X\)</span>. Here, <span class="math inline">\(Y = \max\{X, 1 - X\}\)</span>.</li>
+<li class="fragment">We consider two cases: when <span class="math inline">\(x\)</span> is larger than <span class="math inline">\(1/2\)</span>, <span class="math inline">\(y(x)\)</span> is between <span class="math inline">\(1/2\)</span> and <span class="math inline">\(1\)</span> and when <span class="math inline">\(1 - x\)</span> is larger, it is between <span class="math inline">\(0\)</span> and <span class="math inline">\(1/2\)</span>:</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+y(x) = \left\{
+\begin{array}{ll} x &amp;
+\text{if } 1/2 &lt; x &lt; 1, \text{ and} \\ 1 - x &amp; 0 &lt; x &lt; 1/2
+\end{array}  \right.
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>In other words, <span class="math inline">\(\E(Y)\)</span> can be computed as the sum of two integrals:</li>
+</ul>
+<p><span class="math display">\[
+\E(Y) = \int_{0}^{1} y(x) f_X(x)\, dx =    \\
+\int_{1/2}^{1} x \cdot 1 \, dx + \int_{0}^{1/2} (1-x) \cdot 1 \, dx = \\
+\frac{x^2}{2} \Biggr|_{1/2}^{1} + \frac{1}{2} - \frac{x^2}{2} \Biggr|_{0}^{1/2} = \frac{3}{4}
+\]</span></p>
+</div>
+</div>
+<div id="tabset-10-2">
+<div class="fragment">
+<ul>
+<li>Let’s do a quick simulation in R</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>) <span class="co"># pick a random breaking point on (0, 1)</span></span>
+<span id="cb47-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, x, <span class="dv">1</span> <span class="sc">-</span> x)    <span class="co"># generate y = max(x, 1-x)</span></span>
+<span id="cb47-3"><a></a><span class="fu">mean</span>(y) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)               <span class="co"># estimate the expectation E(Y)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.75</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="normal-rv" class="slide level2 smaller">
+<h2>Normal RV</h2>
+<div class="panel-tabset">
+<ul id="tabset-11" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-11-1">Normal</a></li><li><a href="#tabset-11-2">Properties of Standard Normal</a></li><li><a href="#tabset-11-3">Example: Heights of US adults</a></li></ul>
+<div class="tab-content">
+<div id="tabset-11-1">
+<div>
+<ul>
+<li class="fragment"><span class="math inline">\(X \sim \text{Normal}(\mu, \sigma)\)</span> has the following PDF:</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\text{Normal}(x \mid \mu,\sigma) = \frac{1}{\sqrt{2 \pi} \
+\sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{x - \mu}{\sigma} \right)^2    \right) \!
+\]</span></p>
+</div>
+<div>
+<ul>
+<li class="fragment"><p>The bell shape comes from the <span class="math inline">\(\exp(-x^2)\)</span> part</p></li>
+<li class="fragment"><p>The expected value is <span class="math inline">\(\E(X) = \mu\)</span>, the mode (highest peak) and median are also <span class="math inline">\(\mu\)</span>.</p></li>
+<li class="fragment"><p>Variance is <span class="math inline">\(\V(X) = \sigma^2\)</span> and standard deviation <span class="math inline">\(\text{sd} = \sigma\)</span></p></li>
+<li class="fragment"><p>A Normal RV can be converted to standard normal by subtracting <span class="math inline">\(\mu\)</span> and dividing by <span class="math inline">\(\sigma\)</span></p></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\text{Normal}(x \mid 0, 1) \ = \
+\frac{1}{\sqrt{2 \pi}} \, \exp \left( \frac{-x^2}{2} \right)\
+\]</span></p>
+</div>
+</div>
+<div id="tabset-11-2">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/std-normal.png" class="quarto-figure quarto-figure-center"></p>
+</figure>
+</div>
+</div>
+<div id="tabset-11-3">
+<div>
+<ul>
+<li class="fragment">Sums of small contributions tend to have a normal distribution</li>
+<li class="fragment">Heights of people stratified by gender is a good example</li>
+<li class="fragment">The following data come from “Teaching Statistics, A Bag of Tricks” by Gelman and Nolan</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>mu_m <span class="ot">&lt;-</span> <span class="fl">69.1</span>   <span class="co"># mean heights of US males in inches</span></span>
+<span id="cb49-2"><a></a>sigma_m <span class="ot">&lt;-</span> <span class="fl">2.9</span> <span class="co"># standard deviation for same</span></span>
+<span id="cb49-3"><a></a>mu_w <span class="ot">&lt;-</span> <span class="fl">63.7</span>   <span class="co"># mean heights of US women in inches</span></span>
+<span id="cb49-4"><a></a>sigma_w <span class="ot">&lt;-</span> <span class="fl">2.7</span> <span class="co"># standard deviation of the same</span></span>
+<span id="cb49-5"><a></a></span>
+<span id="cb49-6"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">80</span>, <span class="at">len =</span> <span class="fl">1e3</span>)</span>
+<span id="cb49-7"><a></a>pdf_m <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu_m, <span class="at">sd =</span> sigma_m)</span>
+<span id="cb49-8"><a></a>pdf_w <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)</span>
+<span id="cb49-9"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(x, pdf_m, pdf_w), <span class="fu">aes</span>(x, pdf_m))</span>
+<span id="cb49-10"><a></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span> </span>
+<span id="cb49-11"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pdf_w), <span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
+<span id="cb49-12"><a></a>  <span class="fu">xlab</span>(<span class="st">"Height (in)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb49-13"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Distribution of heights of US adults"</span>) <span class="sc">+</span></span>
+<span id="cb49-14"><a></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">73.5</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"Men"</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb49-15"><a></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">58</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"Women"</span>, <span class="at">color =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
+<span id="cb49-16"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb49-17"><a></a>        <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb49-18"><a></a></span>
+<span id="cb49-19"><a></a><span class="fu">print</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>The combined distribution is not Normal:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>You randomly sample a man from the population. What is <span class="math inline">\(\P(\text{Height}_m &lt; 65)\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">65</span>, </span>
+<span id="cb50-2"><a></a>          <span class="at">mean =</span> mu_m, <span class="at">sd =</span> sigma_m)<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.08</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>You randomly sample a woman from the population. What is <span class="math inline">\(\P(60 &lt; \text{Height}_w &lt; 70)\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="dv">60</span>, <span class="at">upper =</span> <span class="dv">70</span>, </span>
+<span id="cb52-2"><a></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>(<span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">70</span>, </span>
+<span id="cb54-2"><a></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value <span class="sc">-</span> </span>
+<span id="cb54-3"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">upper =</span> <span class="dv">60</span>, </span>
+<span id="cb54-4"><a></a>          <span class="at">mean =</span> mu_w, <span class="at">sd =</span> sigma_w)<span class="sc">$</span>value) <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9</code></pre>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment"><p>What is the probability that a randomly chosen man is taller than a randomly chosen woman?</p></li>
+<li class="fragment"><p>We have two distributions <span class="math inline">\(M \sim \text{Normal}(\mu_m, \sigma_m)\)</span> and <span class="math inline">\(W \sim \text{Normal}(\mu_w, \sigma_w)\)</span>. We want <span class="math inline">\(\P(M &gt; W) = P(Z &gt; 0),\, \text{where }Z = M - W\)</span></p></li>
+<li class="fragment"><p>Sum of two normals is normal where both means and variances sum:</p></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+Z &amp; \sim &amp; \text{Normal}(\mu_m + \mu_w,\, \sigma_m^2 + \sigma_m^2) \\
+E(Z) &amp; = &amp; E(M - W) = E(M) - E(W) = 69.1 - 63.7 = 5.4 \\
+\text{Var}(Z) &amp; = &amp; \text{Var}(M - W) = \text{Var}(M) + \text{Var}(W) =  2.9^2 + 2.7^2 = 15.7 \\
+\text{sd} &amp; = &amp; \sqrt{Var} = \sqrt{15.7} =3.96 \\
+Z &amp; \sim &amp; \text{Normal}(5.4, 3.96)
+\end{eqnarray}
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>To figure out when <span class="math inline">\(Z &gt; 0\)</span>, we can integrate the PDF from 0 to Infinity:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">integrate</span>(dnorm, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="cn">Inf</span>, </span>
+<span id="cb56-2"><a></a>          <span class="at">mean =</span> <span class="fl">5.4</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="fl">15.7</span>))<span class="sc">$</span>value <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.91</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>We don’t have to integrate. We can evaluate the CDF instead:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="dv">0</span>, <span class="at">mean =</span> <span class="fl">5.4</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="fl">15.7</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb58-2"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.91</code></pre>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment"><p>By symmetry, the probability that a randomly chosen woman is taller than a randomly chosen man is 0.09</p></li>
+<li class="fragment"><p>How can we check the analytic solution? We can do a simulation!</p></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb60-2"><a></a>taller_m <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb60-3"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb60-4"><a></a>  height_m <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_m, sigma_m)</span>
+<span id="cb60-5"><a></a>  height_w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_w, sigma_w)</span>
+<span id="cb60-6"><a></a>  taller_m[i] <span class="ot">&lt;-</span> height_m <span class="sc">&gt;</span> height_w</span>
+<span id="cb60-7"><a></a>}</span>
+<span id="cb60-8"><a></a><span class="fu">mean</span>(taller_m) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.91</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>Suppose you wanted to compute the variance this way. How would you do it?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-we-did-not-cover" class="slide level2">
+<h2>What We Did Not Cover</h2>
+<ul>
+<li>Joint, Marginal, and Conditional P[M/D]Fs</li>
+<li>Covariance and correlation</li>
+<li>Conditional Expectations</li>
+</ul>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="https://ericnovik.github.io/smac.html" class="uri">https://ericnovik.github.io/smac.html</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":false,"chalkWidth":5},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
