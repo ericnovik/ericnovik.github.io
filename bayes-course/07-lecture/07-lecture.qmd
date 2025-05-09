@@ -1,7 +1,11 @@
 ---
 title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
-author: "Eric Novik | Spring 2024 | Lecture 7"
+author:
+ - name: "Eric Novik"
+   email: "Spring 2025 | Lecture 7"
+   affiliations: 
+    - name: New York University
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -15,6 +19,7 @@ format:
 editor: source
 always_allow_html: true
 ---
+
 
 
 ##  Logistic Regression and Introduction to Hierarchical Models {.smaller}
@@ -93,7 +98,7 @@ $$
 ## Logistic Posterior {.smaller}
 
 ::: incremental
-- To derive the posterior distribution for Poisson, we consider K regression inputs and independent priors on all $K + 1$ unknowns: $\alpha$ and $\beta_1, \beta_2, ..., \beta_k$
+- We consider K regression inputs and independent priors on all $K + 1$ unknowns: $\alpha$ and $\beta_1, \beta_2, ..., \beta_k$
 - Bernoulli likelihood is: $f(y \mid p) = p^y (1 - p)^{1-y}$ with $y \in \{0, 1\}$
 - And each $p_i = \text{logit}^{-1}(\alpha + X_i\beta)$
 $$
@@ -742,13 +747,29 @@ plot(m4_loo)
 
 ## Introduction to Hierarchical Models {.smaller}
 
+![](images/schools.png){fig-align="center"}
+
+## Introduction to Hierarchical Models {.small}
+
 ::: incremental
-- You can think about hierarchical (sometimes called multi-level or mixed effects) models from a data or parameter perspective, although the parameter view is more fundamental
-- The basic idea is that want to model all sources of potential variability in the data
-- Data often arrive in clusters, such as students within schools, patients with hospitals, voters within states, and so on
-- Since there are local influences, it is often a good idea to assume that units share similar attributes within clusters as well as between clusters
-- These two sources of variability are likely different and we should treat them as such
+- Hierarchical: modeling dependence of lower parameter on a higher parameter, which we sometimes call hyperparameter
+- Call the lower level paramter $\theta$, and hyperparameter $\tau$
+- We can express the joint prior as: $f(\theta, \tau) = f(\theta \mid \tau) f(\tau)$
+- The joint postererior is:
 :::
+
+::: {.fragment}
+$$
+\begin{split}
+f(\theta, \tau \mid y) & \propto \underbrace{f(y \mid \theta, \tau)}_\text{Likelihood} \; \underbrace{ f(\theta, \tau)}_\text{Joint Prior} \\ 
+& = f(y \mid \theta, \tau) \; f(\theta \mid \tau) \; f(\tau) \\
+& = f(y \mid \theta) \; f(\theta \mid \tau) \; f(\tau)
+\end{split}
+$$
+:::
+
+
+
 
 ## Sleep Data {.smaller}
 
@@ -878,7 +899,7 @@ plot(graph, layout = layout, vertex.size = 30, vertex.label = names,
 
 ::: {.fragment}
 $$
-\theta_j \approx \frac{\frac{n_j}{\sigma_{y}^2} \overline y_j + \frac{1}{\sigma_{\tau}^2} \overline y_{\tau}} {\frac{n_j}{\sigma_{y}^2} + \frac{1}{\sigma_{\tau}^2}} 
+\theta_j^{\text{pooled}} \approx \frac{\frac{n_j}{\sigma_{y}^2} \overline y_j + \frac{1}{\sigma_{\tau}^2} \overline y_{\tau}} {\frac{n_j}{\sigma_{y}^2} + \frac{1}{\sigma_{\tau}^2}} 
 $$
 :::
 
@@ -1001,7 +1022,7 @@ $$
 #| cache: true
 
 m2 <- stan_glm(Reaction ~ Subject - 1,
-               prior = normal(300, 10, autoscale = TRUE),
+               prior = normal(300, 10),
                prior_aux = exponential(0.02),
                family = gaussian,
                data = d, 
@@ -1189,7 +1210,7 @@ ppc_intervals(new$Reaction, yrep = new_pred) +
 #| cache: true
 m4 <- stan_glmer(Reaction ~ Days + (Days | Subject),
                  prior_intercept = normal(300, 50),
-                 prior = normal(0, 2, autoscale = TRUE),
+                 prior = normal(0, 2),
                  prior_aux = exponential(0.02),
                  prior_covariance = decov(reg = 1, 
                    conc = 1, shape = 1, scale = 1),
@@ -1254,6 +1275,3 @@ new_subj |>
 ```
 :::
 
-## Course Evaluations {.smaller}
-
-![](images/course-eval.png){fig-align="center"}
