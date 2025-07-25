@@ -227,12 +227,12 @@ window.Quarto = {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Pr <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>N  <span class="ot">&lt;-</span> <span class="dv">365</span>L <span class="sc">*</span> <span class="dv">10</span>L <span class="co"># 10 years</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n  <span class="ot">&lt;-</span> <span class="dv">50</span>L        <span class="co"># compute 50 possible futures</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>run_chain <span class="ot">&lt;-</span> <span class="cf">function</span>(N, p) {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>run_chain <span class="ot">&lt;-</span> <span class="cf">function</span>(N, p, w) {</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fu">c</span>(p, <span class="dv">1</span><span class="sc">-</span>p), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  balance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">+</span> <span class="fu">cumsum</span>(s)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  balance <span class="ot">&lt;-</span> w <span class="sc">+</span> <span class="fu">cumsum</span>(s)</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(balance)</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>chains <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n, <span class="fu">run_chain</span>(N, Pr))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>chains <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n, <span class="fu">run_chain</span>(N, Pr, W))</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(chains) <span class="sc">|&gt;</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Time =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>())</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> chains_df <span class="sc">|&gt;</span></span>
@@ -244,7 +244,7 @@ window.Quarto = {
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># color more extreme futures more red and less extreme more green</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>extremeness <span class="ot">&lt;-</span> chains_df <span class="sc">|&gt;</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Chain) <span class="sc">|&gt;</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">extreme =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Value <span class="sc">-</span> <span class="dv">100</span>)), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">extreme =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Value <span class="sc">-</span> W)), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(chains_df, extremeness, <span class="at">by =</span> <span class="st">"Chain"</span>)</span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(chains_df, <span class="fu">aes</span>(<span class="at">x =</span> Time<span class="sc">/</span><span class="dv">365</span>, <span class="at">y =</span> Value, <span class="at">group =</span> Chain, <span class="at">color =</span> extreme)) <span class="sc">+</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
