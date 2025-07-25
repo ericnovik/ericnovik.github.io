@@ -43,12 +43,12 @@ W  <- 100L
 Pr <- 0.5
 N  <- 365L * 10L # 10 years
 n  <- 50L        # compute 50 possible futures
-run_chain <- function(N, p) {
+run_chain <- function(N, p, w) {
   s <- sample(c(-1, 1), size = N, prob = c(p, 1-p), replace = TRUE)
-  balance <- 100 + cumsum(s)
+  balance <- w + cumsum(s)
   return(balance)
 }
-chains <- replicate(n, run_chain(N, Pr))
+chains <- replicate(n, run_chain(N, Pr, W))
 chains_df <- as.data.frame(chains) |>
   mutate(Time = 1:n())
 chains_df <- chains_df |>
@@ -60,7 +60,7 @@ chains_df <- chains_df |>
 # color more extreme futures more red and less extreme more green
 extremeness <- chains_df |>
   group_by(Chain) |>
-  summarize(extreme = max(abs(Value - 100)), .groups = "drop")
+  summarize(extreme = max(abs(Value - W)), .groups = "drop")
 chains_df <- left_join(chains_df, extremeness, by = "Chain")
 ggplot(chains_df, aes(x = Time/365, y = Value, group = Chain, color = extreme)) +
   geom_line(linewidth = 0.1) +
