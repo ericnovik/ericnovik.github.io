@@ -634,7 +634,7 @@
     "href": "stats-math/01-lecture/01-Lecture.html#course-outline",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Course Outline",
-    "text": "Course Outline\n\n\n\n\nIntroduction to the R language, RStudio, and R Markdown.\nBasic differentiation. Meaning of the derivative. Numeric and symbolic differentiation and optimization.\nBasic integration. Riemann integral and basic rules of integration.\nReview of one-dimensional probability. Conditional probability, random variables, and expectations. Solving probability problems by simulation.\n\n\n\n\n\nDiscrete distributions like Bernoulli and Binomial and continuous distributions like Normal and Exponential\nIntroduction to Matrix Algebra. Vectors and vector arithmetic. Matrixes and matrix operations.\nManipulating and graphing data and Exploratory Data Analysis\nProgramming basics: variables, flow control, loops, functions, and writing simulations\nIntroduction to basic statistics and linear regression."
+    "text": "Course Outline\n\n\n\n\nIntroduction to the R language, RStudio, and R Markdown.\nBasic differentiation. Meaning of the derivative. Numeric and symbolic differentiation and optimization.\nBasic integration. Riemann integral and basic rules of integration.\nReview of one-dimensional probability. Conditional probability, random variables, and expectations. Solving probability problems by simulation.\n\n\n\n\n\nDiscrete distributions like Bernoulli and Binomial and continuous distributions like Normal and Exponential\nIntroduction to Linear Algebra. Vectors and vector arithmetic. Matrixes and matrix operations.\nManipulating and graphing data and Exploratory Data Analysis\nProgramming basics: variables, flow control, loops, functions, and writing simulations\nIntroduction to basic statistical inference and linear regression."
   },
   {
     "objectID": "stats-math/01-lecture/01-Lecture.html#references",
@@ -711,7 +711,7 @@
     "href": "stats-math/01-lecture/01-Lecture.html#example-bionomial-regression",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Bionomial Regression",
-    "text": "Example: Bionomial Regression\nThis is the type of model we fit to the O-Rings data.\n\n\ndata {\n  int&lt;lower=0&gt; N_rows; // number of rows in data\n  int&lt;lower=0&gt; N;      // number of possible \"successes\" in Binom(N, p)\n  vector[N_rows] x;    // temperature for the O-Rings example\n  array[N_rows] int&lt;lower=0, upper=N&gt; y; // number of \"successes\" in y ~ Binom(N, p)\n}\nparameters {\n  real alpha; \n  real beta;  \n}\nmodel {\n  alpha ~ normal(0, 2.5); // we can encode what we know about plausible values\n  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the date\n  y ~ binomial_logit(N, alpha + beta * x); // likehood (conditioned on x)\n}\n\n\\[\n\\begin{eqnarray*}\n\\text{BinomialLogit}(y~|~N,\\theta) & = &\n\\text{Binomial}(y~|~N,\\text{logit}^{-1}(\\theta)) \\\\[6pt] & = &\n\\binom{N}{y} \\left( \\text{logit}^{-1}(\\theta) \\right)^{y}  \\left( 1 -\n\\text{logit}^{-1}(\\theta) \\right)^{N - y}  \n\\end{eqnarray*}\n\\]\n\nSource: Stan Manual"
+    "text": "Example: Bionomial Regression\nThis is the type of model we fit to the O-Rings data.\n\n\ndata {\n  int&lt;lower=0&gt; N_rows; // number of rows in data\n  int&lt;lower=0&gt; N;      // number of possible \"successes\" in Binom(N, p)\n  vector[N_rows] x;    // temperature for the O-Rings example\n  array[N_rows] int&lt;lower=0, upper=N&gt; y; // number of \"successes\" in y ~ Binom(N, p)\n}\nparameters {\n  real alpha; \n  real beta;  \n}\nmodel {\n  alpha ~ normal(0, 2.5); // we can encode what we know about plausible values\n  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the data\n  y ~ binomial_logit(N, alpha + beta * x); // likehood (conditioned on x)\n}\n\n\\[\n\\begin{eqnarray*}\n\\text{BinomialLogit}(y~|~N,\\theta) & = &\n\\text{Binomial}(y~|~N,\\text{logit}^{-1}(\\theta)) \\\\[6pt] & = &\n\\binom{N}{y} \\left( \\text{logit}^{-1}(\\theta) \\right)^{y}  \\left( 1 -\n\\text{logit}^{-1}(\\theta) \\right)^{N - y}  \n\\end{eqnarray*}\n\\]"
   },
   {
     "objectID": "stats-math/01-lecture/01-Lecture.html#example-irt-model",
@@ -732,7 +732,7 @@
     "href": "stats-math/01-lecture/01-Lecture.html#what-is-r",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "What is R",
-    "text": "What is R\n\n\n\n\nR is an open-source, interpreted, (somewhat) functional programming language\nR is an implementation of the S language developed at Bell Labs around 1976\nRoss Ihaka and Robert Gentleman started working on R in the early 1990s\nVersion 1.0 was released in 2000\nThere are approximately 20,000 R packages available in CRAN\nR has a large and generally friendly user community"
+    "text": "What is R\n\n\n\n\nR is an open-source, interpreted, weakly typed, (somewhat) functional programming language\nR is an implementation of the S language developed at Bell Labs around 1976\nRoss Ihaka and Robert Gentleman started working on R in the early 1990s\nVersion 1.0 was released in 2000\nThere are ~20,000+ R packages available on CRAN\nR has a large and mostly friendly user community\n\n\n\n\n\n\n Source: StackOverflow Developer Survey"
   },
   {
     "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-very-basics",
@@ -753,7 +753,7 @@
     "href": "stats-math/01-lecture/01-Lecture.html#your-turn",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
-    "text": "Your Turn\n\nCreate a variable called fib that contains the first 10 Fibonacci numbers\nThey are: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34\nCompute the length of this vector in R\nCompute the sum, the product, and the difference (diff()) between successive numbers\nWhat do you notice about the pattern in the differences?\nNow, create a vector of 100 integers from 1 to 100\nYoung Gauss was asked to sum them by hand\nHe figured out that the sum has to be \\(N (N + 1) / 2\\)\nVerify that Gauss was right (just for 100)\nNow compute the sum of the first hundred squares"
+    "text": "Your Turn\n\nCreate a variable called fib that contains the first 10 Fibonacci numbers\nThey are: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34\nCompute the length of this vector in R\nCompute the sum, the product, and the difference (diff()) between successive numbers\nWhat do you notice about the pattern in the differences?\nNow, create a vector of 100 integers from 1 to 100\nYoung Gauss (allegedly) was asked to sum them by hand\nHe figured out that the sum has to be \\(N (N + 1) / 2\\)\nVerify that Gauss was right (just for 100)\nNow compute the sum of the first hundred squares"
   },
   {
     "objectID": "stats-math/01-lecture/01-Lecture.html#hands-on-lists",
