@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
-subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2024 | Session 2"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric.Novik@nyu.edu | Summer 2025 | Session 2"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -132,7 +132,7 @@ p + geom_abline(slope = 2, intercept = 1, size = 0.2)
 
 ::: {.fragment}
 $$
-\frac{d[y(t)]}{dt} = ky(t)
+\frac{\text{d}[y(t)]}{\text{d}t} = k \cdot y(t)
 $$
 :::
 
@@ -794,11 +794,11 @@ s <- pi / (n - 1)        # choose the same step s as the increment in the t sequ
 all.equal(s, diff(t)[1]) # check that the above statement is true
 
 appr_dxdt <- diff(x)/s   # derivative ≈ rise / run
-d <- d %>%
+d <- d |>
   mutate(appr_dxdt = c(NA, appr_dxdt))
 p <- ggplot(d, aes(t, x))
 p + geom_line() + geom_line(aes(y = dxdt), col = 'red') +
-  geom_line(aes(y = appr_dxdt), col = 'blue', size = 5, alpha = 1/5)
+  geom_line(aes(y = appr_dxdt), col = 'blue', linewidth = 5, alpha = 1/5)
 ```
 
 ## Examples of the Chain Rule

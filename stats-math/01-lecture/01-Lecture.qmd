@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
-subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2025 | Session 1"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric.Novik@nyu.edu | Summer 2025 | Session 1"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -98,13 +98,14 @@ $$
 ::: incremental
 -   **Discrete distributions** like Bernoulli and Binomial and **continuous distributions** like Normal and Exponential
 
--   Introduction to **Matrix Algebra**. Vectors and vector arithmetic. Matrixes and matrix operations.
+-   Introduction to **Linear Algebra**. Vectors and vector arithmetic. Matrixes and matrix operations.
 
 -   Manipulating and graphing data and **Exploratory Data Analysis**
 
+
 -   Programming basics: **variables, flow control, loops, functions**, and writing **simulations**
 
--   Introduction to basic **statistics and linear regression**.
+-   Introduction to basic **statistical inference and linear regression**.
 :::
 :::
 :::
@@ -418,24 +419,24 @@ sigma <- matrix(c(2,-1,-1, 2), nrow = 2)
 f <- function(x, y) mvtnorm::dmvnorm(cbind(x, y), mu, sigma)
 lik <- outer(alpha, beta, f)
 
-# library(plotly)
-# p <- plot_ly(x = ~alpha, y = ~beta, z = ~lik)
-# p %>% add_surface() %>% layout(title = 'Normal Likelihood',
-#                                         plot_bgcolor = "#f0f1eb",
-#                                        paper_bgcolor = "#f0f1eb")
-library(plot3D)
-
-# Generate grid data
-grid_data <- expand.grid(alpha = alpha, beta = beta)
-
-# Apply function to each row of the grid data
-grid_data$lik <- apply(grid_data, 1, function(row) f(row['alpha'], row['beta']))
-
-par(mar = c(3,3,2,1), mgp = c(2,.7,0), tck = -.01, bg = "#f0f1eb")
-scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
-          phi = 10, theta = 30,
-          xlab = "Alpha", ylab = "Beta", zlab = "Likelihood",
-          col = "blue", ticktype = "detailed", pch = ".")
+library(plotly)
+p <- plot_ly(x = ~alpha, y = ~beta, z = ~lik)
+p %>% add_surface() %>% layout(title = 'Normal Likelihood',
+                                        plot_bgcolor = "#f0f1eb",
+                                       paper_bgcolor = "#f0f1eb")
+# library(plot3D)
+# 
+# # Generate grid data
+# grid_data <- expand.grid(alpha = alpha, beta = beta)
+# 
+# # Apply function to each row of the grid data
+# grid_data$lik <- apply(grid_data, 1, function(row) f(row['alpha'], row['beta']))
+# 
+# par(mar = c(3,3,2,1), mgp = c(2,.7,0), tck = -.01, bg = "#f0f1eb")
+# scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
+#           phi = 10, theta = 30,
+#           xlab = "Alpha", ylab = "Beta", zlab = "Likelihood",
+#           col = "blue", ticktype = "detailed", pch = ".")
 
 ```
 :::
@@ -548,7 +549,7 @@ parameters {
 }
 model {
   alpha ~ normal(0, 2.5); // we can encode what we know about plausible values
-  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the date
+  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the data
   y ~ binomial_logit(N, alpha + beta * x); // likehood (conditioned on x)
 }
 ```
@@ -561,10 +562,6 @@ $$
 \text{logit}^{-1}(\theta) \right)^{N - y}  
 \end{eqnarray*}
 $$
-
-::: footer
-Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/QR-reparameterization.html)
-:::
 
 ## Example: IRT Model {.smaller}
 
@@ -630,7 +627,7 @@ Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio
 ::: columns
 ::: {.column width="47.5%"}
 ::: {.incremental style="font-size: 75%;"}
--   R is an open-source, interpreted, (somewhat) functional programming language
+-   R is an open-source, interpreted, weakly typed, (somewhat) functional programming language
 
 -   R is an implementation of the S language developed at Bell Labs around 1976
 
@@ -638,9 +635,9 @@ Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio
 
 -   Version 1.0 was released in 2000
 
--   There are approximately 20,000 R packages available in [CRAN](https://cran.r-project.org/)
+-   There are ~20,000+ R packages available on [CRAN](https://cran.r-project.org/)
 
--   R has a large and generally friendly [user community](https://stackoverflow.com/questions/tagged/r)
+-   R has a large and mostly friendly [user community](https://stackoverflow.com/questions/tagged/r)
 :::
 :::
 
@@ -648,7 +645,12 @@ Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio
 :::
 
 ::: {.column width="47.5%"}
-![](images/r-logo.png){width="274"} ![](images/pl-pop.png)
+
+::: {.fragment}
+![](images/pr-lang-pop.png)
+<span style="font-size: 70%;">Source: [StackOverflow Developer Survey](https://survey.stackoverflow.co/2025/technology#most-popular-technologies-language)</span>
+:::
+
 :::
 :::
 
@@ -712,7 +714,7 @@ sd(die)
 -   Compute the sum, the product, and the difference (`diff()`) between successive numbers
 -   What do you notice about the pattern in the differences?
 -   Now, create a vector of 100 integers from 1 to 100
--   Young Gauss was asked to sum them by hand
+-   Young Gauss (allegedly) was asked to sum them by hand
 -   He figured out that the sum has to be $N (N + 1) / 2$
 -   Verify that Gauss was right (just for 100)
 -   Now compute the sum of the first hundred squares
@@ -891,7 +893,7 @@ sample(coin, 10, replace = TRUE)
 
 ::: incremental
 -   Suppose you want to add the first 100 integers as before but without using the `sum()` function or the formula
--   In math notation: $\sum_{x = 1}^{100}x$
+-   In math notation: $\sum_{i = 1}^{100}x_i$, $\mathbf{x} = (1, 2, 3, \dots, 100)$
 :::
 
 ::: fragment
