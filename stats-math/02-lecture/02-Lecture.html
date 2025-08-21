@@ -947,11 +947,11 @@ F'(x) = f'(g(x))g'(x)
 <pre><code>[1] TRUE</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>appr_dxdt <span class="ot">&lt;-</span> <span class="fu">diff</span>(x)<span class="sc">/</span>s   <span class="co"># derivative ≈ rise / run</span></span>
-<span id="cb43-2"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span></span>
 <span id="cb43-3"><a></a>  <span class="fu">mutate</span>(<span class="at">appr_dxdt =</span> <span class="fu">c</span>(<span class="cn">NA</span>, appr_dxdt))</span>
 <span id="cb43-4"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(t, x))</span>
 <span id="cb43-5"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> dxdt), <span class="at">col =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb43-6"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> appr_dxdt), <span class="at">col =</span> <span class="st">'blue'</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-6"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> appr_dxdt), <span class="at">col =</span> <span class="st">'blue'</span>, <span class="at">linewidth =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
