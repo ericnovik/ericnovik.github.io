@@ -1264,7 +1264,7 @@
     "href": "stats-math/07-lecture/07-lecture.html#standard-errors",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Standard Errors",
-    "text": "Standard Errors\n\n\nStandard error is the estimated standard deviation of the estimate\nIt provides a measure of uncertainty around the estimate\nStandard error decreases as the sample size increases\nTo estimate the SE of the mean from a large population with sd = \\(\\sigma\\): \\(\\frac{\\sigma}{\\sqrt{n}}\\)\n\n\n\nset.seed(1)\nn &lt;- 100; mu &lt;- 5; sigma &lt;- 1.5\nx &lt;- rnorm(n, mean = mu, sd = sigma)\nx_bar &lt;- mean(x); round(x_bar, 2)\n\n[1] 5.16\n\n(se &lt;- sigma/sqrt(n))\n\n[1] 0.15\n\n\n\n\nIf \\(\\sigma\\) is unknown, we can estimate it from the sample: \\(s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}\\)\n\n\n\n\nvar(x)\n\n[1] 1.815215\n\nsum((x - x_bar)^2) / (n - 1)\n\n[1] 1.815215"
+    "text": "Standard Errors\n\n\nStandard error is the estimated standard deviation of the estimate\nIt provides a measure of uncertainty around the estimate\nStandard error decreases as the sample size increases\nTo estimate the SE of the mean from a large population with sd = \\(\\sigma\\): \\(\\frac{\\sigma}{\\sqrt{n}}\\)\n\n\n\nset.seed(1)\nn &lt;- 100; mu &lt;- 5; sigma &lt;- 1.5\nx &lt;- rnorm(n, mean = mu, sd = sigma)\nx_bar &lt;- mean(x); round(x_bar, 2)\n\n[1] 5.16\n\nse &lt;- sigma/sqrt(n)\nprint(se)\n\n[1] 0.15\n\n\n\n\nIf \\(\\sigma\\) is unknown, we can estimate it from the sample: \\(s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}\\)\n\n\n\n\nsd(x)\n\n[1] 1.347299\n\nsd_s &lt;- sqrt(sum((x - x_bar)^2) / (n - 1))\nprint(sd_s |&gt; round(2))\n\n[1] 1.35\n\nse_s &lt;- sd_s/sqrt(n)\nprint(se_s |&gt; round(2))\n\n[1] 0.13"
   },
   {
     "objectID": "stats-math/07-lecture/07-lecture.html#confidence-intervals",
@@ -1341,7 +1341,7 @@
     "href": "stats-math/07-lecture/07-lecture.html#statistical-significance",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Statistical Significance",
-    "text": "Statistical Significance\n\n\nComes up in NHST: Null Hypothesis Significance Testing\nBad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise\nOften, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic\nYou flip a coin 10 times and observe 7 heads. Is there evidence of coin bias?\nWhat about if you got 70 heads out of 100?"
+    "text": "Statistical Significance\n\n\nComes up in NHST: Null Hypothesis Significance Testing\nBad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise\n\n\n\n\\[\n\\text{p-valu}e(y) = \\P(T(y_\\text{rep}) &gt;= T(y) \\mid H)\n\\]\n\n\n\nOften, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic"
   },
   {
     "objectID": "stats-math/07-lecture/07-lecture.html#some-problems-with-statistical-significance",
