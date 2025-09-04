@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
-subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2024 | Session 6"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric.Novik@nyu.edu | Summer 2025 | Session 6"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -598,6 +598,41 @@ $$
 ::: {.fragment}
 - Question: Geometrically, what does it mean to solve a system of equations?
 :::
+
+::: {.fragment}
+```{r}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+#| echo: false
+
+library(ggplot2)
+
+# Define x range
+x_vals <- seq(-1, 2, length.out = 200)
+
+# Define y for each equation
+df <- data.frame(
+  x = rep(x_vals, 2),
+  y = c(1 - 2 * x_vals, (1 - 4 * x_vals) / 2),
+  eq = rep(c("2x + y = 1", "4x + 2y = 1"), each = length(x_vals))
+)
+
+# Plot with legend at the bottom
+ggplot(df, aes(x = x, y = y, color = eq)) +
+  geom_line(linewidth = 1) +
+  scale_color_manual(values = c("2x + y = 1" = "blue", "4x + 2y = 1" = "red")) +
+  theme(legend.position = "bottom") +
+  labs(
+    title = "Linear System: 2x + y = 1 and 4x + 2y = 1",
+    color = "Equation"
+  )
+
+```
+
+:::
+
+
 
 ### No solution
 

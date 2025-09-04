@@ -1,7 +1,7 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
-subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2024 | Session 4"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric.Novik@nyu.edu | Summer 2025 | Session 4"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -270,7 +270,7 @@ for (j in 2:max_people) {
   numerator <- prod(seq(365, 365 - j + 1))
   Pr_match[j - 1] <- round(1 - (numerator / 365^j), 2)
 }
-result <- paste("(", 2:23, ", ", Pr_match, ")", sep = "")
+result <- paste("(", 2:max_people, ", ", Pr_match, ")", sep = "")
 cat(result, sep = "; ")
 ```
 :::
@@ -335,7 +335,7 @@ You flip a fair coin four times. What is the probability that you get one or mor
 #| cache: true
 one_or_more <- function() {
   flips <- sample(c(1, 0), size = 4, replace = TRUE)
-  if (mean(flips) >= 1/4) {
+  if (sum(flips) >= 1) {
     return(TRUE)
   } else {
     return(FALSE)
@@ -398,7 +398,7 @@ $$
 
 ::: panel-tabset
 ## LOTP
-
+In the following, A partitions the entire sample space S.
 $$
 \P(B) = \sum_{i=1}^{n} \P(B | A_i) \P(A_i)
 $$

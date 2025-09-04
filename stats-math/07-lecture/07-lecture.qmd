@@ -1,11 +1,10 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
-subtitle: "Applied Statistics for Social Science Research"
-author: "Eric Novik | Summer 2024 | Session 7"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric.Novik@nyu.edu | Summer 2025 | Session 7"
 format:
   revealjs: 
     theme: ../../custom.scss
-    scrollable: true
     slide-number: true
     chalkboard: 
       buttons: false
@@ -117,7 +116,8 @@ set.seed(1)
 n <- 100; mu <- 5; sigma <- 1.5
 x <- rnorm(n, mean = mu, sd = sigma)
 x_bar <- mean(x); round(x_bar, 2)
-(se <- sigma/sqrt(n))
+se <- sigma/sqrt(n)
+print(se)
 ```
 :::
 
@@ -127,8 +127,11 @@ x_bar <- mean(x); round(x_bar, 2)
 ::: {.fragment}
 ```{r}
 #| echo: true
-var(x)
-sum((x - x_bar)^2) / (n - 1)
+sd(x) |> round(2)
+sd_s <- sqrt(sum((x - x_bar)^2) / (n - 1))
+print(sd_s |> round(2))
+se_s <- sd_s/sqrt(n)
+print(se_s |> round(2))
 ```
 :::
 
@@ -436,9 +439,16 @@ ci_50 |> round(2)
 ::: incremental
 - Comes up in NHST: Null Hypothesis Significance Testing
 - Bad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise
+:::
+
+::: {.fragment}
+$$
+\text{p-valu}e(y) = \P(T(y_\text{rep}) >= T(y) \mid H)
+$$
+:::
+
+::: incremental
 - Often, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic
-- You flip a coin 10 times and observe 7 heads. Is there evidence of coin bias?
-- What about if you got 70 heads out of 100?
 :::
 
 ## Some Problems with Statistical Significance
