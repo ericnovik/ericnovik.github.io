@@ -6,8 +6,8 @@
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.40">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <meta name="author" content="Eric Novik">
   <title>Eric Novik – Bayesian Inference</title>
@@ -29,8 +29,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -94,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-e829f46d6c6374dd212fea2563f89f04.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-eaf01d3181fc0f52e9185863168e2126.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -253,7 +254,6 @@ Eric Novik
 <h2>Lecture 1: Bayesian Workflow</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Overview of the course</li>
 <li class="fragment">Class participation: prediction intervals</li>
@@ -265,7 +265,6 @@ Eric Novik
 <li class="fragment">Introduction to Bayesian workflow</li>
 <li class="fragment">Wanna bet? Mystery box game</li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -295,7 +294,6 @@ Eric Novik
 </section>
 <section id="statistics-vs.-aiml-simplification" class="slide level2 smaller">
 <h2>Statistics vs.&nbsp;AI/ML (Simplification!)</h2>
-<div>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
@@ -335,14 +333,12 @@ Eric Novik
 </div>
 </div>
 </div>
-</div>
 </section>
 <section id="turn-to-your-neighbor-and-discuss" class="slide level2 small scrollable">
 <h2>Turn to your neighbor and discuss</h2>
 <p>Classify each of the following: {<em>decision</em>, <em>parameter inference</em>, <em>prediction</em>, <em>causal inference</em>}</p>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ol type="1">
 <li class="fragment">How fast does a drug clear from the body?</li>
 <li class="fragment">What is the expected tumor size two months after treatment?</li>
@@ -350,7 +346,6 @@ Eric Novik
 <li class="fragment">Should I take this drug?</li>
 <li class="fragment">Should we (FDA/EMA/…) approve this drug?</li>
 </ol>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -379,7 +374,6 @@ Eric Novik
 <p><a href="https://www.lesswrong.com/posts/RTt59BtFLqQbsSiqd/a-history-of-bayes-theorem">Summary</a> of the book <a href="https://www.amazon.com/Theory-That-Would-Not-Die/dp/0300169698/">The Theory That Would Not Die</a></p>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Thomas Bayes (1702(?) — 1761) is <a href="https://en.wikipedia.org/wiki/Nicholas_Saunderson">credited</a> with the discovery of the “Bayes’s Rule”</li>
 <li class="fragment">His paper was published posthumously by Richard Price in 1763</li>
@@ -387,7 +381,6 @@ Eric Novik
 <li class="fragment">Scientific context: Newton’s Principia was published in 1687</li>
 <li class="fragment">Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, FiveThirtyEight</li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -466,7 +459,6 @@ Eric Novik
 </section>
 <section id="review-of-probability" class="slide level2">
 <h2>Review of Probability</h2>
-<div>
 <ul>
 <li class="fragment">A set of all possible outcomes: <span class="math inline">\(\Omega\)</span></li>
 <li class="fragment">An outcome of an experiment: <span class="math inline">\(\omega \in \Omega\)</span></li>
@@ -478,7 +470,6 @@ Eric Novik
 <li class="fragment">Additivity: If <span class="math inline">\(A_1, A_2, A_3, \ldots\)</span> are disjoint, <span class="math inline">\(\P(\cup_{i=1}^{\infty} A_i) = \sum_{i=1}^{\infty} \P(A_i)\)</span></li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="random-variables-review" class="slide level2 small">
 <h2>Random Variables Review</h2>
@@ -486,24 +477,20 @@ Eric Novik
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Review</a></li><li><a href="#tabset-1-2">Illustration</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<div>
 <ul>
 <li class="fragment">A random variable <span class="math inline">\(X\)</span> is a function that maps outcomes of a random experiment to real numbers. <span class="math inline">\(X: \Omega \to \mathbb{R}\)</span>. For each <span class="math inline">\(\omega \in \Omega\)</span>, <span class="math inline">\(X(\omega) \in\mathbb{R}\)</span>.</li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \P_X(X = x_i) = \P\left(\{\omega_j \in \Omega : X(\omega_j) = x_i\}\right)
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment">PMF, PDF, CDF (Blitzstein and Hwang, Ch. 3, 5)</li>
 <li class="fragment">Expectations (Blitzstein and Hwang, Ch. 4)</li>
 <li class="fragment">Joint Distributions (Blitzstein and Hwang, Ch. 7)</li>
 <li class="fragment">Conditional Expectations (Blitzstein and Hwang, Ch. 9)</li>
 </ul>
-</div>
 </div>
 <div id="tabset-1-2">
 <p>Random variable <span class="math inline">\(X(\omega)\)</span> for the number of Heads in two flips</p>
@@ -522,7 +509,6 @@ Eric Novik
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Rolling dice</a></li><li><a href="#tabset-2-2">Omega</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div>
 <ul>
 <li class="fragment">You roll a fair six-sided die twice</li>
 <li class="fragment">Give an example of an <span class="math inline">\(\omega \in \Omega\)</span></li>
@@ -532,13 +518,12 @@ Eric Novik
 <li class="fragment">What is <span class="math inline">\(\P(A)\)</span>?</li>
 </ul>
 </div>
-</div>
 <div id="tabset-2-2">
 <div class="columns">
 <div class="column" style="width:46%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">outer</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">FUN =</span> <span class="st">"+"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">outer</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">FUN =</span> <span class="st">"+"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
 [1,]    2    3    4    5    6    7
@@ -550,22 +535,18 @@ Eric Novik
 </div>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment"><span class="math inline">\(\Omega\)</span> consists of all pairs:
 <ul>
 <li class="fragment"><span class="math inline">\(\{(1, 1), (1, 2), ... (2, 1), (2, 2), ...\}\)</span></li>
 </ul></li>
 </ul>
-</div>
 </div><div class="column" style="width:54%;">
-<div>
 <ul>
 <li class="fragment">There are 36 such pairs</li>
 <li class="fragment">33 of those pairs result in a sum of less than 11</li>
 <li class="fragment"><span class="math inline">\(\P(A) = \frac{33}{36} = \frac{11}{12} \approx 0.917\)</span></li>
 </ul>
-</div>
 </div></div>
 </div>
 </div>
@@ -573,44 +554,41 @@ Eric Novik
 </section>
 <section id="example-simulation" class="slide level2 tiny">
 <h2>Example Simulation</h2>
-<div>
 <ul>
 <li class="fragment">We will use R’s <code>sample()</code> function to simulate rolls of a die and <code>replicate()</code> function to repeat the rolling process many times</li>
 </ul>
-</div>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>die <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>; N <span class="ot">&lt;-</span> <span class="fl">1e4</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>die <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>; N <span class="ot">&lt;-</span> <span class="fl">1e4</span></span>
 <span id="cb3-2"><a></a>roll <span class="ot">&lt;-</span> <span class="cf">function</span>(x, n) {</span>
 <span id="cb3-3"><a></a>  <span class="fu">sample</span>(x, <span class="at">size =</span> n, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb3-4"><a></a>}</span>
-<span id="cb3-5"><a></a><span class="fu">roll</span>(die, <span class="dv">2</span>) <span class="co"># roll the die twice</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a></a><span class="fu">roll</span>(die, <span class="dv">2</span>) <span class="co"># roll the die twice</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3 2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>rolls <span class="ot">&lt;-</span> <span class="fu">replicate</span>(N, <span class="fu">roll</span>(die, <span class="dv">2</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>rolls <span class="ot">&lt;-</span> <span class="fu">replicate</span>(N, <span class="fu">roll</span>(die, <span class="dv">2</span>))</span>
 <span id="cb5-2"><a></a><span class="fu">rownames</span>(rolls) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"X1"</span>, <span class="st">"X2"</span>)</span>
-<span id="cb5-3"><a></a>rolls[, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>] <span class="co"># print first 10 outcomes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3"><a></a>rolls[, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>] <span class="co"># print first 10 outcomes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
 X1    2    6    2    4    6    1    2    1    1     4
 X2    4    6    4    4    2    4    4    6    4     5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>Y <span class="ot">&lt;-</span> <span class="fu">colSums</span>(rolls) <span class="co"># Y = X1 + X2</span></span>
-<span id="cb7-2"><a></a><span class="fu">head</span>(Y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>Y <span class="ot">&lt;-</span> <span class="fu">colSums</span>(rolls) <span class="co"># Y = X1 + X2</span></span>
+<span id="cb7-2"><a></a><span class="fu">head</span>(Y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  6 12  6  8  8  5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">mean</span>(Y <span class="sc">&lt;</span> <span class="dv">11</span>) <span class="co"># == 1/N * sum(Y &lt; 11)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">mean</span>(Y <span class="sc">&lt;</span> <span class="dv">11</span>) <span class="co"># == 1/N * sum(Y &lt; 11)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.915</code></pre>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Given a Random Variable <span class="math inline">\(Y\)</span>, <span class="math inline">\(y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N\)</span> are simulations or draws from <span class="math inline">\(Y\)</span></li>
 <li class="fragment">Fundamental bridge (Blitzstein &amp; Hwang p.&nbsp;164): <span class="math inline">\(\P(A) = \E(\I_A)\)</span></li>
@@ -618,7 +596,6 @@ X2    4    6    4    4    2    4    4    6    4     5</code></pre>
 <li class="fragment">In R, <span class="math inline">\(Y &lt; 11\)</span> creates an indicator variable</li>
 <li class="fragment">And <code>mean()</code> does the average</li>
 </ul>
-</div>
 </div></div>
 <div class="fragment">
 <div class="callout callout-warning callout-titled callout-style-default">
@@ -643,7 +620,7 @@ X2    4    6    4    4    2    4    4    6    4     5</code></pre>
 <div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="co"># Define the possible values of </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="co"># Define the possible values of </span></span>
 <span id="cb11-2"><a></a><span class="co"># Y = X1 + X2 and their probabilities</span></span>
 <span id="cb11-3"><a></a></span>
 <span id="cb11-4"><a></a>Omega <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">12</span></span>
@@ -657,7 +634,7 @@ X2    4    6    4    4    2    4    4    6    4     5</code></pre>
 <span id="cb11-12"><a></a>                    <span class="at">prob =</span> Y_probs)</span>
 <span id="cb11-13"><a></a></span>
 <span id="cb11-14"><a></a><span class="co"># Compute Pr(A)</span></span>
-<span id="cb11-15"><a></a><span class="fu">mean</span>(Y_samples <span class="sc">&lt;</span> <span class="dv">11</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-15"><a></a><span class="fu">mean</span>(Y_samples <span class="sc">&lt;</span> <span class="dv">11</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9167</code></pre>
 </div>
@@ -666,14 +643,14 @@ X2    4    6    4    4    2    4    4    6    4     5</code></pre>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="co"># Plot a histogram of the realizations of Y</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="co"># Plot a histogram of the realizations of Y</span></span>
 <span id="cb13-2"><a></a><span class="fu">par</span>(<span class="at">bg =</span> <span class="st">"#f0f1eb"</span>)</span>
 <span id="cb13-3"><a></a><span class="fu">hist</span>(Y_samples, </span>
 <span id="cb13-4"><a></a>     <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="fl">1.5</span>, <span class="fl">12.5</span>, <span class="at">by =</span> <span class="dv">1</span>), </span>
 <span id="cb13-5"><a></a>     <span class="at">main =</span> <span class="st">"Realizations of Y"</span>,</span>
 <span id="cb13-6"><a></a>     <span class="at">xlab =</span> <span class="st">"Y"</span>, <span class="at">ylab =</span> <span class="st">"P"</span>,</span>
 <span id="cb13-7"><a></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
-<span id="cb13-8"><a></a>     <span class="at">prob =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-8"><a></a>     <span class="at">prob =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -823,7 +800,7 @@ y - \mu_Y
 <section id="bivariate-normal-demo" class="slide level2 small">
 <h2>Bivariate Normal Demo</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">library</span>(distributional)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">library</span>(distributional)</span>
 <span id="cb14-2"><a></a></span>
 <span id="cb14-3"><a></a>sigma_X <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb14-4"><a></a>sigma_Y <span class="ot">&lt;-</span> <span class="dv">2</span></span>
@@ -837,28 +814,28 @@ y - \mu_Y
 <span id="cb14-12"><a></a>dmv_norm <span class="ot">&lt;-</span> <span class="fu">dist_multivariate_normal</span>(<span class="at">mu    =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)), </span>
 <span id="cb14-13"><a></a>                                     <span class="at">sigma =</span> <span class="fu">list</span>(cov_matrix))</span>
 <span id="cb14-14"><a></a><span class="fu">dimnames</span>(dmv_norm) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>)</span>
-<span id="cb14-15"><a></a><span class="fu">variance</span>(dmv_norm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-15"><a></a><span class="fu">variance</span>(dmv_norm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     x y
 [1,] 1 4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">covariance</span>(dmv_norm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">covariance</span>(dmv_norm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
        x   y
 [1,] 1.0 0.6
 [2,] 0.6 4.0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">density</span>(dmv_norm, <span class="fu">cbind</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">3</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>) <span class="co"># should be low</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">density</span>(dmv_norm, <span class="fu">cbind</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">3</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>) <span class="co"># should be low</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">cdf</span>(dmv_norm, <span class="fu">cbind</span>(<span class="dv">3</span>, <span class="dv">3</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)       <span class="co"># should be high</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">cdf</span>(dmv_norm, <span class="fu">cbind</span>(<span class="dv">3</span>, <span class="dv">3</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)       <span class="co"># should be high</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.93</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">generate</span>(dmv_norm, <span class="fl">1e4</span>)             <span class="co"># draws from the bivariate normal</span></span>
-<span id="cb22-2"><a></a><span class="fu">str</span>(draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">generate</span>(dmv_norm, <span class="fl">1e4</span>)             <span class="co"># draws from the bivariate normal</span></span>
+<span id="cb22-2"><a></a><span class="fu">str</span>(draws)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 1
  $ : num [1:10000, 1:2] 0.0231 2.2418 0.9219 0.0766 -1.0797 ...
@@ -866,8 +843,8 @@ y - \mu_Y
   .. ..$ : NULL
   .. ..$ : chr [1:2] "x" "y"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(draws[[<span class="dv">1</span>]])</span>
-<span id="cb24-2"><a></a><span class="fu">head</span>(draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(draws[[<span class="dv">1</span>]])</span>
+<span id="cb24-2"><a></a><span class="fu">head</span>(draws)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
         x      y
@@ -879,34 +856,34 @@ y - \mu_Y
 5 -1.08   -0.600
 6  0.0373 -1.41 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># estimated means</span></span>
-<span id="cb26-2"><a></a><span class="fu">colMeans</span>(draws) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># estimated means</span></span>
+<span id="cb26-2"><a></a><span class="fu">colMeans</span>(draws) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    x     y 
 -0.01 -0.03 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># estimated covariance matrix</span></span>
-<span id="cb28-2"><a></a><span class="fu">cov</span>(draws) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># estimated covariance matrix</span></span>
+<span id="cb28-2"><a></a><span class="fu">cov</span>(draws) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     x    y
 x 0.99 0.61
 y 0.61 4.06</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="co"># estimated corelations matrix</span></span>
-<span id="cb30-2"><a></a><span class="fu">cor</span>(draws) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="co"># estimated corelations matrix</span></span>
+<span id="cb30-2"><a></a><span class="fu">cor</span>(draws) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    x   y
 x 1.0 0.3
 y 0.3 1.0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="co"># should be close to cdf(dist, cbind(3, 3)); why?</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="co"># should be close to cdf(dist, cbind(3, 3)); why?</span></span>
 <span id="cb32-2"><a></a><span class="co"># both evaluate to P(X and Y &lt; 3); &amp; is an _and_ operator</span></span>
-<span id="cb32-3"><a></a><span class="fu">mean</span>(draws<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="dv">3</span> <span class="sc">&amp;</span> draws<span class="sc">$</span>y <span class="sc">&lt;</span> <span class="dv">3</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-3"><a></a><span class="fu">mean</span>(draws<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="dv">3</span> <span class="sc">&amp;</span> draws<span class="sc">$</span>y <span class="sc">&lt;</span> <span class="dv">3</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.93</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="co"># P(X &lt; 0 or Y &lt; 1); | is an _or_, not conditioning operator</span></span>
-<span id="cb34-2"><a></a><span class="fu">mean</span>(draws<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> draws<span class="sc">$</span>y <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="co"># P(X &lt; 0 or Y &lt; 1); | is an _or_, not conditioning operator</span></span>
+<span id="cb34-2"><a></a><span class="fu">mean</span>(draws<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> draws<span class="sc">$</span>y <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.81</code></pre>
 </div>
@@ -915,7 +892,7 @@ y 0.3 1.0</code></pre>
 \P(X &lt; 0 \cup Y &lt; 1) = \P(X &lt; 0) + \P(Y &lt; 1) - \P(X &lt; 0 \cap Y &lt; 1)
 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="co"># Compute P(X &lt; 0)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="co"># Compute P(X &lt; 0)</span></span>
 <span id="cb36-2"><a></a>p_X_less_0 <span class="ot">&lt;-</span> <span class="fu">cdf</span>(<span class="fu">dist_normal</span>(<span class="at">mu =</span> <span class="dv">0</span>, <span class="at">sigma =</span> sigma_X), <span class="dv">0</span>) <span class="co"># pnorm(0, mean = 0, sd = sigma_X)</span></span>
 <span id="cb36-3"><a></a></span>
 <span id="cb36-4"><a></a><span class="co"># Compute P(Y &lt; 1)</span></span>
@@ -925,7 +902,7 @@ y 0.3 1.0</code></pre>
 <span id="cb36-8"><a></a>p_X_less_0_and_Y_less_1 <span class="ot">&lt;-</span> <span class="fu">cdf</span>(dmv_norm, <span class="fu">cbind</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
 <span id="cb36-9"><a></a></span>
 <span id="cb36-10"><a></a><span class="co"># P(X &lt; 0 or Y &lt; 1)</span></span>
-<span id="cb36-11"><a></a>(p_X_less_0 <span class="sc">+</span> p_Y_less_1 <span class="sc">-</span> p_X_less_0_and_Y_less_1) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-11"><a></a>(p_X_less_0 <span class="sc">+</span> p_Y_less_1 <span class="sc">-</span> p_X_less_0_and_Y_less_1) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8</code></pre>
 </div>
@@ -935,9 +912,9 @@ y 0.3 1.0</code></pre>
 <li>How would you evaluate <span class="math inline">\(\P(X &lt; 0 \mid Y &lt; 1)\)</span></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>draws <span class="sc">|&gt;</span> <span class="fu">filter</span>(y <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>draws <span class="sc">|&gt;</span> <span class="fu">filter</span>(y <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
 <span id="cb38-2"><a></a>  <span class="fu">summarise</span>(<span class="at">pr =</span> <span class="fu">mean</span>(x <span class="sc">&lt;</span> <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb38-3"><a></a>  <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-3"><a></a>  <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.56</code></pre>
 </div>
@@ -945,7 +922,6 @@ y 0.3 1.0</code></pre>
 </section>
 <section id="review-of-conditional-probability" class="slide level2">
 <h2>Review of Conditional Probability</h2>
-<div>
 <ul>
 <li class="fragment">For arbitrary <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, if <span class="math inline">\(\P(B) &gt; 0\)</span>:
 <ul>
@@ -956,25 +932,22 @@ y 0.3 1.0</code></pre>
 <li class="fragment"><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent if observing <span class="math inline">\(B\)</span> does not give you any more information about <span class="math inline">\(A\)</span>: <span class="math inline">\(\P(A \mid B) = \P(A)\)</span></li>
 <li class="fragment">And <span class="math inline">\(\P(A B) = \P(A) \P(B)\)</span> (from Bayes’s rule)</li>
 </ul>
-</div>
 </section>
 <section id="joint-marginal-and-conditional" class="slide level2 smaller">
 <h2>Joint, Marginal, and Conditional</h2>
-<div>
 <ul>
 <li class="fragment">Titanic carried approximately 2,200 passengers and sank on 15 April 1912</li>
 <li class="fragment">Let <span class="math inline">\(G: \{m, f\}\)</span> represent Gender and <span class="math inline">\(S: \{n, y\}\)</span> represent Survival</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center" data-class.code="small-code">
 <div class="column">
-<div class="sourceCode cell-code" id="cb40" data-code-line-numbers="|1|2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>surv <span class="ot">&lt;-</span> <span class="fu">apply</span>(Titanic, <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), sum) </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40" data-code-line-numbers="|1|2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>surv <span class="ot">&lt;-</span> <span class="fu">apply</span>(Titanic, <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), sum) </span>
 <span id="cb40-2"><a></a>surv_prop <span class="ot">&lt;-</span> <span class="fu">round</span>(surv <span class="sc">/</span> <span class="fu">sum</span>(surv), <span class="dv">3</span>)</span>
 <span id="cb40-3"><a></a><span class="fu">bind_cols</span>(<span class="at">Sex =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), surv_prop) <span class="sc">|&gt;</span> </span>
 <span id="cb40-4"><a></a>  janitor<span class="sc">::</span><span class="fu">adorn_totals</span>(<span class="fu">c</span>(<span class="st">"row"</span>, <span class="st">"col"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb40-5"><a></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> </span>
-<span id="cb40-6"><a></a>         <span class="st">"Titanic survival proportions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb40-6"><a></a>         <span class="st">"Titanic survival proportions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output-display">
 <table class="caption-top">
@@ -1011,19 +984,16 @@ y 0.3 1.0</code></pre>
 </div>
 </div></div>
 </div>
-<div>
 <ul>
 <li class="fragment"><span class="math inline">\(\P(G = m \cap S = y) =\)</span> 0.167</li>
 <li class="fragment"><span class="math inline">\(\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) =\)</span> ??</li>
 <li class="fragment"><span class="math inline">\(\P(S = y) = \sum_{i \in \{m, f\}} \P(S = y \, \cap G = i) = 0.323\)</span></li>
 </ul>
-</div>
 </section>
 <section id="joint-marginal-and-conditional-1" class="slide level2 tiny">
 <h2>Joint, Marginal, and Conditional</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">What is <span class="math inline">\(\P(G = m \mid S = y)\)</span>, probability of being <br> male given survival?</li>
 <li class="fragment">To compute that, we only consider the column <br> where Survival = Yes</li>
@@ -1034,7 +1004,6 @@ y 0.3 1.0</code></pre>
 <li class="fragment">How would you compute <span class="math inline">\(\P(S = n \mid G = m)\)</span>?</li>
 <li class="fragment"><span class="math inline">\(\P(S = n \mid G = m) = 1 - \P(S = y \mid G = m)\)</span></li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="cell" data-layout-align="right">
 <div class="cell-output-display">
@@ -1153,12 +1122,12 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <div id="tabset-3-1">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
 <span id="cb41-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>); y <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
 <span id="cb41-3"><a></a>inside <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> y<span class="sc">^</span><span class="dv">2</span> <span class="sc">&lt;</span> <span class="dv">1</span></span>
 <span id="cb41-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(x, y, inside)</span>
 <span id="cb41-5"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">data =</span> data)</span>
-<span id="cb41-6"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> inside)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb41-6"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> inside)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1171,7 +1140,7 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 </div>
 <div id="tabset-3-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">cat</span>(<span class="st">"Estimated value of pi ="</span>, <span class="dv">4</span><span class="sc">*</span><span class="fu">sum</span>(inside) <span class="sc">/</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">cat</span>(<span class="st">"Estimated value of pi ="</span>, <span class="dv">4</span><span class="sc">*</span><span class="fu">sum</span>(inside) <span class="sc">/</span> n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated value of pi = 3.128</code></pre>
 </div>
@@ -1224,7 +1193,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 </section>
 <section id="simplified-notation" class="slide level2 smaller">
 <h2>Simplified Notation</h2>
-<div>
 <ul>
 <li class="fragment"><span class="math inline">\(\theta\)</span>: unknowns or parameters to be estimated; could be multivariate, discrete, and continuous; in your book <span class="math inline">\(\pi\)</span></li>
 <li class="fragment"><span class="math inline">\(y\)</span>: observations or measurements to be modelled (<span class="math inline">\(y_1, y_2, ...\)</span>)</li>
@@ -1237,11 +1205,9 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <li class="fragment"><span class="math inline">\(U(z)\)</span>: utility function where <span class="math inline">\(z\)</span> can be <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\tilde{y}\)</span></li>
 <li class="fragment"><span class="math inline">\(\E(U(z) \mid d)\)</span>: expected utility for decision <span class="math inline">\(d\)</span></li>
 </ul>
-</div>
 </section>
 <section id="simplified-bayesian-workflow" class="slide level2 small">
 <h2>Simplified Bayesian Workflow</h2>
-<div>
 <ul>
 <li class="fragment">Specify a prior model <span class="math inline">\(f(\theta)\)</span></li>
 <li class="fragment">Pick a data model <span class="math inline">\(f(y \mid \theta, x)\)</span>, including conditional mean: <span class="math inline">\(\E(y \mid x)\)</span></li>
@@ -1251,7 +1217,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <li class="fragment">Evaluate model quality: 1) quality of the inferences; 2) quality of predictions; go back to the beginning</li>
 <li class="fragment">Compute derived quantities, such as <span class="math inline">\(\P(\theta &gt; \alpha)\)</span>, <span class="math inline">\(f(\widetilde{y} \mid y)\)</span>, and <span class="math inline">\(d^* = \textrm{arg max}_d \ \E(U(z) \mid d)\)</span></li>
 </ul>
-</div>
 <div class="footer">
 <p>For a more complete workflow, see <a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a> by Gelman et al.&nbsp;(2020)</p>
 </div>
@@ -1260,7 +1225,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <h2>Mystery Box Game Analysis</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">Game Setup:
 <ul>
@@ -1275,7 +1239,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 </ul></li>
 </ul></li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1294,7 +1257,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <h2>Example Prior Model</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">What does it mean to put a uniform prior on <span class="math inline">\(\theta\)</span>?</li>
 <li class="fragment">What are we assuming about the game design under this prior?</li>
@@ -1302,7 +1264,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 <li class="fragment">We take one ball from the box; what is <span class="math inline">\(\P(y = \text{red})\)</span>?</li>
 <li class="fragment">Law of Total Probability (LOTP):</li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
@@ -1327,7 +1288,6 @@ Y&amp; \sim \text{Uniform}(-1, 1) \\
 </section>
 <section id="data-model-before-drawing-10-balls" class="slide level2 smaller">
 <h2>Data Model: Before Drawing 10 Balls</h2>
-<div>
 <ul>
 <li class="fragment"><p>Take red ball as success, so <span class="math inline">\(y\)</span> successes out of <span class="math inline">\(N = 10\)</span> trials <span class="math display">\[
 y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(10,\theta)
@@ -1337,9 +1297,9 @@ y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(10,\theta)
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>N <span class="ot">=</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>N</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>N <span class="ot">=</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>N</span>
 <span id="cb44-2"><a></a>f_y <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> y, <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fl">0.50</span>)</span>
-<span id="cb44-3"><a></a><span class="fu">sum</span>(f_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb44-3"><a></a><span class="fu">sum</span>(f_y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
@@ -1352,7 +1312,6 @@ y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(10,\theta)
 <figure>
 <p><img data-src="01-lecture_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="1536"></p>
 </figure>
-</div>
 </div>
 </div>
 </div>
@@ -1409,12 +1368,10 @@ y | \theta \sim \text{Bin}(N,\theta) = \text{Bin}(10,\theta)
 </section>
 <section id="putting-it-all-together" class="slide level2 small">
 <h2>Putting It All Together</h2>
-<div>
 <ul>
 <li class="fragment">We observe 6 red balls, so we can condition on <span class="math inline">\(y = 6\)</span></li>
 <li class="fragment">Let’s turn the Bayesian crank</li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray*}
@@ -1426,12 +1383,10 @@ f(y \mid \theta) f(\theta) \propto
 \end{eqnarray*}
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment">How many elements in <span class="math inline">\(f(\theta)\)</span>?</li>
 <li class="fragment">How many elements in <span class="math inline">\(f(\theta \mid y)\)</span>?</li>
 </ul>
-</div>
 </section>
 <section id="compute-the-posterior" class="slide level2 smaller">
 <h2>Compute the Posterior</h2>
@@ -1440,7 +1395,6 @@ f(y \mid \theta) f(\theta) \propto
 </ul>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">For <span class="math inline">\(\theta = 0.25\)</span>: (we can drop <span class="math inline">\(\binom{10}{6}\)</span> term) <span class="math display">\[
 f(y | 0.25) = \binom{10}{6} (0.25)^6 (0.75)^4 \approx 0.02
@@ -1452,24 +1406,23 @@ f(y | 0.50) = \binom{10}{6} (0.5)^{10} \approx 0.21
 f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
 \]</span></li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">6</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">10</span>; y <span class="ot">&lt;-</span> <span class="dv">6</span></span>
 <span id="cb46-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>)</span>
 <span id="cb46-3"><a></a>prior <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>)</span>
 <span id="cb46-4"><a></a>lik <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(y, N, theta)</span>
 <span id="cb46-5"><a></a>lik_x_prior <span class="ot">&lt;-</span>  lik <span class="sc">*</span> prior</span>
 <span id="cb46-6"><a></a>constant <span class="ot">&lt;-</span> <span class="fu">sum</span>(lik_x_prior)</span>
-<span id="cb46-7"><a></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-7"><a></a>post <span class="ot">&lt;-</span> lik_x_prior <span class="sc">/</span> constant</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><br></p>
 <div class="fragment">
 <div class="cell">
 <div class="cell-output-display">
-<table class="lightable-paper caption-top" data-quarto-postprocess="true" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<table class="lightable-paper caption-top" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">theta</th>
@@ -1510,8 +1463,6 @@ f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
 </tr>
 </tbody>
 </table>
-
-
 </div>
 </div>
 </div>
@@ -1519,25 +1470,21 @@ f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
 </section>
 <section id="option-1-play-immediately" class="slide level2 smaller">
 <h2>Option 1: Play Immediately</h2>
-<div>
 <ul>
 <li class="fragment">Let <span class="math inline">\(x_i\)</span> represent the payoffs for each option <span class="math inline">\(i\)</span></li>
 <li class="fragment">You want to choose <span class="math inline">\(\theta^*\)</span>, such that the utility is maximized; here we take it to be linear in the payoffs:</li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \theta^* = \textrm{arg max}_{\theta} \left\{ x_i \times f(\theta_i \mid y) - \text{Cost} \right\}
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment">Bet on <span class="math inline">\(\theta=0.25\)</span>: <span class="math inline">\(3 \times 0.044 - 2 \approx -\$1.87\)</span></li>
 <li class="fragment">Bet on <span class="math inline">\(\theta=0.50\)</span>: <span class="math inline">\(5 \times 0.559 - 2 \approx  \$0.80\)</span></li>
 <li class="fragment">Bet on <span class="math inline">\(\theta=0.75\)</span>: <span class="math inline">\(15 \times 0.397 - 2 \approx \$3.96\)</span></li>
 <li class="fragment">We bet on <span class="math inline">\(\theta^*=0.75\)</span> with expected payoff of $3.96, compared with $3 before we drew 10 balls</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="callout callout-warning callout-titled callout-style-default">
 <div class="callout-body">
@@ -1556,13 +1503,11 @@ f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
 </section>
 <section id="option-2-should-you-buy-an-extra-ball" class="slide level2 smaller">
 <h2>Option 2: Should You Buy an Extra Ball?</h2>
-<div>
 <ul>
 <li class="fragment">We need to average over uncertainty of the red vs green ball</li>
 <li class="fragment">Instead of <span class="math inline">\(f(\theta) = 1/3\)</span>, we use <span class="math inline">\(f(\theta \mid y)\)</span>, where y is 6 reds out of 10</li>
 <li class="fragment">Compute the probability of red on the next draw (LOTP conditional on <span class="math inline">\(y\)</span>):</li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray*}
@@ -1871,7 +1816,7 @@ f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1936,190 +1881,173 @@ f(y| 0.75 ) = \binom{10}{6} (0.75)^6 (0.25)^4 \approx 0.15
     </script>
 
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>

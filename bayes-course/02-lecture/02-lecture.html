@@ -6,8 +6,8 @@
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.40">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <meta name="author" content="Eric Novik">
   <title>Eric Novik – Bayesian Inference</title>
@@ -29,8 +29,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -94,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-e829f46d6c6374dd212fea2563f89f04.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-eaf01d3181fc0f52e9185863168e2126.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -215,7 +216,6 @@ Eric Novik
 </section>
 <section id="conjugate-models-and-beta-binomial" class="slide level2">
 <h2>Conjugate models and Beta-Binomial</h2>
-<div>
 <ul>
 <li class="fragment">Bayesian workflow</li>
 <li class="fragment">Beta distribution</li>
@@ -227,7 +227,6 @@ Eric Novik
 <li class="fragment">Compromise between priors and data model</li>
 <li class="fragment">Coherence of Bayesian inference</li>
 </ul>
-</div>
 <p><span class="math display">\[
 \DeclareMathOperator{\E}{\mathbb{E}}
 \DeclareMathOperator{\P}{\mathbb{P}}
@@ -242,12 +241,10 @@ Eric Novik
 <h2>Bayesian Workflow</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment"><p>Statistics is like building a bridge — we first <strong>simulate</strong> the conditions under which our bridge should withstand various forces, then we <strong>build</strong> a bridge, and once built, we <strong>test</strong> it before letting people drive on it.</p></li>
 <li class="fragment"><p><strong>Prior knowledge</strong> (not just prior distributions) here would be strength properties of concrete, optimal shape for the length, expected wind conditions, expected load of traffic, and maybe even expected momentum (mass * velocity) of an out-of-control tanker ramming into one of the supporting columns. <strong>The more important our “bridge,” the more testing we do</strong>.</p></li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="fragment">
 <div class="quarto-figure quarto-figure-center">
@@ -269,7 +266,6 @@ Eric Novik
 <h2>Bayesian Inference vs Bayesian Workflow<sup>1</sup></h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Bayesian inference is concerned with computing <span class="math inline">\(f(\theta \mid y) \propto f(\theta) f(y \mid \theta)\)</span></li>
 <li class="fragment">Bayesian workflow covers all aspects of data analysis:
@@ -281,7 +277,6 @@ Eric Novik
 <li class="fragment">Make a decision</li>
 </ul></li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -297,7 +292,6 @@ Eric Novik
 <h2>Why do we need workflow</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">Following the principle of engineering, we start with a simple model</li>
 <li class="fragment">It will likely fit the data (no guarantees) and will not take too long to run</li>
@@ -309,26 +303,22 @@ Eric Novik
 <li class="fragment">We gradually add components and rerun the tests</li>
 <li class="fragment">If data are large, we can subsample the data to test our model</li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="images/strawman.webp" class="quarto-figure quarto-figure-center" height="300"></p>
 </figure>
 </div>
-<div>
 <ul>
 <li class="fragment">We want to compare models as we add features</li>
 <li class="fragment">We calibrate this workflow, including a selection of the inference algorithm based on cost of being wrong</li>
 </ul>
-</div>
 </div></div>
 </section>
 <section id="on-with-the-show" class="slide level2 smaller">
 <h2>On with the show…</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">Last time, we presented the discretized version of the prior</li>
 <li class="fragment">In practice, we are typically working in continuous space</li>
@@ -338,7 +328,6 @@ Eric Novik
 <li class="fragment">In practice, we seldom rely on conjugate relationships</li>
 <li class="fragment">Beta distribution is conjugate to Binomial</li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-right">
 <figure>
@@ -351,7 +340,6 @@ Eric Novik
 <h2>Introducing Beta</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">Beta distribution has the following functional form for <span class="math inline">\(\alpha &gt; 0, \, \beta &gt; 0, \, \theta \in (0, 1)\)</span> <span class="math display">\[
 \begin{eqnarray}
@@ -366,7 +354,6 @@ Eric Novik
 \end{eqnarray}
 \]</span></li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="fragment">
 <div class="quarto-figure quarto-figure-right">
@@ -377,31 +364,27 @@ Eric Novik
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">factorial</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">factorial</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]      1      1      2      6     24    120    720   5040  40320 362880</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">gamma</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">gamma</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]      1      1      2      6     24    120    720   5040  40320 362880</code></pre>
 </div>
 </div>
 </div>
 </div></div>
-<div>
 <ul>
 <li class="fragment">For positive integrers <span class="math inline">\(n\)</span>: <span class="math inline">\(\, \Gamma(n+1) = n!\)</span> and in general <span class="math inline">\(\Gamma(z + 1) = z \Gamma(z)\)</span></li>
 <li class="fragment"><span class="math inline">\(\text{Beta}(1, 1)\)</span> is equivalent to <span class="math inline">\(\text{Unif(0, 1)}\)</span>. Why? (work it out)</li>
 </ul>
-</div>
 </section>
 <section id="visualizing-beta" class="slide level2 smaller">
 <h2>Visualizing Beta</h2>
-<div>
 <ul>
 <li class="fragment">The mode of Beta, <span class="math inline">\(\text{Mode}(\theta) = \argmax_\theta \text{Beta}(\theta \mid \alpha, \beta)\)</span> is shown in red and the function maximum in blue</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -416,7 +399,6 @@ Eric Novik
 </section>
 <section id="expectations" class="slide level2 smaller">
 <h2>Expectations</h2>
-<div>
 <ul>
 <li class="fragment"><p>Recall the definition of expectations for continuous random variables</p></li>
 <li class="fragment"><p>We often write <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\mu_X\)</span> for expected value of <span class="math inline">\(X\)</span> <span class="math display">\[
@@ -429,15 +411,12 @@ Eric Novik
 \V(X) = \E(X^2) - \mu^2
 \]</span></p></li>
 </ul>
-</div>
 </section>
 <section id="what-to-expect-from-beta" class="slide level2 smaller">
 <h2>What to expect from Beta</h2>
-<div>
 <ul>
 <li class="fragment">Keeping in mind that a Gamma function is a continuous analog of the factorial:</li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -459,18 +438,15 @@ Eric Novik
 \end{eqnarray}
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment"><a href="https://www.polleverywhere.com/free_text_polls/Za9vryQs3rJlnSqM3Kf6L">What is the value</a> of <span class="math inline">\(\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta} \, d\theta\)</span></li>
 </ul>
-</div>
 <div class="footer">
 <p>Check the integral <span class="math inline">\(\int_{0}^{1}  \, \theta^\alpha \, (1 - \theta)^{\beta - 1} \, d\theta\)</span> using <a href="https://live.sympy.org/">SymPy</a></p>
 </div>
 </section>
 <section id="what-to-expect-from-beta-1" class="slide level2 smaller">
 <h2>What to expect from Beta</h2>
-<div>
 <ul>
 <li class="fragment"><p>We can find the mode of this distribution by taking the log, differentiating with respect to <span class="math inline">\(\theta\)</span>, and setting the derivative function to zero <span class="math display">\[
 \begin{eqnarray}
@@ -485,13 +461,11 @@ Eric Novik
 \]</span></p></li>
 <li class="fragment"><p>Notice when <span class="math inline">\(\alpha = \beta\)</span>, <span class="math inline">\(\E(\theta) = \text{Mode}(\theta)\)</span></p></li>
 </ul>
-</div>
 </section>
 <section id="example-placenta-previa" class="slide level2 smaller scrollable">
 <h2>Example: Placenta Previa</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div>
 <ul>
 <li class="fragment">We borrow an example from BDA3: the probability of girl birth given placenta previa (PP)</li>
 <li class="fragment">Placenta previa is a condition when the placenta completely or partially covers the opening of the uterus</li>
@@ -499,7 +473,6 @@ Eric Novik
 <li class="fragment">Sex ratio in the population has been stable over space and time at 48.5% females with deviations within no more than 1%<sup>1</sup></li>
 <li class="fragment">Our task is to assess the evidence for <span class="math inline">\(\P(\text{ratio} &lt; .485 \mid \text{PP})\)</span></li>
 </ul>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-right">
 <figure>
@@ -510,7 +483,6 @@ Eric Novik
 <aside><ol class="aside-footnotes"><li id="fn2"><p>Gelman, A., &amp; Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310</p></li></ol></aside></section>
 <section id="biomomial-likelihood" class="slide level2 smaller">
 <h2>Biomomial Likelihood</h2>
-<div>
 <ul>
 <li class="fragment"><p>Recall that Likelihood is the function of the parameter <span class="math inline">\(\theta\)</span>, assuming <span class="math inline">\(\theta \in [0,1]\)</span> <span class="math display">\[
 \text{Bin}(y \mid \theta) = \binom{N}{y}
@@ -518,7 +490,6 @@ Eric Novik
 \]</span></p></li>
 <li class="fragment"><p>Assuming <span class="math inline">\(N = 10\)</span>, the likelihood for <span class="math inline">\(\theta\)</span>, given a few possible values of <span class="math inline">\(y\)</span> successes</p></li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -533,7 +504,6 @@ Eric Novik
 </section>
 <section id="deriving-the-posterior-distribution" class="slide level2 smaller">
 <h2>Deriving the Posterior Distribution</h2>
-<div>
 <ul>
 <li class="fragment"><p>The denominator is constant in <span class="math inline">\(\theta\)</span>; we will derive the posterior up to a proportion <span class="math display">\[
 \begin{eqnarray}
@@ -549,7 +519,6 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <li class="fragment"><p>The last equality comes from matching the kernel <span class="math inline">\(\theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1}\)</span> to the normalized Beta PDF which has a normalizing constant <span class="math inline">\(\frac{\Gamma (\alpha +\beta + N)}{\Gamma (\alpha + y) \Gamma (\beta + N - y)}\)</span></p></li>
 <li class="fragment"><p>Since the posterior is in the same family as the prior, we say that Beta is conjugate to Binomial</p></li>
 </ul>
-</div>
 <div class="footer">
 <p>Check the kernel integral, <span class="math inline">\(\int_{0}^{1} \theta^{y + \alpha - 1} (1 - \theta)^{N - y + \beta - 1} \, d\theta\)</span> using <a href="https://live.sympy.org/">SymPy</a></p>
 </div>
@@ -565,18 +534,16 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 \end{eqnarray}
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment">Note that the posterior expectation is between <span class="math inline">\(y/n\)</span> and <span class="math inline">\(\frac{\alpha}{\alpha + \beta}\)</span></li>
 <li class="fragment">Also note that as sample becomes very large <span class="math inline">\(\E(\theta \mid y) \rightarrow \frac{y}{n}\)</span> and <span class="math inline">\(\V(\theta \mid y) \rightarrow 0\)</span></li>
 <li class="fragment">As before, <span class="math inline">\(\text{Mode}(\theta \mid y) = \E(\theta \mid y)\)</span>, when <span class="math inline">\(\alpha = \beta\)</span></li>
 </ul>
-</div>
 </section>
 <section id="variance-reduction-rate-example" class="slide level2 smaller">
 <h2>Variance Reduction Rate Example</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>post_var <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, y, n) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>post_var <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, y, n) {</span>
 <span id="cb5-2"><a></a>  ((a <span class="sc">+</span> y) <span class="sc">*</span> (b <span class="sc">+</span> n <span class="sc">-</span> y)) <span class="sc">/</span> ((a <span class="sc">+</span> b <span class="sc">+</span> n)<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (a <span class="sc">+</span> b <span class="sc">+</span> n <span class="sc">+</span> <span class="dv">1</span>))</span>
 <span id="cb5-3"><a></a>}</span>
 <span id="cb5-4"><a></a>n <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">500</span>, <span class="at">by =</span> <span class="dv">2</span>)</span>
@@ -584,13 +551,12 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <span id="cb5-6"><a></a>pv <span class="ot">&lt;-</span> <span class="fu">post_var</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">1</span>, <span class="at">y =</span> y, <span class="at">n =</span> n)</span>
 <span id="cb5-7"><a></a>psd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(pv)</span>
 <span id="cb5-8"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(n, psd), <span class="at">data =</span> <span class="fu">data.frame</span>(n, psd)) <span class="sc">+</span></span>
-<span id="cb5-9"><a></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Posterior SD"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-9"><a></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Posterior SD"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="02-lecture_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="432"></section>
 <section id="example-placenta-previa-1" class="slide level2 smaller">
 <h2>Example: Placenta Previa</h2>
-<div>
 <ul>
 <li class="fragment"><p>Let’s derive the analytical posterior and compare it with the samples from the posterior distribution</p></li>
 <li class="fragment"><p>First, we will consider the uniform <span class="math inline">\(\text{Beta}(1, 1)\)</span> prior</p></li>
@@ -601,44 +567,41 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
 <span id="cb6-2"><a></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb6-3"><a></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">438</span>, <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb6-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>95% posterior interval is [0.415, 0.477]</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">integrate</span>(dbeta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb8-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">integrate</span>(dbeta, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> <span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb8-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probability that the ratio &lt; 0.485 under uniform prior = 0.993</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">438</span>, <span class="at">shape2 =</span> <span class="dv">544</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.993</code></pre>
-</div>
 </div>
 </div>
 </div>
 </section>
 <section id="obtaining-quantiles-by-sampling" class="slide level2 smaller">
 <h2>Obtaining Quantiles by Sampling</h2>
-<div>
 <ul>
 <li class="fragment">We can use R’s <code>rbeta()</code> RNG to generate draws from the posterior</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="fl">1e5</span>, <span class="dv">438</span>, <span class="dv">544</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>draws <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="fl">1e5</span>, <span class="dv">438</span>, <span class="dv">544</span>)</span>
 <span id="cb12-2"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(draws), <span class="at">data =</span> <span class="fu">data.frame</span>(draws))</span>
 <span id="cb12-3"><a></a>p <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
 <span id="cb12-4"><a></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.485</span>, </span>
 <span id="cb12-5"><a></a>             <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
 <span id="cb12-6"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Draws from Beta(438, 544)"</span>) <span class="sc">+</span> </span>
 <span id="cb12-7"><a></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span> </span>
-<span id="cb12-8"><a></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-8"><a></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -649,19 +612,17 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 </div></div>
 </div>
-<div>
 <ul>
 <li class="fragment">We can use the <code>quantile()</code> function to get the posterior interval and compute the event probability by evaluating the expectation of the indicator function as before</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">quantile</span>(draws, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">quantile</span>(draws, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> 2.5%   50% 97.5% 
 0.415 0.446 0.477 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">mean</span>(draws <span class="sc">&lt;</span> <span class="fl">0.485</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under uniform prior ="</span>, <span class="fu">mean</span>(draws <span class="sc">&lt;</span> <span class="fl">0.485</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probability that the ratio &lt; 0.485 under uniform prior = 0.993</code></pre>
 </div>
@@ -672,13 +633,11 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <h2>Population Priors</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment"><p>What priors should we use if we think the sample is drawn from the sex ratio “hyper-population”?</p></li>
 <li class="fragment"><p>We know that the population mean is 0.485 and the standard deviation is about 0.01</p></li>
 <li class="fragment"><p>Back out the parameters of the population Beta distribution</p></li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -689,35 +648,29 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 \end{eqnarray}
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment"><span class="math inline">\(\alpha \approx 1211\)</span> and <span class="math inline">\(\beta \approx 1286\)</span></li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Check the result with the simulation</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">1211</span>, <span class="dv">1286</span>)</span>
-<span id="cb17-2"><a></a><span class="fu">mean</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">1211</span>, <span class="dv">1286</span>)</span>
+<span id="cb17-2"><a></a><span class="fu">mean</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.485</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">sd</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">sd</span>(x) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.01</code></pre>
 </div>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment">We can let Mathematica do the algebra</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -729,15 +682,14 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </section>
 <section id="posterior-with-population-priors" class="slide level2 smaller">
 <h2>Posterior with Population Priors</h2>
-<div>
 <ul>
 <li class="fragment"><p><span class="math inline">\(f(\theta | y) = \text{Beta}(1211 + 437, 1286 + 543) = \text{Beta}(1648,1829)\)</span></p></li>
 <li class="fragment"><p>We can compare the prior and posterior using <code>summarize_beta_binomial()</code> in the <code>bayesrules</code> package</p></li>
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">library</span>(bayesrules)</span>
-<span id="cb21-2"><a></a><span class="fu">summarize_beta_binomial</span>(<span class="at">alpha =</span> <span class="dv">1211</span>, <span class="at">beta =</span> <span class="dv">1286</span>, <span class="at">y =</span> <span class="dv">437</span>, <span class="at">n =</span> <span class="dv">980</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">library</span>(bayesrules)</span>
+<span id="cb21-2"><a></a><span class="fu">summarize_beta_binomial</span>(<span class="at">alpha =</span> <span class="dv">1211</span>, <span class="at">beta =</span> <span class="dv">1286</span>, <span class="at">y =</span> <span class="dv">437</span>, <span class="at">n =</span> <span class="dv">980</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      model alpha beta      mean      mode          var          sd
 1     prior  1211 1286 0.4849820 0.4849699 9.998978e-05 0.009999489
@@ -747,10 +699,10 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>int <span class="ot">&lt;-</span> <span class="fl">0.95</span>; l <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> int)<span class="sc">/</span><span class="dv">2</span>; u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> l</span>
 <span id="cb23-2"><a></a>upper <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(u, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb23-3"><a></a>lower <span class="ot">&lt;-</span> <span class="fu">qbeta</span>(l, <span class="dv">1648</span>, <span class="dv">1829</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb23-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-4"><a></a><span class="fu">cat</span>(<span class="st">"95% posterior interval is ["</span>, lower, <span class="st">", "</span>, upper, <span class="st">"]"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>95% posterior interval is [0.457, 0.491]</code></pre>
 </div>
@@ -758,8 +710,8 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">1648</span>, <span class="at">shape2 =</span> <span class="dv">1829</span>)</span>
-<span id="cb25-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under population prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>event_prob <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.485</span>, <span class="at">shape1 =</span> <span class="dv">1648</span>, <span class="at">shape2 =</span> <span class="dv">1829</span>)</span>
+<span id="cb25-2"><a></a><span class="fu">cat</span>(<span class="st">"Probability that the ratio &lt; 0.485 under population prior ="</span>, <span class="fu">round</span>(event_prob, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probability that the ratio &lt; 0.485 under population prior = 0.904</code></pre>
 </div>
@@ -769,15 +721,12 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <li class="fragment">Under uniform prior 95% posterior interval was [0.415, 0.477]</li>
 <li class="fragment">And probability that the ratio &lt; 0.485 under uniform prior = 0.993</li>
 </ul>
-</div>
 </section>
 <section id="visualizing-bayesian-rebalancing" class="slide level2 smaller">
 <h2>Visualizing Bayesian Rebalancing</h2>
-<div>
 <ul>
 <li class="fragment">The following uses <span class="math inline">\(\text{Beta}(5, 5)\)</span> prior and N = 10. Guess what color is likelihood, prior, and posterior.</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -792,7 +741,6 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 </section>
 <section id="data-order-and-batch-invariance" class="slide level2 smaller">
 <h2>Data Order and Batch Invariance</h2>
-<div>
 <ul>
 <li class="fragment">In Bayesian analysis, we can update all at once or one datum at a time and everything in between and in any order (assuming exchangeable observations)</li>
 <li class="fragment">This is a general result, not just for Beta Binomial (see Section 4.5)</li>
@@ -803,15 +751,12 @@ f(\theta \mid y) &amp; = &amp; \text{Beta}(\alpha + y, \,\beta + N - y)
 <li class="fragment">The posterior is <span class="math inline">\(f(\theta \mid y_1) = \text{Beta}(\alpha + y_1, \,\beta + N_1 - y_1)\)</span></li>
 <li class="fragment">We now observe, <span class="math inline">\(y_2\)</span> successes in <span class="math inline">\(n_2\)</span> trials. The posterior is <span class="math inline">\(f(\theta \mid y= y_1 + y_2) = \text{Beta}(\alpha + y_1 + y_2, \,\beta + N_1 - y_1 + N_2 - y_2)\\ = \text{Beta}(\alpha + y, \,\beta + N - y)\)</span></li>
 </ul>
-</div>
 </section>
 <section id="general-case" class="slide level2 smaller scrollable">
 <h2>General Case</h2>
-<div>
 <ul>
 <li class="fragment">Suppose we observe data point <span class="math inline">\(y_1\)</span>, and then data point <span class="math inline">\(y_2\)</span><sup>1</sup></li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -821,12 +766,10 @@ f(\theta \mid y_2) &amp;=&amp;  \frac{\frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)}
 \end{eqnarray}
 \]</span></p>
 </div>
-<div>
 <ul>
 <li class="fragment">Observing data point <span class="math inline">\(y_2\)</span>, and then data point <span class="math inline">\(y_1\)</span>, will results in the same distribution</li>
 <li class="fragment">What if we observed both points at once?</li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{split}
@@ -839,7 +782,6 @@ f(\theta \mid y_1,y_2)
 <aside><ol class="aside-footnotes"><li id="fn3"><p>This comes directly from Bayes Rules!: 4.5 Proving data order invariance</p></li></ol></aside></section>
 <section id="the-myth-of-objectivity-in-science" class="slide level2 smaller scrollable">
 <h2>The myth of objectivity in science</h2>
-<div>
 <ul>
 <li class="fragment">All of science requires choices, and those choices are, by definition, subjective</li>
 <li class="fragment">Neither Frequentist nor Bayesian inference imbues objectivity into your analysis</li>
@@ -847,7 +789,6 @@ f(\theta \mid y_1,y_2)
 <li class="fragment">Remember that important scientific discoveries were made before Statistics became a thing</li>
 <li class="fragment">A better alternative to objective vs subjective debate:</li>
 </ul>
-</div>
 <div class="fragment">
 <blockquote>
 <p>…objectivity replaced by transparency, consensus, impartiality, and correspondence to observable reality, and subjectivity replaced by awareness of multiple perspectives and context dependence<sup>1</sup></p>
@@ -1048,7 +989,7 @@ f(\theta \mid y_1,y_2)
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1113,190 +1054,173 @@ f(\theta \mid y_1,y_2)
     </script>
 
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>
