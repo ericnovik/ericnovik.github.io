@@ -6,8 +6,8 @@
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.40">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <meta name="author" content="Eric.Novik@nyu.edu | Summer 2025 | Session 8">
   <title>Eric Novik – SMaC: Statistics, Math, and Computing</title>
@@ -29,8 +29,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,7 +42,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -94,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-e829f46d6c6374dd212fea2563f89f04.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-eaf01d3181fc0f52e9185863168e2126.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -209,7 +210,6 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 </section>
 <section id="session-8-outline" class="slide level2">
 <h2>Session 8 Outline</h2>
-<div>
 <ul>
 <li class="fragment">Statistical analysis workflow</li>
 <li class="fragment">Simulating data for simple regression</li>
@@ -222,7 +222,6 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 <li class="fragment">Assumptions of the regression analysis</li>
 <li class="fragment">Regression modeling advice</li>
 </ul>
-</div>
 <p><span class="math display">\[
 \DeclareMathOperator{\E}{\mathbb{E}}
 \DeclareMathOperator{\P}{\mathbb{P}}
@@ -240,7 +239,6 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 <img data-src="images/data-science.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="some-notation" class="slide level2 smaller">
 <h2>Some Notation</h2>
-<div>
 <ul>
 <li class="fragment">Observed data <span class="math inline">\(y\)</span></li>
 <li class="fragment">Unobserved but observable data <span class="math inline">\(\widetilde{y}\)</span></li>
@@ -252,25 +250,20 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 <li class="fragment">Maximum likelihood estimate (MLE): <span class="math inline">\(\hat{\theta} = \underset{\theta}{\text{argmax}} \, \mathcal{L}(\theta \mid y, X)\)</span> (for Frequentist inference)</li>
 <li class="fragment">Posterior distribution <span class="math inline">\(f(\theta \mid y, X)\)</span> (for Bayesian inference)</li>
 </ul>
-</div>
 </section>
 <section id="bayes-vs-frequentist-inference" class="slide level2 smaller">
 <h2>Bayes vs Frequentist Inference</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment"><strong>Estimation</strong> is the process of figuring out the unknowns, i.e., unobserved quantities</li>
 <li class="fragment">In frequentist inference, the problem is framed in terms of the <strong>most likely value(s)</strong> of <span class="math inline">\(\theta\)</span></li>
 <li class="fragment">Bayesians want to characterize the whole distribution, a much more ambitious goal</li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
-<div>
 <ul>
 <li class="fragment">Suppose we want to characterize the following function, which represents some distribution of the unknown parameter:</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -282,7 +275,6 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 </section>
 <section id="basic-regression-setup" class="slide level2 smaller">
 <h2>Basic Regression Setup</h2>
-<div>
 <ul>
 <li class="fragment">There are lots of possible ways to set up a regression</li>
 <li class="fragment">One predictor: <span class="math inline">\(y = a + bx + \epsilon\)</span></li>
@@ -293,7 +285,6 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 <li class="fragment">Nonparametric models that are popular in Machine Learning that can learn flexible, functional forms between <span class="math inline">\(y\)</span> and <span class="math inline">\(X\)</span></li>
 <li class="fragment">The latter is not a panacea — if you have a good or good enough functional form, predictions will generally be better and the model will generalize better</li>
 </ul>
-</div>
 <div class="footer">
 <p>Most of the material in this section comes from <a href="https://avehtari.github.io/ROS-Examples/">Regression and Other Stories</a> by Gelman et al.&nbsp;</p>
 </div>
@@ -304,7 +295,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 <li>Fitting simulated data is a good start for an analysis</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rstanarm)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rstanarm)</span>
 <span id="cb1-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">15</span>; x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n</span>
 <span id="cb1-3"><a></a>a <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb1-4"><a></a>b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
@@ -312,7 +303,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 8
 <span id="cb1-6"><a></a>y <span class="ot">&lt;-</span> a <span class="sc">+</span> b<span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma) <span class="co"># or sigma * rnorm(n)</span></span>
 <span id="cb1-7"><a></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
 <span id="cb1-8"><a></a>fit1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
-<span id="cb1-9"><a></a><span class="fu">print</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-9"><a></a><span class="fu">print</span>(fit1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>stan_glm
  family:       gaussian [identity]
@@ -340,10 +331,10 @@ sigma 2.6    0.5
 <li>We extract our betas using the <code>coef()</code> R function</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>a_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit1)[<span class="dv">1</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>a_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit1)[<span class="dv">1</span>]</span>
 <span id="cb3-2"><a></a>b_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit1)[<span class="dv">2</span>]</span>
 <span id="cb3-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> data)</span>
-<span id="cb3-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">intercept =</span> a_hat, <span class="at">slope =</span> b_hat, <span class="at">linewidth =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">intercept =</span> a_hat, <span class="at">slope =</span> b_hat, <span class="at">linewidth =</span> <span class="fl">0.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="480"></section>
@@ -353,7 +344,7 @@ sigma 2.6    0.5
 <li>Data from a survey of adult American women and their children (a subsample from the National Longitudinal Survey of Youth).</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(rstanarm<span class="sc">::</span>kidiq[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, ])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(rstanarm<span class="sc">::</span>kidiq[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, ])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top">
 <thead>
@@ -421,8 +412,8 @@ sigma 2.6    0.5
 <section id="single-binary-predictor" class="slide level2 smaller">
 <h2>Single Binary Predictor</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>fit2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_hs, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
-<span id="cb5-2"><a></a><span class="fu">print</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>fit2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_hs, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb5-2"><a></a><span class="fu">print</span>(fit2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>stan_glm
  family:       gaussian [identity]
@@ -443,30 +434,28 @@ sigma 19.9    0.7
 * For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment">Our model is <span class="math inline">\(\text{kid_score} = 78 + 12 \cdot \text{mom_hs} + \epsilon\)</span></li>
 <li class="fragment">What is the average IQ of kids whose mothers did not complete high school? (in this dataset)</li>
 <li class="fragment">What is the average IQ of kids whose mothers completed high school?</li>
 <li class="fragment">Did high school cause the IQ change?</li>
 </ul>
-</div>
 </section>
 <section id="single-binary-predictor-1" class="slide level2 smaller">
 <h2>Single Binary Predictor</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_hs, kid_score), <span class="at">data =</span> kidiq)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_hs, kid_score), <span class="at">data =</span> kidiq)</span>
 <span id="cb7-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
 <span id="cb7-3"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit2)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit2)[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb7-4"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
 <section id="single-continous-predictor" class="slide level2 smaller">
 <h2>Single Continous Predictor</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>fit3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_iq, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
-<span id="cb8-2"><a></a><span class="fu">print</span>(fit3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>fit3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_iq, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb8-2"><a></a><span class="fu">print</span>(fit3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>stan_glm
  family:       gaussian [identity]
@@ -487,13 +476,11 @@ sigma 18.3    0.6
 * For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment">Our model is <span class="math inline">\(\text{kid_score} = 26 + 0.6 \cdot \text{mom_iq}+ \epsilon\)</span></li>
 <li class="fragment">How much do kids’ scores improve when maternal IQ differs by 10 points?</li>
 <li class="fragment">What is the meaning of the intercepts = 26 here?</li>
 </ul>
-</div>
 </section>
 <section id="simple-transformations" class="slide level2 smaller">
 <h2>Simple Transformations</h2>
@@ -502,10 +489,10 @@ sigma 18.3    0.6
 <li>The transformation: <span class="math inline">\(\text{mom_iq_c}_i = \text{mom_iq}_i - \overline{\text{mom_iq}}\)</span></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>kidiq <span class="ot">&lt;-</span> kidiq <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>kidiq <span class="ot">&lt;-</span> kidiq <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a></a>  <span class="fu">mutate</span>(<span class="at">mom_iq_c =</span> mom_iq <span class="sc">-</span> <span class="fu">mean</span>(mom_iq))</span>
 <span id="cb10-3"><a></a>fit4 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_iq_c, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
-<span id="cb10-4"><a></a><span class="fu">print</span>(fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a></a><span class="fu">print</span>(fit4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>stan_glm
  family:       gaussian [identity]
@@ -526,27 +513,25 @@ sigma 18.3    0.6
 * For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment">Our model is <span class="math inline">\(\text{kid_score} = 87 + 0.6 \cdot \text{mom_iq_c}+ \epsilon\)</span></li>
 <li class="fragment">What is the meaning of the intercepts in this model?</li>
 </ul>
-</div>
 </section>
 <section id="single-continous-predictor-1" class="slide level2 smaller">
 <h2>Single Continous Predictor</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
 <span id="cb12-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb12-3"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit3)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit3)[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit3)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit3)[<span class="dv">2</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
 <section id="combining-the-predictors" class="slide level2 smaller">
 <h2>Combining the Predictors</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>fit5 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_hs <span class="sc">+</span> mom_iq_c, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb13-2"><a></a><span class="fu">print</span>(fit5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>fit5 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(kid_score <span class="sc">~</span> mom_hs <span class="sc">+</span> mom_iq_c, <span class="at">data =</span> kidiq, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb13-2"><a></a><span class="fu">print</span>(fit5)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>stan_glm
  family:       gaussian [identity]
@@ -568,12 +553,10 @@ sigma 18.2    0.6
 * For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment">Our model is now: <span class="math inline">\(\text{kid_score} = 82 + 6 \cdot \text{mom_hs} + 0.6 \cdot \text{mom_iq_c}+ \epsilon\)</span></li>
 <li class="fragment">Write down the interpretation of each coefficient</li>
 </ul>
-</div>
 </section>
 <section id="combining-the-predictors-1" class="slide level2 smaller">
 <h2>Combining the Predictors</h2>
@@ -608,11 +591,11 @@ sigma 18.2    0.6
 <section id="visualizing-the-fit-with-two-predictors" class="slide level2 smaller">
 <h2>Visualizing the Fit With Two Predictors</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
 <span id="cb16-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">as.factor</span>(mom_hs)), <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
 <span id="cb16-3"><a></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Mom HS"</span>) <span class="sc">+</span></span>
 <span id="cb16-4"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit6)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit6)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb16-5"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit6)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit6)[<span class="dv">2</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit6)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-5"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit6)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit6)[<span class="dv">2</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit6)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'blue'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
@@ -645,52 +628,46 @@ sigma 18.0    0.6
 * For info on the priors used see ?prior_summary.stanreg</code></pre>
 </div>
 </div>
-<div>
 <ul>
 <li class="fragment">Our model is: <span class="math inline">\(\text{kid_score} = -10 + 49 \cdot \text{mom_hs} + 1 \cdot \text{mom_iq} - 0.5 \cdot \text{mom_hs} \cdot \text{mom_iq} + \epsilon\)</span></li>
 <li class="fragment">To figure out the slopes, we consider two cases</li>
 <li class="fragment">For <span class="math inline">\(\text{mom_hs} = 0\)</span>, the line is: <span class="math inline">\(\text{kid_score} = -10 + 1 \cdot \text{mom_iq}\)</span></li>
 <li class="fragment">For <span class="math inline">\(\text{mom_hs} = 1\)</span>, the line is: <span class="math inline">\(\text{kid_score} = -10 + 49 \cdot 1 + 1 \cdot \text{mom_iq} - 0.5 \cdot 1 \cdot \text{mom_iq} = 39 + 0.5\cdot \text{mom_iq}\)</span></li>
 </ul>
-</div>
 </section>
 <section id="visualizing-interactions" class="slide level2 smaller">
 <h2>Visualizing Interactions</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
 <span id="cb18-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">as.factor</span>(mom_hs)), <span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
 <span id="cb18-3"><a></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Mom HS"</span>) <span class="sc">+</span></span>
 <span id="cb18-4"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit7)[<span class="dv">1</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit7)[<span class="dv">3</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb18-5"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit7)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit7)[<span class="dv">2</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit7)[<span class="dv">3</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit7)[<span class="dv">4</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-5"><a></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="fu">coef</span>(fit7)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit7)[<span class="dv">2</span>], <span class="at">slope =</span> <span class="fu">coef</span>(fit7)[<span class="dv">3</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit7)[<span class="dv">4</span>], <span class="at">linewidth =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">'blue'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="08-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section>
 <section id="interpreting-coefficients-in-complex-non-linear-models" class="slide level2">
 <h2>Interpreting Coefficients in Complex Non-Linear Models</h2>
-<div>
 <ul>
 <li class="fragment">Models that have many parameters, many interactions, and are non-linear are difficult to interpret by looking at parameters marginally (i.e., one at a time)</li>
 <li class="fragment">For this reason, we typically rely on assessing how changes to model inputs affect model predictions, not the impact of each parameter</li>
 <li class="fragment">Predictions take all the parameter values and their interactions into account</li>
 </ul>
-</div>
 </section>
 <section id="uncertainty-and-prediction" class="slide level2 smaller">
 <h2>Uncertainty and Prediction</h2>
-<div>
 <ul>
 <li class="fragment">We return to our simple linear regression model: <span class="math inline">\(\text{kid_score} = 26 + 0.6 \cdot \text{mom_iq}+ \epsilon\)</span></li>
 <li class="fragment">We can extract the simulations of all plausible parameter values (called a posterior distribution in Bayesian analysis)</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit3)</span>
-<span id="cb19-2"><a></a><span class="fu">dim</span>(post)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit3)</span>
+<span id="cb19-2"><a></a><span class="fu">dim</span>(post)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 4000    3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(post[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>knitr<span class="sc">::</span><span class="fu">kable</span>(post[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top">
 <thead>
@@ -734,20 +711,18 @@ sigma 18.0    0.6
 </section>
 <section id="uncertainty-and-prediction-1" class="slide level2 smaller">
 <h2>Uncertainty and Prediction</h2>
-<div>
 <ul>
 <li class="fragment">Using these simulations we display 50 plausible regression lines</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(fit3)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(fit3)</span>
 <span id="cb22-2"><a></a>post_sub <span class="ot">&lt;-</span> post[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(post), <span class="dv">50</span>), ]</span>
 <span id="cb22-3"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(mom_iq, kid_score), <span class="at">data =</span> kidiq)</span>
 <span id="cb22-4"><a></a>p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
 <span id="cb22-5"><a></a>  <span class="fu">geom_abline</span>(<span class="fu">aes</span>(<span class="at">intercept =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, <span class="at">slope =</span> mom_iq), </span>
 <span id="cb22-6"><a></a>              <span class="at">linewidth =</span> <span class="fl">0.1</span>,</span>
-<span id="cb22-7"><a></a>              <span class="at">data =</span> post_sub)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-7"><a></a>              <span class="at">data =</span> post_sub)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -760,44 +735,42 @@ sigma 18.0    0.6
 </section>
 <section id="uncertainty-and-prediction-2" class="slide level2 smaller">
 <h2>Uncertainty and Prediction</h2>
-<div>
 <ul>
 <li class="fragment">We can compute inferential uncertainty in all the parameters directly</li>
 <li class="fragment">We can also compute event probabilities</li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit3)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>post <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit3)</span>
 <span id="cb23-2"><a></a><span class="co"># median</span></span>
-<span id="cb23-3"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-3"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, median)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      mom_iq       sigma 
  26.0236767   0.6078977  18.2714868 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, mad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, mad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      mom_iq       sigma 
  6.10031655  0.06062729  0.61543505 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># 50% uncertainty estimate</span></span>
-<span id="cb27-2"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># 50% uncertainty estimate</span></span>
+<span id="cb27-2"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     parameters
       (Intercept)    mom_iq    sigma
   25%    21.75756 0.5681001 17.86710
   75%    30.06156 0.6504483 18.69458</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># 90% uncertainty estimate</span></span>
-<span id="cb29-2"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># 90% uncertainty estimate</span></span>
+<span id="cb29-2"><a></a><span class="fu">apply</span>(post, <span class="dv">2</span>, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     parameters
       (Intercept)    mom_iq    sigma
   5%     15.72707 0.5106528 17.32535
   95%    35.77134 0.7095889 19.33193</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="co"># What is the probability that the coefficient of mom_iq is &gt; 0.6</span></span>
-<span id="cb31-2"><a></a><span class="fu">mean</span>(post[, <span class="st">"mom_iq"</span>] <span class="sc">&gt;</span> <span class="fl">0.6</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="co"># What is the probability that the coefficient of mom_iq is &gt; 0.6</span></span>
+<span id="cb31-2"><a></a><span class="fu">mean</span>(post[, <span class="st">"mom_iq"</span>] <span class="sc">&gt;</span> <span class="fl">0.6</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.55</code></pre>
 </div>
@@ -806,13 +779,11 @@ sigma 18.0    0.6
 </section>
 <section id="types-of-prediction" class="slide level2">
 <h2>Types of Prediction</h2>
-<div>
 <ul>
 <li class="fragment">Point prediction: <span class="math inline">\(\hat{a} + \hat{b}x^{\text{new}}\)</span> — predicting expected average <span class="math inline">\(y\)</span> — don’t recommend</li>
 <li class="fragment">Linear predictor with uncertainty in <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>: <span class="math inline">\(a + bx^{\text{new}}\)</span> — predicting uncertainty around the expexted average value of <span class="math inline">\(y\)</span> — typically used to assess treatment effect</li>
 <li class="fragment">Predictive distribution: <span class="math inline">\(a + bx^{\text{new}} + \epsilon\)</span> — predictive uncertainty around a new <span class="math inline">\(y\)</span> — used to predict for a new individual (not ATT)</li>
 </ul>
-</div>
 </section>
 <section id="prediction-in-rstanarm" class="slide level2 smaller">
 <h2>Prediction in RStanArm</h2>
@@ -823,24 +794,24 @@ sigma 18.0    0.6
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>mom120 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">mom_iq =</span> <span class="dv">120</span>)</span>
-<span id="cb33-2"><a></a>(point_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit3, <span class="at">newdata =</span> mom120))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>mom120 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">mom_iq =</span> <span class="dv">120</span>)</span>
+<span id="cb33-2"><a></a>(point_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit3, <span class="at">newdata =</span> mom120))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      1 
 98.9816 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>lin_pred <span class="ot">&lt;-</span> <span class="fu">posterior_linpred</span>(fit3, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>lin_pred <span class="ot">&lt;-</span> <span class="fu">posterior_linpred</span>(fit3, </span>
 <span id="cb35-2"><a></a>                              <span class="at">newdata =</span> mom120)</span>
 <span id="cb35-3"><a></a>post_pred <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(fit3, </span>
 <span id="cb35-4"><a></a>                               <span class="at">newdata =</span> mom120)</span>
 <span id="cb35-5"><a></a>(lp_range <span class="ot">&lt;-</span> <span class="fu">quantile</span>(lin_pred, </span>
-<span id="cb35-6"><a></a>                      <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-6"><a></a>                      <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      5%      95% 
  96.5370 101.4359 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>(pp_range <span class="ot">&lt;-</span> <span class="fu">quantile</span>(post_pred, </span>
-<span id="cb37-2"><a></a>                      <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>(pp_range <span class="ot">&lt;-</span> <span class="fu">quantile</span>(post_pred, </span>
+<span id="cb37-2"><a></a>                      <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       5%       95% 
  68.88551 128.75195 </code></pre>
@@ -861,7 +832,6 @@ sigma 18.0    0.6
 <section id="linear-regression-assumptions" class="slide level2">
 <h2>Linear Regression Assumptions</h2>
 <p>Presented in the order of importance</p>
-<div>
 <ul>
 <li class="fragment">Validity of the model for the question at hand</li>
 <li class="fragment">Representativeness and valid scope of inference</li>
@@ -870,12 +840,10 @@ sigma 18.0    0.6
 <li class="fragment">Equal variance of errors</li>
 <li class="fragment">Normality of errors</li>
 </ul>
-</div>
 </section>
 <section id="quick-tips-to-improve-your-regression-modeling" class="slide level2 smaller">
 <h2>10+ quick tips to improve your regression modeling</h2>
 <p>This advice comes from “Regression and Other Stories” by Gelman and Hill</p>
-<div>
 <ul>
 <li class="fragment">Think generatively</li>
 <li class="fragment">Think about what you are measuring</li>
@@ -890,7 +858,6 @@ sigma 18.0    0.6
 <li class="fragment">Do causal inference in a targeted way, not as a byproduct of a large regression</li>
 <li class="fragment">Learn methods through live examples</li>
 </ul>
-</div>
 </section>
 <section id="thanks-for-being-part-of-my-class" class="slide level2 smaller">
 <h2>Thanks for being part of my class!</h2>
@@ -1099,7 +1066,7 @@ sigma 18.0    0.6
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1164,190 +1131,173 @@ sigma 18.0    0.6
     </script>
 
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/ericnovik\.github\.io\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>
