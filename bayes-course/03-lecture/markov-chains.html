@@ -206,17 +206,14 @@ window.Quarto = {
 </header>
 
 
+<p>Consider a sequence of random variables <span class="math inline">\(Y_1, Y_2, Y_3, Y_4,...\)</span>, where for our purposes the subscripts index time. You can write the joint PDF as <span class="math inline">\(f(y_1) f(y_2 \mid y_1) f(y_3 \mid y_2,y_1) f(y_4 \mid y_3, y_2, y_1)...\)</span>. Larry Wasserman uses a notational trick to write this as <span class="math inline">\(\prod_{i=1}^{N} f(y_i \mid \text{past}_i)\)</span>, where <span class="math inline">\(\text{past}_i = y_{i-1}, y_{i-2}, ..., y_0\)</span></p>
 <p>A Markov chain is a stochastic process represented by a sequence of random variables <span class="math inline">\(Y = Y_0, Y_1, \dots\)</span> that obeys a Markov property. In words, the Markov property says that the future is independent of the past, conditioned on the present.</p>
 <p><span class="math display">\[
-\DeclareMathOperator{\E}{\mathbb{E}}
-\DeclareMathOperator{\P}{\mathbb{P}}
-\DeclareMathOperator{\V}{\mathbb{V}}
-\DeclareMathOperator{\L}{\mathcal{L}}
-\DeclareMathOperator{\I}{\text{I}}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\DeclareMathOperator*{\argmin}{arg\,min}
-\P(Y_{t+1}=y_{t+1} \mid Y_t=y_t, Y_{t-1}=y_{t-1}, \dots, Y_0=y_0) = \P(Y_{t+1}=y_{t+1} \mid Y_t=y_t)
-\]</span></p>
+\begin{aligned}
+\mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=y_{t+1} \mid Y_t=y_t, Y_{t-1}=y_{t-1}, \dots, Y_0=y_0) &amp;= \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=y_{t+1} \mid Y_t=y_t) \\
+&amp;= \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=j \mid Y_t=i)
+\end{aligned}
+\]</span> The last equality is there to simplify the notation that will become handy later on, where we take the current state <span class="math inline">\(i = y_t\)</span> and the next state <span class="math inline">\(j = y_{t+1}\)</span>.</p>
 <p>You can think of a Markov Chain as a process that evolves in time according to some rule governed by probabilities of moving around its state space.</p>
 <p>A discrete state space of a Markov Chain is a collection of all possible states that this chain can visit, which can be finite or infinite.</p>
 <p>Consider a Markov chain with infinite but discrete state space. You start with $100 in your account and every day, you can either make $1 with probability <span class="math inline">\(1/2\)</span>, or lose $1. If you are allowed to overdraft the account, the state space is all integers. The Markov property is satisfied since, on any given day, you only need to know the balance during the previous day, not the whole history of transactions. We can visualize this process with a simulation.</p>
@@ -225,38 +222,42 @@ window.Quarto = {
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>W  <span class="ot">&lt;-</span> <span class="dv">100</span>L</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Pr <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>N  <span class="ot">&lt;-</span> <span class="dv">365</span>L <span class="sc">*</span> <span class="dv">10</span>L <span class="co"># 10 years</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>n  <span class="ot">&lt;-</span> <span class="dv">50</span>L        <span class="co"># compute 50 possible futures</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>run_chain <span class="ot">&lt;-</span> <span class="cf">function</span>(N, p, w) {</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fu">c</span>(p, <span class="dv">1</span><span class="sc">-</span>p), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  balance <span class="ot">&lt;-</span> w <span class="sc">+</span> <span class="fu">cumsum</span>(s)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(balance)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>chains <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n, <span class="fu">run_chain</span>(N, Pr, W))</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(chains) <span class="sc">|&gt;</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Time =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>())</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> chains_df <span class="sc">|&gt;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>Time,        </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Chain"</span>, </span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Value"</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>W  <span class="ot">&lt;-</span> <span class="dv">100</span>L</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Pr <span class="ot">&lt;-</span> <span class="fl">0.5</span>        <span class="co"># Pr of up</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>N  <span class="ot">&lt;-</span> <span class="dv">365</span>L <span class="sc">*</span> <span class="dv">10</span>L <span class="co"># 10 years</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>n  <span class="ot">&lt;-</span> <span class="dv">50</span>L        <span class="co"># compute 50 possible futures</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>run_chain <span class="ot">&lt;-</span> <span class="cf">function</span>(N, p, w) {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">size =</span> N, <span class="at">prob =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">-</span>p, p), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  balance <span class="ot">&lt;-</span> w <span class="sc">+</span> <span class="fu">cumsum</span>(s)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(balance)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="dv">1</span><span class="sc">:</span>n, \(x) {</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">Chain =</span> <span class="fu">as.character</span>(x),</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Time =</span> <span class="dv">1</span><span class="sc">:</span>N,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">Value =</span> <span class="fu">run_chain</span>(N, Pr, W)</span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># color more extreme futures more red and less extreme more green</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>extremeness <span class="ot">&lt;-</span> chains_df <span class="sc">|&gt;</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Chain) <span class="sc">|&gt;</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">extreme =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Value <span class="sc">-</span> W)), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(chains_df, extremeness, <span class="at">by =</span> <span class="st">"Chain"</span>)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(chains_df, <span class="fu">aes</span>(<span class="at">x =</span> Time<span class="sc">/</span><span class="dv">365</span>, <span class="at">y =</span> Value, <span class="at">group =</span> Chain, <span class="at">color =</span> extreme)) <span class="sc">+</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Evolution of $100 assuming Pr(Up $1) = 1/2 = Pr(Down $1)"</span>, </span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (years)"</span>, <span class="at">y =</span> <span class="st">"Balance"</span>) <span class="sc">+</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">low =</span> <span class="st">"green"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># color more extreme futures more red and less extreme more green</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>extremeness <span class="ot">&lt;-</span> chains_df <span class="sc">|&gt;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Chain) <span class="sc">|&gt;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">extreme =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Value <span class="sc">-</span> W)), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>chains_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(chains_df, extremeness, <span class="at">by =</span> <span class="st">"Chain"</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(chains_df, <span class="fu">aes</span>(<span class="at">x =</span> Time<span class="sc">/</span><span class="dv">365</span>, <span class="at">y =</span> Value, <span class="at">group =</span> Chain, <span class="at">color =</span> extreme)) <span class="sc">+</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Evolution of $100 assuming Pr(Up $1) = 1/2 = Pr(Down $1)"</span>, </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (years)"</span>, <span class="at">y =</span> <span class="st">"Balance"</span>) <span class="sc">+</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">low =</span> <span class="st">"green"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -265,6 +266,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>A lot more can be said about these types of processes, but before we get there, let’s consider a simpler scenario.</p>
 <p>As an example of a finite, discrete state space, consider a market that could go up or down daily. If it is an up day, we assume that tomorrow will be an up day with probability 3/5 and a down day with probability 2/5. If it is a down day, tomorrow will be a down day with probability 2/3 and an up day with probability 1/3. This kind of mild memory encodes the fact that there is a slightly higher probability of going down if we are in the down day than going up if we are in the up day.</p>
 <p>This chain has only two states, Up and Down, and it can be visualized using a graph and encoded using a matrix, which we will call a transition matrix Q.</p>
 <div class="cell" data-layout-align="center">
@@ -284,7 +286,7 @@ Q = \begin{array}{c|cc}
 \text{Down} &amp; \frac{1}{3} &amp; \frac{2}{3}
 \end{array}
 \]</span></p>
-<p>This matrix has a property that all rows sum to one. Each entry of the matrix can specified by <span class="math inline">\(q_{y_t,\, y_{t+1}} = \P(Y_{t+1}=y_{t+1} \mid Y_t=y_t)\)</span> which is the probability of transitioning from state <span class="math inline">\(y_t\)</span> to state <span class="math inline">\(y_{t+1}\)</span>. For example suppose we are at <span class="math inline">\(y_t = \text{Up}\)</span>, then <span class="math inline">\(q_{t,\, t+1} = 3/5\)</span> is the probability of another up day tomorrow (at time <span class="math inline">\(t+1\)</span>) and <span class="math inline">\(q_{t,\, t+1} = 2/5\)</span> is the probability of a down day tomorrow. To simplify the notation we will label <span class="math inline">\(y_t = i\)</span>, and <span class="math inline">\(y_{t+1} = j\)</span>, following the usual matrix notation, with <span class="math inline">\(q_{ij}\)</span>, indexing each entry in <span class="math inline">\(Q\)</span>.</p>
+<p>This matrix has a property that all rows sum to one. Each entry of the matrix can specified by <span class="math inline">\(q_{y_t,\, y_{t+1}} = \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=y_{t+1} \mid Y_t=y_t)\)</span> which is the probability of transitioning from state <span class="math inline">\(y_t\)</span> to state <span class="math inline">\(y_{t+1}\)</span>. For example suppose we are at <span class="math inline">\(y_t = \text{Up}\)</span>, then <span class="math inline">\(q_{t,\, t+1} = 3/5\)</span> is the probability of another up day tomorrow (at time <span class="math inline">\(t+1\)</span>) and <span class="math inline">\(q_{t,\, t+1} = 2/5\)</span> is the probability of a down day tomorrow. To simplify the notation we will label <span class="math inline">\(y_t = i\)</span>, and <span class="math inline">\(y_{t+1} = j\)</span>, following the usual matrix notation, with <span class="math inline">\(q_{ij}\)</span>, indexing each entry in <span class="math inline">\(Q\)</span>.</p>
 <p>Let’s say we start in <span class="math inline">\(y_t = \text{Up}\)</span> and run the process for 10,000 days. What proportion of time will we spend in a happy Up state? We will run a simulation first and then check the result analytically.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(expm)</span>
@@ -379,6 +381,9 @@ $vectors
 0.45 0.55 </code></pre>
 </div>
 </div>
+</section>
+<section id="back-to-infinity-and-gamblers-ruin" class="level1">
+<h1>Back to infinity and gambler’s ruin</h1>
 
 
 

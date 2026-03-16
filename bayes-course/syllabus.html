@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Instructor: eric.novik@nyu.edu">
+<meta name="dcterms.date" content="2026-01-29">
+
+<title>APSTA-GE 2123: Bayesian Inference – Eric Novik</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-ff63373b1067ca6f91cf1456aa1f00a2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Eric Novik</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../smac.html"> 
+<span class="menu-text">APSTA-GE 2006: Statistics, Math, and Computing Bootcamp</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../bayes-course.html"> 
+<span class="menu-text">APSTA-GE 2123: Bayesian Inference</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="syllabus.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">APSTA-GE 2123: Bayesian Inference</h1>
+<p class="subtitle lead">NYU Applied Statistics for Social Science Research</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Instructor: eric.novik@nyu.edu </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">29 Jan 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="course-description" class="level2">
+<h2 class="anchored" data-anchor-id="course-description">Course description</h2>
+<p>This course will introduce students to Bayesian data analysis and Bayesian workflow, a process we follow to develop statistical models, test their efficacy and make model improvements. This is a deep subject with a rich history, and we can only offer an introductory treatment during a seven-week course. Nonetheless, motivated students should get enough experience from this course to learn how to think like a Bayesian, understand the basics of Bayesian machinery, fit General Linear Models using Bayesian inference, evaluate model quality, and make predictions.</p>
+<p>During the course, we will use simulations, the R language, Stan, and the <code>rstanarm</code> package.</p>
+</section>
+<section id="student-learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="student-learning-outcomes">Student Learning Outcomes</h2>
+<p>Upon completion of the course, students will be able to:</p>
+<ol type="1">
+<li><p>Explain and be able to implement the key components of the Bayesian workflow.</p></li>
+<li><p>Understand the role of likelihood, prior distribution, prior predictive distribution, and posterior predictive distribution.</p></li>
+<li><p>Implement a simple MCMC sampler in R.</p></li>
+<li><p>Fit GLMs using <code>rstanarm</code> and <code>Stan</code> and interpret the output.</p></li>
+<li><p>Evaluate if you should trust the model inferences (draws from the posterior).</p></li>
+<li><p>Evaluate if the model is adequate for the intended task.</p></li>
+</ol>
+</section>
+<section id="times-location-and-office-hours" class="level2">
+<h2 class="anchored" data-anchor-id="times-location-and-office-hours">Times, Location, and Office Hours</h2>
+<p>In-person weekly lectures will be held every Monday from 5 p.m. to 8 p.m. in Tisch Hall, Room LC11, beginning on March 17 and ending on May 5. Office hours will be held online on Thursdays from 5 pm to 7 pm by <a href="https://calendar.app.google/N5VpwjuW9HzhBB6a6">appointment</a>.</p>
+</section>
+<section id="course-prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="course-prerequisites">Course prerequisites</h2>
+<p>Students should be familiar with the R language. Students should be comfortable with probability, basic differential and integral calculus, and have taken at least one regression course. Students don’t have to be familiar with Stan or <code>rstanarm</code>, and no prior knowledge of Bayes is expected.</p>
+</section>
+<section id="course-materials" class="level2">
+<h2 class="anchored" data-anchor-id="course-materials">Course materials</h2>
+<p>The core text for the course will be <em>Bayes Rules!</em> by <span class="citation" data-cites="johnson2022">Johnson, Ott, and Dogucu (<a href="#ref-johnson2022" role="doc-biblioref">2022</a>)</span>, which is available for free <a href="https://www.bayesrulesbook.com/">online</a> and as a paper copy from <a href="https://www.routledge.com/Bayes-Rules-An-Introduction-to-Applied-Bayesian-Modeling/Johnson-Ott-Dogucu/p/book/9780367255398">CRC Press</a>. We will also read <a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a> by <span class="citation" data-cites="gelman2020">Gelman et al. (<a href="#ref-gelman2020" role="doc-biblioref">2020</a>)</span>.</p>
+<p>Students are expected to have access to R and RStudio or another R programming environment. Students should follow the setup instructions from the <a href="https://www.bayesrulesbook.com/preface.html#setup">Getting set up</a> chapter.</p>
+<p>For those who are interested in a more in-depth treatment of the subject, you could do worse than the following choices:</p>
+<ul>
+<li><p><a href="https://xcelab.net/rm/statistical-rethinking/">Statistical Rethinking</a>, <span class="citation" data-cites="mcelreath2020">McElreath (<a href="#ref-mcelreath2020" role="doc-biblioref">2020</a>)</span></p></li>
+<li><p><a href="https://ben-lambert.com/a-students-guide-to-bayesian-statistics/">A Student’s Guide to Bayesian Statistics</a>, <span class="citation" data-cites="lambert2018">Lambert (<a href="#ref-lambert2018" role="doc-biblioref">2018</a>)</span></p></li>
+<li><p><a href="http://stat.columbia.edu/~gelman/book/">Bayesian Data Analysis</a>, <span class="citation" data-cites="gelman2014">Gelman et al. (<a href="#ref-gelman2014" role="doc-biblioref">2014</a>)</span></p></li>
+<li><p><a href="https://mc-stan.org/docs/stan-users-guide/index.html">Stan User’s Guide</a>, <span class="citation" data-cites="standevelopmentteam2022">Stan Development Team (<a href="#ref-standevelopmentteam2022" role="doc-biblioref">2022</a>)</span></p></li>
+</ul>
+<p>Aki Vehtari from Aalto University compiled an excellent list of mostly Bayesian texts <a href="https://statmodeling.stat.columbia.edu/2018/05/14/aki_books/">here</a>.</p>
+</section>
+<section id="course-outline" class="level2">
+<h2 class="anchored" data-anchor-id="course-outline">Course Outline</h2>
+<p>The following tentative schedule assumes seven 3-hour sessions during which we plan to cover the following material.</p>
+<ul>
+<li><p><strong>(1) Bayesian Workflow</strong></p>
+<p>We will briefly discuss the history of Bayesian inference and introduce the key components of the Bayesian workflow — from model development to model testing and decision-making. We will dig into the key components of Bayes’s rule and introduce the Binomial model.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-1.html">1</a> and <a href="https://www.bayesrulesbook.com/chapter-2.html">2</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 1: Introduction</li>
+</ul></li>
+<li><p><strong>(2) Conjugate models: Beta-Binomial</strong></p>
+<p>To demonstrate the Bayesian machinery, we will review a few simple models for which analytical solutions are available, particularly the beta-binomial. In practice, we seldom use conjugate models, but they have pedagogical value, are very fast, and allow us to validate numerical methods.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-3.html">3</a> and <a href="https://www.bayesrulesbook.com/chapter-4.html">4</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 2: Before fitting a model</li>
+</ul></li>
+<li><p><strong>(3) Other conjugate models and introduction to posterior sampling</strong></p>
+<p>This lecture will examine Gamma-Poisson and Normal-Normal models and discuss posterior sampling. We will begin with grid approximations and then show the output from state-of-the-art posterior samplers, such as the NUTS sampler available in Stan. We will introduce the Stan language, demonstrate a few simple models written in Stan, and go over MCMC diagnostics.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-5.html">5</a> and <a href="https://www.bayesrulesbook.com/chapter-6.html">6</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 3: Fitting a model</li>
+</ul></li>
+<li><p><strong>(4) MCMC, posterior inference, and prediction</strong></p>
+<p>Most interesting models don’t have nice analytic posteriors since most integrals do not have closed-form solutions. Fortunately, Markov Chain Monte Carlo (MCMC) algorithms make it possible to sample from target distributions with arbitrary precision (in infinite time). To understand how MCMC works, we will look under the hood of one of the oldest algorithms, the Metropolis-Hastings algorithm (1953, 1970). We will introduce the posterior predictive distribution.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-7.html">7</a> and <a href="https://www.bayesrulesbook.com/chapter-8.html">8</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 4: Using constructed data to find and understand problems</li>
+</ul></li>
+<li><p><strong>(5) Bayesian linear regression and model evaluation</strong></p>
+<p>Modern MCMC algorithms, such as Hamiltonian Monte Carlo (<span class="citation" data-cites="homan2014">Homan and Gelman (<a href="#ref-homan2014" role="doc-biblioref">2014</a>)</span>), allow us to sample from complicated posteriors efficiently. The Stan language implements this method, and we will use it for the remainder of the course to draw samples from posterior distributions. We will also build a linear regression model in the <code>rstanarm</code> package, which exposes many Stan models via a familiar R language formula interface. We will discuss what makes a good model.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-9.html">9</a> and <a href="https://www.bayesrulesbook.com/chapter-10.html">10</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 6: Evaluating and using a fitted model</li>
+</ul></li>
+<li><p><strong>(6) Expanding the linear model and modeling counts</strong></p>
+<p>We will discuss linear model expansion and compare model performance using leave-one-out cross-validation (LOO). We will also introduce models for analyzing count data, such as Poisson and Negative Binomial.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-11.html">11</a> and <a href="https://www.bayesrulesbook.com/chapter-12.html">12</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 7: Modifying a model</li>
+</ul></li>
+<li><p><strong>(7) Logistic regression and introduction to hierarchical models</strong></p>
+<p>In the final lecture, we will discuss logistic regression and introduce hierarchical models – the workhorse of Bayesian analysis. We will fit and evaluate hierarchical regression and compare the results to complete pooling and no-pooling estimates.</p>
+<ul>
+<li>Bayes Rules!, Chapters <a href="https://www.bayesrulesbook.com/chapter-13.html">13</a> and <a href="https://www.bayesrulesbook.com/chapter-15.html">15</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Bayesian Workflow</a>, Chapter 5: Addressing computational problems</li>
+</ul></li>
+</ul>
+</section>
+<section id="grading" class="level2">
+<h2 class="anchored" data-anchor-id="grading">Grading</h2>
+<p>There will be six homework assignments, six short in-class quizzes, and a final exam. All assignments must be completed in <a href="https://rmarkdown.rstudio.com/lesson-1.html">R Markdown</a>, <a href="https://quarto.org/docs/get-started/hello/rstudio.html">Quarto</a>, or similar systems suitable for scientific publication.</p>
+<ul>
+<li>Six homework assignments: 20%</li>
+<li>Six short quizzes: 50%</li>
+<li>Final exap: 20%</li>
+<li>Class participation: 10%</li>
+</ul>
+<p>The <strong>homework</strong> will be assigned at the end of each lecture and due by the following Monday at 5 pm. The homework includes introductory problems in Bayesian Inference and will not be graded for correctness but to get the credit, it must be submitted, and done independently without the use of AI. Since it will not be graded for correctness (ChatGPT and similar tools are perfectly capable of solving these problems), we can freely discuss homework in the online forum; refer to the class participation.</p>
+<p>The <strong>quizzes</strong> are designed to test your understanding of the material. Quizzes will be administered at the beginning of each class and will take 15-20 minutes. They will done with paper and pen(sil) and you can bring one 8.5 x 11 paper with your notes on both sides (handwritten), but otherwise no other materials. They will include one to three simple questions that do not require complicated computations or proofs and are not meant to be tricky. We will drop the lowest grade.</p>
+<p><strong>Final exam</strong> will be administered in class during finals week. Each student will be given a small dataset to analyze and a list of questions. The students will be expected to perform the analysis on their computer using the tools developed during the semester and submit both the <code>Rmd</code> or <code>Quarto</code> file and the rendered PDF output. The use AI is not allowed during the final but otherwise the exam is open book/notes.</p>
+<p>To earn <strong>class participation</strong> credit, students must attend all lectures <em>and</em> post in the online lecture discussions on Brightspace under the Class Participation topic. For each lecture, please ask a question about the material, ask a general question about Bayesian analysis, or respond to the question asked by another student.</p>
+</section>
+<section id="use-of-ai-and-large-language-models" class="level2">
+<h2 class="anchored" data-anchor-id="use-of-ai-and-large-language-models">Use of AI and Large Language Models</h2>
+<p>Most of you are familiar with LLMs. They are extremely helpful tools but can be helpful and harmful during learning. Please do not use LLMs for your homework or during the final exam. The best use of an LLM is as a tutor. You can and should ask LLMs to clarify confusing concepts particularly for topics that are not at the edge of human knowledge, which include all the topics we will be covering in class. During the first class, I will demo how to effectively use LLMs as a tutor using the IPEPSI (don’t Google it) principle.</p>
+</section>
+<section id="qa-and-after-class-discussion" class="level2">
+<h2 class="anchored" data-anchor-id="qa-and-after-class-discussion">Q&amp;A and After-Class Discussion</h2>
+<p>We will set up several discussion threads on Brightspace at the beginning of class, including homework Q&amp;A. All questions regarding class material, homework, and the final should be posted on Brightspace so other students can benefit from the answers. Please don’t email the instructor or the grader about the course material – post on the forums instead.</p>
+</section>
+<section id="participation-and-attendance-policies" class="level2">
+<h2 class="anchored" data-anchor-id="participation-and-attendance-policies">Participation and Attendance Policies</h2>
+<p>Students are expected to come to class. The students will participate in live surveys during class, discuss concepts with their peers, and take short quizzes.</p>
+</section>
+<section id="other-resources" class="level2">
+<h2 class="anchored" data-anchor-id="other-resources">Other Resources</h2>
+<p>The following resources may be helpful to those who need a refresher on the prerequisites.</p>
+<ul>
+<li><p><a href="https://r4ds.hadley.nz/">R for Data Science</a>, <span class="citation" data-cites="wickham2016">Wickham and Grolemund (<a href="#ref-wickham2016" role="doc-biblioref">2016</a>)</span></p></li>
+<li><p><a href="http://calculusmadeeasy.org/">Calculus Made Easy</a>, <span class="citation" data-cites="thompson1980">Thompson (<a href="#ref-thompson1980" role="doc-biblioref">1980</a>)</span></p></li>
+<li><p><a href="https://openstax.org/details/books/calculus-volume-1">Calculus</a>, <span class="citation" data-cites="herman2016">Herman, Strang, and OpenStax (<a href="#ref-herman2016" role="doc-biblioref">2016</a>)</span></p></li>
+<li><p><a href="https://bit.ly/calc-3blue1brown">YouTube: Essence of Calculus</a>, <span class="citation" data-cites="sanderson2018">Sanderson (<a href="#ref-sanderson2018" role="doc-biblioref">2018</a>)</span></p></li>
+<li><p><a href="https://projects.iq.harvard.edu/stat110/home">Intoduction to Probability</a>, <span class="citation" data-cites="blitzstein2019">Blitzstein and Hwang (<a href="#ref-blitzstein2019" role="doc-biblioref">2019</a>)</span></p></li>
+<li><p><a href="https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf">Introduction to Probability Cheatsheet v2</a>, Chen (2015)</p></li>
+</ul>
+</section>
+<section id="academic-integrity" class="level2">
+<h2 class="anchored" data-anchor-id="academic-integrity">Academic Integrity</h2>
+<p>All students are responsible for understanding and complying with the <a href="https://steinhardt.nyu.edu/current-students/academic-policies-and-procedures">NYU Steinhardt Policies and Academic Integrity</a>.</p>
+</section>
+<section id="students-with-disabilities-statement" class="level2">
+<h2 class="anchored" data-anchor-id="students-with-disabilities-statement">Students with Disabilities Statement</h2>
+<p>Students with physical or learning disabilities are required to register with the Moses Center for Students with Disabilities at 726 Broadway, 2nd Floor, (212-998-4980) and are required to present a letter from the Center to the instructor at the start of the semester in order to be considered for appropriate accommodation.</p>
+</section>
+<section id="mental-health-statement" class="level2">
+<h2 class="anchored" data-anchor-id="mental-health-statement">Mental Health Statement</h2>
+<p>If you are experiencing undue personal and/or academic stress during the semester that may be interfering with your ability to perform academically, the NYU Wellness Exchange (212 443 9999) offers a range of services to assist and support you. I am available to speak with you about stresses related to your work in my course, and I can assist you in connecting with the Wellness Exchange. Additionally, if you anticipate any challenges with completing the assignments, readings, exams and other work required in this course, I encourage you to register with the Moses Center (212 998 4980) in advance so that you may be granted the proper academic accommodations.</p>
+</section>
+<section id="references" class="level2">
+
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-blitzstein2019" class="csl-entry" role="listitem">
+Blitzstein, Joseph K., and Jessica Hwang. 2019. <em>Introduction to Probability</em>. Second edition. Boca Raton: crc Press/Taylor &amp; Francis Group.
+</div>
+<div id="ref-gelman2014" class="csl-entry" role="listitem">
+Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Donald B Rubin. 2014. <em>Bayesian Data Analysis, Third Edition</em>. <a href="https://doi.org/10.1007/s13398-014-0173-7.2">https://doi.org/10.1007/s13398-014-0173-7.2</a>.
+</div>
+<div id="ref-gelman2020" class="csl-entry" role="listitem">
+Gelman, Andrew, Aki Vehtari, Daniel Simpson, Charles C. Margossian, Bob Carpenter, Yuling Yao, Lauren Kennedy, Jonah Gabry, Paul-Christian Bürkner, and Martin Modrák. 2020. <span>“Bayesian Workflow.”</span> <em>arXiv:2011.01808 [Stat]</em>, November. <a href="http://arxiv.org/abs/2011.01808">http://arxiv.org/abs/2011.01808</a>.
+</div>
+<div id="ref-herman2016" class="csl-entry" role="listitem">
+Herman, Edwin, Gilbert Strang, and OpenStax. 2016. <em>Calculus Volume 1</em>. <a href="https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf">https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf</a>.
+</div>
+<div id="ref-homan2014" class="csl-entry" role="listitem">
+Homan, Matthew D., and Andrew Gelman. 2014. <span>“The No-u-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo.”</span> <em>The Journal of Machine Learning Research</em> 15 (1): 15931623.
+</div>
+<div id="ref-johnson2022" class="csl-entry" role="listitem">
+Johnson, Alicia A., Miles Q. Ott, and Mine Dogucu. 2022. <span>“Bayes’ Rule.”</span> In, 17–48. Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429288340-2">https://doi.org/10.1201/9780429288340-2</a>.
+</div>
+<div id="ref-lambert2018" class="csl-entry" role="listitem">
+Lambert, Ben. 2018. <em>A Student<span>’</span>s Guide to Bayesian Statistics</em>. 1st edition. Los Angeles: SAGE Publications Ltd.
+</div>
+<div id="ref-mcelreath2020" class="csl-entry" role="listitem">
+McElreath, Richard. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in r and STAN</em>. 2nd edition. Boca Raton: Chapman; Hall/CRC.
+</div>
+<div id="ref-sanderson2018" class="csl-entry" role="listitem">
+Sanderson, Grant. 2018. <span>“Essence of Calculus,”</span> November. <a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr">https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr</a>.
+</div>
+<div id="ref-standevelopmentteam2022" class="csl-entry" role="listitem">
+Stan Development Team. 2022. <em>Stan Modeling Language Users Guide and Reference Manual</em>. 2.30 ed. <a href="https://mc-stan.org/docs/stan-users-guide/index.html">https://mc-stan.org/docs/stan-users-guide/index.html</a>.
+</div>
+<div id="ref-thompson1980" class="csl-entry" role="listitem">
+Thompson, Silvanus P. 1980. <em>Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus</em>. 3d ed. New York: St. Martin’s Press.
+</div>
+<div id="ref-wickham2016" class="csl-entry" role="listitem">
+Wickham, Hadley, and Garrett Grolemund. 2016. <em>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</em>. First edition. Sebastopol, CA: O’Reilly. <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
