@@ -10,16 +10,6 @@ knitr:
     warning: false
 ---
 
-```{r}
-#| echo: false
-
-library(ggplot2)
-set_theme(theme_linedraw())
-```
-
-A Markov chain is a stochastic process represented by a sequence of random variables $Y = Y_0, Y_1, \dots$ that obeys a Markov property. In words, the Markov property says that the future is independent of the past, conditioned on the present. 
-
-$$
 \DeclareMathOperator{\E}{\mathbb{E}}
 \DeclareMathOperator{\P}{\mathbb{P}}
 \DeclareMathOperator{\V}{\mathbb{V}}
@@ -27,8 +17,25 @@ $$
 \DeclareMathOperator{\I}{\text{I}}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
-\P(Y_{t+1}=y_{t+1} \mid Y_t=y_t, Y_{t-1}=y_{t-1}, \dots, Y_0=y_0) = \P(Y_{t+1}=y_{t+1} \mid Y_t=y_t)
+
+```{r}
+#| echo: false
+
+library(ggplot2)
+set_theme(theme_linedraw())
+```
+
+Consider a sequence of random variables $Y_1, Y_2, Y_3, Y_4,...$, where for our purposes the subscripts index time. You can write the joint PDF as $f(y_1) f(y_2 \mid y_1) f(y_3 \mid y_2,y_1) f(y_4 \mid y_3, y_2, y_1)...$. Larry Wasserman uses a notational trick to write this as $\prod_{i=1}^{N} f(y_i \mid \text{past}_i)$, where $\text{past}_i = y_{i-1}, y_{i-2}, ..., y_0$
+
+A Markov chain is a stochastic process represented by a sequence of random variables $Y = Y_0, Y_1, \dots$ that obeys a Markov property. In words, the Markov property says that the future is independent of the past, conditioned on the present. 
+
 $$
+\begin{aligned}
+\P(Y_{t+1}=y_{t+1} \mid Y_t=y_t, Y_{t-1}=y_{t-1}, \dots, Y_0=y_0) &= \P(Y_{t+1}=y_{t+1} \mid Y_t=y_t) \\
+&= \P(Y_{t+1}=j \mid Y_t=i)
+\end{aligned}
+$$
+The last equality is there to simplify the notation that will become handy later on, where we take the current state $i = y_t$ and the next state $j = y_{t+1}$.
 
 You can think of a Markov Chain as a process that evolves in time according to some rule governed by probabilities of moving around its state space.
 
@@ -45,39 +52,45 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(scales)
+library(purrr)
 
 set.seed(1234)
 W  <- 100L
-Pr <- 0.5
+Pr <- 0.5        # Pr of up
 N  <- 365L * 10L # 10 years
 n  <- 50L        # compute 50 possible futures
+
 run_chain <- function(N, p, w) {
-  s <- sample(c(-1, 1), size = N, prob = c(p, 1-p), replace = TRUE)
+  s <- sample(c(-1, 1), size = N, prob = c(1-p, p), replace = TRUE)
   balance <- w + cumsum(s)
   return(balance)
 }
-chains <- replicate(n, run_chain(N, Pr, W))
-chains_df <- as.data.frame(chains) |>
-  mutate(Time = 1:n())
-chains_df <- chains_df |>
-  pivot_longer(
-    cols = -Time,        
-    names_to = "Chain", 
-    values_to = "Value" 
+
+chains_df <- map_dfr(1:n, \(x) {
+  tibble(
+    Chain = as.character(x),
+    Time = 1:N,
+    Value = run_chain(N, Pr, W)
   )
+})
+
 # color more extreme futures more red and less extreme more green
 extremeness <- chains_df |>
   group_by(Chain) |>
   summarize(extreme = max(abs(Value - W)), .groups = "drop")
 chains_df <- left_join(chains_df, extremeness, by = "Chain")
+
 ggplot(chains_df, aes(x = Time/365, y = Value, group = Chain, color = extreme)) +
   geom_line(linewidth = 0.1) +
   labs(title = "Evolution of $100 assuming Pr(Up $1) = 1/2 = Pr(Down $1)", 
        x = "Time (years)", y = "Balance") +
   scale_color_gradient(low = "green", high = "red") +
   scale_y_continuous(labels = dollar_format()) +
+  scale_x_continuous(breaks = seq(0, 10, by = 1)) +
   theme(legend.position = "none")
 ```
+
+A lot more can be said about these types of processes, but before we get there, let's consider a simpler scenario.
 
 As an example of a finite, discrete state space, consider a market that could go up or down daily. If it is an up day, we assume that tomorrow will be an up day with probability 3/5 and a down day with probability 2/5. If it is a down day, tomorrow will be a down day with probability 2/3 and an up day with probability 1/3. This kind of mild memory encodes the fact that there is a slightly higher probability of going down if we are in the down day than going up if we are in the up day. 
 
@@ -204,5 +217,8 @@ stationary_distribution <- stationary_vec / sum(stationary_vec)
 names(stationary_distribution) <- c("Up", "Down")
 print(stationary_distribution |> round(2))
 ```
+
+# Back to infinity and gambler's ruin
+
 
 
