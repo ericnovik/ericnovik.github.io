@@ -139,7 +139,7 @@ $$
 
 ::: incremental
 - An experienced sommelier is able to correctly identify 8 types of wine from 8 samples
-- An astrologer was able to correctly predict if the stock marker is up or down 8 times in a row
+- An astrologer was able to correctly predict if the stock market is up or down 8 times in a row
 - Is your inference about their predictive ability different? The data are the same!
 - Should we let data speak?
 :::
@@ -152,62 +152,13 @@ $$
 :::
 
 
-## IPEPSI: Checklist for how to use AI as a tutor {.smaller}
-::: {.fragment}
-Supposed you forgot the law of iterated expectations (Adam's Law) which states
-$$
-\E(Y) = E_X(E_{Y|X}(Y \mid X))
-$$
-:::
-
-::: {.fragment}
-Use the following AI prompts
-:::
-
-::: incremental
-- I am a Masters student in Statistics. I want to go over the law of iterated expectations. First, give me an intuitive explanation. I will ask a follow-up question after.
-- Please, provide a step-by-step proof of the discrete case, explaining every move. 
-- Please provide a numerical example.
-- Now, please give me a practice problem.
-- Write a simulation and ask AI to check it OR say: write a simulation in R
-- How is this for an explanation? [Enter an explanation in your words and have it check you]
-:::
-
-## Adam's Law Simulation {.smaller}
-
-```{r}
-#| cache: true
-#| echo: true
-#| eval: false
-
-library(purrr)
-n <- 20
-class_sizes <- sample(n)
-mean_gpa_vec <- runif(n = n, 2.8, 3.2)
-N <- sum(class_sizes)
-W <- class_sizes / N
-G <- class_sizes |>
-  map(\(x) rnorm(n = x, mean = mean_gpa_vec, sd = 1))
-
-# E(Y)
-EY <- unlist(G) |> mean()
-print(EY)
-
-# E(E(Y | X))
-class_means <- map_dbl(G, mean) # can't just average those
-gpaXprob <- class_means * W
-EEYX <- sum(gpaXprob)
-print(EEYX)
-```
-
-
 ## Statistics vs. AI/ML (Simplification!) {.smaller}
 
 ::: incremental
 ::: columns
 ::: {.column width="50%"}
 
--   AI is about **automating tasks** that humans are able to to
+-   AI is about **automating tasks** that humans are able to do
     -   Recognizing faces, cats, and other objects
     -   Identifying tumors on a radiology scan
     -   Playing Chess and Go
@@ -299,7 +250,7 @@ Stephen Stigler gives 3:1 in favor of Nicholas Saunderson for the discovery of B
 ::: {.column width="50%"}
 ![](images/laplace.jpeg){fig-align="center"}
 
-Marquis Pierre Simon de Laplace (1729 --- 1827)
+Marquis Pierre Simon de Laplace (1749 --- 1827)
 
 "Uncertainty is a function of our ignorance, not a property of the world."
 :::
@@ -387,11 +338,6 @@ mean(Y < 11) # == 1/N * sum(Y < 11)
 :::
 :::
 
-::: {.fragment}
-::: callout-warning
-There is something sublte going on: a difference between generating 100 draws from one random variable $Y$ vs getting one draw from 100 $Y$s
-:::
-::: 
 
 ## Example Simulation {.small}
 
@@ -450,6 +396,70 @@ hist(Y_samples,
 :::
 
                          
+## Can't Stop Board Game
+
+![](images/cant-stop.webp){fig-align="center"}
+
+## Law of Total Probability (LOTP)
+Let $A$ be a partition of $\Omega$, so that each $A_i$ is disjoint, $\P(A_i >0)$, and $\cup A_i = \Omega$.
+$$
+\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)
+$$ 
+
+![](images/LTP.png){fig-align="center" width="500"}
+
+::: footer
+Image from Blitzstein and Hwang (2019), Page 55
+:::
+
+## BIPEPSE: AI as a tutor {.smaller}
+::: {.fragment}
+Suppose you forgot the law of iterated expectations (Adam's Law) which states
+$$
+\E(Y) = \E_X(\E_{Y|X}(Y \mid X))
+$$
+:::
+
+::: {.fragment}
+Use the following AI prompts
+:::
+
+::: incremental
+- **Background**: I am a Masters student in Statistics. I want to go over the law of iterated expectations. **Intuition**: First, give me an intuitive explanation. I will ask a follow-up question after.
+- **Proof**: Please, provide a step-by-step proof of the discrete case, explaining every move. 
+- **Example**: Please provide a numerical example.
+- **Problem**: Now, please give me a practice problem.
+- **Simulation**: Write a simulation and ask AI to check it OR say: write a simulation in R
+- **Explanation**: How is this for an explanation? [Enter an explanation in your words and have it check you]
+:::
+
+## Adam's Law Simulation {.smaller}
+
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+
+library(purrr)
+n <- 20
+class_sizes <- sample(n)
+mean_gpa_vec <- runif(n = n, 2.8, 3.2)
+N <- sum(class_sizes)
+W <- class_sizes / N
+G <- class_sizes |>
+  map(\(x) rnorm(n = x, mean = mean_gpa_vec, sd = 1))
+
+# E(Y)
+EY <- unlist(G) |> mean()
+print(EY)
+
+# E(E(Y | X))
+class_means <- map_dbl(G, mean) # can't just average those
+gpaXprob <- class_means * W
+EEYX <- sum(gpaXprob)
+print(EEYX)
+```
+
 ## Bivariate Case {.tinier}
 
 ::: {.fragment}
@@ -541,11 +551,15 @@ y - \mu_Y
 \right)
 $$
 
+$$
+\Sigma = \begin{bmatrix} \sigma_X^2 & \rho\,\sigma_X\sigma_Y \\ \rho\,\sigma_X\sigma_Y & \sigma_Y^2 \end{bmatrix}, \quad \rho = \frac{\operatorname{Cov}(X, Y)}{\sigma_X \, \sigma_Y}, \quad -1 \leq \rho \leq 1
+$$
+
 ::: columns
 ::: {.column width="50%"}
 ```{r}
 #| fig-width: 8
-#| fig-height: 4.5
+#| fig-height: 3.8
 #| fig-align: left
 
 library(mvtnorm)  # For bivariate normal distribution
@@ -590,7 +604,7 @@ plot_ly(
 ::: {.column width="50%"}
 ```{r}
 #| fig-width: 8
-#| fig-height: 4.5
+#| fig-height: 3.8
 #| fig-align: right
 
 # Create a data frame of the grid
@@ -627,7 +641,7 @@ plot_ly(
 :::
 :::
 
-## Bivariate Normal Demo {.small}
+## Bivariate Normal Demo {.tiny}
 ```{r}
 #| echo: true
 
@@ -647,27 +661,54 @@ dmv_norm <- dist_multivariate_normal(mu    = list(c(0, 0)),
 dimnames(dmv_norm) <- c("x", "y")
 variance(dmv_norm)
 covariance(dmv_norm)
-density(dmv_norm, cbind(-3, -3)) |> round(2) # should be low
+density(dmv_norm, cbind(3, 3)) |> round(2)   # should be low
 cdf(dmv_norm, cbind(3, 3)) |> round(2)       # should be high
-draws <- generate(dmv_norm, 1e4)             # draws from the bivariate normal
+```
+
+## Bivariate Normal Demo: Sampling {.smaller}
+
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+
+# draws from the bivariate normal
+draws <- generate(dmv_norm, 1e4)            
 str(draws)
 draws <- as_tibble(draws[[1]])
 head(draws)
+
 # estimated means
 colMeans(draws) |> round(2)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
 # estimated covariance matrix
 cov(draws) |> round(2)
-# estimated corelations matrix
+# estimated correlations matrix
 cor(draws) |> round(2)
 
 # should be close to cdf(dist, cbind(3, 3)); why?
-# both evaluate to P(X and Y < 3); & is an _and_ operator
+# both evaluate to P(X and Y < 3)
+# & is an _and_ operator
 mean(draws$x < 3 & draws$y < 3) |> round(2)
 
-# P(X < 0 or Y < 1); | is an _or_, not conditioning operator
+# P(X < 0 or Y < 1)
+# | is an _or_, not conditioning operator
 mean(draws$x < 0 | draws$y < 1) |> round(2)
 ```
 
+:::
+:::
+
+## Bivariate Normal Demo: Analytical {.tiny}
 
 How would we do the above analytically?
 $$
@@ -690,7 +731,7 @@ p_X_less_0_and_Y_less_1 <- cdf(dmv_norm, cbind(0, 1))
 (p_X_less_0 + p_Y_less_1 - p_X_less_0_and_Y_less_1) |> round(2)
 ```
 
-- Whould you rather do `mean(draws$x < 0 | draws$y < 1)` or the analytical solution?
+- Would you rather do `mean(draws$x < 0 | draws$y < 1)` or the analytical solution?
 - How would you evaluate $\P(X < 0 \mid Y < 1)$
 
 ```{r}
@@ -700,18 +741,6 @@ draws |> filter(y < 1) |>
   as.numeric() |> round(2)
 ```
 
-
-## Law of Total Probability (LOTP)
-Let $A$ be a partition of $\Omega$, so that each $A_i$ is disjoint, $\P(A_i >0)$, and $\cup A_i = \Omega$.
-$$
-\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)
-$$ 
-
-![](images/LTP.png){fig-align="center" width="500"}
-
-::: footer
-Image from Blitzstein and Hwang (2019), Page 55
-:::
 
 ## Bayes's Rule {.smaller}
 
@@ -755,7 +784,7 @@ $$
 -   $f(y \mid \theta, x)$: an observational model, P[DM]F when it is a function of $y$; in your book: $f(y \mid \pi)$
 -   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$; in your book: $\L(\pi \mid y)$
 -   Some people write $\L(\theta; y)$ or simply $\L(\theta)$
--   $U(z)$: utility function where $z$ can be $\theta$, $\tilde{y}$ 
+-   $U(z)$: utility function where $z$ can be some $g(\theta, \tilde{y})$ 
 -   $\E(U(z) \mid d)$: expected utility for decision $d$
 :::
 
@@ -788,7 +817,7 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
     - For $\theta=0.25$: \$5
     - For $\theta=0.50$: \$10
     - For $\theta=0.75$: \$25
-  - Does it makes sense to assume that each box type is equality likely?
+  - Does it make sense to assume that each box type is equally likely?
   - Work out the implied probabilities based on the payoffs, assuming fair game
   - Go to [https://ericnovik.github.io/apps/](https://ericnovik.github.io/apps/), click on Mystery Box and play 20 rounds
 
@@ -813,10 +842,11 @@ For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011
 ::: {.column width="60%"}
 
 ::: incremental
-- You can draw 5 balls from the box 
-- You can pay \$5 and play (make a guess), or pay \$0.50 for extra ball
-- After paying for extra ball, you pay $5 and play
-- For warm-ups: we take one ball from a box -- what is $\P(\text{red})$?
+- Select one box at random
+- Draw 5 balls from the box 
+- You can pay \$5 and play (make a guess), or pay \$0.50 for extra ball and play
+- If you buy an extra ball, you pay $5 and play
+- For warm-ups: you select a box and draw one ball -- what is $\P(\text{red})$?
 - Law of Total Probability (LOTP):
 :::
 
@@ -900,10 +930,17 @@ grid.arrange(p[[1]], p[[2]], p[[3]], nrow = 1)
 ::: incremental
 - We observe that 2 out of 5 balls are red
 - We can construct a likelihood function for $y = 2$ as a function of $\theta$
-- Let's check if this function is a probability distribution:
+:::
+
+::: {.fragment}
 $$
-f (y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
+f(\theta \mid y = 2) = \binom{5}{2} \theta^2 (1 - \theta)^{3}
 $$
+:::
+
+::: incremental
+- This is a function of $\theta$, not $y$
+- Is the likelihood a probability distribution? It does not integrate to 1 over $\theta$:
 :::
 
 ::: {.fragment}
@@ -917,8 +954,14 @@ integrate(dbinom_theta, lower = 0, upper = 1,
 ```
 :::
 
+## Prior Predictive Distribution
+
 ::: incremental
-- Recall, $f(y)$ is called marginal distribution or prior predictive distribution
+- The integral of the likelihood over $\theta$ (under a uniform prior) gives us the prior predictive distribution:
+$$
+f(y) = \int_{0}^{1} \binom{N}{y} \theta^y (1 - \theta)^{N - y}\, d\theta = \frac{1}{N + 1}
+$$
+- $f(y)$ is called the marginal distribution or prior predictive distribution
 - It tells us that prior to observing $y$, all values of $y$ are equally likely
 :::
 
@@ -1098,9 +1141,9 @@ Because of the asymmetric payoffs, we bet on $\theta=0.50$ despite it having a l
 ::: {.fragment}
 $$
 \begin{eqnarray*}
-\P(\tilde{y} = \text{red} \mid y) &=& \sum_{i=1}^{3} f(\tilde{y} = \text{red}, \ \theta_i \mid y) = \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i, \ y) f(\theta_i \mid y) \\
-&=& \sum_{i=1}^{3} f(\tilde{y} = \text{red} \mid \theta_i) f(\theta_i \mid y) \\
- \P(\tilde{y} = \text{red} \mid y) &=& 0.25 \times 0.526  + 0.50 \times 0.416  + 0.75 \times 0.058  \\
+f(\text{red} \mid y) &=& \sum_{i=1}^{3} f(\text{red}, \ \theta_i \mid y) = \sum_{i=1}^{3} f(\text{red} \mid \theta_i, \ y) f(\theta_i \mid y) \\
+&=& \sum_{i=1}^{3} f(\text{red} \mid \theta_i) f(\theta_i \mid y) \\
+ f(\text{red} \mid y) &=& 0.25 \times 0.526  + 0.50 \times 0.416  + 0.75 \times 0.058  \\
   &\approx& 0.383
 \end{eqnarray*}
 $$
@@ -1109,44 +1152,105 @@ $$
 
 
 ::: {.fragment}
-- Posterior predictive probability of green: $\P(\text{green}) = 1 - 0.383  \approx 0.617$
+- Posterior predictive probability of green: $f(\text{green} \mid y) = 1 - 0.383  \approx 0.617$
 :::
 
-## Updating Beliefs With the Extra Ball {.tiny}
+## Updating Beliefs: Case 1 — Extra Ball is Red {.smaller}
 
-### Case 1: Extra Ball is Red
+If the extra ball is red, we update our posterior using Bayes's rule, treating $f(\theta_i \mid y)$ as the prior:
 
-- **Update:** Multiply the original posterior for each $\theta$ by $\theta$:
-  - For $\theta=0.25$: $0.044 \times 0.25 = 0.011$
-  - For $\theta=0.50$: $0.559 \times 0.5 = 0.280$
-  - For $\theta=0.75$: $0.397 \times 0.75 = 0.298$
+::: {.fragment}
+$$
+f(\theta_i \mid y, \text{red}) = \frac{f(\text{red} \mid \theta_i, y) \cdot f(\theta_i \mid y)}{f(\text{red} \mid y)}
+$$
+:::
 
-- **Normalized probabilities:**
-  - $\P(0.25|\text{red}) \approx \frac{0.011}{0.589} \approx 0.019$
-  - $\P(0.50|\text{red}) \approx \frac{0.280}{0.589} \approx 0.475$
-  - $\P(0.75|\text{red}) \approx \frac{0.298}{0.589} \approx 0.506$
+::: incremental
+- Since draws are independent given $\theta$: $\,f(\text{red} \mid \theta_i, y) = f(\text{red} \mid \theta_i) = \theta_i$
+- Expand the denominator via LOTP: $\,f(\text{red} \mid y) = \sum_{j=1}^{3} \theta_j \cdot f(\theta_j \mid y) = 0.383$
+:::
 
-- **Expected prizes:**
-  - Bet on $\theta=0.25$: $0.019 \times 3 \approx 0.057$
-  - Bet on $\theta=0.50$: $0.475 \times 5 \approx 2.375$
-  - Bet on $\theta=0.75$: $0.506 \times 15 \approx 7.593$
+::: {.fragment}
+$$
+f(\theta_i \mid y, \text{red}) = 
+\frac{\overbrace{\theta_i}^{\text{Lik of red}} \cdot \overbrace{f(\theta_i \mid y)}^{\text{Current posterior}}}
+{\underbrace{\sum_{j=1}^{3} \theta_j \cdot f(\theta_j | y)}_{f(\text{red}|y) = 0.383}}
+$$
+:::
 
-## Case 2: Extra Ball is Green {.tiny}
+## Exercise: Case 1 — Extra Ball is Red {.smaller}
 
-- **Update:** Multiply the original posterior by $(1-\theta)$:
-  - For $\theta=0.25$: $0.044 \times 0.75 = 0.033$
-  - For $\theta=0.50$: $0.559 \times 0.5 = 0.280$
-  - For $\theta=0.75$: $0.397 \times 0.25 = 0.099$
+Current posterior and gross payoffs:
 
-- **Normalized probabilities:**
-  - $\P(0.25|\text{green}) \approx \frac{0.033}{0.412} \approx 0.080$
-  - $\P(0.50|\text{green}) \approx \frac{0.280}{0.412} \approx 0.680$
-  - $\P(0.75|\text{green}) \approx \frac{0.099}{0.412} \approx 0.240$
+| $\theta_i$ | $f(\theta_i \mid y)$ | Gross payoff |
+|:-----------:|:--------------------:|:------------:|
+| 0.25        | 0.526                | \$10         |
+| 0.50        | 0.416                | \$15         |
+| 0.75        | 0.058                | \$30         |
 
-- **Expected prizes:**
-  - Bet on $\theta=0.25$: $0.080 \times 3 \approx 0.240$
-  - Bet on $\theta=0.50$: $0.680 \times 5 \approx 3.400$
-  - Bet on $\theta=0.75$: $0.240 \times 15 \approx 3.600$
+$$
+\text{Prize}_i = \text{payoff}_i \times f(\theta_i \mid y, \text{red})
+$$
+
+Which $\theta$ should you bet on if the next ball is red?
+
+## Updating Beliefs: Case 1 — Solution {.tiny}
+
+- **Unnormalized weights** $\theta_i \cdot f(\theta_i \mid y)$:
+  - For $\theta=0.25$: $0.526 \times 0.25 = 0.1315$
+  - For $\theta=0.50$: $0.416 \times 0.50 = 0.2080$
+  - For $\theta=0.75$: $0.058 \times 0.75 = 0.0435$
+
+- **Normalized probabilities** (divide by $0.1315 + 0.2080 + 0.0435 = 0.383$):
+  - $f(0.25 \mid y,\, \text{red}) \approx 0.343$, $\quad f(0.50 \mid y,\, \text{red}) \approx 0.543$, $\quad f(0.75 \mid y,\, \text{red}) \approx 0.114$
+
+- **Expected gross prizes:**
+  - Bet on $\theta=0.25$: $0.343 \times 10 \approx 3.43$
+  - Bet on $\theta=0.50$: $0.543 \times 15 \approx \mathbf{8.15}$
+  - Bet on $\theta=0.75$: $0.114 \times 30 \approx 3.42$
+
+## Updating Beliefs: Case 2 — Extra Ball is Green {.smaller}
+
+By the same logic, with $(1 - \theta_i)$ as the likelihood of green:
+
+::: {.fragment}
+$$
+f(\theta_i \mid y, \text{green}) = \frac{f(\text{green} \mid \theta_i) \cdot f(\theta_i \mid y)}{f(\text{green} \mid y)} = 
+\frac{\overbrace{(1 - \theta_i)}^{\text{Lik of green}} \cdot \overbrace{f(\theta_i \mid y)}^{\text{Current posterior}}}
+{\underbrace{\sum_{j=1}^{3} (1 - \theta_j) \cdot f(\theta_j | y)}_{f(\text{green}|y) = 0.617}}
+$$
+:::
+
+## Exercise: Case 2 — Extra Ball is Green {.smaller}
+
+Current posterior and gross payoffs:
+
+| $\theta_i$ | $f(\theta_i \mid y)$ | Gross payoff |
+|:-----------:|:--------------------:|:------------:|
+| 0.25        | 0.526                | \$10         |
+| 0.50        | 0.416                | \$15         |
+| 0.75        | 0.058                | \$30         |
+
+$$
+\text{Prize}_i = \text{payoff}_i \times f(\theta_i \mid y, \text{green})
+$$
+
+Which $\theta$ should you bet on if the next ball is green?
+
+## Updating Beliefs: Case 2 — Solution {.tiny}
+
+- **Unnormalized weights** $(1 - \theta_i) \cdot f(\theta_i \mid y)$:
+  - For $\theta=0.25$: $0.526 \times 0.75 = 0.3945$
+  - For $\theta=0.50$: $0.416 \times 0.50 = 0.2080$
+  - For $\theta=0.75$: $0.058 \times 0.25 = 0.0145$
+
+- **Normalized probabilities** (divide by $0.3945 + 0.2080 + 0.0145 = 0.617$):
+  - $f(0.25 \mid y,\, \text{green}) \approx 0.639$, $\quad f(0.50 \mid y,\, \text{green}) \approx 0.337$, $\quad f(0.75 \mid y,\, \text{green}) \approx 0.024$
+
+- **Expected gross prizes:**
+  - Bet on $\theta=0.25$: $0.639 \times 10 \approx \mathbf{6.39}$
+  - Bet on $\theta=0.50$: $0.337 \times 15 \approx 5.06$
+  - Bet on $\theta=0.75$: $0.024 \times 30 \approx 0.72$
 
 
 ## Overall Expected Prize With the Extra Ball {.smaller}
@@ -1155,24 +1259,24 @@ $$
 
   $$
   \begin{align*}
-  \E_\text{extra_ball}({\text{payoff}}) =& \P(\text{red})\times7.593 + \P(\text{green})\times3.600 \\
-  =& 0.589 \times 7.593 + 0.411 \times 3.600 \approx 5.95
+  \E_\text{extra ball}({\text{payoff}}) =& f(\text{red} \mid y)\times 8.15 + f(\text{green} \mid y)\times 6.39 \\
+  =& 0.383 \times 8.15 + 0.617 \times 6.39 \approx 7.06
   \end{align*}
   $$
 
 - **Net Expected Payoff (including costs):**
 
-  - Extra ball cost: \$1
-  - Play cost: \$2
+  - Extra ball cost: \$0.50
+  - Play cost: \$5
 
   $$
-  \E_\text{extra_ball}({\text{payoff}}) = 5.95 - 3 = \$2.95.
+  \E_\text{extra ball}({\text{payoff}}) = 7.06 - 5.50 = \$1.56.
   $$
 
-- **Without the extra ball:** Net EV $\approx \$3.96$.
-- **With the extra ball:** Net EV $\approx \$2.95$.
+- **Without the extra ball:** Net EV $\approx \$1.24$.
+- **With the extra ball:** Net EV $\approx \$1.56$.
 
-**Decision:** It is better to pay \$2 and play immediately rather than buying an extra ball.
+**Decision:** It is better to buy an extra ball for \$0.50 before playing.
 
 ## What About For All Possible Outcomes? {.small}
 
@@ -1184,7 +1288,7 @@ $$
 #| fig-height: 5
 #| fig-align: center
 #| echo: false
-source("mystery_box.R")
+source("mystery-box-2026.R")
 p1
 ```
 
@@ -1197,7 +1301,7 @@ p1
 #| fig-height: 5
 #| fig-align: center
 #| echo: false
-source("mystery_box.R")
+source("mystery-box-2026.R")
 p2
 ```
 

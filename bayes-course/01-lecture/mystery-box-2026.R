@@ -105,10 +105,9 @@ p_next_green <- 1 - p_next_red
 # extra ball is red
 norm_next_red <- sweep(theta_x_post_red, MARGIN = 2, STATS = p_next_red, FUN = "/")
 long <- wide_to_long(norm_next_red)
-# p2 <- plot_thetas(long, k + 1, dollars = FALSE, anot = FALSE) +
-#   ggtitle("Posterior probability f(theta | extra red ball)", subtitle = "") +
-#   xlab("Number of Red Balls Observed") +
-#   geom_vline(xintercept = 7, linewidth = 0.2, linetype = "dashed")
+p2 <- plot_thetas(long, k + 1, dollars = FALSE, anot = FALSE, dash = 3) +
+  ggtitle(expression("Posterior probability " * f(theta ~ "|" ~ red))) +
+  xlab("Number of Red Balls Observed")
 
 # computed expected payoff under extra red ball
 E_payoff_red <- norm_next_red
@@ -134,8 +133,12 @@ max_payoff_green <- apply(E_payoff_green, 2, max)
 net_E_payoff <- p_next_red * max_payoff_red + p_next_green * max_payoff_green - (C + extraC)
 df <- data.frame(net_E_payoff_no_extra_ball, net_E_payoff, k = k)
 p3 <- ggplot(df, aes(x = k, y = net_E_payoff_no_extra_ball)) +
-  geom_line(color = "green", linewidth = 0.5) +
-  geom_line(aes(y = net_E_payoff), color = "red", linewidth = 0.5) +
+  geom_line(color = "blue", linewidth = 0.5) +
+  geom_line(aes(y = net_E_payoff), color = "orange", linewidth = 0.5) +
+  geom_text(data = df[df$k == 1, ], aes(label = "Don't buy extra ball"),
+            color = "blue", hjust = 0, vjust = -0.8, size = 3.5) +
+  geom_text(data = df[df$k == 4, ], aes(y = net_E_payoff, label = "Buy extra ball"),
+            color = "orange", hjust = 0, vjust = 1.5, size = 3.5) +
   scale_y_continuous(
     breaks = seq(floor(min(df$net_E_payoff)), 
                  ceiling(max(df$net_E_payoff)), by = 1),
@@ -143,9 +146,10 @@ p3 <- ggplot(df, aes(x = k, y = net_E_payoff_no_extra_ball)) +
   scale_x_continuous(breaks = 0:max(k)) +
   theme(panel.grid.minor = element_blank()) +
   ylab("Net Expected Payoff") +
-  ggtitle("Expected Value of Buying and Extra Ball (Red), Green: No Extra Ball")
+  xlab("Number of Red Balls out of 5")
+  ggtitle("Expected Value of Buying an Extra Ball")
   
 best_strategy_values <- apply(net, 2, max)
 P_k <- marginal_lik
 Total_Game_Value <- sum(best_strategy_values * P_k)
-print(Total_Game_Value)
+#print(Total_Game_Value)

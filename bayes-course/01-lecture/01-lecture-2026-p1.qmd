@@ -1,0 +1,807 @@
+---
+title: "Bayesian Inference"
+subtitle: "NYU Applied Statistics for Social Science Research"
+author:
+ - name: "Eric Novik"
+   email: "Spring 2026 | Lecture 1"
+   affiliations: 
+    - name: New York University
+format:
+  revealjs: 
+    theme: ../../custom.scss
+    scrollable: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+      chalk-width: 5
+    preview-links: auto
+    footer: <https://ericnovik.github.io/bayes-course.html>
+editor: source
+always_allow_html: true
+---
+
+```{r, include=FALSE, cache=FALSE}
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(MASS)
+library(gridExtra)
+library(purrr)
+
+thm <-
+  theme_minimal() + theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    panel.grid.major = element_blank()
+  )
+theme_set(thm)
+
+dbinom_theta <- function(theta, N, y) {
+  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+}
+
+dot_plot <- function(x, y) {
+  p <- ggplot(data.frame(x, y), aes(x, y))
+  p + geom_point(aes(x = x, y = y), size = 0.5) +
+    geom_segment(aes(x = x, y = 0, xend = x, yend = y), linewidth = 0.2) +
+    xlab(expression(theta)) + ylab(expression(f(theta)))
+}
+```
+
+## Introductions
+
+::: columns
+::: {.column width="50%"}
+
+- State your name and where you are from
+- What is your field of study/work, and what are you hoping to learn in this class
+
+:::
+
+::: {.column width="50%"}
+
+![](images/van-gogh-moon.webp){fig-align="center" width="500"}
+
+:::
+:::
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+\DeclareMathOperator{\d}{\mathrm{d}}
+$$
+
+## Lecture 1: Bayesian Workflow {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+-   Overview of the course
+-   Subjective vs Objective
+-   Statistics vs AI/ML
+-   Brief history of Bayesian inference
+-   Stories: pricing books and developing drugs
+-   Review of probability and simulations
+-   Bayes's rule
+-   Introduction to Bayesian workflow
+-   Wanna bet? Mystery box game
+:::
+
+:::
+
+::: {.column width="50%"}
+
+![](images/road.webp){fig-align="center" width="500"}
+
+:::
+:::
+
+
+
+<!-- ## Two Truths and a Lie[^1] {.smaller} -->
+
+<!-- ::: columns -->
+<!-- ::: {.column width="50%"} -->
+<!-- 1. One person tells three personal statements, one of which is a lie.  -->
+<!-- 1. Others discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale).  -->
+<!-- 1. The storyteller reveals which was the lie.  -->
+<!-- 1. Enter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once. -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- ![](images/two-truths.png){fig-align="center" width="500"} -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- [^1]: Gelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101. -->
+
+<!-- ## Two Truths and a Lie -->
+
+<!-- https://tinyurl.com/two-truths-and -->
+
+<!-- ![](images/two-truths-and-400.png){fig-align="center" width="500"} -->
+
+<!-- ::: {.notes} -->
+<!-- What do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves. -->
+<!-- ::: -->
+
+## 
+
+![](images/subj-obj.png){fig-align="center"}
+
+## Subjective vs Objective {.smaller}
+
+::: columns
+::: {.column width="50%"}
+
+::: incremental
+- An experienced sommelier is able to correctly identify 8 types of wine from 8 samples
+- An astrologer was able to correctly predict if the stock market is up or down 8 times in a row
+- Is your inference about their predictive ability different? The data are the same!
+- Should we let data speak?
+:::
+
+:::
+
+::: {.column width="50%"}
+![](images/sommelier.png){fig-align="center" height="600"}
+:::
+:::
+
+
+## Statistics vs. AI/ML (Simplification!) {.smaller}
+
+::: incremental
+::: columns
+::: {.column width="50%"}
+
+-   AI is about **automating tasks** that humans are able to do
+    -   Recognizing faces, cats, and other objects
+    -   Identifying tumors on a radiology scan
+    -   Playing Chess and Go
+    -   Driving a car
+    -   Post ChatGPT 4: Generating coherent text/images/video, signs of reasoning
+:::
+
+::: {.column width="50%"}
+-   Statistics is useful for **answering questions** that humans are not able to do
+    -   How fast does a drug clear from the body? 
+    -   What is the expected tumor size two months after treatment? 
+    -   How would patients respond under a different treatment?
+    -   Should I take this drug?
+    -   Should we (FDA/EMA/...) approve this drug? 
+
+:::
+:::
+
+::: {.fragment}
+::: callout-note
+"Machine learning excels when you have lots of training data that can be reasonably modeled as exchangeable with your test data; Bayesian inference excels when your data are sparse and your model is dense." — Andrew Gelman
+:::
+::: 
+
+
+:::
+
+## Turn to your neighbor and discuss {.small}
+
+Classify each of the following: {_decision_, _parameter inference_, _prediction_, _causal inference_}
+
+::: columns
+::: {.column width="60%"}
+::: incremental
+1.  How fast does a drug clear from the body? 
+1.  What is the expected tumor size two months after treatment? 
+1.  How would patients respond under a different treatment?
+1.  Should I take this drug?
+1.  Should we (FDA/EMA/...) approve this drug? 
+:::
+
+:::
+
+::: {.column width="40%"}
+![](images/inferences.webp){fig-align="center" width="500"} 
+:::
+:::
+
+::: {.fragment style="font-size: 18px;"}
+::: callout-tip
+## Question
+Which category is missing data imputation?
+:::
+:::
+  
+## Brief History {.smaller}
+
+[Summary](https://www.lesswrong.com/posts/RTt59BtFLqQbsSiqd/a-history-of-bayes-theorem) of the book [The Theory That Would Not Die](https://www.amazon.com/Theory-That-Would-Not-Die/dp/0300169698/)
+
+::: columns
+::: {.column width="50%"}
+::: incremental
+-   Thomas Bayes (1702(?) --- 1761) is [credited](https://en.wikipedia.org/wiki/Nicholas_Saunderson) with the discovery of the "Bayes's Rule"
+-   His paper was published posthumously by Richard Price in 1763
+-   Laplace (1749 --- 1827) independently discovered the rule and published it in 1774
+-   Scientific context: Newton's Principia was published in 1687
+-   Bayesian wins: German Enigma cipher, search for a missing H-bomb, Federalist papers, Moneyball, FiveThirtyEight
+:::
+:::
+
+::: {.column width="50%"}
+
+![](images/bayes.png){fig-align="center" width="672"}
+
+:::
+:::
+
+::: notes
+Stephen Stigler gives 3:1 in favor of Nicholas Saunderson for the discovery of Bayes's \[sic\] rule.
+:::
+
+## Laplace's Demon {.smaller}
+
+::: columns
+::: {.column width="50%"}
+> We may regard the present state of the universe as the effect of its past and the cause of its future. An intellect which at any given moment knew all of the forces that animate nature and the mutual positions of the beings that compose it, if this intellect were vast enough to submit the data to analysis, could condense into a single formula the movement of the greatest bodies of the universe and that of the lightest atom; for such an intellect **nothing could be uncertain**, and the future just like the past would be present before its eyes.
+:::
+
+::: {.column width="50%"}
+![](images/laplace.jpeg){fig-align="center"}
+
+Marquis Pierre Simon de Laplace (1749 --- 1827)
+
+"Uncertainty is a function of our ignorance, not a property of the world."
+:::
+:::
+
+## Modern Examples of Bayesian Analyses
+
+::: columns
+::: {.column width="50%"}
+![](images/laplace-modern.png){fig-align="center" width="500px"}
+:::
+
+::: {.column width="50%"}
+![](images/laplace.webp){fig-align="center" width="500px"}
+:::
+:::
+
+
+::: footer
+Left: Pierre Simon Laplace in the style of Wassily Kandinsky, by OpenAI DALL·E
+:::
+
+
+## Elasticity of Demand 
+#### Stan with Hierarchical Models
+
+![](images/books.png){fig-align="center" width="100px"}
+
+## Pharmacokinetics of Drugs 
+####  Stan with Ordinary Differential Equations
+
+![](images/pk.png){fig-align="left"}
+
+## Nonparametric Bayes
+#### Stan with Gaussian Processes 
+![](images/gp.png){fig-align="center" width="100px"}
+
+::: footer
+Practical Hilbert space approximate Bayesian Gaussian processes for probabilistic programming, Riutort-Mayol et al. (2022)
+:::
+
+
+
+
+## Example Simulation {.tiny}
+
+::: incremental
+- We will use R's `sample()` function to simulate rolls of a die and `replicate()` function to repeat the rolling process many times
+:::
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+
+die <- 1:6; N <- 1e4
+roll <- function(x, n) {
+  sample(x, size = n, replace = TRUE)
+}
+roll(die, 2) # roll the die twice
+rolls <- replicate(N, roll(die, 2))
+rownames(rolls) <- c("X1", "X2")
+rolls[, 1:10] # print first 10 outcomes
+Y <- colSums(rolls) # Y = X1 + X2
+head(Y)
+mean(Y < 11) # == 1/N * sum(Y < 11)
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: incremental
+- Given a Random Variable $Y$, $y^{(1)}, y^{(2)}, y^{(3)}, \ldots, y^N$ are simulations or draws from $Y$
+- Fundamental bridge (Blitzstein & Hwang p. 164): $\P(A) = \E(\I_A)$
+- For $Y = X_1 + X_2$: $\P(Y < 11) \approx \frac{1}{N} \sum^{N}_{n=1} \I(y^n < 11)$
+- In R, $Y < 11$ creates an indicator variable
+- And `mean()` does the average
+:::
+
+:::
+:::
+
+
+## Example Simulation {.small}
+
+This is a more direct demonstration of random draws from a distribution of $Y = X_1 + X_2$
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+
+# Define the possible values of 
+# Y = X1 + X2 and their probabilities
+
+Omega <- 2:12
+Y_probs <- 
+  c(1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1) / 36
+
+# Simulate 10,000 realizations of Y
+Y_samples <- sample(Omega,
+                    size = 1e4, 
+                    replace = TRUE, 
+                    prob = Y_probs)
+
+# Compute Pr(A)
+mean(Y_samples < 11)
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+# Plot a histogram of the realizations of Y
+par(bg = "#f0f1eb")
+hist(Y_samples, 
+     breaks = seq(1.5, 12.5, by = 1), 
+     main = "Realizations of Y",
+     xlab = "Y", ylab = "P",
+     col = "lightblue",
+     prob = TRUE)
+```
+:::
+
+:::
+:::
+
+                         
+## Can't Stop Board Game
+
+![](images/cant-stop.webp){fig-align="center"}
+
+## Law of Total Probability (LOTP)
+Let $A$ be a partition of $\Omega$, so that each $A_i$ is disjoint, $\P(A_i >0)$, and $\cup A_i = \Omega$.
+$$
+\P(B) = \sum_{i=1}^{n} \P(B \cap A_i) = \sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)
+$$ 
+
+![](images/LTP.png){fig-align="center" width="500"}
+
+::: footer
+Image from Blitzstein and Hwang (2019), Page 55
+:::
+
+## BIPEPSE: AI as a tutor {.smaller}
+::: {.fragment}
+Suppose you forgot the law of iterated expectations (Adam's Law) which states
+$$
+\E(Y) = \E_X(\E_{Y|X}(Y \mid X))
+$$
+:::
+
+::: {.fragment}
+Use the following AI prompts
+:::
+
+::: incremental
+- **Background**: I am a Masters student in Statistics. I want to go over the law of iterated expectations. **Intuition**: First, give me an intuitive explanation. I will ask a follow-up question after.
+- **Proof**: Please, provide a step-by-step proof of the discrete case, explaining every move. 
+- **Example**: Please provide a numerical example.
+- **Problem**: Now, please give me a practice problem.
+- **Simulation**: Write a simulation and ask AI to check it OR say: write a simulation in R
+- **Explanation**: How is this for an explanation? [Enter an explanation in your words and have it check you]
+:::
+
+## Adam's Law Simulation {.smaller}
+
+```{r}
+#| cache: true
+#| echo: true
+#| eval: false
+
+library(purrr)
+n <- 20
+class_sizes <- sample(n)
+mean_gpa_vec <- runif(n = n, 2.8, 3.2)
+N <- sum(class_sizes)
+W <- class_sizes / N
+G <- class_sizes |>
+  map(\(x) rnorm(n = x, mean = mean_gpa_vec, sd = 1))
+
+# E(Y)
+EY <- unlist(G) |> mean()
+print(EY)
+
+# E(E(Y | X))
+class_means <- map_dbl(G, mean) # can't just average those
+gpaXprob <- class_means * W
+EEYX <- sum(gpaXprob)
+print(EEYX)
+```
+
+## Bivariate Case {.tinier}
+
+::: {.fragment}
+- A bivariate CDF $F_{X,Y}(x, y) = \P(X \leq x, Y \leq y)$
+
+$$
+F_{X,Y}(x, y) \geq 0 \quad \text{for all } x, y
+$$
+:::
+
+::: {.fragment}
+- If the PDF exists
+
+$$
+F_{X,Y}(x, y) = \int_{-\infty}^x \int_{-\infty}^y f_{X,Y}(u, v) \, \mathrm{d}v \, \mathrm{d}u
+$$
+:::
+
+::: {.fragment}
+- Normalization
+
+$$
+\int_{-\infty}^\infty \int_{-\infty}^\infty f_{X,Y}(x, y) \, \mathrm{d}x \, \mathrm{d}y = 1
+$$
+:::
+
+::: {.fragment}
+- From CDF to PDF
+
+$$
+f_{X,Y}(x, y) = \frac{\partial^2}{\partial x \partial y} F_{X,Y}(x, y)
+$$
+:::
+
+## Bivariate Case {.smaller}
+
+::: {.fragment}
+- Marginalization
+
+$$
+f_Y(y) = \int_{-\infty}^\infty f_{X,Y}(x, y) \, \mathrm{d}x.
+$$
+:::
+
+::: {.fragment}
+- Conditional CDF
+
+$$
+F_{Y \mid X}(y \mid x) = \P(Y \leq y \mid X = x)
+$$
+:::
+
+::: columns
+::: {.column width="40%"}
+
+::: {.fragment}
+- Conditional PDF: a function of $y$ for fixed $x$
+$$
+f_{Y|X}(y \mid x) = \frac{f_{X,Y}(x, y)}{f_X(x)}
+$$
+:::
+
+:::
+
+::: {.column width="60%"}
+
+::: {.fragment}
+![](images/cond-pdf.png){fig-align="right" height="200"}
+:::
+
+:::
+:::
+
+
+## Bivariate Normal {.smaller}
+
+$$
+f_{X,Y}(x, y) = \frac{1}{2 \pi \sqrt{\det(\Sigma)}} 
+\exp\left( -\frac{1}{2} 
+\begin{bmatrix} 
+x - \mu_X \\ 
+y - \mu_Y 
+\end{bmatrix}^\top 
+\Sigma^{-1} 
+\begin{bmatrix} 
+x - \mu_X \\ 
+y - \mu_Y 
+\end{bmatrix} 
+\right)
+$$
+
+$$
+\Sigma = \begin{bmatrix} \sigma_X^2 & \rho\,\sigma_X\sigma_Y \\ \rho\,\sigma_X\sigma_Y & \sigma_Y^2 \end{bmatrix}, \quad \rho = \frac{\operatorname{Cov}(X, Y)}{\sigma_X \, \sigma_Y}, \quad -1 \leq \rho \leq 1
+$$
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-width: 8
+#| fig-height: 3.8
+#| fig-align: left
+
+library(mvtnorm)  # For bivariate normal distribution
+library(plotly)   # For interactive 3D plots
+
+# Define parameters for the bivariate normal distribution
+sigma_X <- 1
+sigma_Y <- 2
+rho <- 0.3  # Correlation coefficient
+rho_sigmaXY <- rho * sigma_X * sigma_Y
+cov_matrix <- matrix(c(sigma_X^2,   rho_sigmaXY,
+                       rho_sigmaXY, sigma_Y^2), 2, 2)
+
+# Create a grid of x and y values
+x <- seq(-4, 4, length.out = 50)
+y <- seq(-6, 6, length.out = 50)
+grid <- expand.grid(x = x, y = y)
+
+# Compute the bivariate PDF
+pdf_values <- dmvnorm(grid, mean = c(0, 0), sigma = cov_matrix)
+pdf_matrix <- matrix(pdf_values, nrow = length(x), ncol = length(y))
+
+# Create PDF plot
+plot_ly(
+  x = x,
+  y = y,
+  z = pdf_matrix,
+) |>
+  add_surface() |>
+  layout(title = NULL,
+         paper_bgcolor = "f0f1eb", # Background color of the entire figure
+         plot_bgcolor  = "f0f1eb", # Background color of the plot area
+         scene = list(
+           xaxis = list(title = "X"),
+           yaxis = list(title = "Y"),
+           zaxis = list(title = "PDF")
+         )) |>
+  hide_colorbar()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-width: 8
+#| fig-height: 3.8
+#| fig-align: right
+
+# Create a data frame of the grid
+grid <- grid |>
+  mutate(
+    # Calculate the CDF for each (x, y) point
+    cdf = mapply(function(x, y) {
+      pmvnorm(lower = c(-Inf, -Inf), upper = c(x, y), mean = c(0, 0), 
+              sigma = cov_matrix)
+    }, x, y)
+  )
+
+# Convert grid to matrix for 3D plotting
+cdf_matrix <- matrix(grid$cdf, nrow = length(x), ncol = length(y))
+
+# Create a 3D surface plot
+plot_ly(
+  x = x, 
+  y = y, 
+  z = cdf_matrix,
+  type = "surface"
+) |>
+  layout(
+    title = NULL,
+    paper_bgcolor = "f0f1eb", # Background color of the entire figure
+    plot_bgcolor  = "f0f1eb", # Background color of the plot area
+    scene = list(
+      xaxis = list(title = "X"),
+      yaxis = list(title = "Y"),
+      zaxis = list(title = "CDF")
+    )
+  ) |> hide_colorbar()
+```
+:::
+:::
+
+## Bivariate Normal Demo {.tiny}
+```{r}
+#| echo: true
+
+library(distributional)
+
+sigma_X <- 1
+sigma_Y <- 2
+rho <- 0.3  # Correlation coefficient
+
+rho_sigmaXY <- rho * sigma_X * sigma_Y # why?
+
+cov_matrix <- matrix(c(sigma_X^2,   rho_sigmaXY,
+                       rho_sigmaXY, sigma_Y^2), 2, 2)
+
+dmv_norm <- dist_multivariate_normal(mu    = list(c(0, 0)), 
+                                     sigma = list(cov_matrix))
+dimnames(dmv_norm) <- c("x", "y")
+variance(dmv_norm)
+covariance(dmv_norm)
+density(dmv_norm, cbind(3, 3)) |> round(2)   # should be low
+cdf(dmv_norm, cbind(3, 3)) |> round(2)       # should be high
+```
+
+## Bivariate Normal Demo: Sampling {.smaller}
+
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+
+# draws from the bivariate normal
+draws <- generate(dmv_norm, 1e4)            
+str(draws)
+draws <- as_tibble(draws[[1]])
+head(draws)
+
+# estimated means
+colMeans(draws) |> round(2)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+# estimated covariance matrix
+cov(draws) |> round(2)
+# estimated correlations matrix
+cor(draws) |> round(2)
+
+# should be close to cdf(dist, cbind(3, 3)); why?
+# both evaluate to P(X and Y < 3)
+# & is an _and_ operator
+mean(draws$x < 3 & draws$y < 3) |> round(2)
+
+# P(X < 0 or Y < 1)
+# | is an _or_, not conditioning operator
+mean(draws$x < 0 | draws$y < 1) |> round(2)
+```
+
+:::
+:::
+
+## Bivariate Normal Demo: Analytical {.tiny}
+
+How would we do the above analytically?
+$$
+\P(X < 0 \cup Y < 1) = \P(X < 0) + \P(Y < 1) - \P(X < 0 \cap Y < 1)
+$$
+
+```{r}
+#| echo: true
+
+# Compute P(X < 0)
+p_X_less_0 <- cdf(dist_normal(mu = 0, sigma = sigma_X), 0) # pnorm(0, mean = 0, sd = sigma_X)
+
+# Compute P(Y < 1)
+p_Y_less_1 <- cdf(dist_normal(mu = 0, sigma = sigma_Y), 1) # pnorm(1, mean = 0, sd = sigma_Y)
+
+# Compute P(X < 0, Y < 1)
+p_X_less_0_and_Y_less_1 <- cdf(dmv_norm, cbind(0, 1))
+
+# P(X < 0 or Y < 1)
+(p_X_less_0 + p_Y_less_1 - p_X_less_0_and_Y_less_1) |> round(2)
+```
+
+- Would you rather do `mean(draws$x < 0 | draws$y < 1)` or the analytical solution?
+- How would you evaluate $\P(X < 0 \mid Y < 1)$
+
+```{r}
+#| echo: true
+draws |> filter(y < 1) |>
+  summarise(pr = mean(x < 0)) |>
+  as.numeric() |> round(2)
+```
+
+
+## Bayes's Rule {.smaller}
+
+::: {.fragment}
+- Bayes's rule for events
+
+$$
+\P(A \mid B) = \frac{\P(A \cap B)}{\P(B)} = 
+               \frac{\P(B \mid A) \P(A)}{\sum_{i=1}^{n} \P(B \mid A_i) \P(A_i)}
+$$
+:::
+
+::: {.fragment}
+- Bayes's rule for continuous RVs
+
+$$
+\underbrace{\color{blue}{f_{\Theta|Y}(\theta \mid y)}}_{\text{Posterior}} =
+\frac{
+    \overbrace{ \color{red}{f_{Y|\Theta}(y \mid \theta)} }^{\text{Likelihood}} 
+    \cdot 
+     \overbrace{\color{green}{f_\Theta(\theta)}}^{ \text{Prior} }
+}{
+    \underbrace{\int_{-\infty}^{\infty} f_{Y|\Theta}(y \mid \theta) f_\Theta(\theta) \, \text{d}\theta}_{\text{Prior Predictive } f(y)}
+} \propto 
+\color{red}{f_{Y|\Theta}(y \mid \theta)} \cdot 
+\color{green}{f_\Theta(\theta)}
+$$
+:::
+
+
+
+
+## Notation {.smaller}
+
+::: incremental
+-   $\theta$: unknowns or parameters to be estimated; could be multivariate, discrete, and continuous; in your book $\pi$
+-   $y$: observations or measurements to be modelled ($y_1, y_2, ...$)
+-   $\widetilde{y}$ : unobserved but observable quantities; in your book $y'$
+-   $x$: covariates
+-   $f( \theta )$: a prior model, P[DM]F of $\theta$
+-   $f(y \mid \theta, x)$: an observational model, P[DM]F when it is a function of $y$; in your book: $f(y \mid \pi)$
+-   $f(y \mid \theta)$: is a likelihood function when it is a function of $\theta$; in your book: $\L(\pi \mid y)$
+-   Some people write $\L(\theta; y)$ or simply $\L(\theta)$
+-   $U(z)$: utility function where $z$ can be some $g(\theta, \tilde{y})$ 
+-   $\E(U(z) \mid d)$: expected utility for decision $d$
+:::
+
+## Bayesian Workflow in a Nutshell {.small}
+::: incremental
+- Specify a prior model $f(\theta)$ 
+- Pick a data model $f(y \mid \theta, x)$, including conditional mean: $\E(y \mid x)$
+- Set up a prior predictive distribution $f(y)$
+- After observing data $y$, we treat $f(y \mid \theta, x)$ as the likelihood of observing $y$ under all plausible values of $\theta$, conditioning on $x$ if necessary
+- Derive a posterior distribution for $\theta$, $\, f(\theta \mid y, x)$
+- Evaluate model quality: 1) quality of the inferences; 2) quality of predictions; go back to the beginning
+- Compute derived quantities, such as $\P(\theta > \alpha)$, $f(\widetilde{y} \mid y)$, and $d^* = \textrm{arg max}_d \ \E(U(z) \mid d)$ 
+:::
+
+::: footer
+For a more complete workflow, see [Bayesian Workflow](https://arxiv.org/abs/2011.01808) by Gelman et al. (2020)
+:::
+
+
+
