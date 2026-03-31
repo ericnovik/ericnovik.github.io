@@ -3,7 +3,7 @@ title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author:
  - name: "Eric Novik"
-   email: "Spring 2025 | Lecture 2"
+   email: "Spring 2026 | Lecture 2"
    affiliations: 
     - name: New York University
 format:
@@ -276,7 +276,7 @@ gamma(1:10)
 :::
 
 ::: incremental
-- For positive integrers $n$: $\, \Gamma(n+1) = n!$ and in general $\Gamma(z + 1) = z \Gamma(z)$
+- For positive integers $n$: $\, \Gamma(n+1) = n!$ and in general $\Gamma(z + 1) = z \Gamma(z)$
 - $\text{Beta}(1, 1)$ is equivalent to $\text{Unif(0, 1)}$. Why? (work it out)
 :::
 
@@ -319,7 +319,7 @@ $$
 
 - Variance is a type of expectation, which we often denote by $\sigma^2$
 $$
-\sigma_X = \V(X) = \E(X - \mu)^2 = \int (X - \mu)^2 f(x) \, \text{d}x 
+\sigma_X^2 = \V(X) = \E(X - \mu)^2 = \int (x - \mu)^2 f(x) \, \text{d}x 
 $$
 
 - It is often more convenient to write the variance as
@@ -347,11 +347,11 @@ $$
 $$
 \begin{eqnarray}
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \, \Gamma(\beta)} \cdot 
- \color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + a + b)}} \\
+ \color{red}{\frac{\Gamma(1 + \alpha) \Gamma(\beta)}{\Gamma(1 + \alpha + \beta)}} \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
 \frac{\Gamma(1 + \alpha)}{\Gamma(1 + \alpha + \beta)} \\
 &=& \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)} \cdot 
-\frac{a \Gamma(\alpha)}{(\alpha + \beta) \Gamma(\alpha + \beta)} \\
+\frac{\alpha \Gamma(\alpha)}{(\alpha + \beta) \Gamma(\alpha + \beta)} \\
 &=& \frac{\alpha}{\alpha + \beta}
 \end{eqnarray}
 $$
@@ -412,7 +412,7 @@ $$
 
 [^2]: Gelman, A., & Weakliem, D. (2009). Of Beauty, Sex and Power. American Scientist, 97(4), 310. https://doi.org/10.1511/2009.79.310
 
-## Biomomial Likelihood {.smaller}
+## Binomial Likelihood {.smaller}
 
 ::: incremental
 - Recall that Likelihood is the function of the parameter $\theta$, assuming $\theta \in [0,1]$
@@ -445,7 +445,7 @@ grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]], p1[[6]], nrow = 2)
 ## Deriving the Posterior Distribution {.smaller}
 
 ::: incremental
-- The denominator is constant in $\theta$; we will derive the posterior up to a proportion
+- The denominator is constant in $\theta$; we will derive the posterior up to proportionality
 $$
 \begin{eqnarray}
 f(y \mid \theta) & \propto & \theta^y (1 - \theta)^{N - y} \\
@@ -482,7 +482,7 @@ $$
 ::: {.incremental}
 - Note that the posterior expectation is between $y/n$ and $\frac{\alpha}{\alpha + \beta}$
 - Also note that as sample becomes very large $\E(\theta \mid y) \rightarrow \frac{y}{n}$ and $\V(\theta \mid y) \rightarrow 0$
-- As before, $\text{Mode}(\theta \mid y) = \E(\theta \mid y)$, when $\alpha = \beta$
+- As before, $\text{Mode}(\theta \mid y) = \E(\theta \mid y)$, when $\alpha = \beta$ and $y = n/2$
 :::
 
 ## Variance Reduction Rate Example {.smaller}
@@ -723,14 +723,14 @@ grid.arrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], p1[[5]],
 $$
 \begin{eqnarray}
 f(\theta \mid y_1) &=&  \frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)} \\
-f(\theta \mid y_2) &=&  \frac{\frac{f(\theta)f(y_1 \mid \theta)}{f(y_1)} f(y_2 \mid \theta)}{f(y_2)} \\
-&=& \frac{f(\theta)f(y_1 \mid \theta) f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+f(\theta \mid y_1, y_2) &=&  \frac{f(\theta \mid y_1) f(y_2 \mid \theta)}{f(y_2 \mid y_1)} \\
+&=& \frac{f(\theta)f(y_1 \mid \theta) f(y_2 \mid \theta)}{f(y_1)f(y_2 \mid y_1)}
 \end{eqnarray}
 $$
 :::
 
 ::: incremental
-- Observing data point $y_2$, and then data point $y_1$, will results in the same distribution
+- Observing data point $y_2$, and then data point $y_1$, will result in the same distribution
 - What if we observed both points at once?
 :::
 
@@ -738,8 +738,8 @@ $$
 $$
 \begin{split}
 f(\theta \mid y_1,y_2) 
-& = \frac{f(\theta)f(y_1,y_2 \mid \theta)}{f(y_1)f(y_2)} \\
-& = \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1)f(y_2)}
+& = \frac{f(\theta)f(y_1,y_2 \mid \theta)}{f(y_1, y_2)} \\
+& = \frac{f(\theta)f(y_1 \mid \theta)f(y_2 \mid \theta)}{f(y_1, y_2)}
 \end{split}
 $$
 :::
