@@ -3,7 +3,7 @@ title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author:
  - name: "Eric Novik"
-   email: "Spring 2025 | Lecture 3"
+   email: "Spring 2026 | Lecture 3"
    affiliations: 
     - name: New York University
 format:
@@ -21,7 +21,7 @@ always_allow_html: true
 ---
 
 
-##    Conjugate Models and Posterior Sampling
+## Conjugate Models and Posterior Sampling
 
 ::: incremental
 - Gamma-Poisson family
@@ -153,17 +153,17 @@ $$
 ::: {.incremental}
 - Poisson distribution arises when we are interested in counts
 - In practice, we rarely use Poisson due to its restrictive nature
-- Poisson RV $Y$ is paremeterized with a rate of occurance $\lambda$: $Y|\lambda \sim \text{Pois}(\lambda)$  
+- Poisson RV $Y$ is parameterized with a rate of occurrence $\lambda$: $Y|\lambda \sim \text{Pois}(\lambda)$  
 $$
 f(y \mid \lambda) =  \frac{e^{-\lambda} \lambda^y}{y!}\;\; \text{ for } y \in \{0,1,2,\ldots\}
 $$
 
-- Notice, the Tailor series for $e^\lambda = \sum_{y=0}^{\infty} \frac{\lambda^y}{y!}$ immediately validates that $f$ is a PDF
+- Notice, the Taylor series for $e^\lambda = \sum_{y=0}^{\infty} \frac{\lambda^y}{y!}$ immediately validates that $f$ is a PMF
 
-- Also, $\E(Y | \lambda) = \V(Y | \lambda) = \lambda$, which is the restrictive case mentioned about --- real count data seldom satisfied this constraint
+- Also, $\E(Y | \lambda) = \V(Y | \lambda) = \lambda$, which is the restrictive case mentioned above --- real count data seldom satisfy this constraint
 :::
 
-## Visualizing Poission {.smaller}
+## Visualizing Poisson {.smaller}
 
 ::: incremental
 - Notice that as the rate increases, so does the expected number of events as well as variance, which immediately follows from $\E(Y) = \V(Y) = \lambda$
@@ -193,7 +193,7 @@ grid.arrange(p[[1]], p[[2]], p[[3]],
 ```
 :::
 
-## Example: Hourse Kicks {.smaller}
+## Example: Horse Kicks {.smaller}
 
 ::: incremental
 - Serving in Prussian cavalry in the 1800s was a perilous affair
@@ -215,15 +215,15 @@ d <- dplyr::tibble(year = as.integer(d$Year),
             count = rowSums(d[, -1]))
 p <- ggplot(aes(year, count), data = d)
 p + geom_line(linewidth = 0.2) + geom_point(size = 0.5)  +
-  ggtitle("Number of soilders in the Prussian cavalry killed by horse kicks") + ylab("") + xlab("")
+  ggtitle("Number of soldiers in the Prussian cavalry killed by horse kicks") + ylab("") + xlab("")
 ```
 :::
 
 ## Poisson Likelihood {.smaller}
 
 ::: {.incremental}
-- Assume we observe $Y_1, Y_2, ..., Y_n$ independant Poisson random variables
-- The joint lilelihood, a function of the parameter $\lambda$ for $y_i \in \mathbb{Z}^+$ and $\lambda > 0$, is given by:
+- Assume we observe $Y_1, Y_2, ..., Y_n$ independent Poisson random variables
+- The joint likelihood, a function of the parameter $\lambda$ for $y_i \in \mathbb{Z}^+$ and $\lambda > 0$, is given by:
 $$
 \begin{eqnarray}
 f(y \mid \lambda) & = & \prod_{i=1}^n f(y_i \mid \lambda) = f(y_1 \mid \lambda)  f(y_2 \mid \lambda) \cdots f(y_n \mid \lambda)  =  \prod_{i=1}^{n}\frac{\lambda^{y_i}e^{-\lambda}}{y_i!} \\
@@ -242,7 +242,7 @@ $$
 ::: {.incremental}
 - The likelihood has a form of $\lambda^{a} e^{-b\lambda}$ so we expect the conjugate prior to be of the same form
 
-- Gamma PDF satisfied this condition: $f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}$
+- The Gamma PDF satisfies this condition: $f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}$
 
 - Matching up the exponents, we can interpret $(\alpha - 1)$ as the total number of incidents $\sum y_i$ out of $\beta$ prior observations
 
@@ -347,7 +347,7 @@ $$
 :::
 
 
-## Prussian Army Hourse Kicks {.smaller}
+## Prussian Army Horse Kicks {.smaller}
 
 ::: {.incremental}
 - From 1875 to 1894, there were 14 different cavalry corps
@@ -364,7 +364,7 @@ d |> filter(Year < 1883) |> gt()
 ```
 :::
 
-## Prussian Army Hourse Kicks {.smaller}
+## Prussian Army Horse Kicks {.smaller}
 
 ::: {.fragment}
 ```{r}
@@ -386,7 +386,7 @@ grid.arrange(p1, p2, nrow = 1)
 ```
 :::
 
-## Prussian Army Hourse Kicks {.smaller}
+## Prussian Army Horse Kicks {.smaller}
 
 ::: panel-tabset
 
@@ -493,7 +493,7 @@ library(ggdist)
 p1 <- dot_plot(x = deaths, y = actual, yc = pred, dodge = 0.1) +
   xlab("Number of deaths") +
   ylab("Proportion of deaths") +
-  ggtitle("Death by hourse-kick proportions", 
+  ggtitle("Death by horse-kick proportions", 
           subtitle = "Actuals in black and predictions in red")
 dat <- data.frame(pred, actual, .lower = pred - 2*sd_post,
                   .upper = pred + 2*sd_post)
@@ -512,7 +512,7 @@ grid.arrange(p1, p2, nrow = 1)
 
 ::: {.incremental}
 - Poisson likelihood seems to work well for these data
-- It is likely that each of the 16 corps had about the same number of soldier-horses, a common military practice
+- It is likely that each of the 14 corps had about the same number of soldier-horses, a common military practice
 - Suppose each corps has a different number of cavalrymen
 - We need to introduce an exposure variable $x_i$ for each corps unit
 $$
@@ -529,7 +529,7 @@ $$
 ::: {.incremental}
 - The last conjugate distribution we will introduce is Normal
 - We will only consider a somewhat unrealistic case of known variance $\sigma \in \mathbb{R}^+$ and unknown mean $\mu \in \mathbb{R}$
-- Normal PDF is for one observation $y$ is given by:
+- The Normal PDF for one observation $y$ is given by:
 $$
 \begin{eqnarray}
 \text{Normal}(y \mid \mu,\sigma) & = &\frac{1}{\sqrt{2 \pi} \
@@ -613,7 +613,7 @@ f(y \mid \mu) & = & \prod_{i=1}^{n}\frac{1}{\sqrt{2 \pi} \
 \sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2     \right) \\
 & \propto & \prod_{i=1}^{n} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2 \right) \\  
 & = & \exp \left( {-\frac{\sum_{i=1}^n(y_i-\mu)^2}{2\sigma^2}}\right) \\
-&\propto& \exp\left({-\frac{(\bar{y}-\mu)^2}{2\sigma^2/n}}\right)
+&\propto& \exp\left( -\frac{(\bar{y}-\mu)^2}{2\sigma^2/n} \right)
 \end{eqnarray}
 $$
 
@@ -706,7 +706,7 @@ $$
 ::: {.incremental}
 - We already saw how given samples from the target distribution, we could compute quantities of interest
 - The grid approach to getting samples:
-  1. Generate discreet points in parameter space $\theta$
+  1. Generate discrete points in parameter space $\theta$
   1. Define our likelihood function $f(y|\theta)$ and prior $f(\theta)$
   1. For each point on the grid, compute the product $f(y|\theta)f(\theta)$
   1. Normalize the product to sum to 1
@@ -723,7 +723,7 @@ $$
 - For simplicity we will assume uniform $\text{Beta}(1, 1)$ prior
 $$
 \begin{eqnarray}
-f(\theta)f(y\mid \theta) &\propto& \theta^{a -1}(1 - \theta)^{b-1} \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
+f(\theta)f(y\mid \theta) &\propto& \theta^{\alpha - 1}(1 - \theta)^{\beta - 1} \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
 &=& \theta^0(1 - \theta)^0 \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
 &=& \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
 &=& \theta^{\sum_{i=1}^{n} y_i} \cdot (1 - \theta)^{\sum_{i=1}^{n} (1- y_i)}
@@ -811,7 +811,7 @@ p + geom_histogram(aes(y = after_stat(density)), bins = 50, alpha = 0.6) +
 - If we want to compute an expectation of some function $h$:
 $$
 \begin{eqnarray}
-\E_f[h(\theta)] &=& \int h(\theta)f(\theta)\, d\theta 
+\E_f[h(\theta)] &=& \int h(\theta)f(\theta)\, d\theta \\
 &\approx& \frac{1}{N} \sum_{i = 1}^{N} h \left( \theta^{(i)} \right)
 \end{eqnarray}
 $$
@@ -827,10 +827,10 @@ $$
 - In case of the mean, $h(\theta) := \theta$ and variance, $h(\theta) := \theta^2$, and $f(\theta) = \frac{1}{\sqrt{2 \pi} \ } e^{-\theta^2/2}$
 $$
 \begin{eqnarray}
-\E[\theta] &=& \int_{-\infty}^{\infty} \theta f(\theta)\, d\theta 
+\E[\theta] &=& \int_{-\infty}^{\infty} \theta f(\theta)\, d\theta \\
 &\approx& \frac{1}{N} \sum_{i = 1}^{N} \theta^{(i)} \\
-\E[\theta^2] &=& \int_{-\infty}^{\infty} \theta^2 f(\theta)\, d\theta &\approx&
-\frac{1}{N} \sum_{i = 1}^{N} \left( \theta^{(i)} \right)^2
+\E[\theta^2] &=& \int_{-\infty}^{\infty} \theta^2 f(\theta)\, d\theta \\
+&\approx& \frac{1}{N} \sum_{i = 1}^{N} \left( \theta^{(i)} \right)^2
 \end{eqnarray}
 $$
 :::
@@ -865,7 +865,7 @@ $$
 ```{r}
 #| echo: true
 #| cache: true
-pnorm(1, 0, 1) |> round(2)          # Evalute N(0, 1) CDF at 1
+pnorm(1, 0, 1) |> round(2)          # Evaluate N(0, 1) CDF at 1
 N <- 1e5
 theta <- rnorm(N, 0, 1)             # draw theta from N(0, 1)
 (1/N * sum(theta < 1)) |> round(2)  # same as mean(theta < 1)
@@ -875,9 +875,9 @@ theta <- rnorm(N, 0, 1)             # draw theta from N(0, 1)
 ## MCMC
 ::: {.incremental}
 - MCMC is a very general method for computing expectations (integrals)
-- It produces dependant (autocorrelated) samples, but for a good algorithm, the dependence is manageable 
+- It produces dependent (autocorrelated) samples, but for a good algorithm, the dependence is manageable 
 - Stan's MCMC algorithm is very efficient (more on that later) and requires all parameters to be continuous (data can be discrete)
-- It solves the problem of drawing from distribution $f(\theta)$ where $f$ is not one of the fundamental distributions and $\theta$ is high dimentional 
+- It solves the problem of drawing from distribution $f(\theta)$ where $f$ is not one of the fundamental distributions and $\theta$ is high dimensional 
 - What is high-dimensional? Modern algorithms like NUTS can jointly sample tens of thousands and more parameters
 - That's 10,000+ dimensional integrals of complicated functions!
 
@@ -891,7 +891,7 @@ Include an example where h(x) is an indicator function, and we want to evaluate 
 
 ## Introduction to Stan {.smaller}
 ::: {.incremental}
-- Stan is a procedural, statically typed, Turning complete, probabilistic programming language
+- Stan is a procedural, statically typed, Turing complete, probabilistic programming language
 - Stan language expresses a probabilistic model
 - Stan transpiler converts it to C++
 - Stan inference algorithms perform parameter estimation 
@@ -914,7 +914,7 @@ parameters {
 }
 model {
   for (i in 1:N) {
-    target += log(theta * y[i] + 
+    target += log(theta) * y[i] +
               log(1 - theta) * (1 - y[i]);
   }
 }
@@ -1032,7 +1032,7 @@ p + geom_histogram(aes(y = after_stat(density)),
 A \textbf{Markov chain} is a sequence of random variables $\{X_n\}_{n \geq 0}$ defined on a state space $S$ such that for all $n \geq 0$ and for any states $i_0, i_1, \dots, i_{n+1} \in S$, the Markov property holds:
 
 $$
-\mathbb{P}(X_{n+1}=j \mid X_0=i_0, X_{n-1}=i_{n-1}, \dots, X_n=i_n) = \mathbb{P}(X_{n+1}=j \mid X_n=i)
+\mathbb{P}(X_{n+1}=j \mid X_0=i_0, X_1=i_1, \ldots, X_n=i_n) = \mathbb{P}(X_{n+1}=j \mid X_n=i_n)
 $$
 
 The transition probabilities are represented by a matrix $Q$, where:
@@ -1087,7 +1087,7 @@ p1 <- mcmc_trace(draws, pars = "theta") + ylab(expression(theta)) +
   ggtitle("Good Chain")
 bad_post <- readRDS("data/bad_post.rds")
 bad_draws <- bad_post$draws("mu")
-p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(theta)) +
+p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(mu)) +
   ggtitle("Bad Chain")
 grid.arrange(p1, p2, nrow = 2)
 ```
@@ -1109,7 +1109,7 @@ p1 <- mcmc_trace(draws, pars = "theta") + ylab(expression(theta)) +
   ggtitle("Good Chain")
 bad_post <- readRDS("data/bad_post.rds")
 bad_draws <- bad_post$draws("mu")
-p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(theta)) +
+p2 <- mcmc_trace(bad_draws, pars = "mu") + ylab(expression(mu)) +
   ggtitle("Bad Chain")
 grid.arrange(p1, p2, nrow = 2)
 ```
@@ -1182,7 +1182,7 @@ $$
 ```{r}
 #| echo: true
 bayesplot::rhat(f1, pars = "theta") |> round(3)
-bayesplot::rhat(bad_post, pars = "sigma")  |> round(3)
+bayesplot::rhat(bad_post, pars = "mu")  |> round(3)
 ```
 :::
 
@@ -1204,7 +1204,7 @@ parameters {
 }
 model {
   for (i in 1:N) {
-    target += log(theta * y[i] + 
+    target += log(theta) * y[i] +
               log(1 - theta) * (1 - y[i]);
   }
 }
