@@ -166,6 +166,10 @@ window.Quarto = {
     <a class="nav-link" href="../../bayes-course.html"> 
 <span class="menu-text">APSTA-GE 2123: Bayesian Inference</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../case-studies.html"> 
+<span class="menu-text">Collection of case studies</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -206,16 +210,17 @@ window.Quarto = {
 </header>
 
 
-<p>Consider a sequence of random variables <span class="math inline">\(Y_1, Y_2, Y_3, Y_4,...\)</span>, where for our purposes the subscripts index time. You can write the joint PDF as <span class="math inline">\(f(y_1) f(y_2 \mid y_1) f(y_3 \mid y_2,y_1) f(y_4 \mid y_3, y_2, y_1)...\)</span>. Larry Wasserman uses a notational trick to write this as <span class="math inline">\(\prod_{i=1}^{N} f(y_i \mid \text{past}_i)\)</span>, where <span class="math inline">\(\text{past}_i = y_{i-1}, y_{i-2}, ..., y_0\)</span></p>
+<p>Consider a sequence of random variables <span class="math inline">\(Y_1, Y_2, Y_3, Y_4,...\)</span>, where for our purposes the subscripts index time. You can factor the joint distribution as <span class="math inline">\(f(y_1) f(y_2 \mid y_1) f(y_3 \mid y_2,y_1) f(y_4 \mid y_3, y_2, y_1)...\)</span> (using a density or mass function <span class="math inline">\(f\)</span> according to whether the <span class="math inline">\(Y_i\)</span> are continuous or discrete). Larry Wasserman uses a notational trick to write this as <span class="math inline">\(\prod_{i=1}^{N} f(y_i \mid \text{past}_i)\)</span>, where <span class="math inline">\(\text{past}_i = y_{i-1}, y_{i-2}, ..., y_0\)</span></p>
 <p>A Markov chain is a stochastic process represented by a sequence of random variables <span class="math inline">\(Y = Y_0, Y_1, \dots\)</span> that obeys a Markov property. In words, the Markov property says that the future is independent of the past, conditioned on the present.</p>
 <p><span class="math display">\[
 \begin{aligned}
 \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=y_{t+1} \mid Y_t=y_t, Y_{t-1}=y_{t-1}, \dots, Y_0=y_0) &amp;= \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=y_{t+1} \mid Y_t=y_t) \\
 &amp;= \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=j \mid Y_t=i)
 \end{aligned}
-\]</span> The last equality is there to simplify the notation that will become handy later on, where we take the current state <span class="math inline">\(i = y_t\)</span> and the next state <span class="math inline">\(j = y_{t+1}\)</span>.</p>
-<p>You can think of a Markov Chain as a process that evolves in time according to some rule governed by probabilities of moving around its state space.</p>
-<p>A discrete state space of a Markov Chain is a collection of all possible states that this chain can visit, which can be finite or infinite.</p>
+\]</span></p>
+<p>The last equality is there to simplify the notation that will become handy later on, where we take the current state <span class="math inline">\(i = y_t\)</span> and the next state <span class="math inline">\(j = y_{t+1}\)</span>.</p>
+<p>You can think of a Markov chain as a process that evolves in time according to some rule governed by probabilities of moving around its state space.</p>
+<p>A discrete state space of a Markov chain is a collection of all possible states that this chain can visit, which can be finite or infinite.</p>
 <p>Consider a Markov chain with infinite but discrete state space. You start with $100 in your account and every day, you can either make $1 with probability <span class="math inline">\(1/2\)</span>, or lose $1. If you are allowed to overdraft the account, the state space is all integers. The Markov property is satisfied since, on any given day, you only need to know the balance during the previous day, not the whole history of transactions. We can visualize this process with a simulation.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -278,7 +283,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The following transition matrix <span class="math inline">\(Q = \begin{pmatrix} \frac{3}{5} &amp; \frac{2}{5} \\ \frac{1}{3} &amp; \frac{2}{3} \end{pmatrix}\)</span>, correspods to the above tranisiton graph.</p>
+<p>The following transition matrix <span class="math inline">\(Q = \begin{pmatrix} \frac{3}{5} &amp; \frac{2}{5} \\ \frac{1}{3} &amp; \frac{2}{3} \end{pmatrix}\)</span>, corresponds to the above transition graph.</p>
 <p><span class="math display">\[
 Q = \begin{array}{c|cc}
       &amp; \text{Up}   &amp; \text{Down} \\ \hline
@@ -286,7 +291,7 @@ Q = \begin{array}{c|cc}
 \text{Down} &amp; \frac{1}{3} &amp; \frac{2}{3}
 \end{array}
 \]</span></p>
-<p>This matrix has a property that all rows sum to one. Each entry of the matrix can specified by <span class="math inline">\(q_{y_t,\, y_{t+1}} = \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=y_{t+1} \mid Y_t=y_t)\)</span> which is the probability of transitioning from state <span class="math inline">\(y_t\)</span> to state <span class="math inline">\(y_{t+1}\)</span>. For example suppose we are at <span class="math inline">\(y_t = \text{Up}\)</span>, then <span class="math inline">\(q_{t,\, t+1} = 3/5\)</span> is the probability of another up day tomorrow (at time <span class="math inline">\(t+1\)</span>) and <span class="math inline">\(q_{t,\, t+1} = 2/5\)</span> is the probability of a down day tomorrow. To simplify the notation we will label <span class="math inline">\(y_t = i\)</span>, and <span class="math inline">\(y_{t+1} = j\)</span>, following the usual matrix notation, with <span class="math inline">\(q_{ij}\)</span>, indexing each entry in <span class="math inline">\(Q\)</span>.</p>
+<p>This matrix has the property that all rows sum to one. Each entry is specified by <span class="math inline">\(q_{i j} = \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=j \mid Y_t=i)\)</span>: the probability of moving from current state <span class="math inline">\(i\)</span> to next state <span class="math inline">\(j\)</span> in one step (row <span class="math inline">\(i\)</span>, column <span class="math inline">\(j\)</span> of <span class="math inline">\(Q\)</span>). For example, if <span class="math inline">\(i = \text{Up}\)</span>, then <span class="math inline">\(q_{\text{Up},\text{Up}} = 3/5\)</span> is the probability of another up day tomorrow and <span class="math inline">\(q_{\text{Up},\text{Down}} = 2/5\)</span> is the probability of a down day tomorrow. With states ordered (Up, Down) as above, these are <span class="math inline">\(q_{11}\)</span> and <span class="math inline">\(q_{12}\)</span>.</p>
 <p>Let’s say we start in <span class="math inline">\(y_t = \text{Up}\)</span> and run the process for 10,000 days. What proportion of time will we spend in a happy Up state? We will run a simulation first and then check the result analytically.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(expm)</span>
@@ -308,7 +313,7 @@ Q = \begin{array}{c|cc}
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y), <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">t =</span> <span class="dv">1</span><span class="sc">:</span>T, <span class="at">y =</span> cummean))</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">scale_x_log10</span>() <span class="sc">+</span> </span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(y), <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Cumulative propotion of Up days"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Log10 Time"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Cumulative proportion of Up days"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Log10 Time"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -317,49 +322,85 @@ Q = \begin{array}{c|cc}
 </div>
 </div>
 </div>
-<p>The process stars chaotic, but after about one thousand iterations, it seems to stabalize at around 0.45. We will now investigate this behavious analytically.</p>
+<p>The process starts chaotic, but after about one thousand iterations, it seems to stabilize at around 0.45. We will now investigate this behavior analytically.</p>
 <section id="powers-of-q" class="level2">
 <h2 class="anchored" data-anchor-id="powers-of-q">Powers of Q</h2>
-<p>The long-term equilibrium is reached when the proportions have stabilized, and the distribution over states at that time is called a stationary distribution of the Markov chain, which, in this case, will be in the form of a PMF. For the type of chain we are considering, it can be shown that the stationary distribution exists and is unique.</p>
+<p>The long-term equilibrium is reached when the proportions of time spent in each state have stabilized. The limiting distribution over states is called the stationary distribution of the chain (here a PMF <span class="math inline">\(\pi\)</span> on <span class="math inline">\(\{\text{Up}, \text{Down}\}\)</span>). For the finite, irreducible, aperiodic chains in this note, that distribution exists and is unique.</p>
+<section id="n-step-transition-probabilities" class="level3">
+<h3 class="anchored" data-anchor-id="n-step-transition-probabilities"><span class="math inline">\(n\)</span>-step transition probabilities</h3>
+<p>Let <span class="math inline">\(Q\)</span> be the one-step transition matrix, with entries <span class="math inline">\(q_{ij} = \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=j \mid Y_t=i)\)</span> as above (row <span class="math inline">\(i\)</span>, column <span class="math inline">\(j\)</span>). For any number of steps <span class="math inline">\(n \geq 1\)</span>, the <span class="math inline">\(n\)</span>-step transition probability from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span> is</p>
+<p><span class="math display">\[
+\mathop{\mathrm{\mathbb{P}}}(Y_{t+n}=j \mid Y_t=i) = (Q^n)_{ij},
+\]</span></p>
+<p>i.e.&nbsp;the <span class="math inline">\((i,j)\)</span> entry of the matrix power <span class="math inline">\(Q^n = Q \cdot Q \cdots Q\)</span> (<span class="math inline">\(n\)</span> factors). This is the Chapman–Kolmogorov idea: to go from <span class="math inline">\(i\)</span> to <span class="math inline">\(j\)</span> in <span class="math inline">\(n\)</span> steps you sum over all intermediate paths of length <span class="math inline">\(n\)</span>, which is exactly what matrix multiplication encodes. For a chain with <span class="math inline">\(K\)</span> states, <span class="math inline">\(Q\)</span> is <span class="math inline">\(K \times K\)</span> and the same formula holds: every entry of <span class="math inline">\(Q^n\)</span> is an <span class="math inline">\(n\)</span>-step probability.</p>
+<p>If you describe the current distribution over states as a row vector <span class="math inline">\(\mu^{(t)}\)</span> (so <span class="math inline">\(\mu^{(t)}_i = \mathop{\mathrm{\mathbb{P}}}(Y_t=i)\)</span>), then one step updates via <span class="math inline">\(\mu^{(t+1)} = \mu^{(t)} Q\)</span>, and after <span class="math inline">\(n\)</span> steps</p>
+<p><span class="math display">\[
+\mu^{(t+n)} = \mu^{(t)} Q^n.
+\]</span></p>
+<p>So <span class="math inline">\(Q^n\)</span> tells you both how mass evolves from any fixed starting state (rows of <span class="math inline">\(Q^n\)</span>) and how an arbitrary initial distribution flows forward.</p>
+</section>
+<section id="what-happens-as-n-gets-large" class="level3">
+<h3 class="anchored" data-anchor-id="what-happens-as-n-gets-large">What happens as <span class="math inline">\(n\)</span> gets large?</h3>
+<p>For a well-behaved finite chain (irreducible and aperiodic), the rows of <span class="math inline">\(Q^n\)</span> converge to the same vector, namely the stationary distribution <span class="math inline">\(\pi\)</span>:</p>
+<p><span class="math display">\[
+\lim_{n\to\infty} (Q^n)_{ij} = \pi_j \quad \text{for every } i.
+\]</span></p>
+<p>So after many steps, the probability of being in state <span class="math inline">\(j\)</span> is approximately <span class="math inline">\(\pi_j\)</span>, almost regardless of where you started. That matches the simulation: the cumulative fraction of Up days settles down. You can compute <span class="math inline">\(Q^n\)</span> explicitly (e.g.&nbsp;with a matrix-power routine) and watch the rows flatten toward <span class="math inline">\(\pi\)</span>.</p>
+</section>
+<section id="link-to-eigenvalues-preview" class="level3">
+<h3 class="anchored" data-anchor-id="link-to-eigenvalues-preview">Link to eigenvalues (preview)</h3>
+<p>When <span class="math inline">\(Q\)</span> is diagonalizable, <span class="math inline">\(Q = V \Lambda V^{-1}\)</span> with <span class="math inline">\(\Lambda = \mathrm{diag}(\lambda_1,\ldots,\lambda_K)\)</span>, and</p>
+<p><span class="math display">\[
+Q^n = V \Lambda^n V^{-1}.
+\]</span></p>
+<p>As <span class="math inline">\(n\)</span> grows, eigenvalues with <span class="math inline">\(|\lambda_\ell| &lt; 1\)</span> shrink to zero in <span class="math inline">\(\Lambda^n\)</span>; under our conditions, one eigenvalue equals <span class="math inline">\(1\)</span> and corresponds to the stationary direction. That is why taking powers of <span class="math inline">\(Q\)</span> and finding a left eigenvector of <span class="math inline">\(Q\)</span> with eigenvalue <span class="math inline">\(1\)</span> are two sides of the same coin—the next section uses the eigen route to read off <span class="math inline">\(\pi\)</span> without raising <span class="math inline">\(Q\)</span> to a huge power.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(expm)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Q is defined in the simulation chunk above; (Q^n)[i,j] = P(Y_{t+n}=j | Y_t=i)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">exists</span>(<span class="st">"Q"</span>))</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>pairs <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">i =</span> <span class="sc">-</span><span class="dv">10</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">j =</span> <span class="sc">-</span><span class="dv">10</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>lin_trans <span class="ot">&lt;-</span> <span class="cf">function</span>(M, x) {</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">diff</span>(<span class="fu">dim</span>(M)) <span class="sc">!=</span> <span class="dv">0</span>) <span class="co"># must be square matrix</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">dim</span>(m)[<span class="dv">2</span>] <span class="sc">==</span> <span class="fu">dim</span>(pairs)[<span class="dv">1</span>]) </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(M <span class="sc">%*%</span> x)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># animated_data &lt;- map_dfr(angles, ~ rotate_points(.x, pairs))</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># stopifnot(!any(is.na(animated_data$time)))</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># stopifnot(is.numeric(animated_data$time))</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># p &lt;- ggplot(animated_data, aes(x = x, y = y)) +</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_point(size = 0.1, alpha = 0.8) +</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_vline(xintercept = 0, linewidth = 0.1) +</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_hline(yintercept = 0, linewidth = 0.1) +</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   coord_fixed() +</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(x = "x", y = "y", title = "Rotation: {frame_time}°") +</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal() +</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   transition_time(time) +</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   shadow_mark(past = TRUE, future = FALSE, alpha = 0.2, size = 0.1)</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># animate(p, fps = 10, width = 500, height = 500, duration = 5)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>ns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">5</span>L, <span class="dv">20</span>L, <span class="dv">100</span>L)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>Qn_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ns, <span class="cf">function</span>(n) Q <span class="sc">%^%</span> n)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(Qn_list) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"n="</span>, ns)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (nm <span class="cf">in</span> <span class="fu">names</span>(Qn_list)) {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, nm, <span class="st">" — rows of Q^n (Up, Down):</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">round</span>(Qn_list[[nm]], <span class="dv">4</span>))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+n=1 — rows of Q^n (Up, Down):
+       [,1]   [,2]
+[1,] 0.6000 0.4000
+[2,] 0.3333 0.6667
+
+n=5 — rows of Q^n (Up, Down):
+       [,1]   [,2]
+[1,] 0.4553 0.5447
+[2,] 0.4539 0.5461
+
+n=20 — rows of Q^n (Up, Down):
+       [,1]   [,2]
+[1,] 0.4545 0.5455
+[2,] 0.4545 0.5455
+
+n=100 — rows of Q^n (Up, Down):
+       [,1]   [,2]
+[1,] 0.4545 0.5455
+[2,] 0.4545 0.5455</code></pre>
 </div>
+</div>
+</section>
 </section>
 <section id="solving-with-the-eigen-decomposition" class="level2">
 <h2 class="anchored" data-anchor-id="solving-with-the-eigen-decomposition">Solving with the Eigen decomposition</h2>
+<p>The stationary row vector <span class="math inline">\(\pi\)</span> satisfies balance with the one-step kernel: <span class="math inline">\(\pi = \pi Q\)</span> (equivalently <span class="math inline">\(\pi^{\mathsf T} = Q^{\mathsf T} \pi^{\mathsf T}\)</span>). So <span class="math inline">\(\pi^{\mathsf T}\)</span> is a right eigenvector of <span class="math inline">\(Q^{\mathsf T}\)</span> with eigenvalue <span class="math inline">\(1\)</span>. The code below calls <code>eigen(t(Q))</code> on <span class="math inline">\(Q^{\mathsf T}\)</span>, extracts the eigenvector for the eigenvalue closest to <span class="math inline">\(1\)</span>, and normalizes it to sum to <span class="math inline">\(1\)</span>. That recovers the same <span class="math inline">\(\pi\)</span> you would see as the limiting rows of <span class="math inline">\(Q^n\)</span> in the previous section.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute eigenvalues and eigenvectors of the transpose of Q.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>eigen_res <span class="ot">&lt;-</span> <span class="fu">eigen</span>(<span class="fu">t</span>(Q))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(eigen_res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute eigenvalues and eigenvectors of the transpose of Q.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>eigen_res <span class="ot">&lt;-</span> <span class="fu">eigen</span>(<span class="fu">t</span>(Q))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(eigen_res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>eigen() decomposition
 $values
@@ -370,20 +411,19 @@ $vectors
 [1,] -0.6401844 -0.7071068
 [2,] -0.7682213  0.7071068</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>stationary_vec <span class="ot">&lt;-</span> eigen_res<span class="sc">$</span>vectors[, <span class="dv">1</span>]</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalize to ensure the elements sum to 1</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>stationary_distribution <span class="ot">&lt;-</span> stationary_vec <span class="sc">/</span> <span class="fu">sum</span>(stationary_vec)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stationary_distribution) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Up"</span>, <span class="st">"Down"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stationary_distribution <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Left eigenvector of Q with eigenvalue 1: use eigenvector of Q' for lambda closest to 1</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="fu">which.min</span>(<span class="fu">abs</span>(<span class="fu">Re</span>(eigen_res<span class="sc">$</span>values) <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>stationary_vec <span class="ot">&lt;-</span> <span class="fu">Re</span>(eigen_res<span class="sc">$</span>vectors[, k])</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalize to ensure the elements sum to 1</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>stationary_distribution <span class="ot">&lt;-</span> stationary_vec <span class="sc">/</span> <span class="fu">sum</span>(stationary_vec)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stationary_distribution) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Up"</span>, <span class="st">"Down"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stationary_distribution <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Up Down 
 0.45 0.55 </code></pre>
 </div>
 </div>
-</section>
-<section id="back-to-infinity-and-gamblers-ruin" class="level1">
-<h1>Back to infinity and gambler’s ruin</h1>
 
 
 

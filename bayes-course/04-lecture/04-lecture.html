@@ -205,7 +205,7 @@
 Eric Novik 
 </div>
 <div class="quarto-title-author-email">
-<a href="mailto:Spring 2025 | Lecture 4">Spring 2025 | Lecture 4</a>
+<a href="mailto:Spring 2026 | Lecture 4">Spring 2026 | Lecture 4</a>
 </div>
         <p class="quarto-title-affiliation">
             New York University
@@ -784,17 +784,19 @@ f(\tilde{y} \mid y) &amp;=&amp; \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">library</span>(cmdstanr)</span>
 <span id="cb33-2"><a></a></span>
-<span id="cb33-3"><a></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/normal_pred.stan"</span>) <span class="co"># compile the model</span></span>
-<span id="cb33-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sigma =</span> <span class="fl">0.5</span>)</span>
-<span id="cb33-5"><a></a>f1 <span class="ot">&lt;-</span> m1<span class="sc">$</span><span class="fu">sample</span>(       <span class="co"># for other options to sample, help(sample)</span></span>
-<span id="cb33-6"><a></a>  <span class="at">data =</span> data,         <span class="co"># pass data as a list, match the vars name to Stan</span></span>
-<span id="cb33-7"><a></a>  <span class="at">seed =</span> <span class="dv">123</span>,          <span class="co"># to reproduce results, Stan does not rely on R's seed</span></span>
-<span id="cb33-8"><a></a>  <span class="at">chains =</span> <span class="dv">4</span>,          <span class="co"># total chains, the more, the better</span></span>
-<span id="cb33-9"><a></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="co"># for multi-processor CPUs</span></span>
-<span id="cb33-10"><a></a>  <span class="at">refresh =</span> <span class="dv">0</span>,         <span class="co"># number of iterations printed on the screen</span></span>
-<span id="cb33-11"><a></a>  <span class="at">iter_warmup =</span> <span class="dv">500</span>,   <span class="co"># number of draws for warmup (per chain)</span></span>
-<span id="cb33-12"><a></a>  <span class="at">iter_sampling =</span> <span class="dv">2000</span> <span class="co"># number of draws for samples (per chain)</span></span>
-<span id="cb33-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb33-3"><a></a><span class="co"># Compiled binary is gitignored (see stan/.gitignore): always matches your installed CmdStan.</span></span>
+<span id="cb33-4"><a></a><span class="co"># If you ever see libtbb.dylib / "No chains finished" after a CmdStan upgrade, delete stan/normal_pred or pass force_recompile = TRUE.</span></span>
+<span id="cb33-5"><a></a>m1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"stan/normal_pred.stan"</span>)</span>
+<span id="cb33-6"><a></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> <span class="dv">5</span>, <span class="at">sigma =</span> <span class="fl">0.5</span>)</span>
+<span id="cb33-7"><a></a>f1 <span class="ot">&lt;-</span> m1<span class="sc">$</span><span class="fu">sample</span>(       <span class="co"># for other options to sample, help(sample)</span></span>
+<span id="cb33-8"><a></a>  <span class="at">data =</span> data,         <span class="co"># pass data as a list, match the vars name to Stan</span></span>
+<span id="cb33-9"><a></a>  <span class="at">seed =</span> <span class="dv">123</span>,          <span class="co"># to reproduce results, Stan does not rely on R's seed</span></span>
+<span id="cb33-10"><a></a>  <span class="at">chains =</span> <span class="dv">4</span>,          <span class="co"># total chains, the more, the better</span></span>
+<span id="cb33-11"><a></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="co"># for multi-processor CPUs</span></span>
+<span id="cb33-12"><a></a>  <span class="at">refresh =</span> <span class="dv">0</span>,         <span class="co"># number of iterations printed on the screen</span></span>
+<span id="cb33-13"><a></a>  <span class="at">iter_warmup =</span> <span class="dv">500</span>,   <span class="co"># number of draws for warmup (per chain)</span></span>
+<span id="cb33-14"><a></a>  <span class="at">iter_sampling =</span> <span class="dv">2000</span> <span class="co"># number of draws for samples (per chain)</span></span>
+<span id="cb33-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 parallel chains...
 
@@ -805,16 +807,16 @@ Chain 4 finished in 0.0 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
-Total execution time: 0.2 seconds.</code></pre>
+Total execution time: 0.3 seconds.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>f1<span class="sc">$</span><span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 10
   variable  mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 lp__     -3.47  -3.18 0.745 0.326 -4.95 -2.94  1.00    3507.    4238.
-2 mu        4.71   4.71 0.498 0.498  3.89  5.53  1.00    2899.    4051.
-3 y_tilde   4.71   4.71 0.706 0.706  3.52  5.87  1.00    4572.    5962.</code></pre>
+1 lp__     -3.44  -3.16 0.724 0.304 -4.91 -2.94  1.00    3502.    4202.
+2 mu        4.71   4.72 0.487 0.482  3.91  5.50  1.00    2731.    3673.
+3 y_tilde   4.71   4.71 0.695 0.693  3.57  5.84  1.00    4155.    5781.</code></pre>
 </div>
 </div>
 </div>

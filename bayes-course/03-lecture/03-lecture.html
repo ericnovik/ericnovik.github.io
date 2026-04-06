@@ -205,7 +205,7 @@
 Eric Novik 
 </div>
 <div class="quarto-title-author-email">
-<a href="mailto:Spring 2025 | Lecture 3">Spring 2025 | Lecture 3</a>
+<a href="mailto:Spring 2026 | Lecture 3">Spring 2026 | Lecture 3</a>
 </div>
         <p class="quarto-title-affiliation">
             New York University
@@ -240,16 +240,16 @@ Eric Novik
 <ul>
 <li class="fragment"><p>Poisson distribution arises when we are interested in counts</p></li>
 <li class="fragment"><p>In practice, we rarely use Poisson due to its restrictive nature</p></li>
-<li class="fragment"><p>Poisson RV <span class="math inline">\(Y\)</span> is paremeterized with a rate of occurance <span class="math inline">\(\lambda\)</span>: <span class="math inline">\(Y|\lambda \sim \text{Pois}(\lambda)\)</span><br>
+<li class="fragment"><p>Poisson RV <span class="math inline">\(Y\)</span> is parameterized with a rate of occurrence <span class="math inline">\(\lambda\)</span>: <span class="math inline">\(Y|\lambda \sim \text{Pois}(\lambda)\)</span><br>
 <span class="math display">\[
 f(y \mid \lambda) =  \frac{e^{-\lambda} \lambda^y}{y!}\;\; \text{ for } y \in \{0,1,2,\ldots\}
 \]</span></p></li>
-<li class="fragment"><p>Notice, the Tailor series for <span class="math inline">\(e^\lambda = \sum_{y=0}^{\infty} \frac{\lambda^y}{y!}\)</span> immediately validates that <span class="math inline">\(f\)</span> is a PDF</p></li>
-<li class="fragment"><p>Also, <span class="math inline">\(\E(Y | \lambda) = \V(Y | \lambda) = \lambda\)</span>, which is the restrictive case mentioned about — real count data seldom satisfied this constraint</p></li>
+<li class="fragment"><p>Notice, the Taylor series for <span class="math inline">\(e^\lambda = \sum_{y=0}^{\infty} \frac{\lambda^y}{y!}\)</span> immediately validates that <span class="math inline">\(f\)</span> is a PMF</p></li>
+<li class="fragment"><p>Also, <span class="math inline">\(\E(Y | \lambda) = \V(Y | \lambda) = \lambda\)</span>, which is the restrictive case mentioned above — real count data seldom satisfy this constraint</p></li>
 </ul>
 </section>
-<section id="visualizing-poission" class="slide level2 smaller">
-<h2>Visualizing Poission</h2>
+<section id="visualizing-poisson" class="slide level2 smaller">
+<h2>Visualizing Poisson</h2>
 <ul>
 <li class="fragment">Notice that as the rate increases, so does the expected number of events as well as variance, which immediately follows from <span class="math inline">\(\E(Y) = \V(Y) = \lambda\)</span></li>
 </ul>
@@ -265,8 +265,8 @@ f(y \mid \lambda) =  \frac{e^{-\lambda} \lambda^y}{y!}\;\; \text{ for } y \in \{
 </div>
 </div>
 </section>
-<section id="example-hourse-kicks" class="slide level2 smaller">
-<h2>Example: Hourse Kicks</h2>
+<section id="example-horse-kicks" class="slide level2 smaller">
+<h2>Example: Horse Kicks</h2>
 <ul>
 <li class="fragment">Serving in Prussian cavalry in the 1800s was a perilous affair</li>
 <li class="fragment">Aside from the usual dangers of military service, you were at risk of being killed by a horse kick</li>
@@ -288,8 +288,8 @@ f(y \mid \lambda) =  \frac{e^{-\lambda} \lambda^y}{y!}\;\; \text{ for } y \in \{
 <section id="poisson-likelihood" class="slide level2 smaller">
 <h2>Poisson Likelihood</h2>
 <ul>
-<li class="fragment"><p>Assume we observe <span class="math inline">\(Y_1, Y_2, ..., Y_n\)</span> independant Poisson random variables</p></li>
-<li class="fragment"><p>The joint lilelihood, a function of the parameter <span class="math inline">\(\lambda\)</span> for <span class="math inline">\(y_i \in \mathbb{Z}^+\)</span> and <span class="math inline">\(\lambda &gt; 0\)</span>, is given by: <span class="math display">\[
+<li class="fragment"><p>Assume we observe <span class="math inline">\(Y_1, Y_2, ..., Y_n\)</span> independent Poisson random variables</p></li>
+<li class="fragment"><p>The joint likelihood, a function of the parameter <span class="math inline">\(\lambda\)</span> for <span class="math inline">\(y_i \in \mathbb{Z}^+\)</span> and <span class="math inline">\(\lambda &gt; 0\)</span>, is given by: <span class="math display">\[
 \begin{eqnarray}
 f(y \mid \lambda) &amp; = &amp; \prod_{i=1}^n f(y_i \mid \lambda) = f(y_1 \mid \lambda)  f(y_2 \mid \lambda) \cdots f(y_n \mid \lambda)  =  \prod_{i=1}^{n}\frac{\lambda^{y_i}e^{-\lambda}}{y_i!} \\
 &amp; = &amp;\frac{\lambda^{y_1}e^{-\lambda}}{y_1!} \cdot \frac{\lambda^{y_2}e^{-\lambda}}{y_2!} \cdots \frac{\lambda^{y_n}e^{-\lambda}}{y_n!} \\
@@ -305,7 +305,7 @@ f(y \mid \lambda) &amp; = &amp; \prod_{i=1}^n f(y_i \mid \lambda) = f(y_1 \mid \
 <h2>Conjugate Prior for Poisson</h2>
 <ul>
 <li class="fragment"><p>The likelihood has a form of <span class="math inline">\(\lambda^{a} e^{-b\lambda}\)</span> so we expect the conjugate prior to be of the same form</p></li>
-<li class="fragment"><p>Gamma PDF satisfied this condition: <span class="math inline">\(f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}\)</span></p></li>
+<li class="fragment"><p>The Gamma PDF satisfies this condition: <span class="math inline">\(f(\lambda) \propto \lambda^{\alpha - 1} e^{-\beta\lambda}\)</span></p></li>
 <li class="fragment"><p>Matching up the exponents, we can interpret <span class="math inline">\((\alpha - 1)\)</span> as the total number of incidents <span class="math inline">\(\sum y_i\)</span> out of <span class="math inline">\(\beta\)</span> prior observations</p></li>
 <li class="fragment"><p>Full Gamma density is <span class="math inline">\(\text{Gamma}(\lambda|\alpha,\beta)=\frac{\beta^{\alpha}}   {\Gamma(\alpha)} \, \lambda^{\alpha - 1}e^{-\beta \, \lambda}\)</span> for <span class="math inline">\(\lambda, \alpha, \beta \in \mathbb{R}^+\)</span> <span class="math display">\[
 \begin{equation}
@@ -383,8 +383,8 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 \]</span></p>
 </div>
 </section>
-<section id="prussian-army-hourse-kicks" class="slide level2 smaller">
-<h2>Prussian Army Hourse Kicks</h2>
+<section id="prussian-army-horse-kicks" class="slide level2 smaller">
+<h2>Prussian Army Horse Kicks</h2>
 <ul>
 <li class="fragment">From 1875 to 1894, there were 14 different cavalry corps</li>
 <li class="fragment">Each reported a number of deaths by horse kick every year</li>
@@ -1011,8 +1011,8 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </div>
 </div>
 </section>
-<section id="prussian-army-hourse-kicks-1" class="slide level2 smaller">
-<h2>Prussian Army Hourse Kicks</h2>
+<section id="prussian-army-horse-kicks-1" class="slide level2 smaller">
+<h2>Prussian Army Horse Kicks</h2>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># this flattens the data frame into a vector</span></span>
@@ -1035,8 +1035,8 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 </div>
 </div>
 </section>
-<section id="prussian-army-hourse-kicks-2" class="slide level2 smaller">
-<h2>Prussian Army Hourse Kicks</h2>
+<section id="prussian-army-horse-kicks-2" class="slide level2 smaller">
+<h2>Prussian Army Horse Kicks</h2>
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Prior and Posterior</a></li><li><a href="#tabset-1-2">Plots</a></li></ul>
 <div class="tab-content">
@@ -1153,7 +1153,7 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma}\left( \alpha + \sum_{i=1}^{n} y_i, 
 <h2>Adding Exposure</h2>
 <ul>
 <li class="fragment">Poisson likelihood seems to work well for these data</li>
-<li class="fragment">It is likely that each of the 16 corps had about the same number of soldier-horses, a common military practice</li>
+<li class="fragment">It is likely that each of the 14 corps had about the same number of soldier-horses, a common military practice</li>
 <li class="fragment">Suppose each corps has a different number of cavalrymen</li>
 <li class="fragment">We need to introduce an exposure variable <span class="math inline">\(x_i\)</span> for each corps unit <span class="math display">\[
 \begin{eqnarray}
@@ -1170,7 +1170,7 @@ f(\lambda \mid y) &amp; = &amp; \text{Gamma} \left( \alpha + \sum_{i=1}^{n} y_i,
 <ul>
 <li class="fragment">The last conjugate distribution we will introduce is Normal</li>
 <li class="fragment">We will only consider a somewhat unrealistic case of known variance <span class="math inline">\(\sigma \in \mathbb{R}^+\)</span> and unknown mean <span class="math inline">\(\mu \in \mathbb{R}\)</span></li>
-<li class="fragment">Normal PDF is for one observation <span class="math inline">\(y\)</span> is given by: <span class="math display">\[
+<li class="fragment">The Normal PDF for one observation <span class="math inline">\(y\)</span> is given by: <span class="math display">\[
 \begin{eqnarray}
 \text{Normal}(y \mid \mu,\sigma) &amp; = &amp;\frac{1}{\sqrt{2 \pi} \
 \sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{y - \mu}{\sigma} \right)^2     \right) \\
@@ -1241,7 +1241,7 @@ f(y \mid \mu) &amp; = &amp; \prod_{i=1}^{n}\frac{1}{\sqrt{2 \pi} \
 \sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2     \right) \\
 &amp; \propto &amp; \prod_{i=1}^{n} \exp\left( - \, \frac{1}{2} \left(  \frac{y_i - \mu}{\sigma} \right)^2 \right) \\  
 &amp; = &amp; \exp \left( {-\frac{\sum_{i=1}^n(y_i-\mu)^2}{2\sigma^2}}\right) \\
-&amp;\propto&amp; \exp\left({-\frac{(\bar{y}-\mu)^2}{2\sigma^2/n}}\right)
+&amp;\propto&amp; \exp\left( -\frac{(\bar{y}-\mu)^2}{2\sigma^2/n} \right)
 \end{eqnarray}
 \]</span></p></li>
 <li class="fragment"><p>The last line is derived by expanding the square and dropping terms that don’t depend on <span class="math inline">\(\mu\)</span>; <span class="math inline">\(\bar{y} = \frac{1}{n} \sum_{i=1}^{n} y_i\)</span></p></li>
@@ -1337,13 +1337,13 @@ f(\mu \mid y) &amp;\propto&amp; \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \
 <li class="fragment">We already saw how given samples from the target distribution, we could compute quantities of interest</li>
 <li class="fragment">The grid approach to getting samples:
 <ol type="1">
-<li class="fragment">Generate discreet points in parameter space <span class="math inline">\(\theta\)</span></li>
+<li class="fragment">Generate discrete points in parameter space <span class="math inline">\(\theta\)</span></li>
 <li class="fragment">Define our likelihood function <span class="math inline">\(f(y|\theta)\)</span> and prior <span class="math inline">\(f(\theta)\)</span></li>
 <li class="fragment">For each point on the grid, compute the product <span class="math inline">\(f(y|\theta)f(\theta)\)</span></li>
 <li class="fragment">Normalize the product to sum to 1</li>
 <li class="fragment">Sample from the resulting distribution in proportion to the posterior probability</li>
 </ol></li>
-<li class="fragment">Here, <span class="math inline">\(\theta\)</span> is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the clinical trial example.</li>
+<li class="fragment">Here, <span class="math inline">\(\theta\)</span> is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the mystery box example.</li>
 <li class="fragment">What are some limitations of this approach?</li>
 </ul>
 </section>
@@ -1356,7 +1356,7 @@ f(\mu \mid y) &amp;\propto&amp; \exp \left(  -\frac{1}{2\tau_1^2} \left( \mu - \
 <ul>
 <li class="fragment">For simplicity we will assume uniform <span class="math inline">\(\text{Beta}(1, 1)\)</span> prior <span class="math display">\[
 \begin{eqnarray}
-f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
+f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{\alpha - 1}(1 - \theta)^{\beta - 1} \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
 &amp;=&amp; \theta^0(1 - \theta)^0 \cdot \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
 &amp;=&amp; \prod_{i=1}^{n} \theta^{y_i} (1 - \theta)^{1 - y_i} \\
 &amp;=&amp; \theta^{\sum_{i=1}^{n} y_i} \cdot (1 - \theta)^{\sum_{i=1}^{n} (1- y_i)}
@@ -1434,7 +1434,7 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <li class="fragment"><p>Suppose we can draw samples from PDF <span class="math inline">\(f\)</span>, <span class="math inline">\((\theta^{(1)}, \theta^{(2)},..., \theta^{(N)})\)</span></p></li>
 <li class="fragment"><p>If we want to compute an expectation of some function <span class="math inline">\(h\)</span>: <span class="math display">\[
 \begin{eqnarray}
-\E_f[h(\theta)] &amp;=&amp; \int h(\theta)f(\theta)\, d\theta
+\E_f[h(\theta)] &amp;=&amp; \int h(\theta)f(\theta)\, d\theta \\
 &amp;\approx&amp; \frac{1}{N} \sum_{i = 1}^{N} h \left( \theta^{(i)} \right)
 \end{eqnarray}
 \]</span></p></li>
@@ -1445,30 +1445,42 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 </div>
 <div id="tabset-4-2">
 <ul>
-<li class="fragment">Suppose we want to estimate the mean and variance of standard normal</li>
-<li class="fragment">In case of the mean, <span class="math inline">\(h(\theta) := \theta\)</span> and variance, <span class="math inline">\(h(\theta) := \theta^2\)</span>, and <span class="math inline">\(f(\theta) = \frac{1}{\sqrt{2 \pi} \ } e^{-\theta^2/2}\)</span> <span class="math display">\[
-\begin{eqnarray}
-\E[\theta] &amp;=&amp; \int_{-\infty}^{\infty} \theta f(\theta)\, d\theta
-&amp;\approx&amp; \frac{1}{N} \sum_{i = 1}^{N} \theta^{(i)} \\
-\E[\theta^2] &amp;=&amp; \int_{-\infty}^{\infty} \theta^2 f(\theta)\, d\theta &amp;\approx&amp;
-\frac{1}{N} \sum_{i = 1}^{N} \left( \theta^{(i)} \right)^2
-\end{eqnarray}
-\]</span></li>
+<li class="fragment">Suppose we want to estimate the mean and variance of a RV</li>
+<li class="fragment">In case of the mean, <span class="math inline">\(h(\theta) := \theta\)</span> and variance, <span class="math inline">\(h(\theta) := \theta^2\)</span></li>
 </ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+\E[\theta] &amp;=&amp; \int_{-\infty}^{\infty} \theta f(\theta)\, d\theta \\
+&amp;\approx&amp; \frac{1}{N} \sum_{i = 1}^{N} \theta^{(i)} \\
+\E[\theta^2] &amp;=&amp; \int_{-\infty}^{\infty} \theta^2 f(\theta)\, d\theta \\
+&amp;\approx&amp; \frac{1}{N} \sum_{i = 1}^{N} \left( \theta^{(i)} \right)^2
+\end{eqnarray}
+\]</span></p>
+</div>
+</div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>N <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb22-2"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)          <span class="co"># draw theta from N(0, 1)</span></span>
-<span id="cb22-3"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)   <span class="co"># E(theta),   same as mean(theta)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb22-2"><a></a></span>
+<span id="cb22-3"><a></a><span class="co"># draw theta from N(0, 1)</span></span>
+<span id="cb22-4"><a></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)          </span>
+<span id="cb22-5"><a></a></span>
+<span id="cb22-6"><a></a><span class="co"># E(theta),   same as mean(theta)</span></span>
+<span id="cb22-7"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)   </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>) <span class="co"># E(theta^2), same as mean(theta^2)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># E(theta^2), same as mean(theta^2)</span></span>
+<span id="cb24-2"><a></a>(<span class="dv">1</span><span class="sc">/</span>N <span class="sc">*</span> <span class="fu">sum</span>(theta<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
 </div>
 </div>
+</div></div>
 </div>
 <div id="tabset-4-3">
 <ul>
@@ -1483,7 +1495,7 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">pnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)          <span class="co"># Evalute N(0, 1) CDF at 1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">pnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)          <span class="co"># Evaluate N(0, 1) CDF at 1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.84</code></pre>
 </div>
@@ -1499,9 +1511,9 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <div id="tabset-4-4">
 <ul>
 <li class="fragment">MCMC is a very general method for computing expectations (integrals)</li>
-<li class="fragment">It produces dependant (autocorrelated) samples, but for a good algorithm, the dependence is manageable</li>
+<li class="fragment">It produces dependent (autocorrelated) samples, but for a good algorithm, the dependence is manageable</li>
 <li class="fragment">Stan’s MCMC algorithm is very efficient (more on that later) and requires all parameters to be continuous (data can be discrete)</li>
-<li class="fragment">It solves the problem of drawing from distribution <span class="math inline">\(f(\theta)\)</span> where <span class="math inline">\(f\)</span> is not one of the fundamental distributions and <span class="math inline">\(\theta\)</span> is high dimentional</li>
+<li class="fragment">It solves the problem of drawing from distribution <span class="math inline">\(f(\theta)\)</span> where <span class="math inline">\(f\)</span> is not one of the fundamental distributions and <span class="math inline">\(\theta\)</span> is high dimensional</li>
 <li class="fragment">What is high-dimensional? Modern algorithms like NUTS can jointly sample tens of thousands and more parameters</li>
 <li class="fragment">That’s 10,000+ dimensional integrals of complicated functions!</li>
 </ul>
@@ -1525,7 +1537,7 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <section id="introduction-to-stan" class="slide level2 smaller">
 <h2>Introduction to Stan</h2>
 <ul>
-<li class="fragment">Stan is a procedural, statically typed, Turning complete, probabilistic programming language</li>
+<li class="fragment">Stan is a procedural, statically typed, Turing complete, probabilistic programming language</li>
 <li class="fragment">Stan language expresses a probabilistic model</li>
 <li class="fragment">Stan transpiler converts it to C++</li>
 <li class="fragment">Stan inference algorithms perform parameter estimation</li>
@@ -1545,7 +1557,7 @@ f(\theta)f(y\mid \theta) &amp;\propto&amp; \theta^{a -1}(1 - \theta)^{b-1} \cdot
 <span id="cb30-8"><a></a>}</span>
 <span id="cb30-9"><a></a><span class="kw">model</span> {</span>
 <span id="cb30-10"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
-<span id="cb30-11"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
+<span id="cb30-11"><a></a>    <span class="kw">target +=</span> log(theta) * y[i] +</span>
 <span id="cb30-12"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
 <span id="cb30-13"><a></a>  }</span>
 <span id="cb30-14"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1693,7 +1705,7 @@ Total execution time: 0.3 seconds.</code></pre>
 <iframe data-external="1" src="https://www.youtube.com/embed/1TKhH81k7QA" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
 <p>A is a sequence of random variables <span class="math inline">\(\{X_n\}_{n \geq 0}\)</span> defined on a state space <span class="math inline">\(S\)</span> such that for all <span class="math inline">\(n \geq 0\)</span> and for any states <span class="math inline">\(i_0, i_1, \dots, i_{n+1} \in S\)</span>, the Markov property holds:</p>
 <p><span class="math display">\[
-\mathbb{P}(X_{n+1}=j \mid X_0=i_0, X_{n-1}=i_{n-1}, \dots, X_n=i_n) = \mathbb{P}(X_{n+1}=j \mid X_n=i)
+\mathbb{P}(X_{n+1}=j \mid X_0=i_0, X_1=i_1, \ldots, X_n=i_n) = \mathbb{P}(X_{n+1}=j \mid X_n=i_n)
 \]</span></p>
 <p>The transition probabilities are represented by a matrix <span class="math inline">\(Q\)</span>, where:</p>
 <p><span class="math display">\[
@@ -1733,7 +1745,7 @@ q_{ij} = \mathbb{P}(X_{n+1} = j \mid X_n = i)
 <span id="cb45-5"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Good Chain"</span>)</span>
 <span id="cb45-6"><a></a>bad_post <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/bad_post.rds"</span>)</span>
 <span id="cb45-7"><a></a>bad_draws <span class="ot">&lt;-</span> bad_post<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"mu"</span>)</span>
-<span id="cb45-8"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(bad_draws, <span class="at">pars =</span> <span class="st">"mu"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(theta)) <span class="sc">+</span></span>
+<span id="cb45-8"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_trace</span>(bad_draws, <span class="at">pars =</span> <span class="st">"mu"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="fu">expression</span>(mu)) <span class="sc">+</span></span>
 <span id="cb45-9"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Bad Chain"</span>)</span>
 <span id="cb45-10"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1820,10 +1832,10 @@ q_{ij} = \mathbb{P}(X_{n+1} = j \mid X_n = i)
 <pre><code>theta 
 1.006 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>bayesplot<span class="sc">::</span><span class="fu">rhat</span>(bad_post, <span class="at">pars =</span> <span class="st">"sigma"</span>)  <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>bayesplot<span class="sc">::</span><span class="fu">rhat</span>(bad_post, <span class="at">pars =</span> <span class="st">"mu"</span>)  <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>sigma 
-1.043 </code></pre>
+<pre><code>   mu 
+1.034 </code></pre>
 </div>
 </div>
 </div>
@@ -1848,7 +1860,7 @@ q_{ij} = \mathbb{P}(X_{n+1} = j \mid X_n = i)
 <span id="cb54-7"><a></a>}</span>
 <span id="cb54-8"><a></a><span class="kw">model</span> {</span>
 <span id="cb54-9"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
-<span id="cb54-10"><a></a>    <span class="kw">target +=</span> log(theta * y[i] + </span>
+<span id="cb54-10"><a></a>    <span class="kw">target +=</span> log(theta) * y[i] +</span>
 <span id="cb54-11"><a></a>              log(<span class="dv">1</span> - theta) * (<span class="dv">1</span> - y[i]);</span>
 <span id="cb54-12"><a></a>  }</span>
 <span id="cb54-13"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
