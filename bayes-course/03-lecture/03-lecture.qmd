@@ -711,7 +711,7 @@ $$
   1. For each point on the grid, compute the product $f(y|\theta)f(\theta)$
   1. Normalize the product to sum to 1
   1. Sample from the resulting distribution in proportion to the posterior probability
-- Here, $\theta$ is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the clinical trial example.
+- Here, $\theta$ is continuous, so we can not use the technique we used for a discrete, one-dimensional prior from the mystery box example.
 - What are some limitations of this approach?
 :::
 
@@ -823,8 +823,14 @@ $$
 
 ## Example 1
 ::: incremental
-- Suppose we want to estimate the mean and variance of standard normal
-- In case of the mean, $h(\theta) := \theta$ and variance, $h(\theta) := \theta^2$, and $f(\theta) = \frac{1}{\sqrt{2 \pi} \ } e^{-\theta^2/2}$
+- Suppose we want to estimate the mean and variance of a RV
+- In case of the mean, $h(\theta) := \theta$ and variance, $h(\theta) := \theta^2$
+:::
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
 $$
 \begin{eqnarray}
 \E[\theta] &=& \int_{-\infty}^{\infty} \theta f(\theta)\, d\theta \\
@@ -835,17 +841,30 @@ $$
 $$
 :::
 
+:::
+
+::: {.column width="50%"}
+
 ::: {.fragment}
 ```{r}
 #| echo: true
 #| cache: true
-
 N <- 1e5
-theta <- rnorm(N, 0, 1)          # draw theta from N(0, 1)
-(1/N * sum(theta)) |> round(2)   # E(theta),   same as mean(theta)
-(1/N * sum(theta^2)) |> round(2) # E(theta^2), same as mean(theta^2)
+
+# draw theta from N(0, 1)
+theta <- rnorm(N, 0, 1)          
+
+# E(theta),   same as mean(theta)
+(1/N * sum(theta)) |> round(2)   
+
+# E(theta^2), same as mean(theta^2)
+(1/N * sum(theta^2)) |> round(2) 
 ```
 :::
+
+:::
+:::
+
 
 ## Example 2
 

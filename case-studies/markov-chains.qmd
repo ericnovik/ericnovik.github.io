@@ -48,13 +48,6 @@ A discrete state space of a Markov chain is a collection of all possible states 
 Consider a Markov chain with infinite but discrete state space. You start with \$100 in your account and every day, you can either make \$1 with probability $1/2$, or lose \$1. If you are allowed to overdraft the account, the state space is all integers. The Markov property is satisfied since, on any given day, you only need to know the balance during the previous day, not the whole history of transactions. We can visualize this process with a simulation.
 
 ```{r}
-#| echo: false
-rnorm(100)
-```
-
-
-
-```{r}
 #| fig-width: 6
 #| fig-height: 4
 #| fig-align: center
@@ -171,44 +164,69 @@ The process starts chaotic, but after about one thousand iterations, it seems to
 
 ## Powers of Q
 
-The long-term equilibrium is reached when the proportions have stabilized, and the distribution over states at that time is called a stationary distribution of the Markov chain, which, in this case, will be in the form of a PMF. For the type of chain we are considering, it can be shown that the stationary distribution exists and is unique.
+The long-term equilibrium is reached when the proportions of time spent in each state have stabilized. The limiting distribution over states is called the stationary distribution of the chain (here a PMF $\pi$ on $\{\text{Up}, \text{Down}\}$). For the finite, irreducible, aperiodic chains in this note, that distribution exists and is unique.
+
+### $n$-step transition probabilities
+
+Let $Q$ be the one-step transition matrix, with entries $q_{ij} = \mathop{\mathrm{\mathbb{P}}}(Y_{t+1}=j \mid Y_t=i)$ as above (row $i$, column $j$). For any number of steps $n \geq 1$, the $n$-step transition probability from state $i$ to state $j$ is
+
+$$
+\mathop{\mathrm{\mathbb{P}}}(Y_{t+n}=j \mid Y_t=i) = (Q^n)_{ij},
+$$
+
+i.e. the $(i,j)$ entry of the matrix power $Q^n = Q \cdot Q \cdots Q$ ($n$ factors). This is the Chapman–Kolmogorov idea: to go from $i$ to $j$ in $n$ steps you sum over all intermediate paths of length $n$, which is exactly what matrix multiplication encodes. For a chain with $K$ states, $Q$ is $K \times K$ and the same formula holds: every entry of $Q^n$ is an $n$-step probability.
+
+If you describe the current distribution over states as a row vector $\mu^{(t)}$ (so $\mu^{(t)}_i = \mathop{\mathrm{\mathbb{P}}}(Y_t=i)$), then one step updates via $\mu^{(t+1)} = \mu^{(t)} Q$, and after $n$ steps
+
+$$
+\mu^{(t+n)} = \mu^{(t)} Q^n.
+$$
+
+So $Q^n$ tells you both how mass evolves from any fixed starting state (rows of $Q^n$) and how an arbitrary initial distribution flows forward.
+
+### What happens as $n$ gets large?
+
+For a well-behaved finite chain (irreducible and aperiodic), the rows of $Q^n$ converge to the same vector, namely the stationary distribution $\pi$:
+
+$$
+\lim_{n\to\infty} (Q^n)_{ij} = \pi_j \quad \text{for every } i.
+$$
+
+So after many steps, the probability of being in state $j$ is approximately $\pi_j$, almost regardless of where you started. That matches the simulation: the cumulative fraction of Up days settles down. You can compute $Q^n$ explicitly (e.g. with a matrix-power routine) and watch the rows flatten toward $\pi$.
+
+### Link to eigenvalues (preview)
+
+When $Q$ is diagonalizable, $Q = V \Lambda V^{-1}$ with $\Lambda = \mathrm{diag}(\lambda_1,\ldots,\lambda_K)$, and
+
+$$
+Q^n = V \Lambda^n V^{-1}.
+$$
+
+As $n$ grows, eigenvalues with $|\lambda_\ell| < 1$ shrink to zero in $\Lambda^n$; under our conditions, one eigenvalue equals $1$ and corresponds to the stationary direction. That is why taking powers of $Q$ and finding a left eigenvector of $Q$ with eigenvalue $1$ are two sides of the same coin—the next section uses the eigen route to read off $\pi$ without raising $Q$ to a huge power.
 
 ```{r}
 #| cache: true
 #| echo: true
+#| label: powers-of-Q
 
-library(ggplot2)
-library(gganimate)
-library(dplyr)
-library(purrr)
+library(expm)
 
-pairs <- expand.grid(i = -10:10, j = -10:10)
+# Q is defined in the simulation chunk above; (Q^n)[i,j] = P(Y_{t+n}=j | Y_t=i)
+stopifnot(exists("Q"))
 
-lin_trans <- function(M, x) {
-  stopifnot(nrow(M) == ncol(M)) # square matrix
-  stopifnot(ncol(M) == length(x))
-  M %*% x
+ns <- c(1L, 5L, 20L, 100L)
+Qn_list <- lapply(ns, function(n) Q %^% n)
+names(Qn_list) <- paste0("n=", ns)
+
+for (nm in names(Qn_list)) {
+  cat("\n", nm, " — rows of Q^n (Up, Down):\n", sep = "")
+  print(round(Qn_list[[nm]], 4))
 }
-
-# animated_data <- map_dfr(angles, ~ rotate_points(.x, pairs))
-# 
-# stopifnot(!any(is.na(animated_data$time)))
-# stopifnot(is.numeric(animated_data$time))
-# 
-# p <- ggplot(animated_data, aes(x = x, y = y)) +
-#   geom_point(size = 0.1, alpha = 0.8) +
-#   geom_vline(xintercept = 0, linewidth = 0.1) +
-#   geom_hline(yintercept = 0, linewidth = 0.1) +
-#   coord_fixed() +
-#   labs(x = "x", y = "y", title = "Rotation: {frame_time}°") +
-#   theme_minimal() +
-#   transition_time(time) +
-#   shadow_mark(past = TRUE, future = FALSE, alpha = 0.2, size = 0.1)
-# 
-# animate(p, fps = 10, width = 500, height = 500, duration = 5)
 ```
 
 ## Solving with the Eigen decomposition
+
+The stationary row vector $\pi$ satisfies balance with the one-step kernel: $\pi = \pi Q$ (equivalently $\pi^{\mathsf T} = Q^{\mathsf T} \pi^{\mathsf T}$). So $\pi^{\mathsf T}$ is a right eigenvector of $Q^{\mathsf T}$ with eigenvalue $1$. The code below calls `eigen(t(Q))` on $Q^{\mathsf T}$, extracts the eigenvector for the eigenvalue closest to $1$, and normalizes it to sum to $1$. That recovers the same $\pi$ you would see as the limiting rows of $Q^n$ in the previous section.
 
 ```{r}
 #| fig-width: 4.5
@@ -230,6 +248,3 @@ names(stationary_distribution) <- c("Up", "Down")
 print(stationary_distribution |> round(2))
 ```
 
-# Back to infinity and gambler's ruin
-
-*This section is a stub: material on random walks on $\mathbb{Z}$, recurrence, and gambler's ruin can be added here.*

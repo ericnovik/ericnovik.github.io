@@ -3,7 +3,7 @@ title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author:
  - name: "Eric Novik"
-   email: "Spring 2025 | Lecture 4"
+   email: "Spring 2026 | Lecture 4"
    affiliations: 
     - name: New York University
 format:
@@ -750,7 +750,9 @@ generated quantities {
 #| message: false
 library(cmdstanr)
 
-m1 <- cmdstan_model("stan/normal_pred.stan") # compile the model
+# Compiled binary is gitignored (see stan/.gitignore): always matches your installed CmdStan.
+# If you ever see libtbb.dylib / "No chains finished" after a CmdStan upgrade, delete stan/normal_pred or pass force_recompile = TRUE.
+m1 <- cmdstan_model("stan/normal_pred.stan")
 data <- list(y = 5, sigma = 0.5)
 f1 <- m1$sample(       # for other options to sample, help(sample)
   data = data,         # pass data as a list, match the vars name to Stan
