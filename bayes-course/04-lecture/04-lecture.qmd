@@ -171,7 +171,7 @@ $$
 - Pick a random starting point at $i=1$ with $\theta^{(1)}$
 - **Propose** a next possible value of $\theta$, call it  $\theta'$ from an (easy) proposal distribution
 - Evaluate if you should **accept or reject** the proposal
-- If accepted, go to $\theta^{'(2)}$, otherwise stay at $\theta^{(2)} = \theta^{(1)}$
+- If accepted, set $\theta^{(2)} = \theta'$; otherwise stay at $\theta^{(2)} = \theta^{(1)}$
 - Rinse and repeat
 :::
 
@@ -179,7 +179,7 @@ $$
 
 ::: {.column width="50%"}
 ::: {.incremental}
-- If we can get an independant draw from $\theta$, we just take it
+- If we can get an independent draw from $\theta$, we just take it
 - That amounts to regular Monte Carlo sampling, like `rnorm(1, mean = 0, sd = 1)`
 - Otherwise, we need a **rule** for evaluating when to accept and when to reject the proposal
 - We still need a way to **evaluate the density** at the proposed value (it will be part of the rule)
@@ -306,7 +306,7 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
   ratio <- f_proposal / f_current # [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]
   alpha <- min(ratio, 1)     
   
-  if (alpha > runif(1)) {         # this is just another way of flipping a coint
+  if (alpha > runif(1)) {         # this is just another way of flipping a coin
     next_value <- proposal_mean  
   } else {
     next_value <- current_mean
@@ -417,7 +417,7 @@ metropolis_iteration_1 <- function(y, current_mean, proposal_scale,
   ratio <- f_proposal / f_current # [f(theta') * f(y | theta')] / [f(theta) * f(y | theta)]
   alpha <- min(ratio, 1)     
   
-  if (alpha > runif(1)) {         # this is just another way of flipping a coint
+  if (alpha > runif(1)) {         # this is just another way of flipping a coin
     next_value <- proposal_mean  
   } else {
     next_value <- current_mean
@@ -457,7 +457,7 @@ metropolis_iteration_2 <- function(y, current_mean, proposal_scale, sd,
   f_current     <- dnorm(current_mean, mean = prior_mean, sd = prior_sd) *        
                    prod(dnorm(y, mean = current_mean, sd = sd))
 
-  if ((f_proposal || f_current) == 0) {
+  if (f_proposal == 0 || f_current == 0) {
     return("Error: underflow") # on my computer double.xmin = 2.225074e-308
   }
   ratio <- f_proposal / f_current 
@@ -618,8 +618,8 @@ sd(d) |> round(2)
 
 ::: {.incremental}
 - We will only consider the case of symmetric q
-- Suppose you sample two points from the PMF $f(\theta \mid y)$, $\theta_a$ and $\theta_b$ and assume we are at time $t-1$
-- Let the probability of going from $\theta_a$ to $\theta_b$ be: $\P(\theta^t = \theta_b) \mid \theta^{t-1} = \theta_a) := p_{a b}$ and the reverse jump: $\P(\theta^t = \theta_a) \mid \theta^{t-1} = \theta_b) := p_{b a}$
+- Suppose you sample two points from the PDF $f(\theta \mid y)$, $\theta_a$ and $\theta_b$, and assume we are at time $t-1$
+- Let the probability of going from $\theta_a$ to $\theta_b$ be: $\P(\theta^t = \theta_b \mid \theta^{t-1} = \theta_a) := p_{a b}$ and the reverse jump: $\P(\theta^t = \theta_a \mid \theta^{t-1} = \theta_b) := p_{b a}$
 - We want to show:
 $$
 \begin{eqnarray}
@@ -668,15 +668,15 @@ f(\tilde{y} \mid y) &=& \int f(\tilde{y}, \theta \mid y) \, d\theta \\
 \end{eqnarray}
 $$
 
-- $f(\tilde{y} \mid \theta, y) = f(\tilde{y} \mid \theta)$ since $y \perp\!\!\!\perp \tilde{y} \mid \theta$ (conditional indepedence)
+- $f(\tilde{y} \mid \theta, y) = f(\tilde{y} \mid \theta)$ since $y \perp\!\!\!\perp \tilde{y} \mid \theta$ (conditional independence)
 - Two sources of variability are accounted for: sampling variability in $\tilde{y}$ weighted by posterior variability in $\theta$
 - Given draws from $f(\theta \mid y)$, $\theta^{(m)} \sim f(\theta \mid y)$, we can compute the integral in a usual way: $f(\tilde{y} \mid y) \approx \frac{1}{M} \sum_{m = 1}^M f(\tilde{y} \mid \theta^{(m)})$
 :::
 
 ## Introducing Posterior Predictive Distribution {.smaller}
 ::: {.incremental}
-- For simple models we can often evalute $\int f(\theta \mid y) f(\tilde{y} \mid \theta) \, d\theta$ directly
-- We will use an inderect approach using our example Normal-Normal model with known variance
+- For simple models we can often evaluate $\int f(\theta \mid y) f(\tilde{y} \mid \theta) \, d\theta$ directly
+- We will use an indirect approach using our example Normal-Normal model with known variance
 - Since we already know $f(\theta | y)$, we will sample $\theta$ from it, and then sample $\tilde{y}$, from $f(\tilde{y} \mid \theta)$
 - Recall, $y \sim \text{Normal}(\mu, 0.5)$ with prior $\mu \sim \text{Normal}(0, 2)$
 - For $y = 5$, the posterior $\mu | y \sim \text{Normal}(4.71, 0.49)$
@@ -767,10 +767,10 @@ f1$summary()
 ```
 :::
 
-## Extra Credit: breaking codes with MCMC
+## Breaking codes with MCMC
 
 ::: panel-tabset
-## Dianconis
+## Diaconis
 ![](images/prison0.png){fig-align="center" width="650"}
 
 ## Cypher text
