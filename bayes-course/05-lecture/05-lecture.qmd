@@ -3,7 +3,7 @@ title: "Bayesian Inference"
 subtitle: "NYU Applied Statistics for Social Science Research"
 author:
  - name: "Eric Novik"
-   email: "Spring 2025 | Lecture 5"
+   email: "Spring 2026 | Lecture 5"
    affiliations: 
     - name: New York University
 format:
@@ -115,7 +115,7 @@ $$
 
 
 ::: footer
-[Univercity of Toronto Data Sets](https://tspace.library.utoronto.ca/handle/1807/10395)
+[University of Toronto Data Sets](https://tspace.library.utoronto.ca/handle/1807/10395)
 :::
 
 ## Howell Dataset {.smaller}
@@ -242,7 +242,7 @@ $$
 ## Howell Regression {.smaller}
 ::: incremental
 - In this dataset, the units of $\beta$ are $\frac{kg}{cm}$, since the units of height are $cm$
-- Should $\beta$ be positive. Why?
+- Should $\beta$ be positive? Why?
 - Do you think $\beta$ is likely to be less than 1. Why?
 - We can consult [height-weight tables](http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html) for the expected value and variance
 - In the dataset, $\E(\beta) = 0.55$ with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more
@@ -386,20 +386,66 @@ p + geom_point(size = 0.5) + ylim(20, 90) +
 
 ::: incremental
 - We have seen how to derive the posterior and posterior predictive distribution
-- Three dimentional posterior: $f(\alpha, \beta, \sigma)$. Where is $\mu$?
+- Three dimensional posterior: $f(\alpha, \beta, \sigma)$. Where is $\mu$?
 - We construct the posterior from the prior and data likelihood (for each $y_i$):
 $$
 \begin{eqnarray}
 &\text{Prior: }f(\alpha, \beta, \sigma) = f_1(\alpha) f_2(\beta) f_3(\sigma) \\
 &\text{Likelihood: }f(y \mid \alpha, \beta, \sigma) = \prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \\
-&\text{Posterior: }f(\alpha,\beta,\sigma \mid y) = \frac{f_1(\alpha) f(_2\beta) f_3(\sigma) \cdot \left[\prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \right]}
+&\text{Posterior: }f(\alpha,\beta,\sigma \mid y) = \frac{f_1(\alpha) f_2(\beta) f_3(\sigma) \cdot \left[\prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \right]}
  {\int\int\int f_1(\alpha) f_2(\beta) f_3(\sigma) \cdot \left[\prod_{i=1}^{n}f_4(y_i \mid \alpha, \beta, \sigma) \right] d\alpha \, d\beta \, d\sigma}
 \end{eqnarray}
 $$
 - To be more precise, we would indicate that $f_1, f_2$ and $f_4$ are Normal with different parameters, and $f_3$ is $\text{Exp}(0.2)$
 :::
 
-## Fitting the Model {.smaller}
+## Coding the Model in Stan {.smaller}
+
+::: {.fragment}
+```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
+data {
+  int<lower=0> N;
+  vector[N] x;
+  vector[N] y;
+  int<lower=0, upper=1> prior_PD;
+}
+parameters {
+  real alpha;
+  real beta;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] mu = alpha + beta * x;
+}
+model {
+  alpha ~ normal(60, 10);
+  beta ~ normal(0.55, 0.1);
+  sigma ~ exponential(0.2);
+  if (prior_PD == 0) {
+    y ~ normal(mu, sigma);
+  }
+}
+generated quantities {
+  array[N] real yrep = normal_rng(mu, sigma);
+}
+```
+:::
+
+::: incremental
+- You can pass `prior_PD` as a flag to enable drawing from the prior predictive distribution
+:::
+
+## {.smaller}
+
+![](stan/sampler-exploration.gif){fig-align="center" height="680"}
+
+## {.smaller}
+
+```{=html}
+<iframe src="stan/posterior-3d.html" width="100%" height="690" style="border:none;"></iframe>
+```
+
+## Fitting the Model in RStanArm {.smaller}
 
 ::: incremental
 - Even though our prior is slightly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting
@@ -453,11 +499,11 @@ summary(m1)
 ::: 
 
 ::: incremental
-- If you can examine the priors by running `prior_summary(m1)`
+- You can examine the priors by running `prior_summary(m1)`
 :::
 
 
-## Evaluting Quality of the Inferences {.smaller}
+## Evaluating Quality of the Inferences {.smaller}
 
 ::: {.fragment}
 ```{r}
@@ -485,41 +531,6 @@ mcmc_trace(m1, size = 0.3)
 ```
 :::
 
-## Same Model in Stan {.smaller}
-
-::: {.fragment}
-```{stan, output.var = 'stan1', eval = FALSE, echo = TRUE}
-data {
-  int<lower=0> N;
-  vector[N] x;
-  vector[N] y;
-  int<lower=0, upper=1> prior_PD;
-}
-parameters {
-  real alpha;
-  real beta;
-  real<lower=0> sigma;
-}
-transformed parameters {
-  vector[N] mu = alpha + beta * x;
-}
-model {
-  alpha ~ normal(60, 10);
-  beta ~ normal(0.55, 0.1);
-  sigma ~ exponential(0.2);
-  if (!prior_PD) {
-    y ~ normal(mu, sigma);
-  }
-}
-generated quantities {
-  array[N] real yrep = normal_rng(mu, sigma);
-}
-```
-:::
-
-::: incremental
-- You can pass `prior_PD` as a flag to enable drawing from the prior predictive distribution
-:::
 
 ## Prior vs Posterior {.smaller}
 ::: incremental   
@@ -708,9 +719,92 @@ p +
    - $\eta_n = \alpha + \sum_{p=1}^P \beta_p x_{np}$, where $P$ is the total number of regression inputs
 
 - `posterior_epred` returns an $D \times N$ matrix that applies the inverse link (in GLMs) to the linear predictor $\eta$
-   - $\mu_n = \E(y | x_n)$; this is the same as $\eta$ in Lin Regression
+   - $\mu_n = \E(y \mid x_n)$; this is the same as $\eta$ in Lin Regression
    
 - `posterior_predict` returns an $D \times N$ matrix of predictions: $y \mid \mu_n$
+:::
+
+## Stan View: `linpred` vs `epred` {#stan-view-linpred-vs-epred .smaller}
+
+
+::: incremental
+- In Stan terms, `posterior_linpred` returns draws of the linear predictor $\eta$
+- `posterior_epred` returns draws of $\mu = g^{-1}(\eta)$, where $g^{-1}$ is the inverse link
+- `posterior_predict` (`y_rep`) adds outcome noise on top of $\mu$
+:::
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+::: {style="font-size: 0.8em; line-height: 1.06;"}
+```{stan, output.var = 'stan_identity_link', eval = FALSE, echo = TRUE}
+// Identity link (Gaussian)
+data {
+  int<lower=1> N;
+  int<lower=1> K;
+  matrix[N, K] X;
+  vector[N] y;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] eta = alpha + X * beta;
+  vector[N] mu = eta; // g^{-1}(eta) = eta
+}
+model {
+  y ~ normal(mu, sigma);
+}
+generated quantities {
+  array[N] real y_rep;
+  for (n in 1:N) {
+    y_rep[n] = normal_rng(mu[n], sigma);
+  }
+}
+```
+:::
+
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+::: {style="font-size: 0.8em; line-height: 1.06;"}
+```{stan, output.var = 'stan_logit_link', eval = FALSE, echo = TRUE}
+// Logit link (Bernoulli)
+data {
+  int<lower=1> N;
+  int<lower=1> K;
+  matrix[N, K] X;
+  array[N] int<lower=0, upper=1> y;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+}
+transformed parameters {
+  vector[N] eta = alpha + X * beta;
+  vector[N] mu = inv_logit(eta); // g^{-1}(eta)
+}
+model {
+  y ~ bernoulli_logit(eta);
+}
+generated quantities {
+  array[N] int y_rep;
+  for (n in 1:N) {
+    y_rep[n] = bernoulli_rng(mu[n]);
+  }
+
+}
+```
+:::
+
+:::
+:::
+
 :::
 
 ## Predictions in RStanArm {.smaller}
@@ -720,6 +814,7 @@ p +
 - Posterior linear predictor
 
 ::: {.fragment}
+::: {style="font-size: 0.8em; line-height: 1.06;"}
 ```{r}
 #| cache: true
 #| echo: true
@@ -728,10 +823,12 @@ quantile(eta, probs = c(0.05, 0.50, 0.95)) |> round(2)
 glue::glue('From the R simulation, 90% interval for eta = [{mqi$mu.lower |> round(2)}, {mqi$mu.upper |> round(2)}]')
 ```
 :::
+:::
 
 - Posterior conditional mean
 
 ::: {.fragment}
+::: {style="font-size: 0.8em; line-height: 1.06;"}
 ```{r}
 #| cache: true
 #| echo: true
@@ -739,10 +836,12 @@ mu <- posterior_epred(m1, newdata = data.frame(height_c = 5.4))
 quantile(mu, probs = c(0.05, 0.50, 0.95)) |> round(2)
 ```
 :::
+:::
 
 - Posterior prediction
 
 ::: {.fragment}
+::: {style="font-size: 0.8em; line-height: 1.06;"}
 ```{r}
 #| cache: true
 #| echo: true
@@ -751,10 +850,10 @@ quantile(y_pred, probs = c(0.05, 0.50, 0.95)) |> round(2)
 glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower |> round(2)}, {mqi$y_pred.upper |> round(2)}]')
 ```
 :::
-
+:::
 :::
 
-## Evaluting Model Quality {.smaller}
+## Evaluating Model Quality {.smaller}
 
 </br>
 </br>
@@ -787,7 +886,9 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 - If you are making causal (counterfactual) predictions, naive cross-validation will not work. Why?
 :::
 
+::: {.fragment}
 [^1]: Gneiting, T., Balabdaoui, F., and Raftery, A. E. (2007) Probabilistic forecasts, calibration and sharpness. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 69(2), 243–268.
+:::
 
 
 ## Model Evaluation {.smaller}
@@ -795,7 +896,7 @@ glue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower 
 Here is the high-level plan of attack:
 
 ::: incremental
-- Fit a linear model to the full !Kung dataset (not just adults) and let `RStanArm` pick the priors (don't do this at home)
+- Fit a linear model to the full !Kung dataset (not just adults) and let `rstanarm` pick the priors (don't do this at home)
 - We know that this model is not quite right
 - Evaluate the model fit 
 - Fix the model by thinking about the relationship between height and weight
@@ -852,7 +953,7 @@ summary(m2)
 ::: incremental
 - The idea behind PPCs is to compare the distribution of the observation to posterior predictions
 - We already saw an example of how to do it by hand
-- Here, we will do using functions in `RStanArm`
+- Here, we will do this using functions in `rstanarm`
 :::
 
 ::: {.fragment}
@@ -947,7 +1048,7 @@ bayesplot::ppc_intervals(
 - We looked at some visual evidence for in-sample model accuracy
 - The model is clearly doing a poor job of capturing observed data, particularly in the lower quantiles of the predictive distribution
 - In a situation like this, we would typically proceed to model improvements
-- Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit[^2]
+- Often, the model is not as bad as this one, and we would like to get some quantitative measures of model fit
 - We do this so we can assess the relative performance of the next set of models
 :::
 
@@ -961,8 +1062,6 @@ bayesplot::ppc_intervals(
 :::
 :::
 :::
-
-[^2]: Vehtari, A., Gelman, A., & Gabry, J. (2017). [Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC](https://mc-stan.org/loo/index.html). Statistics and Computing, 27(5), 1413–1432. https://doi.org/10.1007/s11222-016-9696-4
 
 
 ## Quantifying Model Accuracy {.smaller}
@@ -980,7 +1079,7 @@ bayesplot::ppc_intervals(
 ```{r}
 #| echo: true
 
-# avarage error
+# average error
 mean(d$weight - colMeans(yrep)) |> round(2)
 
 # root mean square error
@@ -1019,36 +1118,267 @@ calib(yrep, d$weight, 0.90)
 :::
 
 
-## Quantifying Model Accuracy {.smaller}
+## Bayesian Model Evaluation {.smaller}
 
 ::: incremental
-- A popular "proper" scoring rule for probabilistic prediction is log score
-- This is equivalent to the log predictive density $\log f(y \mid \theta)$
-- We would like to estimate the model's ability to predict data it has not seen, even though we do not observe the true data-generating process
-- This quantity is approximated by log-pointwise-predictive-density
+::: {style="font-size: 0.6em; line-height: 1.06;"}
+- For the full treatment, see Vehtari, et al. (2017): [Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC](https://sites.stat.columbia.edu/gelman/research/published/loo_stan.pdf).
+
+- Data $y_1, \ldots, y_N$, $f(y \mid \theta) = \prod_{n=1}^{N} f(y_n \mid \theta)$, and the PPD for a new point $\tilde{y}_n$ is $f(\tilde{y}_n \mid y) = \int f(\tilde{y}_n \mid \theta) \, f(\theta \mid y) \, d\theta$
+- Out-of-sample predictive accuracy over all $N$ points is summarized by the **expected log pointwise predictive density**
 $$
-\text{lppd} = \sum_{n=1}^{N} \log \left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta_{-n}^{(s)}) \right)
+\text{elpd} = \sum_{n=1}^{N} \mathbb{E}_{\tilde{y}_n \sim f_t}\!\big[\log f(\tilde{y}_n \mid y)\big]
+            = \sum_{n=1}^{N} \int f_t(\tilde{y}_n) \log f(\tilde{y}_n \mid y) \, d\tilde{y}_n
 $$
-- To compute this quantity, fit the model N times, dropping one point at a time (-n)
-- S is the number of posterior samples, and $\theta_{-n}^{(s)}$, is the s-th sample without the n-th data point
-- [Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC](https://arxiv.org/abs/1507.04544) provides a computationally efficient way to approximate LOO, without refitting the model N times. 
+where $f_t(\tilde{y}_n)$ is the (unknown) true data-generating density for $\tilde{y}_n$
+- We don't know $f_t$, so we approximate elpd from the data we have. The naive in-sample plug-in is the **log pointwise predictive density**
+$$
+\text{lpd} = \sum_{n=1}^{N} \log f(y_n \mid y) = \sum_{n=1}^{N} \log \int f(y_n \mid \theta) \, f(\theta \mid y) \, d\theta
+$$
+- With $S$ posterior draws $\theta^{s} \sim f(\theta \mid y)$, define $\ell_{s,n} = \log f(y_n \mid \theta^{s})$; then the Monte-Carlo estimate of lpd is
+$$
+\widehat{\text{lpd}} = \sum_{n=1}^{N} \log \!\left( \frac{1}{S} \sum_{s=1}^{S} f(y_n \mid \theta^{s})\right) =
+\sum_{n=1}^{N} \log \!\left( \frac{1}{S} \sum_{s=1}^{S} \exp(\ell_{s,n}) \right)
+$$
+- $\widehat{\text{lpd}}$ uses each $y_n$ to both fit *and* evaluate the model, so it overestimates elpd. Leave-one-out cross-validation gives an honest estimate
+$$
+\text{elpd}_{\text{loo}} = \sum_{n=1}^{N} \log f(y_n \mid y_{-n}), \qquad f(y_n \mid y_{-n}) = \int f(y_n \mid \theta) \, f(\theta \mid y_{-n}) \, d\theta
+$$
+- Naively this requires re-fitting the model $N$ times; the `loo` package avoids this with Pareto-smoothed importance sampling (PSIS-LOO)
+:::
 :::
 
-## Quantifying Model Accuracy {.smaller}
+## Two models, one dataset {.smaller}
 
+Simulate $N = 100$ points from an exponential growth process with normal noise.
+
+::: {.fragment}
 ```{r}
-#| cache: true
-#| fig-width: 4
-#| fig-height: 3
-#| fig-align: center
+#| label: sim-exp
 #| echo: true
-library(loo)
-lm2 <- loo(m2)
-lm2
-plot(lm2)
+set.seed(123)
+N <- 100
+x <- seq(0, 5, length.out = N)
+a_true <- 1; b_true <- 0.7; sigma_true <- 1.5
+y <- a_true * exp(b_true * x) + rnorm(N, 0, sigma_true)
+df <- data.frame(x = x, y = y)
+```
+:::
+
+::: {.fragment}
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 3.2
+#| fig-align: center
+
+ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.7, color = "#1f77b4") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
+              color = "#d62728", linetype = 2, linewidth = 0.5) +
+  labs(title = expression(y == exp(0.7 * x) + N(0, 1.5^2)),
+       subtitle = "dashed red: best linear fit; clearly misses the curvature") +
+  thm
+```
+:::
+
+## Two Stan programs {#two-stan-programs .smaller}
+
+```{=html}
+<style>
+#two-stan-programs pre { font-size: 0.55em !important; line-height: 1.05 !important; }
+#two-stan-programs pre code { font-size: 1em !important; line-height: 1.05 !important; }
+</style>
+```
+
+::: columns
+::: {.column width="50%"}
+
+::: {.fragment}
+```{stan, output.var = 'lin_reg_compare', eval = FALSE, echo = TRUE}
+// linear: mu = a + b * x
+data {
+  int<lower=0> N;
+  vector[N] x;
+  vector[N] y;
+}
+parameters {
+  real a;
+  real b;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] mu = a + b * x;
+}
+model {
+  a     ~ normal(0, 1);
+  b     ~ normal(0, 1);
+  sigma ~ exponential(0.2);
+  y ~ normal(mu, sigma);
+}
+generated quantities {
+  vector[N] log_lik;
+  for (n in 1:N)
+    log_lik[n] = normal_lpdf(y[n] | mu[n], sigma);
+}
+```
+
+:::
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+```{stan, output.var = 'exp_growth', eval = FALSE, echo = TRUE}
+// exponential: mu = a * exp(b * x)
+data {
+  int<lower=0> N;
+  vector[N] x;
+  vector[N] y;
+}
+parameters {
+  real<lower=0> a;
+  real b;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] mu = a * exp(b * x);
+}
+model {
+  a     ~ normal(0, 1);
+  b     ~ normal(0, 1);
+  sigma ~ exponential(0.2);
+  y ~ normal(mu, sigma);
+}
+generated quantities {
+  vector[N] log_lik;
+  for (n in 1:N)
+    log_lik[n] = normal_lpdf(y[n] | mu[n], sigma);
+}
 ```
 
 
+:::
+:::
+:::
 
+## From `log_lik` to lpd {.smaller}
 
+::: incremental
+::: {style="font-size: 0.9em; line-height: 1.06;"}
+- Let $\ell_{s,n} = \log f(y_n \mid \theta^{s})$ be the pointwise log-likelihood under posterior draw $\theta^{s}$; the Stan output `log_lik` is the $S \times N$ matrix $[\ell_{s,n}]$
+- Summing one **row** gives the log joint likelihood at a single draw, not the lpd
+$$
+\sum_{n=1}^{N} \ell_{s,n} \;=\; \log f(y \mid \theta^{s})
+$$
+- The (in-sample) **lpd** averages densities over draws *inside* the log, then sums over data (column-wise log-mean-exp, then sum)
+$$
+\widehat{\text{lpd}} \;=\; \sum_{n=1}^{N} \log\!\left(\frac{1}{S}\sum_{s=1}^{S} \exp(\ell_{s,n})\right)
+\;=\; \sum_{n=1}^{N} \!\Big[\operatorname{log\_sum\_exp}\bigl(\{\ell_{s,n}\}_{s=1}^{S}\bigr) - \log S\Big]
+$$
+- Stan provides `log_sum_exp(...)`; in R it's a one-liner: `log_sum_exp <- function(z) { m <- max(z); m + log(sum(exp(z - m))) }`
+- Order matters: lpd is the log of an average density, not an average of log densities
+:::
+:::
 
+## Fitting both models {.smaller}
+
+::: {.fragment}
+```{r}
+#| label: fit-both
+#| echo: true
+#| message: false
+#| warning: false
+#| results: hide
+#| cache: true
+#| cache.extra: !expr c(tools::md5sum("stan/lin_reg_compare.stan"), tools::md5sum("stan/exp_growth.stan"))
+library(cmdstanr)
+
+stan_data <- list(N = N, x = x, y = y)
+
+mod_lin <- cmdstan_model("stan/lin_reg_compare.stan")
+mod_exp <- cmdstan_model("stan/exp_growth.stan")
+
+fit_lin <- mod_lin$sample(
+  data = stan_data, chains = 4, parallel_chains = 4,
+  iter_sampling = 1000, refresh = 0, show_messages = FALSE)
+fit_exp <- mod_exp$sample(
+  data = stan_data, chains = 4, parallel_chains = 4,
+  iter_sampling = 1000, refresh = 0, show_messages = FALSE,
+  init = function() list(a = 1, b = 0.5, sigma = 1))
+
+ll_lin <- fit_lin$draws("log_lik", format = "matrix")  # S x N
+ll_exp <- fit_exp$draws("log_lik", format = "matrix")
+```
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+dim(ll_lin)
+```
+:::
+
+## lpd: exponential wins {.smaller}
+
+::: {.fragment}
+```{r}
+#| echo: true
+log_sum_exp <- function(z) { m <- max(z); m + log(sum(exp(z - m))) }
+
+S <- nrow(ll_lin)
+lpd_pt_lin <- apply(ll_lin, 2, log_sum_exp) - log(S)
+lpd_pt_exp <- apply(ll_exp, 2, log_sum_exp) - log(S)
+
+c(lpd_linear = sum(lpd_pt_lin),
+  lpd_exp    = sum(lpd_pt_exp),
+  diff       = sum(lpd_pt_exp) - sum(lpd_pt_lin))
+```
+:::
+
+::: {.fragment}
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 3.4
+#| fig-align: center
+
+pt <- data.frame(
+  x = rep(x, 2),
+  lpd = c(lpd_pt_lin, lpd_pt_exp),
+  model = rep(c("linear", "exponential"), each = N)
+)
+ggplot(pt, aes(x, lpd, color = model)) +
+  geom_line(linewidth = 0.3, alpha = 0.8) +
+  geom_point(alpha = 0.7, size = 1) +
+  scale_color_manual(values = c(linear = "#d62728", exponential = "#1f77b4")) +
+  labs(y = expression(pointwise~widehat(lpd)[n]),
+       title = "Pointwise lpd across the dataset (higher is better)") +
+  thm
+```
+:::
+
+## elpd via the `loo` package {.smaller}
+
+::: incremental
+- $\widehat{\text{lpd}}$ is in-sample and overestimates predictive accuracy; the `loo` package gives PSIS-LOO estimates of $\text{elpd}_{\text{loo}}$ from the same $S \times N$ `log_lik` matrix
+- `loo_compare()` ranks models by $\widehat{\text{elpd}}_{\text{loo}}$ and reports the standard error of the difference
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+library(loo)
+loo_lin <- loo(ll_lin)
+loo_exp <- loo(ll_exp)
+lpd_vals <- c(linear = sum(lpd_pt_lin), exponential = sum(lpd_pt_exp))
+cbind(rbind(linear      = loo_lin$estimates["elpd_loo", ],
+            exponential = loo_exp$estimates["elpd_loo", ]),
+      lpd = lpd_vals)
+cmp <- loo_compare(list(linear = loo_lin, exponential = loo_exp))
+cbind(cmp[, c("elpd_diff", "se_diff")],
+      lpd_diff = lpd_vals[rownames(cmp)] - max(lpd_vals))
+```
+:::
