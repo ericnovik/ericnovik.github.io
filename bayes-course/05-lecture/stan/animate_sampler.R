@@ -411,3 +411,29 @@ anim_sampling <- make_segment_animation(
 anim <- c(anim_warmup, anim_sampling)
 image_write(anim, path = out_path, format = "gif")
 message("Saved animation to: ", out_path)
+
+# Also transcode to a small H.264 MP4 (the slides embed the MP4, since the
+# raw GIF easily exceeds GitHub's 100 MB per-file limit).
+mp4_path <- sub("\\.gif$", ".mp4", out_path)
+if (nzchar(Sys.which("ffmpeg"))) {
+  status <- system2(
+    "ffmpeg",
+    args = c(
+      "-y", "-i", shQuote(out_path),
+      "-movflags", "+faststart",
+      "-pix_fmt", "yuv420p",
+      "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+      "-c:v", "libx264", "-crf", "23", "-preset", "slow",
+      shQuote(mp4_path)
+    ),
+    stdout = FALSE, stderr = FALSE
+  )
+  if (status == 0) {
+    message("Saved MP4 to: ", mp4_path)
+  } else {
+    warning("ffmpeg returned status ", status, "; MP4 was not produced.")
+  }
+} else {
+  warning("ffmpeg not found on PATH; skipping MP4 transcode. ",
+          "Install ffmpeg to keep stan/sampler-exploration.mp4 in sync.")
+}
