@@ -1220,7 +1220,7 @@ transformed parameters {
 }
 model {
   a     ~ normal(0, 1);
-  b     ~ normal(0, 1);
+  b     ~ normal(0, 5);
   sigma ~ exponential(0.2);
   y ~ normal(mu, sigma);
 }
@@ -1254,7 +1254,7 @@ transformed parameters {
 }
 model {
   a     ~ normal(0, 1);
-  b     ~ normal(0, 1);
+  b     ~ normal(0, 5);
   sigma ~ exponential(0.2);
   y ~ normal(mu, sigma);
 }
@@ -1284,7 +1284,7 @@ $$
 \widehat{\text{lpd}} \;=\; \sum_{n=1}^{N} \log\!\left(\frac{1}{S}\sum_{s=1}^{S} \exp(\ell_{s,n})\right)
 \;=\; \sum_{n=1}^{N} \!\Big[\operatorname{log\_sum\_exp}\bigl(\{\ell_{s,n}\}_{s=1}^{S}\bigr) - \log S\Big]
 $$
-- Stan provides `log_sum_exp(...)`; in R it's a one-liner: `log_sum_exp <- function(z) { m <- max(z); m + log(sum(exp(z - m))) }`
+- Stan provides `log_sum_exp(...)`; in R it's a one-liner: `log_sum_exp <- function(z) { m <- max(z); m + log(sum(exp(z - m))) }`. See [this](https://ericnovik.github.io/stats-math/02-lecture/02-Lecture.html#/logarithmic-functions) for more details.
 - Order matters: lpd is the log of an average density, not an average of log densities
 :::
 :::
@@ -1312,8 +1312,7 @@ fit_lin <- mod_lin$sample(
   iter_sampling = 1000, refresh = 0, show_messages = FALSE)
 fit_exp <- mod_exp$sample(
   data = stan_data, chains = 4, parallel_chains = 4,
-  iter_sampling = 1000, refresh = 0, show_messages = FALSE,
-  init = function() list(a = 1, b = 0.5, sigma = 1))
+  iter_sampling = 1000, refresh = 0, show_messages = FALSE)
 
 ll_lin <- fit_lin$draws("log_lik", format = "matrix")  # S x N
 ll_exp <- fit_exp$draws("log_lik", format = "matrix")

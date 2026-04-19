@@ -13,7 +13,7 @@ transformed parameters {
 }
 model {
   a     ~ normal(0, 1);
-  b     ~ normal(0, 1);
+  b     ~ normal(0, 5);
   sigma ~ exponential(0.2);
   y ~ normal(mu, sigma);
 }
