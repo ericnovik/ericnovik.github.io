@@ -402,6 +402,24 @@ $$
 - To be more precise, we would indicate that $f_1, f_2$ and $f_4$ are Normal with different parameters, and $f_3$ is $\text{Exp}(0.2)$
 :::
 
+## Deriving a Posterior Distribution {.smaller}
+
+::: incremental
+- Substituting the actual densities from our model (with $\mu_i = \alpha + \beta x^c_i$):
+$$
+\begin{aligned}
+f_1(\alpha) &= \tfrac{1}{10\sqrt{2\pi}} \exp\!\left(-\tfrac{(\alpha - 60)^2}{200}\right) \\
+f_2(\beta) &= \tfrac{1}{0.1\sqrt{2\pi}} \exp\!\left(-\tfrac{(\beta - 0.55)^2}{0.02}\right) \\
+f_3(\sigma) &= 0.2 \, e^{-0.2\, \sigma}, \quad \sigma \geq 0 \\
+f_4(y_i \mid \alpha, \beta, \sigma) &= \tfrac{1}{\sigma\sqrt{2\pi}} \exp\!\left(-\tfrac{(y_i - \alpha - \beta x^c_i)^2}{2 \sigma^2}\right)
+\end{aligned}
+$$
+- The (unnormalized) posterior is the product of these densities:
+$$
+f(\alpha,\beta,\sigma \mid y) \propto f_1(\alpha)\, f_2(\beta)\, f_3(\sigma) \prod_{i=1}^{n} f_4(y_i \mid \alpha, \beta, \sigma)
+$$
+:::
+
 ## Coding the Model in Stan {.smaller}
 
 ::: {.fragment}
@@ -452,6 +470,19 @@ generated quantities {
 ```{=html}
 <iframe src="stan/posterior-3d.html" width="100%" height="690" style="border:none;"></iframe>
 ```
+
+## {#nuts-demo background-iframe="https://chi-feng.github.io/mcmc-demo/app.html?algorithm=RandomWalkMH&target=banana" background-interactive="true"}
+
+```{=html}
+<style>
+.reveal:has(section#nuts-demo.present) .footer,
+.reveal:has(section#nuts-demo.present) .slide-number { display: none !important; }
+</style>
+```
+
+::: {.attribution style="position: absolute; bottom: 0.4em; left: 50%; transform: translateX(-50%); font-size: 0.3em; background: transparent; color: #666; padding: 0; white-space: nowrap;"}
+Interactive NUTS demo by Chi Feng — [github.com/chi-feng/mcmc-demo](https://github.com/chi-feng/mcmc-demo) (MIT License)
+:::
 
 ## Fitting the Model in RStanArm {.smaller}
 
