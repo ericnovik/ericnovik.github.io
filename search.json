@@ -2090,7 +2090,7 @@
     "href": "bayes-course/05-lecture/05-lecture.html#motivating-example",
     "title": "Bayesian Inference",
     "section": "Motivating Example",
-    "text": "Motivating Example\n\n\n\nWe borrow this example from Richard McElreath’s Statistical Rethinking\nThe data sets provided have been produced between 1969 to 2008, based on Nancy Howell’s observations of the !Kung San\nFrom Wikipedia: “The ǃKung are one of the San peoples who live mostly on the western edge of the Kalahari desert, Ovamboland (northern Namibia and southern Angola), and Botswana.”\n\n\n\n\n\n\n\n\n\nUnivercity of Toronto Data Sets"
+    "text": "Motivating Example\n\n\n\nWe borrow this example from Richard McElreath’s Statistical Rethinking\nThe data sets provided have been produced between 1969 to 2008, based on Nancy Howell’s observations of the !Kung San\nFrom Wikipedia: “The ǃKung are one of the San peoples who live mostly on the western edge of the Kalahari desert, Ovamboland (northern Namibia and southern Angola), and Botswana.”\n\n\n\n\n\n\n\n\n\nUniversity of Toronto Data Sets"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#howell-dataset",
@@ -2132,7 +2132,7 @@
     "href": "bayes-course/05-lecture/05-lecture.html#howell-regression-2",
     "title": "Bayesian Inference",
     "section": "Howell Regression",
-    "text": "Howell Regression\n\nIn this dataset, the units of \\(\\beta\\) are \\(\\frac{kg}{cm}\\), since the units of height are \\(cm\\)\nShould \\(\\beta\\) be positive. Why?\nDo you think \\(\\beta\\) is likely to be less than 1. Why?\nWe can consult height-weight tables for the expected value and variance\nIn the dataset, \\(\\E(\\beta) = 0.55\\) with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more \\[\n\\begin{eqnarray}\ny_i & \\sim & \\text{Normal}(\\mu_i, \\, \\sigma)\\\\\n\\mu_i & = & \\alpha + \\beta x^c_i \\\\\n\\alpha & \\sim & \\text{Normal}(60, \\, 10) \\\\\n\\beta & \\sim & \\text{Normal}(0.55, \\, 0.1) \\\\\n\\sigma & \\sim & \\text{Exp}(r) \\\\\n\\end{eqnarray}\n\\]\nWhat about the error term \\(\\sigma\\)?"
+    "text": "Howell Regression\n\nIn this dataset, the units of \\(\\beta\\) are \\(\\frac{kg}{cm}\\), since the units of height are \\(cm\\)\nShould \\(\\beta\\) be positive? Why?\nDo you think \\(\\beta\\) is likely to be less than 1. Why?\nWe can consult height-weight tables for the expected value and variance\nIn the dataset, \\(\\E(\\beta) = 0.55\\) with a standard error of 0.006, but since we are uncertain how applicable that is to !Kung, we will allow the prior to vary more \\[\n\\begin{eqnarray}\ny_i & \\sim & \\text{Normal}(\\mu_i, \\, \\sigma)\\\\\n\\mu_i & = & \\alpha + \\beta x^c_i \\\\\n\\alpha & \\sim & \\text{Normal}(60, \\, 10) \\\\\n\\beta & \\sim & \\text{Normal}(0.55, \\, 0.1) \\\\\n\\sigma & \\sim & \\text{Exp}(r) \\\\\n\\end{eqnarray}\n\\]\nWhat about the error term \\(\\sigma\\)?"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#howell-regression-3",
@@ -2167,35 +2167,49 @@
     "href": "bayes-course/05-lecture/05-lecture.html#deriving-a-posterior-distribution",
     "title": "Bayesian Inference",
     "section": "Deriving a Posterior Distribution",
-    "text": "Deriving a Posterior Distribution\n\nWe have seen how to derive the posterior and posterior predictive distribution\nThree dimentional posterior: \\(f(\\alpha, \\beta, \\sigma)\\). Where is \\(\\mu\\)?\nWe construct the posterior from the prior and data likelihood (for each \\(y_i\\)): \\[\n\\begin{eqnarray}\n&\\text{Prior: }f(\\alpha, \\beta, \\sigma) = f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\\\\n&\\text{Likelihood: }f(y \\mid \\alpha, \\beta, \\sigma) = \\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\\\\n&\\text{Posterior: }f(\\alpha,\\beta,\\sigma \\mid y) = \\frac{f_1(\\alpha) f(_2\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right]}\n{\\int\\int\\int f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right] d\\alpha \\, d\\beta \\, d\\sigma}\n\\end{eqnarray}\n\\]\nTo be more precise, we would indicate that \\(f_1, f_2\\) and \\(f_4\\) are Normal with different parameters, and \\(f_3\\) is \\(\\text{Exp}(0.2)\\)"
+    "text": "Deriving a Posterior Distribution\n\nWe have seen how to derive the posterior and posterior predictive distribution\nThree dimensional posterior: \\(f(\\alpha, \\beta, \\sigma)\\). Where is \\(\\mu\\)?\nWe construct the posterior from the prior and data likelihood (for each \\(y_i\\)): \\[\n\\begin{eqnarray}\n&\\text{Prior: }f(\\alpha, \\beta, \\sigma) = f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\\\\n&\\text{Likelihood: }f(y \\mid \\alpha, \\beta, \\sigma) = \\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\\\\n&\\text{Posterior: }f(\\alpha,\\beta,\\sigma \\mid y) = \\frac{f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right]}\n{\\int\\int\\int f_1(\\alpha) f_2(\\beta) f_3(\\sigma) \\cdot \\left[\\prod_{i=1}^{n}f_4(y_i \\mid \\alpha, \\beta, \\sigma) \\right] d\\alpha \\, d\\beta \\, d\\sigma}\n\\end{eqnarray}\n\\]\nTo be more precise, we would indicate that \\(f_1, f_2\\) and \\(f_4\\) are Normal with different parameters, and \\(f_3\\) is \\(\\text{Exp}(0.2)\\)"
   },
   {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#fitting-the-model",
-    "href": "bayes-course/05-lecture/05-lecture.html#fitting-the-model",
+    "objectID": "bayes-course/05-lecture/05-lecture.html#deriving-a-posterior-distribution-1",
+    "href": "bayes-course/05-lecture/05-lecture.html#deriving-a-posterior-distribution-1",
     "title": "Bayesian Inference",
-    "section": "Fitting the Model",
-    "text": "Fitting the Model\n\nEven though our prior is slightly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting\nWe will use stan_glm() function in rstanarm\nrstanarm has default priors, but you should specify your own:\n\n\n\nlibrary(rstanarm)\nlibrary(bayesplot)\noptions(mc.cores = parallel::detectCores())\n\nm1 &lt;- stan_glm(\n  weight ~ height_c,\n  data = d,\n  family = gaussian,\n  prior_intercept = normal(60, 10),\n  prior = normal(0.55, 0.1),\n  prior_aux = exponential(0.2),\n  chains = 4,\n  iter = 500,\n  seed = 1234\n)\n\n\n\nBy default, rstanarm samples from the posterior. To get back the prior predictive distribution (instead of doing it in R) use prior_PD = TRUE"
+    "section": "Deriving a Posterior Distribution",
+    "text": "Deriving a Posterior Distribution\n\nSubstituting the actual densities from our model (with \\(\\mu_i = \\alpha + \\beta x^c_i\\)): \\[\n\\begin{aligned}\nf_1(\\alpha) &= \\tfrac{1}{10\\sqrt{2\\pi}} \\exp\\!\\left(-\\tfrac{(\\alpha - 60)^2}{200}\\right) \\\\\nf_2(\\beta) &= \\tfrac{1}{0.1\\sqrt{2\\pi}} \\exp\\!\\left(-\\tfrac{(\\beta - 0.55)^2}{0.02}\\right) \\\\\nf_3(\\sigma) &= 0.2 \\, e^{-0.2\\, \\sigma}, \\quad \\sigma \\geq 0 \\\\\nf_4(y_i \\mid \\alpha, \\beta, \\sigma) &= \\tfrac{1}{\\sigma\\sqrt{2\\pi}} \\exp\\!\\left(-\\tfrac{(y_i - \\alpha - \\beta x^c_i)^2}{2 \\sigma^2}\\right)\n\\end{aligned}\n\\]\nThe (unnormalized) posterior is the product of these densities: \\[\nf(\\alpha,\\beta,\\sigma \\mid y) \\propto f_1(\\alpha)\\, f_2(\\beta)\\, f_3(\\sigma) \\prod_{i=1}^{n} f_4(y_i \\mid \\alpha, \\beta, \\sigma)\n\\]"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#coding-the-model-in-stan",
+    "href": "bayes-course/05-lecture/05-lecture.html#coding-the-model-in-stan",
+    "title": "Bayesian Inference",
+    "section": "Coding the Model in Stan",
+    "text": "Coding the Model in Stan\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  vector[N] x;\n  vector[N] y;\n  int&lt;lower=0, upper=1&gt; prior_PD;\n}\nparameters {\n  real alpha;\n  real beta;\n  real&lt;lower=0&gt; sigma;\n}\ntransformed parameters {\n  vector[N] mu = alpha + beta * x;\n}\nmodel {\n  alpha ~ normal(60, 10);\n  beta ~ normal(0.55, 0.1);\n  sigma ~ exponential(0.2);\n  if (prior_PD == 0) {\n    y ~ normal(mu, sigma);\n  }\n}\ngenerated quantities {\n  array[N] real yrep = normal_rng(mu, sigma);\n}\n\n\n\nYou can pass prior_PD as a flag to enable drawing from the prior predictive distribution"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#nuts-demo",
+    "href": "bayes-course/05-lecture/05-lecture.html#nuts-demo",
+    "title": "Bayesian Inference",
+    "section": "",
+    "text": "Interactive NUTS demo by Chi Feng — github.com/chi-feng/mcmc-demo (MIT License)"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#fitting-the-model-in-rstanarm",
+    "href": "bayes-course/05-lecture/05-lecture.html#fitting-the-model-in-rstanarm",
+    "title": "Bayesian Inference",
+    "section": "Fitting the Model in RStanArm",
+    "text": "Fitting the Model in RStanArm\n\nEven though our prior is slightly off, 300+ observations is a lot in this case (big data!), and so we proceed to model fitting\nWe will use stan_glm() function in rstanarm\nrstanarm has default priors, but you should specify your own:\n\n\n\nlibrary(rstanarm)\nlibrary(bayesplot)\noptions(mc.cores = parallel::detectCores())\n\nm1 &lt;- stan_glm(\n  weight ~ height_c,\n  data = d,\n  family = gaussian,\n  prior_intercept = normal(60, 10),\n  prior = normal(0.55, 0.1),\n  prior_aux = exponential(0.2),\n  chains = 4,\n  iter = 500,\n  seed = 1234\n)\n\n\n\nBy default, rstanarm samples from the posterior. To get back the prior predictive distribution (instead of doing it in R) use prior_PD = TRUE"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#looking-at-the-model-summary",
     "href": "bayes-course/05-lecture/05-lecture.html#looking-at-the-model-summary",
     "title": "Bayesian Inference",
     "section": "Looking at the Model Summary",
-    "text": "Looking at the Model Summary\n\n\nsummary(m1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      weight ~ height_c\n algorithm:    sampling\n sample:       1000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 352\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 45.0    0.2 44.7  45.0  45.3 \nheight_c     0.6    0.0  0.6   0.6   0.7 \nsigma        4.2    0.2  4.0   4.2   4.5 \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 45.0    0.3 44.6  45.0  45.4 \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  824  \nheight_c      0.0  1.0  994  \nsigma         0.0  1.0  867  \nmean_PPD      0.0  1.0  970  \nlog-posterior 0.1  1.0  459  \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).\n\n\n\n\nIf you can examine the priors by running prior_summary(m1)"
+    "text": "Looking at the Model Summary\n\n\nsummary(m1)\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      weight ~ height_c\n algorithm:    sampling\n sample:       1000 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 352\n predictors:   2\n\nEstimates:\n              mean   sd   10%   50%   90%\n(Intercept) 45.0    0.2 44.7  45.0  45.3 \nheight_c     0.6    0.0  0.6   0.6   0.7 \nsigma        4.2    0.2  4.0   4.2   4.5 \n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 45.0    0.3 44.6  45.0  45.4 \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  824  \nheight_c      0.0  1.0  994  \nsigma         0.0  1.0  867  \nmean_PPD      0.0  1.0  970  \nlog-posterior 0.1  1.0  459  \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).\n\n\n\n\nYou can examine the priors by running prior_summary(m1)"
   },
   {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-inferences",
-    "href": "bayes-course/05-lecture/05-lecture.html#evaluting-quality-of-the-inferences",
+    "objectID": "bayes-course/05-lecture/05-lecture.html#evaluating-quality-of-the-inferences",
+    "href": "bayes-course/05-lecture/05-lecture.html#evaluating-quality-of-the-inferences",
     "title": "Bayesian Inference",
-    "section": "Evaluting Quality of the Inferences",
-    "text": "Evaluting Quality of the Inferences\n\n\nneff_ratio(m1) |&gt; round(2)\n\n(Intercept)    height_c       sigma \n       0.82        0.99        0.87 \n\n\n\n\n\nrhat(m1) |&gt; round(2)\n\n(Intercept)    height_c       sigma \n          1           1           1 \n\n\n\n\n\nmcmc_trace(m1, size = 0.3)"
-  },
-  {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#same-model-in-stan",
-    "href": "bayes-course/05-lecture/05-lecture.html#same-model-in-stan",
-    "title": "Bayesian Inference",
-    "section": "Same Model in Stan",
-    "text": "Same Model in Stan\n\n\ndata {\n  int&lt;lower=0&gt; N;\n  vector[N] x;\n  vector[N] y;\n  int&lt;lower=0, upper=1&gt; prior_PD;\n}\nparameters {\n  real alpha;\n  real beta;\n  real&lt;lower=0&gt; sigma;\n}\ntransformed parameters {\n  vector[N] mu = alpha + beta * x;\n}\nmodel {\n  alpha ~ normal(60, 10);\n  beta ~ normal(0.55, 0.1);\n  sigma ~ exponential(0.2);\n  if (!prior_PD) {\n    y ~ normal(mu, sigma);\n  }\n}\ngenerated quantities {\n  array[N] real yrep = normal_rng(mu, sigma);\n}\n\n\n\nYou can pass prior_PD as a flag to enable drawing from the prior predictive distribution"
+    "section": "Evaluating Quality of the Inferences",
+    "text": "Evaluating Quality of the Inferences\n\n\nneff_ratio(m1) |&gt; round(2)\n\n(Intercept)    height_c       sigma \n       0.82        0.99        0.87 \n\n\n\n\n\nrhat(m1) |&gt; round(2)\n\n(Intercept)    height_c       sigma \n          1           1           1 \n\n\n\n\n\nmcmc_trace(m1, size = 0.3)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#prior-vs-posterior",
@@ -2223,7 +2237,7 @@
     "href": "bayes-course/05-lecture/05-lecture.html#variability-in-parameter-inferences",
     "title": "Bayesian Inference",
     "section": "Variability in Parameter Inferences",
-    "text": "Variability in Parameter Inferences\n\nThe code in section 9.4 in the book doesn’t work as the function and variable names have changed\n\n\n\ndpred &lt;- d |&gt; \n  # same as add_epred_draws for lin reg not for other GLMs\n  add_linpred_draws(m1, ndraws = 50)\nhead(dpred, 3)\n\n# A tibble: 3 × 10\n# Groups:   height, weight, age, male, height_c, .row [1]\n  height weight   age  male height_c  .row .chain .iteration .draw .linpred\n   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;\n1   152.   47.8    63     1    -2.83     1     NA         NA     1     43.3\n2   152.   47.8    63     1    -2.83     1     NA         NA     2     42.9\n3   152.   47.8    63     1    -2.83     1     NA         NA     3     43.0\n\n\n\n\n\n\np &lt;- dpred |&gt; ggplot(aes(x = height_c, y = weight)) +\n  geom_line(aes(y = .linpred, group = .draw), \n            alpha = 0.1) + \n  geom_point(data = d, size = 0.05) +\n  ylab(\"Weight (kg)\") + \n  xlab(\"Centered Height (cm)\") +\n  ggtitle(\"100 draws from the slope/intercept posterior\")\nprint(p)"
+    "text": "Variability in Parameter Inferences\n\nThe code in section 9.4 in the book doesn’t work as the function and variable names have changed\n\n\n\ndpred &lt;- d |&gt; \n  # same as add_epred_draws for lin reg not for other GLMs\n  add_linpred_draws(m1, ndraws = 50)\nhead(dpred, 3)\n\n# A tibble: 3 × 10\n# Groups:   height, weight, age, male, height_c, .row [1]\n  height weight   age  male height_c  .row .chain .iteration .draw .linpred\n   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;\n1   152.   47.8    63     1    -2.83     1     NA         NA     1     43.4\n2   152.   47.8    63     1    -2.83     1     NA         NA     2     42.9\n3   152.   47.8    63     1    -2.83     1     NA         NA     3     43.4\n\n\n\n\n\n\np &lt;- dpred |&gt; ggplot(aes(x = height_c, y = weight)) +\n  geom_line(aes(y = .linpred, group = .draw), \n            alpha = 0.1) + \n  geom_point(data = d, size = 0.05) +\n  ylab(\"Weight (kg)\") + \n  xlab(\"Centered Height (cm)\") +\n  ggtitle(\"100 draws from the slope/intercept posterior\")\nprint(p)"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#posterior-predictions",
@@ -2244,21 +2258,28 @@
     "href": "bayes-course/05-lecture/05-lecture.html#rstanarm-prediction-functions",
     "title": "Bayesian Inference",
     "section": "RStanArm Prediction Functions",
-    "text": "RStanArm Prediction Functions\n\nposterior_linpred returns \\(D \\times N\\) matrix with D draws and N data points\n\n\\(\\eta_n = \\alpha + \\sum_{p=1}^P \\beta_p x_{np}\\), where \\(P\\) is the total number of regression inputs\n\nposterior_epred returns an \\(D \\times N\\) matrix that applies the inverse link (in GLMs) to the linear predictor \\(\\eta\\)\n\n\\(\\mu_n = \\E(y | x_n)\\); this is the same as \\(\\eta\\) in Lin Regression\n\nposterior_predict returns an \\(D \\times N\\) matrix of predictions: \\(y \\mid \\mu_n\\)"
+    "text": "RStanArm Prediction Functions\n\nposterior_linpred returns \\(D \\times N\\) matrix with D draws and N data points\n\n\\(\\eta_n = \\alpha + \\sum_{p=1}^P \\beta_p x_{np}\\), where \\(P\\) is the total number of regression inputs\n\nposterior_epred returns an \\(D \\times N\\) matrix that applies the inverse link (in GLMs) to the linear predictor \\(\\eta\\)\n\n\\(\\mu_n = \\E(y \\mid x_n)\\); this is the same as \\(\\eta\\) in Lin Regression\n\nposterior_predict returns an \\(D \\times N\\) matrix of predictions: \\(y \\mid \\mu_n\\)"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#stan-view-linpred-vs-epred",
+    "href": "bayes-course/05-lecture/05-lecture.html#stan-view-linpred-vs-epred",
+    "title": "Bayesian Inference",
+    "section": "Stan View: linpred vs epred",
+    "text": "Stan View: linpred vs epred\n\nIn Stan terms, posterior_linpred returns draws of the linear predictor \\(\\eta\\)\nposterior_epred returns draws of \\(\\mu = g^{-1}(\\eta)\\), where \\(g^{-1}\\) is the inverse link\nposterior_predict (y_rep) adds outcome noise on top of \\(\\mu\\)\n\n\n\n\n\n\n// Identity link (Gaussian)\ndata {\n  int&lt;lower=1&gt; N;\n  int&lt;lower=1&gt; K;\n  matrix[N, K] X;\n  vector[N] y;\n}\nparameters {\n  real alpha;\n  vector[K] beta;\n  real&lt;lower=0&gt; sigma;\n}\ntransformed parameters {\n  vector[N] eta = alpha + X * beta;\n  vector[N] mu = eta; // g^{-1}(eta) = eta\n}\nmodel {\n  y ~ normal(mu, sigma);\n}\ngenerated quantities {\n  array[N] real y_rep;\n  for (n in 1:N) {\n    y_rep[n] = normal_rng(mu[n], sigma);\n  }\n}\n\n\n\n\n\n\n\n// Logit link (Bernoulli)\ndata {\n  int&lt;lower=1&gt; N;\n  int&lt;lower=1&gt; K;\n  matrix[N, K] X;\n  array[N] int&lt;lower=0, upper=1&gt; y;\n}\nparameters {\n  real alpha;\n  vector[K] beta;\n}\ntransformed parameters {\n  vector[N] eta = alpha + X * beta;\n  vector[N] mu = inv_logit(eta); // g^{-1}(eta)\n}\nmodel {\n  y ~ bernoulli_logit(eta);\n}\ngenerated quantities {\n  array[N] int y_rep;\n  for (n in 1:N) {\n    y_rep[n] = bernoulli_rng(mu[n]);\n  }\n\n}"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#predictions-in-rstanarm",
     "href": "bayes-course/05-lecture/05-lecture.html#predictions-in-rstanarm",
     "title": "Bayesian Inference",
     "section": "Predictions in RStanArm",
-    "text": "Predictions in RStanArm\n\nPosterior linear predictor\n\n\n\neta &lt;- posterior_linpred(m1, newdata = data.frame(height_c = 5.4))\nquantile(eta, probs = c(0.05, 0.50, 0.95)) |&gt; round(2)\n\n  5%  50%  95% \n47.9 48.4 48.8 \n\nglue::glue('From the R simulation, 90% interval for eta = [{mqi$mu.lower |&gt; round(2)}, {mqi$mu.upper |&gt; round(2)}]')\n\nFrom the R simulation, 90% interval for eta = [47.91, 48.82]\n\n\n\n\nPosterior conditional mean\n\n\n\nmu &lt;- posterior_epred(m1, newdata = data.frame(height_c = 5.4))\nquantile(mu, probs = c(0.05, 0.50, 0.95)) |&gt; round(2)\n\n  5%  50%  95% \n47.9 48.4 48.8 \n\n\n\n\nPosterior prediction\n\n\n\ny_pred &lt;- posterior_predict(m1, newdata = data.frame(height_c = 5.4))\nquantile(y_pred, probs = c(0.05, 0.50, 0.95)) |&gt; round(2)\n\n  5%  50%  95% \n41.6 48.5 55.0 \n\nglue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower |&gt; round(2)}, {mqi$y_pred.upper |&gt; round(2)}]')\n\nFrom the R simulation, 90% interval for y_pred = [41.24, 55.25]"
+    "text": "Predictions in RStanArm\n\nPosterior linear predictor\n\n\n\n\neta &lt;- posterior_linpred(m1, newdata = data.frame(height_c = 5.4))\nquantile(eta, probs = c(0.05, 0.50, 0.95)) |&gt; round(2)\n\n  5%  50%  95% \n47.9 48.4 48.8 \n\nglue::glue('From the R simulation, 90% interval for eta = [{mqi$mu.lower |&gt; round(2)}, {mqi$mu.upper |&gt; round(2)}]')\n\nFrom the R simulation, 90% interval for eta = [47.91, 48.82]\n\n\n\n\n\nPosterior conditional mean\n\n\n\n\nmu &lt;- posterior_epred(m1, newdata = data.frame(height_c = 5.4))\nquantile(mu, probs = c(0.05, 0.50, 0.95)) |&gt; round(2)\n\n  5%  50%  95% \n47.9 48.4 48.8 \n\n\n\n\n\nPosterior prediction\n\n\n\n\ny_pred &lt;- posterior_predict(m1, newdata = data.frame(height_c = 5.4))\nquantile(y_pred, probs = c(0.05, 0.50, 0.95)) |&gt; round(2)\n\n  5%  50%  95% \n41.6 48.5 55.0 \n\nglue::glue('From the R simulation, 90% interval for y_pred = [{mqi$y_pred.lower |&gt; round(2)}, {mqi$y_pred.upper |&gt; round(2)}]')\n\nFrom the R simulation, 90% interval for y_pred = [41.24, 55.25]"
   },
   {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#evaluting-model-quality",
-    "href": "bayes-course/05-lecture/05-lecture.html#evaluting-model-quality",
+    "objectID": "bayes-course/05-lecture/05-lecture.html#evaluating-model-quality",
+    "href": "bayes-course/05-lecture/05-lecture.html#evaluating-model-quality",
     "title": "Bayesian Inference",
-    "section": "Evaluting Model Quality",
-    "text": "Evaluting Model Quality"
+    "section": "Evaluating Model Quality",
+    "text": "Evaluating Model Quality"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#evaluating-quality-of-the-model",
@@ -2272,28 +2293,28 @@
     "href": "bayes-course/05-lecture/05-lecture.html#evaluating-quality-of-the-model-1",
     "title": "Bayesian Inference",
     "section": "Evaluating Quality of the Model",
-    "text": "Evaluating Quality of the Model\n\nOnce we are satisfied that the draws are statistically well-behaved, we can focus on evaluating predictive performance\nWe typically care about predictive performance out-of-sample\nIn general, a good model is well-calibrated and makes sharp predictions (Gneiting et al. 2007)1\nFor in-sample assessment, we perform Posterior Predictive Checks or PPCs\nTo assess out-of-sample performance, we rely on cross-validation or its approximations\nIf you are making causal (counterfactual) predictions, naive cross-validation will not work. Why?\n\nGneiting, T., Balabdaoui, F., and Raftery, A. E. (2007) Probabilistic forecasts, calibration and sharpness. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 69(2), 243–268."
+    "text": "Evaluating Quality of the Model\n\nOnce we are satisfied that the draws are statistically well-behaved, we can focus on evaluating predictive performance\nWe typically care about predictive performance out-of-sample\nIn general, a good model is well-calibrated and makes sharp predictions (Gneiting et al. 2007)1\nFor in-sample assessment, we perform Posterior Predictive Checks or PPCs\nTo assess out-of-sample performance, we rely on cross-validation or its approximations\nIf you are making causal (counterfactual) predictions, naive cross-validation will not work. Why?\n\n\n\n\nGneiting, T., Balabdaoui, F., and Raftery, A. E. (2007) Probabilistic forecasts, calibration and sharpness. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 69(2), 243–268."
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#model-evaluation",
     "href": "bayes-course/05-lecture/05-lecture.html#model-evaluation",
     "title": "Bayesian Inference",
     "section": "Model Evaluation",
-    "text": "Model Evaluation\nHere is the high-level plan of attack:\n\nFit a linear model to the full !Kung dataset (not just adults) and let RStanArm pick the priors (don’t do this at home)\nWe know that this model is not quite right\nEvaluate the model fit\nFix the model by thinking about the relationship between height and weight\nEvaluate the improved model\nCompare the linear model to the improved model"
+    "text": "Model Evaluation\nHere is the high-level plan of attack:\n\nFit a linear model to the full !Kung dataset (not just adults) and let rstanarm pick the priors (don’t do this at home)\nWe know that this model is not quite right\nEvaluate the model fit\nFix the model by thinking about the relationship between height and weight\nEvaluate the improved model\nCompare the linear model to the improved model"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#model-evaluation-1",
     "href": "bayes-course/05-lecture/05-lecture.html#model-evaluation-1",
     "title": "Bayesian Inference",
     "section": "Model Evaluation",
-    "text": "Model Evaluation\n\nThe following fits a linear model to the full dataset (not just adults)\n\n\n\nm2 &lt;- stan_glm(\n  weight ~ height,\n  data = d,\n  family = gaussian,\n  chains = 4,\n  iter = 600,\n  seed = 1234\n)\nsummary(m2)\n\n\n\nThere were no sampling problems\nAnd posterior draws look well-behaved\nBut how good is this model?\n\n\n\n\n\nModel Info:\n\n function:     stan_glm\n family:       gaussian [identity]\n formula:      weight ~ height\n algorithm:    sampling\n sample:       1200 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 544\n predictors:   2\n\nEstimates:\n              mean   sd    10%   50%   90%\n(Intercept) -33.8    1.1 -35.1 -33.7 -32.4\nheight        0.5    0.0   0.5   0.5   0.5\nsigma         5.0    0.1   4.8   5.0   5.2\n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 35.6    0.3 35.2  35.6  36.0 \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  1198 \nheight        0.0  1.0  1228 \nsigma         0.0  1.0   836 \nmean_PPD      0.0  1.0  1126 \nlog-posterior 0.1  1.0   497 \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
+    "text": "Model Evaluation\n\nThe following fits a linear model to the full dataset (not just adults)\n\n\n\nm2 &lt;- stan_glm(\n  weight ~ height,\n  data = d,\n  family = gaussian,\n  chains = 4,\n  iter = 600,\n  seed = 1234\n)\nsummary(m2)\n\n\n\nThere were no sampling problems\nAnd posterior draws look well-behaved\nBut how good is this model?\n\n\n\n\n\nModel Info:\n function:     stan_glm\n family:       gaussian [identity]\n formula:      weight ~ height\n algorithm:    sampling\n sample:       1200 (posterior sample size)\n priors:       see help('prior_summary')\n observations: 544\n predictors:   2\n\nEstimates:\n              mean   sd    10%   50%   90%\n(Intercept) -33.8    1.1 -35.1 -33.7 -32.4\nheight        0.5    0.0   0.5   0.5   0.5\nsigma         5.0    0.1   4.8   5.0   5.2\n\nFit Diagnostics:\n           mean   sd   10%   50%   90%\nmean_PPD 35.6    0.3 35.2  35.6  36.0 \n\nThe mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n\nMCMC diagnostics\n              mcse Rhat n_eff\n(Intercept)   0.0  1.0  1198 \nheight        0.0  1.0  1228 \nsigma         0.0  1.0   836 \nmean_PPD      0.0  1.0  1126 \nlog-posterior 0.1  1.0   497 \n\nFor each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#visual-posterior-predictive-checks",
     "href": "bayes-course/05-lecture/05-lecture.html#visual-posterior-predictive-checks",
     "title": "Bayesian Inference",
     "section": "Visual Posterior Predictive Checks",
-    "text": "Visual Posterior Predictive Checks\n\nThe idea behind PPCs is to compare the distribution of the observation to posterior predictions\nWe already saw an example of how to do it by hand\nHere, we will do using functions in RStanArm\n\n\n\n\nlibrary(bayesplot)\n# bayesplot::pp_check(m2) &lt;-- shortcut\n\n# predict for every observed point\nyrep &lt;- posterior_predict(m2) \n\n# select 50 draws at random\ns &lt;- sample(nrow(yrep), 50)\n\n# plot data against predictive densities\nppc_dens_overlay(d$weight, yrep[s, ])"
+    "text": "Visual Posterior Predictive Checks\n\nThe idea behind PPCs is to compare the distribution of the observation to posterior predictions\nWe already saw an example of how to do it by hand\nHere, we will do this using functions in rstanarm\n\n\n\n\nlibrary(bayesplot)\n# bayesplot::pp_check(m2) &lt;-- shortcut\n\n# predict for every observed point\nyrep &lt;- posterior_predict(m2) \n\n# select 50 draws at random\ns &lt;- sample(nrow(yrep), 50)\n\n# plot data against predictive densities\nppc_dens_overlay(d$weight, yrep[s, ])"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#visual-posterior-predictive-checks-1",
@@ -2314,14 +2335,14 @@
     "href": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy",
     "title": "Bayesian Inference",
     "section": "Quantifying Model Accuracy",
-    "text": "Quantifying Model Accuracy\n\n\n\nWe looked at some visual evidence for in-sample model accuracy\nThe model is clearly doing a poor job of capturing observed data, particularly in the lower quantiles of the predictive distribution\nIn a situation like this, we would typically proceed to model improvements\nOften, the model is not as bad as this one, and we would like to get some quantitative measures of model fit1\nWe do this so we can assess the relative performance of the next set of models\n\n\n\n\n\n\n\n\n\n\nVehtari, A., Gelman, A., & Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing, 27(5), 1413–1432. https://doi.org/10.1007/s11222-016-9696-4"
+    "text": "Quantifying Model Accuracy\n\n\n\nWe looked at some visual evidence for in-sample model accuracy\nThe model is clearly doing a poor job of capturing observed data, particularly in the lower quantiles of the predictive distribution\nIn a situation like this, we would typically proceed to model improvements\nOften, the model is not as bad as this one, and we would like to get some quantitative measures of model fit\nWe do this so we can assess the relative performance of the next set of models"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-1",
     "href": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-1",
     "title": "Bayesian Inference",
     "section": "Quantifying Model Accuracy",
-    "text": "Quantifying Model Accuracy\n\nOne way to assess model accuracy is to compute an average square deviation from point prediction: mean square error\n\n\\(\\text{RMSE} = \\sqrt{\\frac{1}{N} \\sum_{n=1}^{N} (y_n - \\E(y_n|\\theta))^2}\\)\nOr its scaled version, which divides the summand by \\(\\V(y_n | \\theta)\\)\n\nThese measures do not work well for non-normal models\nOn the plus side, it is intuitive (why?) and computation is easy\nNote that if we just average the errors, we will get zero by definition\n\n\n\n# avarage error\nmean(d$weight - colMeans(yrep)) |&gt; round(2)\n\n[1] -0.01\n\n# root mean square error\nmean((d$weight - colMeans(yrep))^2) |&gt; sqrt() |&gt; round(2)\n\n[1] 4.98\n\n# your book reports median absolute error\nmedian(abs(d$weight - colMeans(yrep)))\n\n[1] 3.58"
+    "text": "Quantifying Model Accuracy\n\nOne way to assess model accuracy is to compute an average square deviation from point prediction: mean square error\n\n\\(\\text{RMSE} = \\sqrt{\\frac{1}{N} \\sum_{n=1}^{N} (y_n - \\E(y_n|\\theta))^2}\\)\nOr its scaled version, which divides the summand by \\(\\V(y_n | \\theta)\\)\n\nThese measures do not work well for non-normal models\nOn the plus side, it is intuitive (why?) and computation is easy\nNote that if we just average the errors, we will get zero by definition\n\n\n\n# average error\nmean(d$weight - colMeans(yrep)) |&gt; round(2)\n\n[1] -0.01\n\n# root mean square error\nmean((d$weight - colMeans(yrep))^2) |&gt; sqrt() |&gt; round(2)\n\n[1] 4.98\n\n# your book reports median absolute error\nmedian(abs(d$weight - colMeans(yrep)))\n\n[1] 3.58"
   },
   {
     "objectID": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-2",
@@ -2331,18 +2352,53 @@
     "text": "Quantifying Model Accuracy\n\nIn a probabilistic prediction, we can assess model calibration\nCalibration says that, for example, 50% intervals contain approximately 50% of the observations, and so on\nA well-calibrated model may still be a bad model (see below) as the uncertainty may be too wide; for two models with the same calibration, we prefer the one with lower uncertainty\n\n\n\ninside &lt;- function(y, obs) return(obs &gt;= y[1] & obs &lt;= y[2])\ncalib  &lt;- function(y, data, interval) {\n  mid &lt;- interval / 2\n  l &lt;- 0.5 - mid; u &lt;- 0.5 + mid\n  intervals &lt;- apply(y, 2, quantile, probs = c(l, u))\n  is_inside &lt;- numeric(ncol(intervals))\n  for (i in 1:ncol(intervals)) {\n    is_inside[i] &lt;- inside(intervals[, i], data[i])\n  }\n return(mean(is_inside))\n}\ncalib(yrep, d$weight, 0.50)\n\n[1] 0.478\n\ncalib(yrep, d$weight, 0.90)\n\n[1] 0.912"
   },
   {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-3",
-    "href": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-3",
+    "objectID": "bayes-course/05-lecture/05-lecture.html#bayesian-model-evaluation",
+    "href": "bayes-course/05-lecture/05-lecture.html#bayesian-model-evaluation",
     "title": "Bayesian Inference",
-    "section": "Quantifying Model Accuracy",
-    "text": "Quantifying Model Accuracy\n\nA popular “proper” scoring rule for probabilistic prediction is log score\nThis is equivalent to the log predictive density \\(\\log f(y \\mid \\theta)\\)\nWe would like to estimate the model’s ability to predict data it has not seen, even though we do not observe the true data-generating process\nThis quantity is approximated by log-pointwise-predictive-density \\[\n\\text{lppd} = \\sum_{n=1}^{N} \\log \\left( \\frac{1}{S} \\sum_{s=1}^{S} f(y_n \\mid \\theta_{-n}^{(s)}) \\right)\n\\]\nTo compute this quantity, fit the model N times, dropping one point at a time (-n)\nS is the number of posterior samples, and \\(\\theta_{-n}^{(s)}\\), is the s-th sample without the n-th data point\nPractical Bayesian model evaluation using leave-one-out cross-validation and WAIC provides a computationally efficient way to approximate LOO, without refitting the model N times."
+    "section": "Bayesian Model Evaluation",
+    "text": "Bayesian Model Evaluation\n\n\nFor the full treatment, see Vehtari, et al. (2017): Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC.\nData \\(y_1, \\ldots, y_N\\), \\(f(y \\mid \\theta) = \\prod_{n=1}^{N} f(y_n \\mid \\theta)\\), and the PPD for a new point \\(\\tilde{y}_n\\) is \\(f(\\tilde{y}_n \\mid y) = \\int f(\\tilde{y}_n \\mid \\theta) \\, f(\\theta \\mid y) \\, d\\theta\\)\nOut-of-sample predictive accuracy over all \\(N\\) points is summarized by the expected log pointwise predictive density \\[\n\\text{elpd} = \\sum_{n=1}^{N} \\mathbb{E}_{\\tilde{y}_n \\sim f_t}\\!\\big[\\log f(\\tilde{y}_n \\mid y)\\big]\n          = \\sum_{n=1}^{N} \\int f_t(\\tilde{y}_n) \\log f(\\tilde{y}_n \\mid y) \\, d\\tilde{y}_n\n\\] where \\(f_t(\\tilde{y}_n)\\) is the (unknown) true data-generating density for \\(\\tilde{y}_n\\)\nWe don’t know \\(f_t\\), so we approximate elpd from the data we have. The naive in-sample plug-in is the log pointwise predictive density \\[\n\\text{lpd} = \\sum_{n=1}^{N} \\log f(y_n \\mid y) = \\sum_{n=1}^{N} \\log \\int f(y_n \\mid \\theta) \\, f(\\theta \\mid y) \\, d\\theta\n\\]\nWith \\(S\\) posterior draws \\(\\theta^{s} \\sim f(\\theta \\mid y)\\), define \\(\\ell_{s,n} = \\log f(y_n \\mid \\theta^{s})\\); then the Monte-Carlo estimate of lpd is \\[\n\\widehat{\\text{lpd}} = \\sum_{n=1}^{N} \\log \\!\\left( \\frac{1}{S} \\sum_{s=1}^{S} f(y_n \\mid \\theta^{s})\\right) =\n\\sum_{n=1}^{N} \\log \\!\\left( \\frac{1}{S} \\sum_{s=1}^{S} \\exp(\\ell_{s,n}) \\right)\n\\]\n\\(\\widehat{\\text{lpd}}\\) uses each \\(y_n\\) to both fit and evaluate the model, so it overestimates elpd. Leave-one-out cross-validation gives an honest estimate \\[\n\\text{elpd}_{\\text{loo}} = \\sum_{n=1}^{N} \\log f(y_n \\mid y_{-n}), \\qquad f(y_n \\mid y_{-n}) = \\int f(y_n \\mid \\theta) \\, f(\\theta \\mid y_{-n}) \\, d\\theta\n\\]\nNaively this requires re-fitting the model \\(N\\) times; the loo package avoids this with Pareto-smoothed importance sampling (PSIS-LOO)"
   },
   {
-    "objectID": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-4",
-    "href": "bayes-course/05-lecture/05-lecture.html#quantifying-model-accuracy-4",
+    "objectID": "bayes-course/05-lecture/05-lecture.html#two-models-one-dataset",
+    "href": "bayes-course/05-lecture/05-lecture.html#two-models-one-dataset",
     "title": "Bayesian Inference",
-    "section": "Quantifying Model Accuracy",
-    "text": "Quantifying Model Accuracy\n\nlibrary(loo)\nlm2 &lt;- loo(m2)\nlm2\n\n\nComputed from 1200 by 544 log-likelihood matrix.\n\n         Estimate   SE\nelpd_loo  -1648.7 14.3\np_loo         3.0  0.3\nlooic      3297.3 28.6\n------\nMCSE of elpd_loo is 0.1.\nMCSE and ESS estimates assume MCMC draws (r_eff in [0.6, 1.0]).\n\nAll Pareto k estimates are good (k &lt; 0.68).\nSee help('pareto-k-diagnostic') for details.\n\nplot(lm2)"
+    "section": "Two models, one dataset",
+    "text": "Two models, one dataset\nSimulate \\(N = 100\\) points from an exponential growth process with normal noise.\n\n\nset.seed(123)\nN &lt;- 100\nx &lt;- seq(0, 5, length.out = N)\na_true &lt;- 1; b_true &lt;- 0.7; sigma_true &lt;- 1.5\ny &lt;- a_true * exp(b_true * x) + rnorm(N, 0, sigma_true)\ndf &lt;- data.frame(x = x, y = y)"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#two-stan-programs",
+    "href": "bayes-course/05-lecture/05-lecture.html#two-stan-programs",
+    "title": "Bayesian Inference",
+    "section": "Two Stan programs",
+    "text": "Two Stan programs\n\n\n\n\n\n// linear: mu = a + b * x\ndata {\n  int&lt;lower=0&gt; N;\n  vector[N] x;\n  vector[N] y;\n}\nparameters {\n  real a;\n  real b;\n  real&lt;lower=0&gt; sigma;\n}\ntransformed parameters {\n  vector[N] mu = a + b * x;\n}\nmodel {\n  a     ~ normal(0, 1);\n  b     ~ normal(0, 5);\n  sigma ~ exponential(0.2);\n  y ~ normal(mu, sigma);\n}\ngenerated quantities {\n  vector[N] log_lik;\n  for (n in 1:N)\n    log_lik[n] = normal_lpdf(y[n] | mu[n], sigma);\n}\n\n\n\n\n\n// exponential: mu = a * exp(b * x)\ndata {\n  int&lt;lower=0&gt; N;\n  vector[N] x;\n  vector[N] y;\n}\nparameters {\n  real&lt;lower=0&gt; a;\n  real b;\n  real&lt;lower=0&gt; sigma;\n}\ntransformed parameters {\n  vector[N] mu = a * exp(b * x);\n}\nmodel {\n  a     ~ normal(0, 1);\n  b     ~ normal(0, 5);\n  sigma ~ exponential(0.2);\n  y ~ normal(mu, sigma);\n}\ngenerated quantities {\n  vector[N] log_lik;\n  for (n in 1:N)\n    log_lik[n] = normal_lpdf(y[n] | mu[n], sigma);\n}"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#from-log_lik-to-lpd",
+    "href": "bayes-course/05-lecture/05-lecture.html#from-log_lik-to-lpd",
+    "title": "Bayesian Inference",
+    "section": "From log_lik to lpd",
+    "text": "From log_lik to lpd\n\n\nLet \\(\\ell_{s,n} = \\log f(y_n \\mid \\theta^{s})\\) be the pointwise log-likelihood under posterior draw \\(\\theta^{s}\\); the Stan output log_lik is the \\(S \\times N\\) matrix \\([\\ell_{s,n}]\\)\nSumming one row gives the log joint likelihood at a single draw, not the lpd \\[\n\\sum_{n=1}^{N} \\ell_{s,n} \\;=\\; \\log f(y \\mid \\theta^{s})\n\\]\nThe (in-sample) lpd averages densities over draws inside the log, then sums over data (column-wise log-mean-exp, then sum) \\[\n\\widehat{\\text{lpd}} \\;=\\; \\sum_{n=1}^{N} \\log\\!\\left(\\frac{1}{S}\\sum_{s=1}^{S} \\exp(\\ell_{s,n})\\right)\n\\;=\\; \\sum_{n=1}^{N} \\!\\Big[\\operatorname{log\\_sum\\_exp}\\bigl(\\{\\ell_{s,n}\\}_{s=1}^{S}\\bigr) - \\log S\\Big]\n\\]\nStan provides log_sum_exp(...); in R it’s a one-liner: log_sum_exp &lt;- function(z) { m &lt;- max(z); m + log(sum(exp(z - m))) }. See this for more details.\nOrder matters: lpd is the log of an average density, not an average of log densities"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#fitting-both-models",
+    "href": "bayes-course/05-lecture/05-lecture.html#fitting-both-models",
+    "title": "Bayesian Inference",
+    "section": "Fitting both models",
+    "text": "Fitting both models\n\n\nlibrary(cmdstanr)\n\nstan_data &lt;- list(N = N, x = x, y = y)\n\nmod_lin &lt;- cmdstan_model(\"stan/lin_reg_compare.stan\")\nmod_exp &lt;- cmdstan_model(\"stan/exp_growth.stan\")\n\nfit_lin &lt;- mod_lin$sample(\n  data = stan_data, chains = 4, parallel_chains = 4,\n  iter_sampling = 1000, refresh = 0, show_messages = FALSE)\nfit_exp &lt;- mod_exp$sample(\n  data = stan_data, chains = 4, parallel_chains = 4,\n  iter_sampling = 1000, refresh = 0, show_messages = FALSE)\n\nll_lin &lt;- fit_lin$draws(\"log_lik\", format = \"matrix\")  # S x N\nll_exp &lt;- fit_exp$draws(\"log_lik\", format = \"matrix\")\n\n\n\n\ndim(ll_lin)\n\n[1] 4000  100"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#lpd-exponential-wins",
+    "href": "bayes-course/05-lecture/05-lecture.html#lpd-exponential-wins",
+    "title": "Bayesian Inference",
+    "section": "lpd: exponential wins",
+    "text": "lpd: exponential wins\n\n\nlog_sum_exp &lt;- function(z) { m &lt;- max(z); m + log(sum(exp(z - m))) }\n\nS &lt;- nrow(ll_lin)\nlpd_pt_lin &lt;- apply(ll_lin, 2, log_sum_exp) - log(S)\nlpd_pt_exp &lt;- apply(ll_exp, 2, log_sum_exp) - log(S)\n\nc(lpd_linear = sum(lpd_pt_lin),\n  lpd_exp    = sum(lpd_pt_exp),\n  diff       = sum(lpd_pt_exp) - sum(lpd_pt_lin))\n\nlpd_linear    lpd_exp       diff \n      -279       -172        107"
+  },
+  {
+    "objectID": "bayes-course/05-lecture/05-lecture.html#elpd-via-the-loo-package",
+    "href": "bayes-course/05-lecture/05-lecture.html#elpd-via-the-loo-package",
+    "title": "Bayesian Inference",
+    "section": "elpd via the loo package",
+    "text": "elpd via the loo package\n\n\\(\\widehat{\\text{lpd}}\\) is in-sample and overestimates predictive accuracy; the loo package gives PSIS-LOO estimates of \\(\\text{elpd}_{\\text{loo}}\\) from the same \\(S \\times N\\) log_lik matrix\nloo_compare() ranks models by \\(\\widehat{\\text{elpd}}_{\\text{loo}}\\) and reports the standard error of the difference\n\n\n\nlibrary(loo)\nloo_lin &lt;- loo(ll_lin)\nloo_exp &lt;- loo(ll_exp)\nlpd_vals &lt;- c(linear = sum(lpd_pt_lin), exponential = sum(lpd_pt_exp))\ncbind(rbind(linear      = loo_lin$estimates[\"elpd_loo\", ],\n            exponential = loo_exp$estimates[\"elpd_loo\", ]),\n      lpd = lpd_vals)\n\n            Estimate   SE  lpd\nlinear          -282 7.69 -279\nexponential     -175 6.86 -172\n\ncmp &lt;- loo_compare(list(linear = loo_lin, exponential = loo_exp))\ncbind(cmp[, c(\"elpd_diff\", \"se_diff\")],\n      lpd_diff = lpd_vals[rownames(cmp)] - max(lpd_vals))\n\n            elpd_diff se_diff lpd_diff\nexponential         0    0.00        0\nlinear           -107    8.58     -107"
   },
   {
     "objectID": "bayes-course/06-lecture/06-lecture.html#more-linear-models-and-modeling-counts",
