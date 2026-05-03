@@ -1,0 +1,328 @@
+---
+title: "Two Truths and a Lie"
+subtitle: "Certainty and Accuracy in Guessing"
+format:
+  html:
+    toc: true
+    df-print: paged
+execute:
+  echo: false
+  warning: false
+  message: false
+params:
+  data_mode: previous
+---
+
+```{r}
+library(googlesheets4)
+library(ggplot2)
+library(glue)
+library(knitr)
+library(rstanarm)
+library(tidybayes)
+
+current_year_sheet <- "Y2026"
+previous_year_sheet <- "Y2024"
+
+thm <-
+  theme_minimal() +
+  theme(panel.grid.major = element_blank())
+theme_set(thm)
+gs4_deauth()
+
+url1 <- "https://docs.google.com/spreadsheets/d/"
+url2 <- "1oyCbed2BpQzHtvpA4DynTlPbwZpxOzOePNw9tas40qU/edit#gid=186692089"
+url <- paste0(url1, url2)
+
+data_mode <- match.arg(params$data_mode, choices = c("current", "previous", "both"))
+selected_sheets <- switch(
+  data_mode,
+  current = current_year_sheet,
+  previous = previous_year_sheet,
+  both = c(current_year_sheet, previous_year_sheet)
+)
+
+read_two_truths <- function(sheet) {
+  data <- read_sheet(url, sheet = sheet)
+  colnames(data) <- c("time", "group", "score", "correct")
+  data |>
+    dplyr::mutate(
+      year = sheet,
+      time = as.character(time),
+      group = as.character(group),
+      score = as.numeric(score),
+      correct = dplyr::case_when(
+        correct == "Yes" ~ 1,
+        correct == "No" ~ 0,
+        TRUE ~ NA_real_
+      )
+    ) |>
+    dplyr::filter(!is.na(score), !is.na(correct))
+}
+
+data <- lapply(selected_sheets, read_two_truths) |>
+  dplyr::bind_rows()
+
+if (nrow(data) == 0) {
+  stop(
+    glue("No usable responses found in sheet(s): {toString(selected_sheets)}."),
+    call. = FALSE
+  )
+}
+
+set.seed(123)
+data <- data |>
+  dplyr::mutate(score_jitter = pmin(10, pmax(0, score + runif(dplyr::n(), -0.3, 0.3))))
+
+plot_points <- function(data, data_mode, from = 0, to = 10) {
+  p <- ggplot(aes(score_jitter, correct), data = data)
+  if (data_mode == "both") {
+    p <- p + geom_point(aes(color = year))
+  } else {
+    p <- p + geom_point()
+  }
+  p +
+    xlim(from, to) +
+    xlab("Certainty score") +
+    ylab("Pr(Correct guess)")
+}
+
+make_epred_curves <- function(scores, model, n_draws = 100) {
+  epred_draws <- data.frame(score = scores) |>
+    add_epred_draws(model)
+  draw_ids <- sample(
+    unique(epred_draws$.draw),
+    size = min(n_draws, dplyr::n_distinct(epred_draws$.draw))
+  )
+
+  list(
+    posterior_lines = epred_draws |>
+      dplyr::filter(.draw %in% draw_ids),
+    mean_line = epred_draws |>
+      dplyr::group_by(score) |>
+      dplyr::summarize(.epred = mean(.epred), .groups = "drop")
+  )
+}
+```
+## Introduction
+This activity was designed by Andrew Gelman and originally published in:
+
+Gelman, A. (2023). “Two Truths and a Lie” as a class-participation activity. The American Statistician, 77(1), 97–101.
+
+## Data Used
+
+This analysis uses the Google Sheet tabs selected by `data_mode = "`r data_mode`"`.
+The current-year tab is `Y2026`; the previous available tab in the workbook is `Y2024`.
+The response variable is whether the group guessed the lie correctly, coded as 1 for a correct guess and 0 for an incorrect guess.
+The predictor is the group's certainty score on a 0 to 10 scale.
+
+```{r}
+data |>
+  dplyr::select(year, group, score, correct) |>
+  head(10) |>
+  kable(
+    caption = "First 10 usable responses after cleaning."
+  )
+```
+
+The table shows the cleaned observations used in the model.
+Rows with missing certainty scores or missing outcomes are removed before fitting the model.
+The `year` column identifies which worksheet each response came from, which matters when current and previous data are combined.
+
+```{r}
+summary_table <- data |>
+  dplyr::group_by(year) |>
+  dplyr::summarize(
+    responses = dplyr::n(),
+    mean_score = mean(score),
+    accuracy = mean(correct),
+    .groups = "drop"
+  )
+
+summary_table |>
+  dplyr::mutate(
+    mean_score = round(mean_score, 2),
+    accuracy = round(accuracy, 2)
+  ) |>
+  kable(caption = "Summary of certainty scores and guessing accuracy.")
+```
+
+This summary gives a quick check on the sample size, average certainty, and observed accuracy.
+The accuracy column is the raw proportion of correct guesses before fitting any model.
+
+## Certainty and Correct Guesses
+
+```{r}
+plot_points(data, data_mode)
+```
+
+Each point is one group's guess.
+The horizontal position is the certainty score, with slight jitter added only to reduce overplotting.
+The vertical position is the outcome: 1 means the group guessed correctly and 0 means it did not.
+If both years are selected, point color identifies the worksheet year.
+
+## Bayesian Logistic Regression
+
+Let $y_i$ indicate whether guess $i$ was correct, and let $x_i$ be the certainty score for that guess.
+We model the probability of a correct guess with a logistic regression:
+
+$$
+\begin{aligned}
+y_i &\sim \textrm{Bernoulli}(p_i) \\
+\textrm{logit}(p_i) &= \alpha + \beta x_i \\
+p_i &= \textrm{logit}^{-1}(\alpha + \beta x_i).
+\end{aligned}
+$$
+
+The intercept $\alpha$ is the log odds of a correct guess when the certainty score is 0.
+Because the game has two truths and one lie, random guessing has probability $1/3$ of identifying the lie.
+That implies a natural prior center for the intercept:
+
+$$
+\textrm{logit}(1/3) = \log\left(\frac{1/3}{2/3}\right) \approx -0.69.
+$$
+
+For the slope, $\beta$ is the change in log odds for a one-point increase in certainty.
+On the odds scale, a one-point increase multiplies the odds of a correct guess by $\exp(\beta)$.
+If $\beta = 0$, then $\exp(0) = 1$, meaning certainty has no association with accuracy.
+If $\beta = 1$, then $\exp(1) \approx 2.7$, meaning each one-point increase in certainty nearly triples the odds of a correct guess, which is already a large effect on a 0 to 10 scale.
+So a weakly informative prior centered at 0 with scale 0.5 is reasonable, even though one might expect the effect to be more likely positive than negative.
+
+The model uses the following priors:
+
+$$
+\begin{aligned}
+\alpha &\sim \textrm{Normal}(\textrm{logit}(1/3), 1) \\
+\beta &\sim \textrm{Normal}(0, 0.5).
+\end{aligned}
+$$
+
+```{r}
+#| echo: true
+fit <- stan_glm(
+  correct ~ score,
+  prior_intercept = normal(qlogis(1 / 3), 1),
+  prior = normal(0, 0.5),
+  family = binomial(link = "logit"),
+  data = data,
+  iter = 500,
+  refresh = 0,
+  seed = 123
+)
+print(fit, digits = 2)
+```
+```{r}
+posterior_means <- coef(fit)
+a_hat <- posterior_means["(Intercept)"]
+b_hat <- posterior_means["score"]
+```
+
+The fitted output reports posterior summaries for $\alpha$ and $\beta$.
+The intercept describes baseline guessing performance at certainty score 0, while the slope describes how the odds of a correct guess change as certainty increases.
+Positive posterior mass for $\beta$ supports the idea that more confident guesses tend to be more accurate.
+
+## Fitted Relationship
+
+```{r}
+set.seed(123)
+scores <- seq(0, 10, len = 30)
+curves <- make_epred_curves(scores, fit)
+
+plot_points(data, data_mode) +
+  geom_line(
+    aes(score, .epred, group = .draw),
+    linewidth = 0.2,
+    alpha = 1 / 5,
+    data = curves$posterior_lines
+  ) +
+  geom_line(
+    aes(score, .epred),
+    linewidth = 0.5,
+    color = "red",
+    data = curves$mean_line
+  ) +
+  geom_text(
+    x = 3,
+    y = 0.6,
+    label = glue(
+      "Pr(Y = 1) = invlogit({round(a_hat, 2)} + {round(b_hat, 2)}*x)"
+    ),
+    color = "brown",
+    size = 5
+  )
+```
+
+The thin gray curves are 100 draws from the posterior distribution, so they show uncertainty about the fitted relationship.
+The red line is the posterior mean relationship.
+When the gray lines are widely spread apart, the data leave more uncertainty about the probability of a correct guess at that certainty score.
+
+
+```{r}
+prob_low <- plogis(a_hat)
+prob_high <- plogis(a_hat + b_hat * 10)
+```
+
+Using the posterior mean coefficients, the estimated probability of a correct guess is about `r round(prob_low, 2)` at certainty score 0 and about `r round(prob_high, 2)` at certainty score 10.
+This comparison summarizes the fitted change across the observed certainty scale.
+
+We can also compute posterior predictive summaries for specific certainty scores.
+Here the values are expected probabilities of a correct guess for someone with certainty scores 0, 5, and 10.
+
+```{r}
+prediction_grid <- data.frame(score = c(0, 5, 10))
+pred <- posterior_epred(fit, newdata = prediction_grid)
+
+prediction_summary <- t(apply(
+  pred,
+  2,
+  quantile,
+  probs = c(0.05, 0.50, 0.95)
+))
+
+prediction_summary <- data.frame(
+  score = prediction_grid$score,
+  q05 = prediction_summary[, "5%"],
+  q50 = prediction_summary[, "50%"],
+  q95 = prediction_summary[, "95%"]
+)
+
+prediction_summary |>
+  dplyr::mutate(
+    q05 = round(q05, 2),
+    q50 = round(q50, 2),
+    q95 = round(q95, 2)
+  ) |>
+  kable(
+    caption = "Posterior expected probability of a correct guess at selected certainty scores.",
+    col.names = c("Certainty score", "5%", "50%", "95%")
+  )
+```
+
+The median column is the posterior median probability at each certainty score.
+The 5% and 95% columns give a central 90% posterior interval for the expected probability, showing how uncertain the fitted model is at each point on the certainty scale.
+
+## Wider Score Range
+
+```{r}
+from <- -10
+to <- 20
+scores <- seq(from, to, len = 30)
+curves <- make_epred_curves(scores, fit)
+
+plot_points(data, data_mode, from = from, to = to) +
+  geom_line(
+    aes(score, .epred, group = .draw),
+    linewidth = 0.2,
+    alpha = 1 / 5,
+    data = curves$posterior_lines
+  ) +
+  geom_line(
+    aes(score, .epred),
+    linewidth = 0.5,
+    color = "red",
+    data = curves$mean_line
+  )
+```
+
+This plot extends the fitted logistic curve beyond the actual 0 to 10 certainty scale.
+It is useful for seeing the full S-shape implied by the logistic model, but values below 0 or above 10 are extrapolations rather than possible certainty scores from the activity.
