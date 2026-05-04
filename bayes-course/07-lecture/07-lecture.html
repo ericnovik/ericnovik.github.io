@@ -221,7 +221,7 @@ Eric Novik
 <li class="fragment">Understanding logistic regression</li>
 <li class="fragment">Simulating data</li>
 <li class="fragment">Prior predictive simulations</li>
-<li class="fragment">Example: Diabetes in Pima native americans</li>
+<li class="fragment">Example: Diabetes in Pima Native Americans</li>
 <li class="fragment">Introducing hierarchical/multi-level models</li>
 <li class="fragment">Pooling: none, complete, and partial</li>
 <li class="fragment">Example hierarchical model</li>
@@ -259,7 +259,7 @@ Eric Novik
 <li class="fragment">Response vector <span class="math inline">\(y\)</span> consisting of zeros and ones</li>
 <li class="fragment">The data model is <span class="math inline">\(y_i \sim \text{Bernoulli}(p_i)\)</span></li>
 <li class="fragment">Linear predictor: <span class="math inline">\(\eta_i = \alpha + X_i\beta\)</span>, where <span class="math inline">\(X\)</span> is a matrix</li>
-<li class="fragment">In general: <span class="math inline">\(\E(y \mid X) = g^{-1}(\eta)\)</span>, where <span class="math inline">\(g^{-1}\)</span>is the inverse link function that maps the linear predictor onto the observational scale</li>
+<li class="fragment">In general: <span class="math inline">\(\E(y \mid X) = g^{-1}(\eta)\)</span>, where <span class="math inline">\(g^{-1}\)</span> is the inverse link function that maps the linear predictor onto the observational scale</li>
 <li class="fragment">In particular: <span class="math inline">\(\E(y_i \mid X_i) = \text{logit}^{-1}(\alpha + X_i\beta) = p_i = \P(y_i = 1)\)</span>
 <ul>
 <li class="fragment"><span class="math inline">\(\text{logit}(p_i) = \eta_i\)</span> and <span class="math inline">\(p_i = \text{logit}^{-1}(\eta_i)\)</span></li>
@@ -270,7 +270,7 @@ Eric Novik
 <section id="logistic-posterior" class="slide level2 smaller">
 <h2>Logistic Posterior</h2>
 <ul>
-<li class="fragment"><p>We consider K regression inputs and independent priors on all <span class="math inline">\(K + 1\)</span> unknowns: <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta_1, \beta_2, ..., \beta_k\)</span></p></li>
+<li class="fragment"><p>We consider K regression inputs and independent priors on all <span class="math inline">\(K + 1\)</span> unknowns: <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta_1, \beta_2, ..., \beta_K\)</span></p></li>
 <li class="fragment"><p>Bernoulli likelihood is: <span class="math inline">\(f(y \mid p) = p^y (1 - p)^{1-y}\)</span> with <span class="math inline">\(y \in \{0, 1\}\)</span></p></li>
 <li class="fragment"><p>And each <span class="math inline">\(p_i = \text{logit}^{-1}(\alpha + X_i\beta)\)</span> <span class="math display">\[
 f\left(\alpha,\beta \mid y,X\right) \propto
@@ -303,9 +303,9 @@ f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) 
 <span id="cb1-12"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y), <span class="at">data =</span> sim)</span>
 <span id="cb1-13"><a></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
 <span id="cb1-14"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(x, Pr), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb1-15"><a></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, </span>
+<span id="cb1-15"><a></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>,</span>
 <span id="cb1-16"><a></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb1-17"><a></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">invlogit</span>(a), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, </span>
+<span id="cb1-17"><a></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">invlogit</span>(a), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>,</span>
 <span id="cb1-18"><a></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
 <span id="cb1-19"><a></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.50</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
 <span id="cb1-20"><a></a>  <span class="fu">ggtitle</span>(<span class="fu">TeX</span>(<span class="st">"$y_i </span><span class="sc">\\</span><span class="st">sim Bernoulli(logit^{-1}(1.2 + 0.4x_i))$"</span>)) <span class="sc">+</span></span>
@@ -332,13 +332,13 @@ f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) 
 <ul>
 <li class="fragment">The intercept is the log odds of an event when <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(\text{logit}^{-1}(1.2) = 0.77\)</span></li>
 <li class="fragment">The slope changes depending on where you are on the curve</li>
-<li class="fragment">When you are near 0.50, the slope of logit(x) is 1/4 and so you can divide your coefficient by 4 to get a rough estimate</li>
+<li class="fragment">When you are near 0.50, the slope of the inverse logit function (logistic curve) is 1/4 and so you can divide your coefficient by 4 to get a rough estimate</li>
 <li class="fragment">This implies that if we go from <span class="math inline">\(x = -3\)</span> to <span class="math inline">\(x = -2\)</span>, the probability will increase by about 0.10</li>
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>(<span class="fu">invlogit</span>(<span class="fl">1.2</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> <span class="sc">-</span><span class="dv">2</span>) <span class="sc">-</span> </span>
-<span id="cb2-2"><a></a>   <span class="fu">invlogit</span>(<span class="fl">1.2</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> <span class="sc">-</span><span class="dv">3</span>)) <span class="sc">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>(<span class="fu">invlogit</span>(<span class="fl">1.2</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> <span class="sc">-</span><span class="dv">2</span>) <span class="sc">-</span></span>
+<span id="cb2-2"><a></a>   <span class="fu">invlogit</span>(<span class="fl">1.2</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> <span class="sc">-</span><span class="dv">3</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb2-3"><a></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1</code></pre>
@@ -370,7 +370,7 @@ f_{\alpha}\left(\alpha\right) \cdot \prod_{k=1}^K f_{\beta}\left(\beta_k\right) 
 <span id="cb4-2"><a></a>m1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x,</span>
 <span id="cb4-3"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
 <span id="cb4-4"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb4-5"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb4-5"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
 <span id="cb4-6"><a></a>               <span class="at">data =</span> sim,</span>
 <span id="cb4-7"><a></a>               <span class="at">chains =</span> <span class="dv">4</span>,</span>
 <span id="cb4-8"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
@@ -438,7 +438,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb6-16"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Pr), <span class="at">data =</span> sim, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
 <span id="cb6-17"><a></a>  <span class="fu">ylab</span>(<span class="fu">TeX</span>(<span class="st">"$logit^{-1}(</span><span class="sc">\\</span><span class="st">alpha + </span><span class="sc">\\</span><span class="st">beta x)$"</span>)) <span class="sc">+</span></span>
 <span id="cb6-18"><a></a>  <span class="fu">ggtitle</span>(<span class="fu">TeX</span>(<span class="st">"Simulating from prior $logit^{-1}(</span><span class="sc">\\</span><span class="st">alpha + </span><span class="sc">\\</span><span class="st">beta x_i))$"</span>),</span>
-<span id="cb6-19"><a></a>  <span class="at">subtitle =</span> <span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">alpha </span><span class="sc">\\</span><span class="st">sim Normal(1.2, 0.5)$ and $</span><span class="sc">\\</span><span class="st">beta </span><span class="sc">\\</span><span class="st">sim Normal(0.4, 0.1)$"</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-19"><a></a>  <span class="at">subtitle =</span> <span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">alpha </span><span class="sc">\\</span><span class="st">sim Normal(1.2, 0.5)$ and $</span><span class="sc">\\</span><span class="st">beta </span><span class="sc">\\</span><span class="st">sim Normal(0.4, 0.1)$"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -449,6 +449,42 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div></div>
 </div>
+</section>
+<section id="two-truths-and-a-lie1" class="slide level2 smaller scrollable">
+<h2>Two Truths and a Lie<sup>1</sup></h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ol type="1">
+<li>One person tells three personal statements, one of which is a lie.</li>
+<li>Others discuss and guess which statement is the lie, and they jointly construct a numerical statement of their certainty in the guess (on a 0–10 scale).</li>
+<li>The storyteller reveals which was the lie.</li>
+<li>Enter the certainty number and the outcome (success or failure) and submit in the Google form. Rotate through everyone in your group so that each person plays the storyteller role once.</li>
+</ol>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/two-truths.png" class="quarto-figure quarto-figure-center" width="500"></p>
+</figure>
+</div>
+</div></div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Gelman, A. (2023). “Two Truths and a Lie” as a Class-Participation Activity. The American Statistician, 77(1), 97–101.</p></li></ol></aside></section>
+<section id="two-truths-and-a-lie" class="slide level2">
+<h2>Two Truths and a Lie</h2>
+<p>https://tinyurl.com/two-truths-and</p>
+
+<img data-src="images/two-truths-and-400.png" class="quarto-figure quarto-figure-center r-stretch" width="500"><aside class="notes">
+<p>What do you think the range of certainty scores will look like: will there be any 0’s or 10’s? Will there be a positive relation between x and y: are guesses with higher certainty be more accurate, on average? How strong will the relation be between x and y: what will the curve look like? Give approximate numerical values for the intercept and slope coefficients corresponding to their sketched curves.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-diabetes" class="slide level2 smaller">
 <h2>Example: Diabetes</h2>
@@ -609,7 +645,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pima, <span class="fu">aes</span>(<span class="at">x =</span> mass)) <span class="sc">+</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pima, <span class="fu">aes</span>(<span class="at">x =</span> mass)) <span class="sc">+</span></span>
 <span id="cb8-2"><a></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">group =</span> diabetes, <span class="at">fill =</span> diabetes, <span class="at">color =</span> diabetes), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">+</span></span>
 <span id="cb8-3"><a></a>  <span class="fu">xlab</span>(<span class="st">"BMI"</span>)</span>
 <span id="cb8-4"><a></a>p2 <span class="ot">&lt;-</span> pima <span class="sc">|&gt;</span></span>
@@ -619,9 +655,9 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb8-8"><a></a>  <span class="fu">summarize</span>(<span class="at">p =</span> <span class="fu">mean</span>(diabetes <span class="sc">==</span> <span class="st">"pos"</span>),</span>
 <span id="cb8-9"><a></a>            <span class="at">n =</span> <span class="fu">n</span>(),</span>
 <span id="cb8-10"><a></a>            <span class="at">se =</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n),</span>
-<span id="cb8-11"><a></a>            <span class="at">lower =</span> p <span class="sc">+</span> se,</span>
-<span id="cb8-12"><a></a>            <span class="at">upper =</span> p <span class="sc">-</span> se) <span class="sc">|&gt;</span></span>
-<span id="cb8-13"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bmi_cut, <span class="at">y =</span> p)) <span class="sc">+</span> </span>
+<span id="cb8-11"><a></a>            <span class="at">lower =</span> p <span class="sc">-</span> se,</span>
+<span id="cb8-12"><a></a>            <span class="at">upper =</span> p <span class="sc">+</span> se) <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bmi_cut, <span class="at">y =</span> p)) <span class="sc">+</span></span>
 <span id="cb8-14"><a></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
 <span id="cb8-15"><a></a>  <span class="fu">xlab</span>(<span class="st">"BMI range"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Proportion"</span>) <span class="sc">+</span></span>
 <span id="cb8-16"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Proportion of diabetics by BMI +/- 1 SE"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -660,7 +696,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <span id="cb9-7"><a></a>         <span class="at">age =</span> (age <span class="sc">-</span> <span class="fu">mean</span>(age)) <span class="sc">/</span> <span class="dv">10</span>,</span>
 <span id="cb9-8"><a></a>         <span class="at">pedigree =</span> (pedigree <span class="sc">-</span> <span class="fu">mean</span>(pedigree)),</span>
 <span id="cb9-9"><a></a>         <span class="at">bmi =</span> ((mass <span class="sc">-</span> <span class="fu">mean</span>(mass)) <span class="sc">/</span> <span class="dv">10</span>),</span>
-<span id="cb9-10"><a></a>         <span class="at">glucose =</span> ((glucose <span class="sc">-</span> <span class="fu">mean</span>(glucose)) <span class="sc">/</span> <span class="fu">sd</span>(glucose))) </span>
+<span id="cb9-10"><a></a>         <span class="at">glucose =</span> ((glucose <span class="sc">-</span> <span class="fu">mean</span>(glucose)) <span class="sc">/</span> <span class="fu">sd</span>(glucose)))</span>
 <span id="cb9-11"><a></a><span class="fu">head</span>(d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 7
@@ -700,7 +736,7 @@ p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 <ul>
 <li class="fragment">The prior on the intercept corresponds to the log odds of developing diabetes when a person has an average BMI, which is about 29 in the US (which is considered high-risk)</li>
 <li class="fragment">It is likely that the probability is between 20% and 80%, and so a weakly informative prior can be expressed as <span class="math inline">\(\text{Normal}(0, 0.5)\)</span>, since <code>invlogit(c(-1.5, 1.5)) = [0.18, 0.82]</code></li>
-<li class="fragment">Suppose, we also put a weakly informative <span class="math inline">\(\text{Normal}(0, 1)\)</span> pior on <span class="math inline">\(\beta\)</span></li>
+<li class="fragment">Suppose, we also put a weakly informative <span class="math inline">\(\text{Normal}(0, 1)\)</span> prior on <span class="math inline">\(\beta\)</span></li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
@@ -724,16 +760,15 @@ p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 <div class="column">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>m_prior <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi,</span>
 <span id="cb11-2"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
-<span id="cb11-3"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), </span>
-<span id="cb11-4"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
-<span id="cb11-5"><a></a>               <span class="at">refresh =</span> <span class="dv">100</span>,</span>
-<span id="cb11-6"><a></a>               <span class="at">prior_PD =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb11-7"><a></a>               <span class="at">data =</span> d, </span>
-<span id="cb11-8"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
-<span id="cb11-9"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
-<span id="cb11-10"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
-<span id="cb11-11"><a></a></span>
-<span id="cb11-12"><a></a><span class="fu">summary</span>(m_prior)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-3"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb11-4"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb11-5"><a></a>               <span class="at">prior_PD =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-6"><a></a>               <span class="at">data =</span> d,</span>
+<span id="cb11-7"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb11-8"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb11-9"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb11-10"><a></a></span>
+<span id="cb11-11"><a></a><span class="fu">summary</span>(m_prior)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -796,7 +831,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <p><span class="math display">\[
 \begin{eqnarray}
 y_i &amp;\sim&amp; \text{Bernoulli}(p_i) \\
-\eta_i &amp;=&amp; \alpha + \beta_1 \left( \frac{x_{i} - \bar x}{10} \right) \\
+\eta_i &amp;=&amp; \alpha + \beta \left( \frac{x_{i} - \bar x}{10} \right) \\
 p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 \alpha &amp;\sim&amp; \text{Normal}(0 ,\ 0.5) \\
 \beta &amp;\sim&amp; \text{Normal}(0.7 , \ 0.2)
@@ -814,15 +849,14 @@ p_i &amp;=&amp; \frac{e^{\eta_i}}{1 + e^{\eta_i}} \\
 <div class="column">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>m_prior <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi,</span>
 <span id="cb14-2"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
-<span id="cb14-3"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>), </span>
-<span id="cb14-4"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
-<span id="cb14-5"><a></a>               <span class="at">refresh =</span> <span class="dv">100</span>,</span>
-<span id="cb14-6"><a></a>               <span class="at">prior_PD =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb14-7"><a></a>               <span class="at">data =</span> d, </span>
-<span id="cb14-8"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
-<span id="cb14-9"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
-<span id="cb14-10"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
-<span id="cb14-11"><a></a><span class="fu">summary</span>(m_prior)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-3"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>),</span>
+<span id="cb14-4"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb14-5"><a></a>               <span class="at">prior_PD =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-6"><a></a>               <span class="at">data =</span> d,</span>
+<span id="cb14-7"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb14-8"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
+<span id="cb14-9"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
+<span id="cb14-10"><a></a><span class="fu">summary</span>(m_prior)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -883,10 +917,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="column">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>m2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi,</span>
 <span id="cb17-2"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
-<span id="cb17-3"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>), </span>
-<span id="cb17-4"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
+<span id="cb17-3"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>),</span>
+<span id="cb17-4"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
 <span id="cb17-5"><a></a>               <span class="at">prior_PD =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb17-6"><a></a>               <span class="at">data =</span> d, </span>
+<span id="cb17-6"><a></a>               <span class="at">data =</span> d,</span>
 <span id="cb17-7"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
 <span id="cb17-8"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
 <span id="cb17-9"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
@@ -1038,14 +1072,14 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="fragment">
 <div class="cell columns column-output-location">
 <div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>priors <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>priors <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
 <span id="cb28-2"><a></a>                 <span class="at">scale =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb28-3"><a></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi <span class="sc">+</span> pedigree <span class="sc">+</span> </span>
+<span id="cb28-3"><a></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi <span class="sc">+</span> pedigree <span class="sc">+</span></span>
 <span id="cb28-4"><a></a>                 age <span class="sc">+</span> glucose,</span>
 <span id="cb28-5"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
 <span id="cb28-6"><a></a>               <span class="at">prior =</span> priors,</span>
-<span id="cb28-7"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
-<span id="cb28-8"><a></a>               <span class="at">data =</span> d, </span>
+<span id="cb28-7"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb28-8"><a></a>               <span class="at">data =</span> d,</span>
 <span id="cb28-9"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
 <span id="cb28-10"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
 <span id="cb28-11"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
@@ -1095,7 +1129,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <section id="shinystan-demo" class="slide level2 smaller">
 <h2>ShinyStan Demo</h2>
 <ul>
-<li>To use <code>install.packages("shinystan")</code> and <code>launch_shinystan(m3)</code></li>
+<li>To install, run <code>install.packages("shinystan")</code>, then launch with <code>launch_shinystan(m3)</code></li>
 </ul>
 
 <img data-src="images/shinystan.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
@@ -1109,15 +1143,15 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="cell columns column-output-location">
 <div class="column">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">library</span>(splines)</span>
-<span id="cb30-2"><a></a>priors <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">7</span>)), </span>
+<span id="cb30-2"><a></a>priors <span class="ot">&lt;-</span> <span class="fu">normal</span>(<span class="at">location =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">7</span>)),</span>
 <span id="cb30-3"><a></a>                 <span class="at">scale =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">7</span>)))</span>
-<span id="cb30-4"><a></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi <span class="sc">+</span> pedigree <span class="sc">+</span> </span>
-<span id="cb30-5"><a></a>                 <span class="fu">bs</span>(age, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb30-4"><a></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(diab <span class="sc">~</span> bmi <span class="sc">+</span> pedigree <span class="sc">+</span></span>
+<span id="cb30-5"><a></a>                 <span class="fu">bs</span>(age, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
 <span id="cb30-6"><a></a>                 glucose <span class="sc">+</span> glucose<span class="sc">:</span>pedigree,</span>
 <span id="cb30-7"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
 <span id="cb30-8"><a></a>               <span class="at">prior =</span> priors,</span>
-<span id="cb30-9"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>), </span>
-<span id="cb30-10"><a></a>               <span class="at">data =</span> d, </span>
+<span id="cb30-9"><a></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb30-10"><a></a>               <span class="at">data =</span> d,</span>
 <span id="cb30-11"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
 <span id="cb30-12"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>,</span>
 <span id="cb30-13"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span>
@@ -1182,9 +1216,9 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="fragment">
 <div class="cell columns column-output-location">
 <div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>), </span>
-<span id="cb32-2"><a></a>    <span class="at">mgp =</span> <span class="fu">c</span>(<span class="dv">2</span>,.<span class="dv">7</span>,<span class="dv">0</span>), </span>
-<span id="cb32-3"><a></a>    <span class="at">tck =</span> <span class="sc">-</span>.<span class="dv">01</span>, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>),</span>
+<span id="cb32-2"><a></a>    <span class="at">mgp =</span> <span class="fu">c</span>(<span class="dv">2</span>,.<span class="dv">7</span>,<span class="dv">0</span>),</span>
+<span id="cb32-3"><a></a>    <span class="at">tck =</span> <span class="sc">-</span>.<span class="dv">01</span>,</span>
 <span id="cb32-4"><a></a>    <span class="at">bg  =</span> <span class="st">"#f0f1eb"</span>)</span>
 <span id="cb32-5"><a></a>m2_loo <span class="ot">&lt;-</span> <span class="fu">loo</span>(m2)</span>
 <span id="cb32-6"><a></a>m3_loo <span class="ot">&lt;-</span> <span class="fu">loo</span>(m3)</span>
@@ -1216,9 +1250,9 @@ m2 -104.5      12.4 </code></pre>
 <h2>Introduction to Hierarchical Models</h2>
 <ul>
 <li class="fragment">Hierarchical: modeling dependence of lower parameter on a higher parameter, which we sometimes call hyperparameter</li>
-<li class="fragment">Call the lower level paramter <span class="math inline">\(\theta\)</span>, and hyperparameter <span class="math inline">\(\tau\)</span></li>
+<li class="fragment">Call the lower level parameter <span class="math inline">\(\theta\)</span>, and hyperparameter <span class="math inline">\(\tau\)</span></li>
 <li class="fragment">We can express the joint prior as: <span class="math inline">\(f(\theta, \tau) = f(\theta \mid \tau) f(\tau)\)</span></li>
-<li class="fragment">The joint postererior is:</li>
+<li class="fragment">The joint posterior is:</li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
@@ -1326,7 +1360,7 @@ f(\theta, \tau \mid y) &amp; \propto \underbrace{f(y \mid \theta, \tau)}_\text{L
 <section id="partial-pooling-compromise" class="slide level2 smaller">
 <h2>Partial Pooling Compromise</h2>
 <ul>
-<li class="fragment">Posterior <span class="math inline">\(f(\theta \mid y)\)</span> is is a compromise between prior <span class="math inline">\(f(\theta)\)</span> and likelihood <span class="math inline">\(f(y \mid \theta)\)</span></li>
+<li class="fragment">Posterior <span class="math inline">\(f(\theta \mid y)\)</span> is a compromise between prior <span class="math inline">\(f(\theta)\)</span> and likelihood <span class="math inline">\(f(y \mid \theta)\)</span></li>
 <li class="fragment">In the same spirit, the pooled parameter <span class="math inline">\(\theta_j\)</span> (say reaction time for subject <span class="math inline">\(j\)</span>) is a compromise between within-subject parameters, and among-subject parameters</li>
 </ul>
 <div class="fragment">
@@ -1352,11 +1386,11 @@ f(\theta, \tau \mid y) &amp; \propto \underbrace{f(y \mid \theta, \tau)}_\text{L
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb36-2"><a></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(lme4<span class="sc">::</span>sleepstudy)</span>
 <span id="cb36-3"><a></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, n <span class="sc">*</span> <span class="fl">0.7</span>)</span>
-<span id="cb36-4"><a></a>d <span class="ot">&lt;-</span> lme4<span class="sc">::</span>sleepstudy[s, ] </span>
-<span id="cb36-5"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Days, Reaction), </span>
+<span id="cb36-4"><a></a>d <span class="ot">&lt;-</span> lme4<span class="sc">::</span>sleepstudy[s, ]</span>
+<span id="cb36-5"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Days, Reaction),</span>
 <span id="cb36-6"><a></a>            <span class="at">data =</span> d)</span>
 <span id="cb36-7"><a></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">width =</span> <span class="fl">0.2</span>)</span>
-<span id="cb36-8"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Reaction), </span>
+<span id="cb36-8"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(Reaction),</span>
 <span id="cb36-9"><a></a>            <span class="at">data =</span> d)</span>
 <span id="cb36-10"><a></a>p2 <span class="ot">&lt;-</span> p2 <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">20</span>)</span>
 <span id="cb36-11"><a></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1392,7 +1426,7 @@ y_{ij} &amp; \sim &amp; \text{Normal}(\mu, \ \sigma^2) \\
 <span id="cb37-2"><a></a>               <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">10</span>),</span>
 <span id="cb37-3"><a></a>               <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
 <span id="cb37-4"><a></a>               <span class="at">family =</span> gaussian,</span>
-<span id="cb37-5"><a></a>               <span class="at">data =</span> d, </span>
+<span id="cb37-5"><a></a>               <span class="at">data =</span> d,</span>
 <span id="cb37-6"><a></a>               <span class="at">iter =</span> <span class="dv">5000</span>,</span>
 <span id="cb37-7"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
 <span id="cb37-8"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>)</span>
@@ -1468,7 +1502,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <p><span class="math display">\[
 \begin{eqnarray}
 y_{ij} &amp; \sim &amp; \text{Normal}(\mu_j, \ \sigma^2) \\
-\mu_j    &amp; \sim &amp; \text{Normal}(300, s_j^2) \\
+\mu_j    &amp; \sim &amp; \text{Normal}(300, s^2) \\
 \sigma &amp; \sim &amp; \text{Exponential}(0.02)
 \end{eqnarray}
 \]</span></p>
@@ -1482,7 +1516,7 @@ y_{ij} &amp; \sim &amp; \text{Normal}(\mu_j, \ \sigma^2) \\
 <span id="cb40-2"><a></a>               <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">10</span>),</span>
 <span id="cb40-3"><a></a>               <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
 <span id="cb40-4"><a></a>               <span class="at">family =</span> gaussian,</span>
-<span id="cb40-5"><a></a>               <span class="at">data =</span> d, </span>
+<span id="cb40-5"><a></a>               <span class="at">data =</span> d,</span>
 <span id="cb40-6"><a></a>               <span class="at">iter =</span> <span class="dv">1000</span>,</span>
 <span id="cb40-7"><a></a>               <span class="at">refresh =</span> <span class="dv">0</span>,</span>
 <span id="cb40-8"><a></a>               <span class="at">seed =</span> <span class="dv">123</span>)</span>
@@ -1597,6 +1631,8 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </section>
 <section id="sleep-data-8" class="slide level2 smaller">
 <h2>Sleep Data</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
 <li class="fragment">We can now write out the full model giving priors to all global parameters</li>
 <li class="fragment">Notice, how the model could be extended if instead of <span class="math inline">\(\mu_j\)</span> we had our typical linear predictor</li>
@@ -1608,13 +1644,192 @@ y_{ij} &amp;\sim&amp; \text{Normal}(\mu_j, \ \sigma_y^2) \\
 \mu_{j} &amp;\sim&amp; \text{Normal}(\mu, \ \sigma_{\mu}^2) \\
 \mu &amp;\sim&amp; \text{Normal}(300, 50^2) \\
 \sigma_y &amp;\sim&amp; \text{Exponential}(0.02) \\
-\sigma_{\mu} &amp;\sim&amp; \text{Exponential}(1)
+\sigma_{\mu} &amp;\sim&amp; \text{Exponential}(0.02)
 \end{eqnarray}
 \]</span></p>
 </div>
+</div><div class="column" style="width:50%;">
 <ul>
 <li class="fragment">This model can also be written such that <span class="math inline">\(\mu_j = \mu + b_j\)</span>, where each <span class="math inline">\(b_j \sim \text{Normal}(0, \sigma_{\mu}^2)\)</span></li>
 </ul>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{eqnarray}
+y_{ij} &amp;\sim&amp; \text{Normal}(\mu_j, \ \sigma_y^2) \\
+\mu_j &amp;=&amp; \mu + b_j \\
+b_j &amp;\sim&amp; \text{Normal}(0, \ \sigma_{\mu}^2) \\
+\ldots
+\end{eqnarray}
+\]</span></p>
+</div>
+</div></div>
+</section>
+<section id="non-centering" class="slide level2 smaller">
+<h2>Non-Centering</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Centered:</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+b_j &amp;\sim&amp; \text{Normal}(0, \sigma_\mu^2) \\
+\mu_j &amp;=&amp; \mu + b_j
+\end{eqnarray}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p>Non-centered:</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+z_j &amp;\sim&amp; \text{Normal}(0, 1) \\
+b_j &amp;=&amp; \sigma_\mu z_j \\
+\mu_j &amp;=&amp; \mu + b_j
+\end{eqnarray}
+\]</span></p>
+</div></div>
+<ul>
+<li class="fragment">Both parameterizations imply the same model: <span class="math inline">\(b_j \sim \text{Normal}(0, \sigma_\mu^2)\)</span></li>
+<li class="fragment">Non-centering samples a standardized effect <span class="math inline">\(z_j\)</span> first, then scales it by <span class="math inline">\(\sigma_\mu\)</span></li>
+<li class="fragment">This often improves Stan sampling when group-level variation is weakly identified</li>
+</ul>
+</section>
+<section id="stan-model-not-what-stan_glmer-does" class="slide level2 smaller">
+<h2>Stan Model (not what stan_glmer() does)</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="font-size: 0.8em; line-height: 1.06;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb43-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb43-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;                 <span class="co">// observations</span></span>
+<span id="cb43-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; J;                 <span class="co">// subjects</span></span>
+<span id="cb43-4"><a></a>  <span class="dt">vector</span>[N] y;                    <span class="co">// reaction times</span></span>
+<span id="cb43-5"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>, <span class="kw">upper</span>=J&gt; subject;</span>
+<span id="cb43-6"><a></a>}</span>
+<span id="cb43-7"><a></a></span>
+<span id="cb43-8"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb43-9"><a></a>  <span class="dt">real</span> mu;                        <span class="co">// population mean</span></span>
+<span id="cb43-10"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_y;          <span class="co">// within-subject sd</span></span>
+<span id="cb43-11"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_mu;         <span class="co">// between-subject sd</span></span>
+<span id="cb43-12"><a></a>  <span class="dt">vector</span>[J] z_subject;            <span class="co">// standardized subject effects</span></span>
+<span id="cb43-13"><a></a>}</span>
+<span id="cb43-14"><a></a></span>
+<span id="cb43-15"><a></a><span class="kw">transformed parameters</span> {</span>
+<span id="cb43-16"><a></a>  <span class="dt">vector</span>[J] b_subject = sigma_mu * z_subject;</span>
+<span id="cb43-17"><a></a>  <span class="dt">vector</span>[J] mu_subject = mu + b_subject;</span>
+<span id="cb43-18"><a></a>}</span>
+<span id="cb43-19"><a></a></span>
+<span id="cb43-20"><a></a><span class="kw">model</span> {</span>
+<span id="cb43-21"><a></a>  mu ~ normal(<span class="dv">300</span>, <span class="dv">50</span>);</span>
+<span id="cb43-22"><a></a>  sigma_y ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb43-23"><a></a>  sigma_mu ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb43-24"><a></a>  z_subject ~ normal(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb43-25"><a></a></span>
+<span id="cb43-26"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb43-27"><a></a>    y[i] ~ normal(mu_subject[subject[i]], sigma_y);</span>
+<span id="cb43-28"><a></a>  }</span>
+<span id="cb43-29"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<div style="font-size: 0.65em;">
+<p>Hypothetical data:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"><span class="math inline">\(i\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(y_i\)</span></th>
+<th style="text-align: right;"><code>subject[i]</code></th>
+<th style="text-align: left;">mean used</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;"><code>mu_subject[1]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">310</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;"><code>mu_subject[1]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">370</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;"><code>mu_subject[2]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">340</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;"><code>mu_subject[2]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">290</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;"><code>mu_subject[3]</code></td>
+</tr>
+</tbody>
+</table>
+<p>Key parameters:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">parameter</th>
+<th style="text-align: left;">meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>mu</code></td>
+<td style="text-align: left;">population mean</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>b_subject[j]</code></td>
+<td style="text-align: left;">subject <span class="math inline">\(j\)</span> deviation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mu_subject[j]</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mu + b_j\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>sigma_y</code></td>
+<td style="text-align: left;">within-subject SD</td>
+</tr>
+</tbody>
+</table>
+<p>So for row <span class="math inline">\(i = 3\)</span>:</p>
+<p><span class="math display">\[
+\texttt{subject[3]} = 2
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+y_3 \sim \text{Normal}(\texttt{mu_subject[2]}, \sigma_y).
+\]</span></p>
+</div>
+</div></div>
+</section>
+<section id="stan-model-direct-non-centered" class="slide level2 smaller">
+<h2>Stan Model Direct Non-centered</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb44-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb44-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;</span>
+<span id="cb44-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; J;</span>
+<span id="cb44-4"><a></a>  <span class="dt">vector</span>[N] y;</span>
+<span id="cb44-5"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>, <span class="kw">upper</span>=J&gt; subject;</span>
+<span id="cb44-6"><a></a>}</span>
+<span id="cb44-7"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb44-8"><a></a>  <span class="dt">real</span> mu;                                          <span class="co">// population mean</span></span>
+<span id="cb44-9"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_y;                            <span class="co">// within-subject sd</span></span>
+<span id="cb44-10"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_mu;                           <span class="co">// between-subject sd</span></span>
+<span id="cb44-11"><a></a>  <span class="dt">vector</span>&lt;<span class="dt">offset</span>=mu, <span class="dt">multiplier</span>=sigma_mu&gt;[J] mu_subject;  <span class="co">// subject means</span></span>
+<span id="cb44-12"><a></a>}</span>
+<span id="cb44-13"><a></a><span class="kw">model</span> {</span>
+<span id="cb44-14"><a></a>  mu ~ normal(<span class="dv">300</span>, <span class="dv">50</span>);</span>
+<span id="cb44-15"><a></a>  sigma_y ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb44-16"><a></a>  sigma_mu ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb44-17"><a></a>  mu_subject ~ normal(mu, sigma_mu);</span>
+<span id="cb44-18"><a></a>  y ~ normal(mu_subject[subject], sigma_y);</span>
+<span id="cb44-19"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sleep-data-9" class="slide level2 smaller">
 <h2>Sleep Data</h2>
@@ -1622,14 +1837,13 @@ y_{ij} &amp;\sim&amp; \text{Normal}(\mu_j, \ \sigma_y^2) \\
 <div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(Reaction <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> Subject),</span>
-<span id="cb43-2"><a></a>                 <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">50</span>),</span>
-<span id="cb43-3"><a></a>                 <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
-<span id="cb43-4"><a></a>                 <span class="at">prior_covariance =</span> <span class="fu">decov</span>(<span class="at">reg =</span> <span class="dv">1</span>, </span>
-<span id="cb43-5"><a></a>                   <span class="at">conc =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">1</span>),</span>
-<span id="cb43-6"><a></a>                 <span class="at">family =</span> gaussian, <span class="at">data =</span> d, <span class="at">iter =</span> <span class="dv">1500</span>,</span>
-<span id="cb43-7"><a></a>                 <span class="at">refresh =</span> <span class="dv">0</span>,</span>
-<span id="cb43-8"><a></a>                 <span class="at">seed =</span> <span class="dv">123</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>m3 <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(Reaction <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> Subject),</span>
+<span id="cb45-2"><a></a>                 <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">50</span>),</span>
+<span id="cb45-3"><a></a>                 <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
+<span id="cb45-4"><a></a>                 <span class="at">prior_covariance =</span> <span class="fu">decov</span>(<span class="at">shape =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">50</span>),</span>
+<span id="cb45-5"><a></a>                 <span class="at">family =</span> gaussian, <span class="at">data =</span> d, <span class="at">iter =</span> <span class="dv">1500</span>,</span>
+<span id="cb45-6"><a></a>                 <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb45-7"><a></a>                 <span class="at">seed =</span> <span class="dv">123</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
@@ -1637,12 +1851,12 @@ y_{ij} &amp;\sim&amp; \text{Normal}(\mu_j, \ \sigma_y^2) \\
 <li class="fragment">(Intercept) = <span class="math inline">\(\mu\)</span></li>
 <li class="fragment">sigma = <span class="math inline">\(\sigma_y\)</span></li>
 <li class="fragment">Sigma[Subject:(Intercept),(Intercept)] = <span class="math inline">\(\sigma^2_{\mu}\)</span></li>
-<li class="fragment">b[(Intercept) Subject:XYZ] = <span class="math inline">\(b_j\)</span>, and so <span class="math inline">\(\mu_j = \mu + \beta_j\)</span></li>
+<li class="fragment">b[(Intercept) Subject:XYZ] = <span class="math inline">\(b_j\)</span>, and so <span class="math inline">\(\mu_j = \mu + b_j\)</span></li>
 </ul>
 </div></div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">summary</span>(m3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">summary</span>(m3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -1721,13 +1935,13 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <h2>Computing <span class="math inline">\(\mu_j\)</span></h2>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>muj <span class="ot">&lt;-</span> m3 <span class="sc">|&gt;</span></span>
-<span id="cb46-2"><a></a>  <span class="fu">spread_draws</span>(<span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, b[ ,Subject]) <span class="sc">|&gt;</span></span>
-<span id="cb46-3"><a></a>  <span class="fu">mutate</span>(<span class="at">mu_j =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> b) <span class="sc">|&gt;</span></span>
-<span id="cb46-4"><a></a>  <span class="fu">select</span>(Subject, mu_j) <span class="sc">|&gt;</span></span>
-<span id="cb46-5"><a></a>  <span class="fu">mean_qi</span>(<span class="at">.width =</span> <span class="fl">0.90</span>)</span>
-<span id="cb46-6"><a></a></span>
-<span id="cb46-7"><a></a><span class="fu">head</span>(muj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>muj <span class="ot">&lt;-</span> m3 <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a></a>  <span class="fu">spread_draws</span>(<span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, b[ ,Subject]) <span class="sc">|&gt;</span></span>
+<span id="cb48-3"><a></a>  <span class="fu">mutate</span>(<span class="at">mu_j =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> b) <span class="sc">|&gt;</span></span>
+<span id="cb48-4"><a></a>  <span class="fu">select</span>(Subject, mu_j) <span class="sc">|&gt;</span></span>
+<span id="cb48-5"><a></a>  <span class="fu">mean_qi</span>(<span class="at">.width =</span> <span class="fl">0.90</span>)</span>
+<span id="cb48-6"><a></a></span>
+<span id="cb48-7"><a></a><span class="fu">head</span>(muj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 7
   Subject      mu_j .lower .upper .width .point .interval
@@ -1771,24 +1985,194 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div>
 </section>
-<section id="building-a-full-hierarchical-model" class="slide level2 smaller">
-<h2>Building a Full Hierarchical Model</h2>
+<section id="varying-intercepts-and-slopes" class="slide level2 smaller">
+<h2>Varying Intercepts and Slopes</h2>
+<div style="font-size: 0.72em; line-height: 1.10;">
+<p><strong>The data.</strong> We have <span class="math inline">\(N\)</span> observations of reaction time <span class="math inline">\(y_i\)</span> measured on day <span class="math inline">\(\text{days}_i\)</span> for subject <span class="math inline">\(s[i] \in \{1, \ldots, J\}\)</span>, with <span class="math inline">\(J = 18\)</span> subjects and roughly 10 observations per subject.</p>
+<p><strong>The generative model.</strong> At the observation level:</p>
+<p><span class="math display">\[
+y_i \mid \alpha, \beta, \mathbf{b}_{s[i]}, \sigma_y
+\sim
+\mathcal{N}\!\left(
+\alpha + b_{s[i],1} + (\beta + b_{s[i],2})\,\text{days}_i,\;
+\sigma_y
+\right)
+\]</span></p>
+<p>Each subject has a pair of deviations from the population intercept and slope:</p>
+<p><span class="math display">\[
+\mathbf{b}_j =
+\begin{pmatrix}
+b_{j,1} \\
+b_{j,2}
+\end{pmatrix}
+\sim
+\mathcal{N}_2(\mathbf{0}, \Sigma),
+\qquad j = 1, \ldots, J
+\]</span></p>
+<p>where <span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(2 \times 2\)</span> covariance matrix that captures both the spread of subject-level intercepts and slopes <em>and</em> their correlation. The decomposition that matters for the parameterization is:</p>
+<p><span class="math display">\[
+\Sigma = \text{diag}(\boldsymbol\tau)\,\Omega\,\text{diag}(\boldsymbol\tau)
+\]</span></p>
+<p>with <span class="math inline">\(\boldsymbol\tau = (\tau_1, \tau_2)^\top\)</span> the marginal SDs and <span class="math inline">\(\Omega\)</span> the <span class="math inline">\(2 \times 2\)</span> correlation matrix. This separates scale from correlation, letting priors act separately on <span class="math inline">\(\boldsymbol\tau\)</span> and <span class="math inline">\(\Omega\)</span>.</p>
+</div>
+</section>
+<section id="stan-model-centered" class="slide level2 smaller">
+<h2>Stan Model: Centered</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div style="font-size: 0.75em; line-height: 1.10;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb50-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb50-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;</span>
+<span id="cb50-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; J;</span>
+<span id="cb50-4"><a></a>  <span class="dt">vector</span>[N] y;</span>
+<span id="cb50-5"><a></a>  <span class="dt">vector</span>[N] days;</span>
+<span id="cb50-6"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>, <span class="kw">upper</span>=J&gt; subject;</span>
+<span id="cb50-7"><a></a>}</span>
+<span id="cb50-8"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb50-9"><a></a>  <span class="dt">real</span> alpha;                     <span class="co">// population intercept</span></span>
+<span id="cb50-10"><a></a>  <span class="dt">real</span> beta;                      <span class="co">// population slope</span></span>
+<span id="cb50-11"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_y;          <span class="co">// residual sd</span></span>
+<span id="cb50-12"><a></a>  <span class="dt">vector</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt;[<span class="dv">2</span>] tau;         <span class="co">// intercept/slope subject SDs</span></span>
+<span id="cb50-13"><a></a>  <span class="dt">corr_matrix</span>[<span class="dv">2</span>] Omega;           <span class="co">// correlation matrix</span></span>
+<span id="cb50-14"><a></a>  <span class="dt">array</span>[J] <span class="dt">vector</span>[<span class="dv">2</span>] b_subject;   <span class="co">// subject deviations (centered)</span></span>
+<span id="cb50-15"><a></a>}</span>
+<span id="cb50-16"><a></a><span class="kw">transformed parameters</span> {</span>
+<span id="cb50-17"><a></a>  <span class="dt">cov_matrix</span>[<span class="dv">2</span>] Sigma = quad_form_diag(Omega, tau);</span>
+<span id="cb50-18"><a></a>}</span>
+<span id="cb50-19"><a></a><span class="kw">model</span> {</span>
+<span id="cb50-20"><a></a>  alpha ~ normal(<span class="dv">300</span>, <span class="dv">50</span>);</span>
+<span id="cb50-21"><a></a>  beta ~ normal(<span class="dv">0</span>, <span class="dv">2</span>);</span>
+<span id="cb50-22"><a></a>  sigma_y ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb50-23"><a></a>  tau[<span class="dv">1</span>] ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb50-24"><a></a>  tau[<span class="dv">2</span>] ~ exponential(<span class="fl">0.2</span>);</span>
+<span id="cb50-25"><a></a></span>
+<span id="cb50-26"><a></a>  Omega ~ lkj_corr(<span class="dv">1</span>);</span>
+<span id="cb50-27"><a></a>  b_subject ~ multi_normal(rep_vector(<span class="dv">0</span>, <span class="dv">2</span>), Sigma);</span>
+<span id="cb50-28"><a></a></span>
+<span id="cb50-29"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb50-30"><a></a>    y[i] ~ normal(</span>
+<span id="cb50-31"><a></a>      alpha + b_subject[subject[i]][<span class="dv">1</span>] +</span>
+<span id="cb50-32"><a></a>        (beta + b_subject[subject[i]][<span class="dv">2</span>]) * days[i],</span>
+<span id="cb50-33"><a></a>      sigma_y</span>
+<span id="cb50-34"><a></a>    );</span>
+<span id="cb50-35"><a></a>  }</span>
+<span id="cb50-36"><a></a>}</span>
+<span id="cb50-37"><a></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:48%;">
+<div style="font-size: 0.8em; line-height: 1.10;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb51-1"><a></a>...</span>
+<span id="cb51-2"><a></a><span class="kw">generated quantities</span> {</span>
+<span id="cb51-3"><a></a>  <span class="dt">real</span> rho = Omega[<span class="dv">1</span>, <span class="dv">2</span>];</span>
+<span id="cb51-4"><a></a>  <span class="dt">vector</span>[N] log_lik;</span>
+<span id="cb51-5"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N)</span>
+<span id="cb51-6"><a></a>    log_lik[i] = normal_lpdf(y[i] |</span>
+<span id="cb51-7"><a></a>      alpha + b_subject[subject[i]][<span class="dv">1</span>] +</span>
+<span id="cb51-8"><a></a>        (beta + b_subject[subject[i]][<span class="dv">2</span>]) * days[i],</span>
+<span id="cb51-9"><a></a>      sigma_y);</span>
+<span id="cb51-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+</section>
+<section id="stan-model-non-centered" class="slide level2 smaller">
+<h2>Stan Model: Non-centered</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div style="font-size: 0.50em; line-height: 1.00;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb52-1"><a></a><span class="kw">data</span> {</span>
+<span id="cb52-2"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;</span>
+<span id="cb52-3"><a></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; J;</span>
+<span id="cb52-4"><a></a>  <span class="dt">vector</span>[N] y;</span>
+<span id="cb52-5"><a></a>  <span class="dt">vector</span>[N] days;</span>
+<span id="cb52-6"><a></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>, <span class="kw">upper</span>=J&gt; subject;</span>
+<span id="cb52-7"><a></a>}</span>
+<span id="cb52-8"><a></a></span>
+<span id="cb52-9"><a></a><span class="kw">parameters</span> {</span>
+<span id="cb52-10"><a></a>  <span class="dt">real</span> alpha;                     <span class="co">// population intercept</span></span>
+<span id="cb52-11"><a></a>  <span class="dt">real</span> beta;                      <span class="co">// population slope</span></span>
+<span id="cb52-12"><a></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_y;          <span class="co">// residual sd</span></span>
+<span id="cb52-13"><a></a>  <span class="dt">vector</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt;[<span class="dv">2</span>] tau;         <span class="co">// intercept/slope subject SDs</span></span>
+<span id="cb52-14"><a></a>  <span class="dt">cholesky_factor_corr</span>[<span class="dv">2</span>] L_Omega;</span>
+<span id="cb52-15"><a></a>  <span class="dt">matrix</span>[<span class="dv">2</span>, J] z_subject;         <span class="co">// standardized subject effects</span></span>
+<span id="cb52-16"><a></a>}</span>
+<span id="cb52-17"><a></a></span>
+<span id="cb52-18"><a></a><span class="kw">transformed parameters</span> {</span>
+<span id="cb52-19"><a></a>  <span class="dt">matrix</span>[J, <span class="dv">2</span>] b_subject =</span>
+<span id="cb52-20"><a></a>    (diag_pre_multiply(tau, L_Omega) * z_subject)';</span>
+<span id="cb52-21"><a></a>}</span>
+<span id="cb52-22"><a></a></span>
+<span id="cb52-23"><a></a><span class="kw">model</span> {</span>
+<span id="cb52-24"><a></a>  alpha ~ normal(<span class="dv">300</span>, <span class="dv">50</span>);</span>
+<span id="cb52-25"><a></a>  beta ~ normal(<span class="dv">0</span>, <span class="dv">2</span>);</span>
+<span id="cb52-26"><a></a>  sigma_y ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb52-27"><a></a>  tau[<span class="dv">1</span>] ~ exponential(<span class="fl">0.02</span>);</span>
+<span id="cb52-28"><a></a>  tau[<span class="dv">2</span>] ~ exponential(<span class="fl">0.2</span>);</span>
+<span id="cb52-29"><a></a>  L_Omega ~ lkj_corr_cholesky(<span class="dv">1</span>);</span>
+<span id="cb52-30"><a></a>  to_vector(z_subject) ~ normal(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb52-31"><a></a></span>
+<span id="cb52-32"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb52-33"><a></a>    y[i] ~ normal(</span>
+<span id="cb52-34"><a></a>      alpha + b_subject[subject[i], <span class="dv">1</span>] +</span>
+<span id="cb52-35"><a></a>        (beta + b_subject[subject[i], <span class="dv">2</span>]) * days[i],</span>
+<span id="cb52-36"><a></a>      sigma_y</span>
+<span id="cb52-37"><a></a>    );</span>
+<span id="cb52-38"><a></a>  }</span>
+<span id="cb52-39"><a></a>}</span>
+<span id="cb52-40"><a></a></span>
+<span id="cb52-41"><a></a><span class="kw">generated quantities</span> {</span>
+<span id="cb52-42"><a></a>  <span class="dt">corr_matrix</span>[<span class="dv">2</span>] Omega = multiply_lower_tri_self_transpose(L_Omega);</span>
+<span id="cb52-43"><a></a>  <span class="dt">real</span> rho = Omega[<span class="dv">1</span>, <span class="dv">2</span>];</span>
+<span id="cb52-44"><a></a>  <span class="dt">vector</span>[N] log_lik;</span>
+<span id="cb52-45"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N)</span>
+<span id="cb52-46"><a></a>    log_lik[i] = normal_lpdf(y[i] |</span>
+<span id="cb52-47"><a></a>      alpha + b_subject[subject[i], <span class="dv">1</span>] +</span>
+<span id="cb52-48"><a></a>        (beta + b_subject[subject[i], <span class="dv">2</span>]) * days[i],</span>
+<span id="cb52-49"><a></a>      sigma_y);</span>
+<span id="cb52-50"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:48%;">
+<div style="font-size: 0.48em; line-height: 1.06;">
+<p>The non-centered trick rewrites the prior on <span class="math inline">\(\mathbf{b}_j\)</span> using a deterministic transformation of standard normals. Cholesky-decompose <span class="math inline">\(\Omega = L_\Omega L_\Omega^\top\)</span>, so:</p>
+<p><span class="math display">\[
+\Sigma =
+\text{diag}(\boldsymbol\tau)L_\Omega L_\Omega^\top\text{diag}(\boldsymbol\tau)
+=
+\left(\text{diag}(\boldsymbol\tau)L_\Omega\right)
+\left(\text{diag}(\boldsymbol\tau)L_\Omega\right)^\top
+\]</span></p>
+<p>Let <span class="math inline">\(L = \text{diag}(\boldsymbol\tau)L_\Omega\)</span>. Then if <span class="math inline">\(\mathbf{z}_j \sim \mathcal{N}_2(\mathbf{0}, I)\)</span>,</p>
+<p><span class="math display">\[
+\mathbf{b}_j = L\mathbf{z}_j
+\sim \mathcal{N}_2(\mathbf{0}, \Sigma)
+\]</span></p>
+<p>by construction. Crucially, in the parameterization <span class="math inline">\((\mathbf{z}_j, \boldsymbol\tau, L_\Omega)\)</span>, the prior is independent across components: <span class="math inline">\(\mathbf{z}_j \sim \mathcal{N}(\mathbf{0}, I)\)</span> regardless of what <span class="math inline">\(\boldsymbol\tau\)</span> does. The funnel is gone; the dependency between <span class="math inline">\(\mathbf{b}_j\)</span> and <span class="math inline">\(\boldsymbol\tau\)</span> is moved out of the prior geometry and into the data-informed likelihood.</p>
+<p>In the Stan code this is exactly the line:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb53-1"><a></a><span class="dt">matrix</span>[J, <span class="dv">2</span>] b_subject =</span>
+<span id="cb53-2"><a></a>  (diag_pre_multiply(tau, L_Omega) * z_subject)';</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Reading it:</p>
 <ul>
-<li class="fragment">The model we have built so far is for average reaction time only</li>
-<li class="fragment">What we would like to do, is to build a pooled regression model for the reaction time of each subject</li>
-<li class="fragment">The mechanics are similar but now we need a model for the slopes and intercepts for each subject, their covariance, and priors</li>
+<li><code>diag_pre_multiply(tau, L_Omega)</code> builds <span class="math inline">\(L = \text{diag}(\boldsymbol\tau)L_\Omega\)</span>, a <span class="math inline">\(2 \times 2\)</span> matrix.</li>
+<li><code>z_subject</code> is <span class="math inline">\(2 \times J\)</span>, with each column a standard-normal draw <span class="math inline">\(\mathbf{z}_j\)</span>.</li>
+<li>Multiplication gives a <span class="math inline">\(2 \times J\)</span> matrix whose columns are <span class="math inline">\(L\mathbf{z}_j = \mathbf{b}_j\)</span>.</li>
+<li>The transpose makes it <span class="math inline">\(J \times 2\)</span>, so <code>b_subject[j, 1]</code> is subject <span class="math inline">\(j\)</span>’s intercept deviation and <code>b_subject[j, 2]</code> is its slope deviation.</li>
 </ul>
+<p><code>z_subject</code> is declared <span class="math inline">\(2 \times J\)</span> rather than <span class="math inline">\(J \times 2\)</span> so the multiplication <span class="math inline">\(LZ\)</span> lines up without an extra transpose inside the hot path.</p>
+</div>
+</div></div>
+</section>
+<section id="similar-model-in-rstanarm" class="slide level2 smaller">
+<h2>Similar Model in RStanArm</h2>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject),</span>
-<span id="cb48-2"><a></a>                 <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">50</span>),</span>
-<span id="cb48-3"><a></a>                 <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>),</span>
-<span id="cb48-4"><a></a>                 <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
-<span id="cb48-5"><a></a>                 <span class="at">prior_covariance =</span> <span class="fu">decov</span>(<span class="at">reg =</span> <span class="dv">1</span>, </span>
-<span id="cb48-6"><a></a>                   <span class="at">conc =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">1</span>),</span>
-<span id="cb48-7"><a></a>                 <span class="at">family =</span> gaussian, <span class="at">data =</span> d, <span class="at">iter =</span> <span class="dv">1500</span>,</span>
-<span id="cb48-8"><a></a>                 <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb48-9"><a></a><span class="fu">summary</span>(m4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>m4 <span class="ot">&lt;-</span> <span class="fu">stan_glmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject),</span>
+<span id="cb54-2"><a></a>                 <span class="at">prior_intercept =</span> <span class="fu">normal</span>(<span class="dv">300</span>, <span class="dv">50</span>),</span>
+<span id="cb54-3"><a></a>                 <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb54-4"><a></a>                 <span class="at">prior_aux =</span> <span class="fu">exponential</span>(<span class="fl">0.02</span>),</span>
+<span id="cb54-5"><a></a>                 <span class="at">prior_covariance =</span> <span class="fu">decov</span>(<span class="at">reg =</span> <span class="dv">1</span>,   <span class="co"># This is not what is done</span></span>
+<span id="cb54-6"><a></a>                   <span class="at">conc =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">1</span>),  <span class="co"># in Stan on the previous slide</span></span>
+<span id="cb54-7"><a></a>                 <span class="at">family =</span> gaussian, <span class="at">data =</span> d, <span class="at">iter =</span> <span class="dv">1500</span>,</span>
+<span id="cb54-8"><a></a>                 <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">123</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb54-9"><a></a><span class="fu">summary</span>(m4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -1904,8 +2288,8 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div>
 </section>
-<section id="building-a-full-hierarchical-model-1" class="slide level2 smaller">
-<h2>Building a Full Hierarchical Model</h2>
+<section id="section" class="slide level2">
+<h2></h2>
 
 <img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-40-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1152"></section>
 <section id="predicting-for-a-new-subject" class="slide level2 smaller">
@@ -1917,19 +2301,19 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="fragment">
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>new_subj <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Days =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>, </span>
-<span id="cb50-2"><a></a>              <span class="at">Subject =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="dv">400</span>, <span class="dv">10</span>)))</span>
-<span id="cb50-3"><a></a>ypred_subj <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m4, </span>
-<span id="cb50-4"><a></a>                        <span class="at">newdata =</span> new_subj)</span>
-<span id="cb50-5"><a></a>new_subj <span class="sc">|&gt;</span></span>
-<span id="cb50-6"><a></a>  <span class="fu">add_predicted_draws</span>(m4) <span class="sc">|&gt;</span></span>
-<span id="cb50-7"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Days)) <span class="sc">+</span></span>
-<span id="cb50-8"><a></a>  <span class="fu">stat_lineribbon</span>(<span class="fu">aes</span>(<span class="at">y =</span> .prediction), </span>
-<span id="cb50-9"><a></a>                  <span class="at">width =</span> <span class="fu">c</span>(.<span class="dv">9</span>, .<span class="dv">8</span>, .<span class="dv">5</span>), </span>
-<span id="cb50-10"><a></a>                  <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb50-11"><a></a>  <span class="fu">ylab</span>(<span class="st">"Reaction time"</span>) <span class="sc">+</span> </span>
-<span id="cb50-12"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Prediction for an unobserved subject"</span>) <span class="sc">+</span></span>
-<span id="cb50-13"><a></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Greys"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>new_subj <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Days =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>,</span>
+<span id="cb56-2"><a></a>              <span class="at">Subject =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="dv">400</span>, <span class="dv">10</span>)))</span>
+<span id="cb56-3"><a></a>ypred_subj <span class="ot">&lt;-</span> <span class="fu">posterior_predict</span>(m4,</span>
+<span id="cb56-4"><a></a>                        <span class="at">newdata =</span> new_subj)</span>
+<span id="cb56-5"><a></a>new_subj <span class="sc">|&gt;</span></span>
+<span id="cb56-6"><a></a>  <span class="fu">add_predicted_draws</span>(m4) <span class="sc">|&gt;</span></span>
+<span id="cb56-7"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Days)) <span class="sc">+</span></span>
+<span id="cb56-8"><a></a>  <span class="fu">stat_lineribbon</span>(<span class="fu">aes</span>(<span class="at">y =</span> .prediction),</span>
+<span id="cb56-9"><a></a>                  <span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">9</span>, .<span class="dv">8</span>, .<span class="dv">5</span>),</span>
+<span id="cb56-10"><a></a>                  <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb56-11"><a></a>  <span class="fu">ylab</span>(<span class="st">"Reaction time"</span>) <span class="sc">+</span></span>
+<span id="cb56-12"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Prediction for an unobserved subject"</span>) <span class="sc">+</span></span>
+<span id="cb56-13"><a></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Greys"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1943,6 +2327,7 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 
 
 </section>
+
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
