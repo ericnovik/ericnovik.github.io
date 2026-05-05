@@ -2051,8 +2051,8 @@ b_{j,2}
 <span id="cb50-28"><a></a></span>
 <span id="cb50-29"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
 <span id="cb50-30"><a></a>    y[i] ~ normal(</span>
-<span id="cb50-31"><a></a>      alpha + b_subject[subject[i]][<span class="dv">1</span>] +</span>
-<span id="cb50-32"><a></a>        (beta + b_subject[subject[i]][<span class="dv">2</span>]) * days[i],</span>
+<span id="cb50-31"><a></a>      alpha + b_subject[subject[i], <span class="dv">1</span>] +</span>
+<span id="cb50-32"><a></a>        (beta + b_subject[subject[i], <span class="dv">2</span>]) * days[i],</span>
 <span id="cb50-33"><a></a>      sigma_y</span>
 <span id="cb50-34"><a></a>    );</span>
 <span id="cb50-35"><a></a>  }</span>
@@ -2067,8 +2067,8 @@ b_{j,2}
 <span id="cb51-4"><a></a>  <span class="dt">vector</span>[N] log_lik;</span>
 <span id="cb51-5"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N)</span>
 <span id="cb51-6"><a></a>    log_lik[i] = normal_lpdf(y[i] |</span>
-<span id="cb51-7"><a></a>      alpha + b_subject[subject[i]][<span class="dv">1</span>] +</span>
-<span id="cb51-8"><a></a>        (beta + b_subject[subject[i]][<span class="dv">2</span>]) * days[i],</span>
+<span id="cb51-7"><a></a>      alpha + b_subject[subject[i], <span class="dv">1</span>] +</span>
+<span id="cb51-8"><a></a>        (beta + b_subject[subject[i], <span class="dv">2</span>]) * days[i],</span>
 <span id="cb51-9"><a></a>      sigma_y);</span>
 <span id="cb51-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
