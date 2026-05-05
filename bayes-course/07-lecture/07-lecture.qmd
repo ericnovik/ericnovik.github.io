@@ -1380,33 +1380,120 @@ ppc_intervals(new$Reaction, yrep = new_pred) +
 ```
 :::
 
-## Building a Full Hierarchical Model {.smaller}
+## Varying Intercepts and Slopes {.smaller}
 
-::: incremental
-- The model we have built so far is for average reaction time only
-- What we would like to do, is to build a pooled regression model for the reaction time of each subject
-- The mechanics are similar but now we need a model for the slopes and intercepts for each subject, their covariance, and priors
+::: {style="font-size: 0.72em; line-height: 1.10;"}
+
+**The data.** We have $N$ observations of reaction time $y_i$ measured on day $\text{days}_i$ for subject
+$s[i] \in \{1, \ldots, J\}$, with $J = 18$ subjects and roughly 10 observations per subject.
+
+**The generative model.** At the observation level:
+
+$$
+y_i \mid \alpha, \beta, \mathbf{b}_{s[i]}, \sigma_y
+\sim
+\mathcal{N}\!\left(
+\alpha + b_{s[i],1} + (\beta + b_{s[i],2})\,\text{days}_i,\;
+\sigma_y
+\right)
+$$
+
+Each subject has a pair of deviations from the population intercept and slope:
+
+$$
+\mathbf{b}_j =
+\begin{pmatrix}
+b_{j,1} \\
+b_{j,2}
+\end{pmatrix}
+\sim
+\mathcal{N}_2(\mathbf{0}, \Sigma),
+\qquad j = 1, \ldots, J
+$$
+
+where $\Sigma$ is a $2 \times 2$ covariance matrix that captures both the spread of subject-level intercepts and slopes *and* their correlation. The decomposition that matters for the parameterization is:
+
+$$
+\Sigma = \text{diag}(\boldsymbol\tau)\,\Omega\,\text{diag}(\boldsymbol\tau)
+$$
+
+with $\boldsymbol\tau = (\tau_1, \tau_2)^\top$ the marginal SDs and $\Omega$ the $2 \times 2$ correlation matrix.
+This separates scale from correlation, letting priors act separately on $\boldsymbol\tau$ and $\Omega$.
 :::
 
-::: {.fragment}
-```{r}
-#| echo: true
-#| cache: true
-m4 <- stan_glmer(Reaction ~ Days + (Days | Subject),
-                 prior_intercept = normal(300, 50),
-                 prior = normal(0, 2),
-                 prior_aux = exponential(0.02),
-                 prior_covariance = decov(reg = 1,
-                   conc = 1, shape = 1, scale = 1),
-                 family = gaussian, data = d, iter = 1500,
-                 cores = 4, seed = 123, refresh = 0)
-summary(m4)
+## Stan Model: Centered {.smaller}
+
+::: columns
+::: {.column width="52%"}
+::: {style="font-size: 0.75em; line-height: 1.10;"}
+```stan
+data {
+  int<lower=1> N;
+  int<lower=1> J;
+  vector[N] y;
+  vector[N] days;
+  array[N] int<lower=1, upper=J> subject;
+}
+parameters {
+  real alpha;                     // population intercept
+  real beta;                      // population slope
+  real<lower=0> sigma_y;          // residual sd
+  vector<lower=0>[2] tau;         // intercept/slope subject SDs
+  corr_matrix[2] Omega;           // correlation matrix
+  array[J] vector[2] b_subject;   // subject deviations (centered)
+}
+transformed parameters {
+  cov_matrix[2] Sigma = quad_form_diag(Omega, tau);
+}
+model {
+  alpha ~ normal(300, 50);
+  beta ~ normal(0, 2);
+  sigma_y ~ exponential(0.02);
+  tau[1] ~ exponential(0.02);
+  tau[2] ~ exponential(0.2);
+
+  Omega ~ lkj_corr(1);
+  b_subject ~ multi_normal(rep_vector(0, 2), Sigma);
+
+  for (i in 1:N) {
+    y[i] ~ normal(
+      alpha + b_subject[subject[i], 1] +
+        (beta + b_subject[subject[i], 2]) * days[i],
+      sigma_y
+    );
+  }
+}
+...
 ```
 :::
+:::
 
-## Stan Model (not what stan_glmer() does) {.smaller}
+::: {.column width="48%"}
+::: {style="font-size: 0.8em; line-height: 1.10;"}
+```stan
+...
+generated quantities {
+  real rho = Omega[1, 2];
+  vector[N] log_lik;
+  for (i in 1:N)
+    log_lik[i] = normal_lpdf(y[i] |
+      alpha + b_subject[subject[i], 1] +
+        (beta + b_subject[subject[i], 2]) * days[i],
+      sigma_y);
+}
+```
+:::
+:::
+:::
 
-::: {style="font-size: 0.68em; line-height: 1.02;"}
+
+
+## Stan Model: Non-centered {.smaller}
+
+::: columns
+::: {.column width="52%"}
+
+::: {style="font-size: 0.50em; line-height: 1.00;"}
 ```stan
 data {
   int<lower=1> N;
@@ -1446,22 +1533,89 @@ model {
       sigma_y
     );
   }
+}
 
-  generated quantities {
-    corr_matrix[2] Omega = multiply_lower_tri_self_transpose(L_Omega);
-    real rho = Omega[1, 2];
-    vector[N] log_lik;
-    for (i in 1:N)
-      log_lik[i] = normal_lpdf(y[i] |
-        alpha + b_subject[subject[i], 1] +
-          (beta + b_subject[subject[i], 2]) * days[i],
-        sigma_y);
-  }
+generated quantities {
+  corr_matrix[2] Omega = multiply_lower_tri_self_transpose(L_Omega);
+  real rho = Omega[1, 2];
+  vector[N] log_lik;
+  for (i in 1:N)
+    log_lik[i] = normal_lpdf(y[i] |
+      alpha + b_subject[subject[i], 1] +
+        (beta + b_subject[subject[i], 2]) * days[i],
+      sigma_y);
 }
 ```
 :::
 
-## Building a Full Hierarchical Model {.smaller}
+:::
+
+::: {.column width="48%"}
+
+::: {style="font-size: 0.48em; line-height: 1.06;"}
+The non-centered trick rewrites the prior on $\mathbf{b}_j$ using a deterministic transformation of standard normals.
+Cholesky-decompose $\Omega = L_\Omega L_\Omega^\top$, so:
+
+$$
+\Sigma =
+\text{diag}(\boldsymbol\tau)L_\Omega L_\Omega^\top\text{diag}(\boldsymbol\tau)
+=
+\left(\text{diag}(\boldsymbol\tau)L_\Omega\right)
+\left(\text{diag}(\boldsymbol\tau)L_\Omega\right)^\top
+$$
+
+Let $L = \text{diag}(\boldsymbol\tau)L_\Omega$. Then if
+$\mathbf{z}_j \sim \mathcal{N}_2(\mathbf{0}, I)$,
+
+$$
+\mathbf{b}_j = L\mathbf{z}_j
+\sim \mathcal{N}_2(\mathbf{0}, \Sigma)
+$$
+
+by construction. Crucially, in the parameterization $(\mathbf{z}_j, \boldsymbol\tau, L_\Omega)$, the prior is independent across components:
+$\mathbf{z}_j \sim \mathcal{N}(\mathbf{0}, I)$ regardless of what $\boldsymbol\tau$ does.
+The funnel is gone; the dependency between $\mathbf{b}_j$ and $\boldsymbol\tau$ is moved out of the prior geometry and into the data-informed likelihood.
+
+In the Stan code this is exactly the line:
+
+```stan
+matrix[J, 2] b_subject =
+  (diag_pre_multiply(tau, L_Omega) * z_subject)';
+```
+
+Reading it:
+
+- `diag_pre_multiply(tau, L_Omega)` builds $L = \text{diag}(\boldsymbol\tau)L_\Omega$, a $2 \times 2$ matrix.
+- `z_subject` is $2 \times J$, with each column a standard-normal draw $\mathbf{z}_j$.
+- Multiplication gives a $2 \times J$ matrix whose columns are $L\mathbf{z}_j = \mathbf{b}_j$.
+- The transpose makes it $J \times 2$, so `b_subject[j, 1]` is subject $j$'s intercept deviation and `b_subject[j, 2]` is its slope deviation.
+
+`z_subject` is declared $2 \times J$ rather than $J \times 2$ so the multiplication $LZ$ lines up without an extra transpose inside the hot path.
+:::
+
+:::
+:::
+
+## Similar Model in RStanArm {.smaller}
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+m4 <- stan_glmer(Reaction ~ Days + (Days | Subject),
+                 prior_intercept = normal(300, 50),
+                 prior = normal(0, 2),
+                 prior_aux = exponential(0.02),
+                 prior_covariance = decov(reg = 1,   # This is not what is done
+                   conc = 1, shape = 1, scale = 1),  # in Stan on the previous slide
+                 family = gaussian, data = d, iter = 1500,
+                 cores = 4, seed = 123, refresh = 0)
+summary(m4)
+```
+:::
+
+
+##
 
 ```{r}
 #| echo: false
