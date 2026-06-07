@@ -55,8 +55,9 @@ x(t) = ½ · g · t²
 ### Reference numbers (for plots / worked examples)
 
 - `g_moon = 1.625 m/s²` (true, "unknown" value to recover)
-- Tower height `H = 100 m`, red marks every 1 m → `x = 1, 2, …, 100`
-- Time at mark k: `tₖ = √(2·xₖ / g)` — `t₁ ≈ 1.11 s`, `t₁₀₀ ≈ 11.09 s`
+- Tower height `H = 100 m`, red marks **every 5 m** → `x = 5, 10, …, 100` (20 marks)
+  - 5 m (not 1 m) so the clicks are humanly spaced: 20 clicks over ~11 s, ~one every 0.5 s
+- Time at mark k: `tₖ = √(2·xₖ / g)` — first mark `t ≈ 2.48 s`, last `t ≈ 11.09 s`
 - Stopwatch / reaction noise ≈ 0.1 s on each reading
 
 ---
@@ -125,7 +126,7 @@ a 100 m tower beside you, a metal ball stamped **1 kg**, and a stopwatch.
 -   The ship's autopilot has the equations of motion programmed in — but
     it's missing one number: the Moon's gravitational acceleration g
 -   Your plan: climb the tower, drop the ball, and record the time it
-    passes each **red mark** (spaced 1 m apart, 100 marks down)
+    passes each **red mark** (spaced 5 m apart, 20 marks down)
 -   Each mark has a sensor: as the ball passes, it **flashes a light**, so
     from the top you read the time off your stopwatch at each flash
 -   From those (tₖ, xₖ) pairs you will *infer* g — and fly home
@@ -156,7 +157,7 @@ $$ v(t) = g\,t, \qquad x(t) = \tfrac{1}{2}\, g\, t^2 $$
 set.seed(12)
 g <- 1.625               # true (unknown) lunar gravity, m/s^2
 H <- 100                 # tower height, m
-marks  <- 1:H            # red marks every 1 m
+marks  <- seq(5, H, by = 5)  # 20 red marks, every 5 m
 t_true <- sqrt(2 * marks / g)
 t_obs  <- t_true + rnorm(H, 0, 0.1)   # stopwatch / reaction noise
 ```
@@ -213,10 +214,12 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
    each extra reading has a cost — we want the *fewest* drops that buy the
    required precision. This becomes a recurring question:
    - Posed informally in **L2** when the mission is introduced.
-   - Made concrete in **L7** via standard errors / confidence intervals on ĝ:
-     find the smallest n such that the CI half-width puts g within ±0.05 (one
-     decimal), then ±0.005 (two decimals).
-   - Can be explored by simulation earlier (vary n, watch the CI shrink).
+   - Made concrete in **L7** via standard errors / confidence intervals on ĝ.
+     With marks every 5 m (20 per drop, spanning the whole tower), the unit of
+     cost is the **drop**: a single drop already nails the first decimal
+     (CI half-width ≈ 0.012), and ~6 drops reach the second decimal
+     (half-width < 0.005). The second decimal costs ~6× the oxygen of the first.
+   - Can be explored by simulation (vary the number of drops, watch the CI shrink).
 4. **Observation mechanism (NEW, resolved as narrative detail)** — How does a
    person standing on top of the tower see the ball pass a mark? RESOLVED: each
    mark has a sensor that **flashes a light** as the ball passes; the observer
@@ -236,7 +239,7 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 - [x] L3: reframe "From Velocity to Position" as integrating `ẍ = g` twice
 - [x] L6: reframe overdetermined `X β̂ = y` as recovering `g` from drop data
 - [x] L7: reframe measurement-error model as uncertainty in `g`
-- [x] L7: answer the oxygen / sample-size question — smallest n for ±0.05 (one decimal) and ±0.005 (two decimals) CI on ĝ
+- [x] L7: answer the oxygen / sample-size question — drops needed for ±0.05 (1 drop) and ±0.005 (~6 drops) CI on ĝ; marks every 5 m
 - [x] Remove all remaining generic straight-line narrative
 - [x] Fix typos (§5)
 - [x] Render each modified lecture to confirm it compiles
@@ -254,7 +257,7 @@ visceral: their own reaction time *is* the noise.
 
 - A ball is dropped from the tower on the Moon and falls under constant
   acceleration `g_moon ≈ 1.625 m/s²` (animation in real, slowed, or scaled time).
-- As the ball passes each **red mark** (every 1 m), the mark **flashes a light**.
+- As the ball passes each **red mark** (every 5 m, 20 marks), the mark **flashes a light**.
 - The student **clicks the mouse** (or presses a key) at each flash; the app
   records the click timestamp `t_k` against the known mark height `x_k`.
 - The recorded `(t_k, x_k)` pairs are the dataset they then analyze in R to

@@ -552,7 +552,7 @@ A thousand years from now, your friends drug you, load you onto a ship, and fire
 ::: incremental
 -   The ship's autopilot has the equations of motion programmed in --- but it is missing one number: the Moon's gravitational acceleration $g$
 
--   Your plan: climb the tower, drop the ball, and record the time it passes each **red mark** (spaced 1 m apart, 100 marks down)
+-   Your plan: climb the tower, drop the ball, and record the time it passes each **red mark** (spaced 5 m apart, 20 marks down)
 
 -   Each mark has a sensor: as the ball passes, it **flashes a light**, so from the top you read the time off your stopwatch at each flash
 
@@ -594,9 +594,10 @@ Low gravity is a *feature*: on the Moon a 100 m drop takes about 11 s, slow enou
 set.seed(12)
 g <- 1.625                          # true (unknown) lunar gravity, m/s^2
 H <- 100                            # tower height in meters
-marks  <- 1:H                       # red marks, every 1 meter
+marks  <- seq(5, H, by = 5)         # 20 red marks, every 5 meters
 t_true <- sqrt(2 * marks / g)       # exact time to reach each mark
-t_obs  <- t_true + rnorm(H, 0, 0.1) # noisy stopwatch reading at each flash
+n <- length(marks)
+t_obs  <- t_true + rnorm(n, 0, 0.1) # noisy stopwatch reading at each flash
 
 d <- data.frame(t = t_obs, x = marks)
 p <- ggplot(d, aes(t, x)) + geom_point(size = 0.3) +
@@ -627,7 +628,7 @@ p + geom_line(data = sol, aes(t, x), color = 'red', linewidth = 0.2) +
 :::
 
 ::: {.fragment}
-**Oxygen is limited**, so each extra drop costs you. How few marks must we record to pin down $g$ to one decimal place? To two? We return to this in Session 7.
+**Oxygen is limited**, so each drop costs you. One drop gives 20 timed marks --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
 :::
 
 ## Average Velocity and the Secant {.smaller}

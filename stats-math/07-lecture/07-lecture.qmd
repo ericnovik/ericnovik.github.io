@@ -194,9 +194,9 @@ ggplot(results, aes(x = sample_id)) +
 ```
 :::
 
-## Moon Drop: How Many Marks? {.smaller}
+## Moon Drop: How Many Drops? {.smaller}
 
-Oxygen is limited, so each drop costs you. How many marks must we record to pin down $g$? We simulate: for each $n$, fit $\hat{g} = 2\hat{\beta}_1$ many times and measure the spread.
+Each drop gives 20 timed marks (every 5 m), and each drop costs oxygen. How many drops do we need to pin down $g$? We simulate: for each number of drops, fit $\hat{g} = 2\hat{\beta}_1$ many times and measure the spread.
 
 ::: {.fragment}
 ```{r}
@@ -204,30 +204,31 @@ Oxygen is limited, so each drop costs you. How many marks must we record to pin 
 #| cache: true
 set.seed(1)
 g_true <- 1.625
-sigma  <- 0.5            # distance-reading noise, meters
+sigma  <- 1              # distance-reading noise, meters
 reps   <- 500
+marks  <- seq(5, 100, by = 5)             # 20 marks, every 5 m
+tsq    <- (sqrt(2 * marks / g_true))^2    # squared pass times
 
-se_ghat <- function(n_marks) {
-  marks <- 1:n_marks
-  tsq   <- (sqrt(2 * marks / g_true))^2          # squared pass times
-  ghat  <- replicate(reps, {
-    y <- 0.5 * g_true * tsq + rnorm(n_marks, 0, sigma)
-    2 * coef(lm(y ~ 0 + tsq))[1]                 # g = 2 * slope
+se_ghat <- function(n_drops) {
+  z <- rep(tsq, n_drops)                  # pool n_drops worth of marks
+  ghat <- replicate(reps, {
+    y <- 0.5 * g_true * z + rnorm(length(z), 0, sigma)
+    2 * coef(lm(y ~ 0 + z))[1]            # g = 2 * slope
   })
-  sd(ghat)                                       # empirical SE of g_hat
+  sd(ghat)                               # empirical SE of g_hat
 }
 
-ns <- c(5, 10, 15, 20, 40, 70, 100)
-se <- sapply(ns, se_ghat)
-data.frame(n_marks = ns, se = round(se, 4),
+drops <- c(1, 2, 3, 6, 10, 20)
+se <- sapply(drops, se_ghat)
+data.frame(drops = drops, marks = drops * 20, se = round(se, 4),
            ci_half_width = round(1.96 * se, 4))
 ```
 :::
 
 ::: {.fragment}
-- **One decimal** ($\pm 0.05$): a CI half-width under $0.05$ needs only ~15 marks
-- **Two decimals** ($\pm 0.005$): you need ~70 marks --- most of the tower
-- Precision costs data: the second decimal is ~5× more expensive than the first
+- **One decimal** ($\pm 0.05$): a single drop (20 marks) is already more than enough
+- **Two decimals** ($\pm 0.005$): you need ~6 drops --- the second decimal costs ~6× the oxygen of the first
+- Spreading marks over the whole tower gives each drop a lot of leverage
 :::
 
 ## Confidence Intervals for Proportions {.smaller}

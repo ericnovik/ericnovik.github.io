@@ -893,11 +893,12 @@ solve(XtX) %>% round(2)
 #| fig-align: center
 
 set.seed(12)
-g <- 1.625                # true (unknown) lunar gravity, m/s^2
-t <- (0:50 * 11) / 50     # time points over an ~11 s fall
-y <- 0.5 * g * t^2 + rnorm(length(t), 0, 3)
+g <- 1.625                       # true (unknown) lunar gravity, m/s^2
+marks <- seq(5, 100, by = 5)     # 20 red marks, every 5 m down the tower
+t <- sqrt(2 * marks / g)         # exact pass time at each mark
+y <- marks + rnorm(length(marks), 0, 0.8)   # noisy distance reading at each flash
 p <- ggplot(data.frame(t, y), aes(t, y))
-p <- p + geom_point(size = 0.2) + xlab("time t (s)") + ylab("distance fallen x (m)") +
+p <- p + geom_point(size = 0.5) + xlab("time t (s)") + ylab("distance fallen x (m)") +
   ggtitle("Noisy measurements of the ball's fall")
 print(p)
 ```
@@ -917,11 +918,11 @@ print(p)
 
 - Let's express it in the matrix notation
 
-- What is our design matrix $X$? We have 51 observations, so $X$ will have two columns and 51 rows: a column of 1s for the intercept and a column of times squared $t^2$
+- What is our design matrix $X$? We have 20 observations (one per mark), so $X$ will have two columns and 20 rows: a column of 1s for the intercept and a column of times squared $t^2$
 
 - Our unknown vector $\hat{\beta}$ has two elements $(\hat{\beta_0},\, \hat{\beta_1)}$
 
-- $y$ is our outcome vector of length 51, capturing the distance fallen at each time point $t$
+- $y$ is our outcome vector of length 20, capturing the distance fallen at each time point $t$
 
 - $y = X\hat{\beta}$ captures our system in matrix form
 :::
