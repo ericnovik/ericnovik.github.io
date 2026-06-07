@@ -228,7 +228,7 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 ## 7. Implementation checklist
 
 - [x] L1: add "Programming and Statistics in the Age of AI" slide after *SMaC: Why Bother?*
-- [ ] L1: create `images/ai-confident-wrong.png` asset
+- [x] L1: create `images/ai-confident-wrong.png` asset (base-rate confidently-wrong chat mockup; wired into the slide as a two-column layout)
 - [x] L2: replace *Motion in a Straight Line* with the *A Cruel Joke* + *Setting Up the Equation of Motion* arc (include the light-flash sensor detail)
 - [x] L2: add simulated Moon-drop data plot
 - [x] L2: reinterpret the existing derivative slides' constants as `g`
