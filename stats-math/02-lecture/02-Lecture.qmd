@@ -208,7 +208,7 @@ If we let $n \to \infty$, we call this process exponential growth.
 #| eval: false
 
 rate <- 0.05    # interest rate r
-P <- 100        # pricical P
+P <- 100        # principal P
 n_comp <- 1:100 # number of compoundings n
 
 Pn <- function(n, A, r, t) A * (1 + r/n)^(t*n)
@@ -545,10 +545,46 @@ Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/1
 :::
 :::
 
-## Example: Motion in a Straight Line {.smaller}
+## A Cruel Joke {.smaller}
 
-Suppose you have an experiment where you can measure the position of an object moving in a straight line every $1/10$ of a second for 5 seconds. When you look at the graph of time versus position, it looks like this:
+A thousand years from now, your friends drug you, load you onto a ship, and fire it at the Moon. You wake in a spacesuit on the surface: a ship, a 100 m tower beside you, a metal ball stamped **1 kg**, and a stopwatch.
 
+::: incremental
+-   The ship's autopilot has the equations of motion programmed in --- but it is missing one number: the Moon's gravitational acceleration $g$
+
+-   Your plan: climb the tower, drop the ball, and record the time it passes each **red mark** (spaced 1 m apart, 100 marks down)
+
+-   Each mark has a sensor: as the ball passes, it **flashes a light**, so from the top you read the time off your stopwatch at each flash
+
+-   From those $(t_k, x_k)$ pairs you will *infer* $g$ --- and fly home
+:::
+
+## Setting Up the Equation of Motion {.smaller}
+
+::: incremental
+-   There is no atmosphere on the Moon, so the only force on the ball is gravity. Newton's second law gives:
+
+$$
+m\,\ddot{x} = m\,g \quad\Rightarrow\quad \ddot{x} = g
+$$
+
+-   The mass cancels --- *that is why the 1 kg label is a red herring.* This is Galileo's insight, confirmed on the Moon by Apollo 15's hammer-and-feather drop.
+
+-   Integrating twice (we cover integration in Session 3), and dropping from rest, gives the solution we will use:
+
+$$
+v(t) = g\,t, \qquad x(t) = \tfrac{1}{2}\, g\, t^2
+$$
+
+-   So the **acceleration** is the second derivative of position --- a constant $g$ --- which is exactly the unknown the mission needs.
+:::
+
+## The Drop, in Data {.smaller}
+
+Low gravity is a *feature*: on the Moon a 100 m drop takes about 11 s, slow enough to read marks with a stopwatch. On Earth it would take 4.5 s.
+
+::: columns
+::: {.column width="50%"}
 ::: {.fragment}
 ```{r}
 #| fig-width: 4
@@ -556,81 +592,82 @@ Suppose you have an experiment where you can measure the position of an object m
 #| fig-align: center
 
 set.seed(12)
-a <- 2; b <- 3
-t <- (0:50 * 5) / 50
-x <- a + b * t^2 + rnorm(length(t), 0, 3)
-p <- ggplot(data.frame(t, x), aes(t, x))
-p <- p + geom_point(size = 0.2) + xlab("time t (s)") + ylab("position x (m)") +
-  ggtitle("Noisy measurements of object's position")
+g <- 1.625                          # true (unknown) lunar gravity, m/s^2
+H <- 100                            # tower height in meters
+marks  <- 1:H                       # red marks, every 1 meter
+t_true <- sqrt(2 * marks / g)       # exact time to reach each mark
+t_obs  <- t_true + rnorm(H, 0, 0.1) # noisy stopwatch reading at each flash
+
+d <- data.frame(t = t_obs, x = marks)
+p <- ggplot(d, aes(t, x)) + geom_point(size = 0.3) +
+  xlab("time t (s)") + ylab("distance fallen x (m)") +
+  ggtitle("Stopwatch reading at each light flash")
 print(p)
 ```
 :::
-
-::: {.fragment}
-You guess that the function is quadratic in $t$. If $x$ is measured in meters, and $t$ is in seconds, then $a$ must have units of $m$ and $b$ must have units $m/s^2$.
-
-$$
-x(t) = a + bt^2
-$$
 :::
 
+::: {.column width="50%"}
 ::: {.fragment}
-The *statistical inference* problem is to find *plausible* values of $a$ and $b$, given our noisy measurements and the assumption that the position function is quadratic. We will come back to how to do it later, but for now, assume that the *most likely* values were found to be $a = 2$ and $b = 3$.
+The inference problem (Session 6) is to recover $g$ from the noisy $(t_k, x_k)$ pairs, assuming $x(t) = \tfrac{1}{2} g t^2$. Here is the curve at the value we will recover, $g \approx 1.62$.
 
 ```{r}
 #| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 
-a <- 2; b <- 3
-x <- a + b * t^2
-p + geom_line(aes(y = x), data = data.frame(x), size = 0.2, color = 'red') +
-  annotate("text", 2, 60, label = "x(t) == 2 + 3*t^2", parse = TRUE, color = 'red') 
+tt  <- seq(0, max(t_obs), length = 200)
+sol <- data.frame(t = tt, x = 0.5 * g * tt^2)
+p + geom_line(data = sol, aes(t, x), color = 'red', linewidth = 0.2) +
+  annotate("text", 3, 80, label = "x(t) == frac(1, 2) * g * t^2",
+           parse = TRUE, color = 'red')
 ```
 :::
-
-::: {.fragment}
-We can now ask, what was the average velocity between $1$ and $4$ seconds? This is the same as the slope of the secant line:
-
-$$
-\bar{v} = 
-\frac{\text{displacment} (m)}{\text{elapsed time} (s)} = 
-\frac{\Delta x}{\Delta t} =  
-\frac{x(4) - x(1)}{4-1} = \frac{50-5}{3} = 15 \text{ m/s} = 54 \text{ km/h}  
-$$
+:::
 :::
 
 ::: {.fragment}
-Since we know that this is a line of the form $x(t) = a + 15t$, that goes through the point $(t_1, x_1) = (1, 5)$, $5 = a + 15\cdot1$ or $a = -10$. The equation of the secant line is, therefore:
+**Oxygen is limited**, so each extra drop costs you. How few marks must we record to pin down $g$ to one decimal place? To two? We return to this in Session 7.
+:::
+
+## Average Velocity and the Secant {.smaller}
+
+::: {.fragment}
+Before we can find $g$, we need to understand velocity. What was the ball's *average* velocity between $t_1$ and $t_2$ seconds? This is the slope of the secant line:
 
 $$
-x(t) = -10 + 15t
+\bar{v} =
+\frac{\Delta x}{\Delta t} =
+\frac{x(t_2) - x(t_1)}{t_2 - t_1} =
+\frac{\tfrac{1}{2} g\, t_2^2 - \tfrac{1}{2} g\, t_1^2}{t_2 - t_1} =
+\tfrac{1}{2} g\, (t_1 + t_2)
 $$
 :::
 
 ::: {.fragment}
 ```{r}
-#| fig-width: 4
-#| fig-height: 4
+#| fig-width: 4.5
+#| fig-height: 3.6
 #| fig-align: center
 #| echo: true
-p <- ggplot(data.frame(t, x), aes(t, x))
-p + geom_line(size = 0.2) +
-  geom_abline(slope = 15, intercept = -10, size = 0.2, color = 'red') +
-  geom_point(x = 1, y = 5, color = 'blue') +
-  geom_point(x = 4, y = 50, color = 'blue') +
-  xlab("time t (s)") + ylab("position x (m)") +
-  annotate("text", 3.7, 55, label = "(4, 50)") +
-  annotate("text", 1, 12, label = "(1, 5)") +
-  ggtitle("object's position function and the secant line")
+t1 <- 4; t2 <- 9
+x1 <- 0.5 * g * t1^2; x2 <- 0.5 * g * t2^2
+slope <- (x2 - x1) / (t2 - t1)            # avg velocity = ½ g (t1 + t2)
+ggplot(sol, aes(t, x)) + geom_line(linewidth = 0.2) +
+  geom_abline(slope = slope, intercept = x1 - slope * t1,
+              color = 'red', linewidth = 0.2) +
+  geom_point(aes(x = t1, y = x1), color = 'blue') +
+  geom_point(aes(x = t2, y = x2), color = 'blue') +
+  xlab("time t (s)") + ylab("distance fallen x (m)") +
+  ggtitle("Position curve and a secant line")
 ```
 :::
 
 ::: {.fragment}
-What if we wanted to know the speedometer reading at $4$ seconds? In other words, we want to know the speed at that instant. This is where the *limit* comes in.
+What if we wanted the *speedometer* reading at an instant $t$, not the average over an interval? This is where the *limit* comes in.
 
 $$
-v = \lim_{\Delta t \to 0} \frac{\Delta x}{\Delta t} = \frac{dx}{dt} 
+v = \lim_{\Delta t \to 0} \frac{\Delta x}{\Delta t} = \frac{dx}{dt}
 $$
 :::
 
@@ -656,24 +693,24 @@ $$
 ## The Derivative {.smaller}
 
 ::: {.fragment}
--   Our original problem was to find the velocity at $t = 4$ given our position function $x(t) = 2 + 3t^2$.
+-   Our problem is to find the velocity at time $t$ given the position function $x(t) = \tfrac{1}{2} g t^2$.
 
 $$
 \begin{eqnarray}
-v & = & \lim_{\Delta h \to 0} \frac{x(a + h) - x(a)}{h} = 
-\lim_{\Delta h \to 0} \frac{2 + 3(t + h)^2 - 2 - 3t^2}{h} = \\
-& \lim_{\Delta h \to 0} & \frac{6ht + 3h^2}{h} = \lim_{\Delta h \to 0} (6t + 3h) = 6t
+v & = & \lim_{\Delta h \to 0} \frac{x(t + h) - x(t)}{h} =
+\lim_{\Delta h \to 0} \frac{\tfrac{1}{2} g (t + h)^2 - \tfrac{1}{2} g t^2}{h} = \\
+& \lim_{\Delta h \to 0} & \frac{g t h + \tfrac{1}{2} g h^2}{h} = \lim_{\Delta h \to 0} \left(g t + \tfrac{1}{2} g h\right) = g t
 \end{eqnarray}
-$$ 
+$$
 :::
 
 ::: {.fragment}
-- At $t = 4$, the speedometer was reading $6 \cdot 4 = 24 \text{ m/s } = 86.4 \text{ km/h}$.
+- With our estimate $g \approx 1.62$, the speedometer at $t = 4$ reads $1.62 \cdot 4 \approx 6.5 \text{ m/s}$.
 
 -   The velocity is the derivative of position with respect to time, and we can write:
 
 $$
-v(t) = \frac{dx}{dt} = 6t
+v(t) = \frac{dx}{dt} = g t
 $$
 :::
 
@@ -682,7 +719,7 @@ $$
 -   But what about acceleration?
 
 ::: {.fragment}
--   Acceleration is a change in velocity with respect to time or the second derivative of position: 
+-   Acceleration is a change in velocity with respect to time or the second derivative of position:
 
 $$
 a(t) = \frac{dv}{dt} = \frac{d}{dt} \left( \frac{d x}{d t} \right) = \frac{d^2 x}{d t^2}
@@ -690,16 +727,16 @@ $$
 :::
 
 ::: {.fragment}
--   To compute acceleration at $t = 4$, we take the limit again, only this time with respect to the velocity function:
+-   We take the limit again, this time of the velocity function $v(t) = g t$:
 
 $$
-a = \frac{dv}{dt} = \lim_{\Delta h \to 0} \frac{6(t + h) - 6t}{h} = \\
-\lim_{\Delta h \to 0} \frac{6t + 6h - 6t}{h} = \lim_{\Delta h \to 0} 6 = 6
-$$ 
+a = \frac{dv}{dt} = \lim_{\Delta h \to 0} \frac{g(t + h) - g t}{h} =
+\lim_{\Delta h \to 0} \frac{g h}{h} = \lim_{\Delta h \to 0} g = g
+$$
 :::
 
 ::: {.fragment}
-- This function $a(t) = 6$ does not depend on $t$, and so acceleration is a constant $6 \text{ m}/\text{s}^2$ at all values of $t$ including $t = 4$
+- The acceleration $a(t) = g$ does not depend on $t$ --- it is **constant**. **This constant is exactly what the mission needs.** Recovering it from the drop data is the inference problem we solve in Sessions 6 and 7.
 :::
 
 ::: {.fragment}
@@ -729,17 +766,19 @@ $$
 
 ## Your Turn
 
-- Suppose we have the following equations of motion:
+- Suppose that on a different moon a calibration drop (with a small initial push, so it is not released from rest) produced the position function:
 
 $$
 x(t) = 4 + 3t + 5t^2
 $$
 
-- What is the object's position at time zero and time 1 second?
+- What is the ball's position at time zero and time 1 second?
 
 - What is the velocity at time zero?
 
 - What is the velocity and acceleration at 5 seconds?
+
+- What is this moon's gravitational acceleration $g$? (Hint: compare $a(t)$ to $\ddot{x} = g$.)
 
 ## Product Rule and Chain Rule {.smaller}
 

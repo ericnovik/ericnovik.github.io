@@ -878,11 +878,11 @@ solve(XtX) %>% round(2)
 
 :::
 
-## Motion in the Straight Line {.smaller}
+## Recovering g from the Moon Drop {.smaller}
 
 ::: incremental
-- Recall, from lecture 1, our example of a car moving in a straight line where we have noisy measurements of its position over time
-- At the time, we assumed we were able somehow to find the intercept and slope of the equation
+- Recall, from Session 2, the Moon mission: we drop a ball from a tower and record the distance fallen at noisy time points to infer the Moon's gravity $g$
+- At the time, we promised we would later learn how to find $g$ from the data
 - We are now in a position to solve the problem
 :::
 
@@ -893,17 +893,17 @@ solve(XtX) %>% round(2)
 #| fig-align: center
 
 set.seed(12)
-b0 <- 2; b1 <- 3
-x <- (0:50 * 5) / 50
-y <- b0 + b1 * x^2 + rnorm(length(x), 0, 3)
-p <- ggplot(data.frame(x, y), aes(x, y))
-p <- p + geom_point(size = 0.2) + xlab("time t (s)") + ylab("position x (m)") +
-  ggtitle("Noisy measurements of car's position")
+g <- 1.625                # true (unknown) lunar gravity, m/s^2
+t <- (0:50 * 11) / 50     # time points over an ~11 s fall
+y <- 0.5 * g * t^2 + rnorm(length(t), 0, 3)
+p <- ggplot(data.frame(t, y), aes(t, y))
+p <- p + geom_point(size = 0.2) + xlab("time t (s)") + ylab("distance fallen x (m)") +
+  ggtitle("Noisy measurements of the ball's fall")
 print(p)
 ```
 :::
 
-## Motion in the Straight Line {.smaller}
+## Recovering g from the Moon Drop {.smaller}
 
 ::: panel-tabset
 ### Setup
@@ -911,9 +911,9 @@ print(p)
 ::: incremental
 - This is a quadratic function. How can we solve it using linear regression (the least squares method)?
 
-- We assumed the equation of motion was $x(t) = a + bt^2$, which we will write as $y(t) = \beta_0 + \beta_1 t^2$
+- The equation of motion is $x(t) = \tfrac{1}{2} g t^2$, which we will write as $y(t) = \beta_0 + \beta_1 t^2$
 
-- The unknowns are $\beta_0$ and $\beta_1$
+- We keep an intercept $\beta_0$ as a check: since the ball is dropped from rest at $x = 0$, we expect $\hat{\beta}_0 \approx 0$, while $\hat{\beta}_1 \approx g/2$, so $\hat{g} = 2\hat{\beta}_1$
 
 - Let's express it in the matrix notation
 
@@ -921,10 +921,10 @@ print(p)
 
 - Our unknown vector $\hat{\beta}$ has two elements $(\hat{\beta_0},\, \hat{\beta_1)}$
 
-- $y$ is our outcome vector of length 51, capturing the car's position at each time point $t$
+- $y$ is our outcome vector of length 51, capturing the distance fallen at each time point $t$
 
 - $y = X\hat{\beta}$ captures our system in matrix form
-::: 
+:::
 
 ### Solution
 
@@ -932,11 +932,6 @@ print(p)
 ::: {.column width="50%"}
 
 ::: {.fragment}
-```{r}
-#| echo: false
-t <- x
-```
-
 ```{r}
 #| echo: true
 
@@ -970,6 +965,11 @@ head(y)
 
 beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
 beta_hat %>% round(2)
+
+# intercept is ~0 (dropped from rest); g = 2 * beta_1
+g_hat <- 2 * beta_hat[2]
+round(g_hat, 3)
+
 data <- data.frame(y = y, t_squared = t^2)
 # compare to R's lm()
 fit <- lm(y ~ t_squared, data = data)
@@ -979,7 +979,7 @@ arm::display(fit)
 :::
 
 ::: {.fragment}
-- Warning: do not use $(X^TX)^{-1}X^Ty$ directly as above; it's computationally inefficient
+- We recover $\hat{g} = 2\hat{\beta}_1 \approx 1.62$ --- the mission is a go. (Warning: do not use $(X^TX)^{-1}X^Ty$ directly as above; it's computationally inefficient.)
 :::
 
 :::
@@ -992,7 +992,7 @@ arm::display(fit)
 #| fig-height: 4
 #| fig-align: center
 #| echo: true
-d <- data.frame(yhat = beta_hat[1] + beta_hat[2] * x^2)
+d <- data.frame(t = t, yhat = beta_hat[1] + beta_hat[2] * t^2)
 p + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')
 ```
 

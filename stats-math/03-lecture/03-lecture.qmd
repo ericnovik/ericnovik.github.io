@@ -351,7 +351,7 @@ p + geom_line(aes(color = name)) + xlab("Year") +
 ![](images/int.jpg){fig-align="center" width="672"}
 
 ::: incremental
--   Unknowns are sometimes called parameters, like our $a$ and $b$, in the $x(t) = a + bt^2$ model
+-   Unknowns are sometimes called parameters, like the Moon's gravity $g$ in our drop model $x(t) = \tfrac{1}{2} g t^2$
 :::
 :::
 :::
@@ -384,28 +384,28 @@ Image Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/p
 ## Antiderivative
 
 ::: incremental
--   Recal our position function $x(t) = 2 + 3t^2$
--   We found the velocity function by differentiating and we can *almost* get back the position function by integrating.
+-   Recall the Moon drop: from $\ddot{x} = g$ we found the velocity $v(t) = g t$
+-   This is the promised derivation: integrate $v(t)$ once to *recover the position function* $x(t)$
 :::
 
 ::: {.fragment}
 $$
 \begin{eqnarray}
-v(t) & = & \frac{d}{dt} \left( 2 + 3t^2 \right) = 6t \\
-x(t) & = & \int{6t\, dt} = 3t^2 + C
+v(t) & = & \int{g\, dt} = g t + C_1 \\
+x(t) & = & \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 \end{eqnarray}
 $$
 :::
 
 ::: incremental
--   Why almost? Look at the constant $2$ in $\frac{d}{dt}(2 + 3t^2)$. You can replace it with any other constant and the result will still be $6t$.
+-   The ball is *dropped from rest* at the top of the tower, so the initial velocity is zero ($C_1 = 0$), and we measure distance fallen from the release point, so the initial position is zero ($C_2 = 0$).
 
--   To put it another way, to characterize the position fucntion you need to know the intial position and you can't get that from the velocity function alone.
+-   That leaves $x(t) = \tfrac{1}{2} g t^2$. In general, to characterize the position function you need the initial position and velocity --- you can't get those from the acceleration alone.
 :::
 
 ## Plot
 
-The position function for different values of initial position $C$. Notice that the only thing that changes is the intercept.
+The position function for different values of initial position $C_2$. Notice that the only thing that changes is the intercept.
 
 ::: {.fragment}
 ```{r}
@@ -413,21 +413,22 @@ The position function for different values of initial position $C$. Notice that 
 #| fig-height: 4
 #| fig-align: center
 
-t <- (0:50 * 5) / 50
+g <- 1.625
+t <- (0:50 * 11) / 50
 c <- seq(0, 90, by = 10)
-y <- function(x) 3*x^2
+y <- function(x) 0.5 * g * x^2
 
 d <- c %>% map(~ y(t) + .x)
 d <- as.data.frame(d)
 colnames(d) <- as.factor(c)
-d$time <- t 
+d$time <- t
 d <- pivot_longer(d, !time)
 p <- ggplot(d, aes(time, value))
 p + geom_line(aes(color = name)) +
   xlab("time t (s)") + ylab("position x (m)") +
-  ggtitle("Position functions for different values of C") +
-  annotate("text", 1, 150, label = "x(t) == 3*t^2 + C", parse = TRUE) +
-  guides(color = guide_legend(title = "C"))
+  ggtitle("Position functions for different initial positions") +
+  annotate("text", 2, 180, label = "x(t) == frac(1, 2) * g * t^2 + C[2]", parse = TRUE) +
+  guides(color = guide_legend(title = expression(C[2])))
 
 ```
 :::
@@ -444,7 +445,7 @@ p + geom_line(aes(color = name)) +
 OpenStax: [Here is a more complete list](https://openstax.org/books/calculus-volume-1/pages/a-table-of-integrals)
 :::
 
-## Techniques of Intergration {.smaller}
+## Techniques of Integration {.smaller}
 
 ::: incremental
 -   Integral, like a derivative, is a linear operator:
@@ -637,7 +638,7 @@ $$
 $$
 
 
-## Ingegration by Parts {.smaller}
+## Integration by Parts {.smaller}
 
 $$
 \begin{eqnarray}

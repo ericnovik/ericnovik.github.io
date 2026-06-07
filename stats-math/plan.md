@@ -227,16 +227,59 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 
 ## 7. Implementation checklist
 
-- [ ] L1: add "Programming and Statistics in the Age of AI" slide after *SMaC: Why Bother?*
+- [x] L1: add "Programming and Statistics in the Age of AI" slide after *SMaC: Why Bother?*
 - [ ] L1: create `images/ai-confident-wrong.png` asset
-- [ ] L2: replace *Motion in a Straight Line* with the *A Cruel Joke* + *Setting Up the Equation of Motion* arc (include the light-flash sensor detail)
-- [ ] L2: add simulated Moon-drop data plot
-- [ ] L2: reinterpret the existing derivative slides' constants as `g`
-- [ ] L2: pose the oxygen / sample-size question informally
-- [ ] L3: reframe "From Velocity to Position" as integrating `ẍ = g` twice
-- [ ] L6: reframe overdetermined `X β̂ = y` as recovering `g` from drop data
-- [ ] L7: reframe measurement-error model as uncertainty in `g`
-- [ ] L7: answer the oxygen / sample-size question — smallest n for ±0.05 (one decimal) and ±0.005 (two decimals) CI on ĝ
-- [ ] Remove all remaining generic straight-line narrative
-- [ ] Fix typos (§5)
-- [ ] Render each modified lecture to confirm it compiles
+- [x] L2: replace *Motion in a Straight Line* with the *A Cruel Joke* + *Setting Up the Equation of Motion* arc (include the light-flash sensor detail)
+- [x] L2: add simulated Moon-drop data plot
+- [x] L2: reinterpret the existing derivative slides' constants as `g`
+- [x] L2: pose the oxygen / sample-size question informally
+- [x] L3: reframe "From Velocity to Position" as integrating `ẍ = g` twice
+- [x] L6: reframe overdetermined `X β̂ = y` as recovering `g` from drop data
+- [x] L7: reframe measurement-error model as uncertainty in `g`
+- [x] L7: answer the oxygen / sample-size question — smallest n for ±0.05 (one decimal) and ±0.005 (two decimals) CI on ĝ
+- [x] Remove all remaining generic straight-line narrative
+- [x] Fix typos (§5)
+- [x] Render each modified lecture to confirm it compiles
+- [ ] Build the interactive data-collection app (§8)
+
+---
+
+## 8. Interactive data-collection app (JS)
+
+Instead of only *simulating* the drop in R, students **collect the data
+themselves** in a small browser app. This makes the measurement-error story
+visceral: their own reaction time *is* the noise.
+
+### Core interaction
+
+- A ball is dropped from the tower on the Moon and falls under constant
+  acceleration `g_moon ≈ 1.625 m/s²` (animation in real, slowed, or scaled time).
+- As the ball passes each **red mark** (every 1 m), the mark **flashes a light**.
+- The student **clicks the mouse** (or presses a key) at each flash; the app
+  records the click timestamp `t_k` against the known mark height `x_k`.
+- The recorded `(t_k, x_k)` pairs are the dataset they then analyze in R to
+  infer `g` — closing the loop with L2/L6/L7.
+
+### Why it's pedagogically valuable
+
+- The noise is **real and self-generated** (human reaction time ≈ 100–250 ms),
+  not `rnorm()` — students *feel* where measurement error comes from.
+- Connects directly to the oxygen / sample-size question (§6.3): they can stop
+  early and see how few clicks still pin down `g`.
+- Natural class activity: everyone runs a trial, pool the data, compare
+  individual vs. pooled estimates of `g`.
+
+### Rough requirements / open questions
+
+- **Tech**: vanilla JS + Canvas (or a tiny framework); embeddable in the
+  reveal.js deck or standalone. Keep dependencies minimal.
+- **Time scaling**: a true 100 m Moon drop takes ~11 s; decide whether to run
+  real-time, slow-motion, or let the student set the speed.
+- **Data export**: download `(t_k, x_k)` as CSV, or paste into R; optionally a
+  "pool the class" mode.
+- **Calibration**: log the click latency so students can see their own bias
+  (systematic late-clicking) vs. random error.
+- **Fairness to the model**: noise should land on `t` (click timing), matching
+  the L2 narrative; reconcile with the OLS-on-position framing used in L6.
+- **Scope**: MVP = single drop, click-to-time, CSV export. Stretch = class
+  pooling, latency calibration, adjustable tower height / gravity.
