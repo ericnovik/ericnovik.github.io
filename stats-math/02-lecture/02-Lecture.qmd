@@ -591,15 +591,12 @@ Low gravity is a *feature*: on the Moon a 100 m drop takes about 11 s, slow enou
 #| fig-height: 4
 #| fig-align: center
 
-set.seed(12)
 g <- 1.625                          # true (unknown) lunar gravity, m/s^2
-H <- 100                            # tower height in meters
-marks  <- seq(5, H, by = 5)         # 20 red marks, every 5 meters
-t_true <- sqrt(2 * marks / g)       # exact time to reach each mark
-n <- length(marks)
-t_obs  <- t_true + rnorm(n, 0, 0.1) # noisy stopwatch reading at each flash
 
-d <- data.frame(t = t_obs, x = marks)
+# Real data: one click per light flash, collected by hand in the browser app.
+raw <- read.csv("data/moon-drop.csv")
+d <- data.frame(t = raw$t_obs_s, x = raw$x_m)
+
 p <- ggplot(d, aes(t, x)) + geom_point(size = 0.3) +
   xlab("time t (s)") + ylab("distance fallen x (m)") +
   ggtitle("Stopwatch reading at each light flash")
@@ -617,7 +614,7 @@ The inference problem (Session 6) is to recover $g$ from the noisy $(t_k, x_k)$ 
 #| fig-height: 4
 #| fig-align: center
 
-tt  <- seq(0, max(t_obs), length = 200)
+tt  <- seq(0, max(d$t), length = 200)
 sol <- data.frame(t = tt, x = 0.5 * g * tt^2)
 p + geom_line(data = sol, aes(t, x), color = 'red', linewidth = 0.2) +
   annotate("text", 3, 80, label = "x(t) == frac(1, 2) * g * t^2",
@@ -628,7 +625,7 @@ p + geom_line(data = sol, aes(t, x), color = 'red', linewidth = 0.2) +
 :::
 
 ::: {.fragment}
-**Oxygen is limited**, so each drop costs you. One drop gives 20 timed marks --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
+**Oxygen is limited**, so each drop costs you. One drop gives up to 20 timed marks (this run caught 19) --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
 :::
 
 ## Average Velocity and the Secant {.smaller}

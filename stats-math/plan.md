@@ -243,7 +243,7 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 - [x] Remove all remaining generic straight-line narrative
 - [x] Fix typos (§5)
 - [x] Render each modified lecture to confirm it compiles
-- [ ] Build the interactive data-collection app (§8)
+- [x] Build the interactive data-collection app (§8) — `apps/moon-experiment/` (vanilla JS + Canvas + Chart.js; click-to-time, live clock, data table, CSV export, time-vs-distance plot with recovered ĝ)
 
 ---
 
