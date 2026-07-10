@@ -243,14 +243,15 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 - [x] Remove all remaining generic straight-line narrative
 - [x] Fix typos (§5)
 - [x] Render each modified lecture to confirm it compiles
-- [x] Build the interactive data-collection app (§8) — `apps/moon-experiment/` (vanilla JS + Canvas + Chart.js; click-to-time, live clock, data table, CSV export, time-vs-distance plot with recovered ĝ)
+- [x] Build the interactive data-collection app (§8) — external app at `~/Repos/apps/moon-experiment/` (vanilla JS + Canvas + Chart.js; click-to-time, live clock, data table, CSV export, time-vs-distance plot with recovered ĝ)
 
 ---
 
 ## 8. Interactive data-collection app (JS)
 
 Instead of only *simulating* the drop in R, students **collect the data
-themselves** in a small browser app. This makes the measurement-error story
+themselves** in a small browser app. This app lives outside this repo at
+`~/Repos/apps/moon-experiment/`. This makes the measurement-error story
 visceral: their own reaction time *is* the noise.
 
 ### Core interaction
