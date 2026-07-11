@@ -3,11 +3,11 @@ title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
 author: "Eric.Novik@nyu.edu | Summer 2026 | Session 1"
 format:
-  revealjs: 
+  revealjs:
     theme: ../../custom.scss
     scrollable: true
     slide-number: true
-    chalkboard: 
+    chalkboard:
       buttons: false
       chalk-width: 5
     preview-links: auto
@@ -20,9 +20,9 @@ bibliography: ../references.bib
 ## Course Objectives
 
 ::: incremental
--   This course will help you to prepare for the **A3SR MS Program** by covering the minimal necessary foundation in **computing**, **math,** and **probability**.
+-   This course will help you to prepare for the **A3SR MS program** and other statistics programs by covering the minimal necessary foundation in **computing**, **math,** and **probability**.
 
--   After completing the course, you will be able to write simple R programs and perform simulations, plot and manipulate data, solve basic probability problems, and understand the concept of regression
+-   After completing the course, you will be able to write small to medium-size R programs and perform simulations, plot and manipulate data, solve basic probability problems, and understand the concept of regression
 :::
 
 ```{r}
@@ -42,7 +42,7 @@ thm <-
 theme_set(thm)
 
 dbinom_theta <- function(theta, N, y) {
-  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+  choose(N, y) * theta^y * (1 - theta)^(N - y)
 }
 
 dot_plot <- function(x, y) {
@@ -88,7 +88,7 @@ $$
 
 -   Basic **differentiation**. Meaning of the derivative. Numeric and symbolic differentiation and optimization.
 
--   Basic **integration**. Riemann integral and basic rules of integration. 
+-   Basic **integration**. Riemann integral and basic rules of integration.
 
 -   Review of **one-dimensional** **probability**. Conditional probability, random variables, and expectations. Solving probability problems by simulation.
 :::
@@ -129,10 +129,6 @@ $$
 -   Optional: [Matrix Cookbook](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf), @petersen2012
 
 -   [Intoduction to Probability](https://projects.iq.harvard.edu/stat110/home), @blitzstein2019
-
-## Where are you from?
-
-![](images/where-are-you-from.png){fig-align="center" width="670"}
 
 ## Session 1 Outline
 
@@ -284,12 +280,12 @@ p + xlab("Temperature at launch (F)") + ylab("") +
   ) +
   annotate("segment", x = temp_at_launch + 10, xend = temp_at_launch + 1,
              y = expected_fails_at_launch, yend = expected_fails_at_launch,
-           colour = "blue", size = 0.2, arrow = arrow(type = "closed", 
+           colour = "blue", size = 0.2, arrow = arrow(type = "closed",
                                                       length = unit(0.1, "inches"))) +
-  annotate("text", x = temp_at_launch + 24, 
-           y = expected_fails_at_launch, 
-           label = paste("Expected number of failures at launch = ", 
-                         round(expected_fails_at_launch)), 
+  annotate("text", x = temp_at_launch + 24,
+           y = expected_fails_at_launch,
+           label = paste("Expected number of failures at launch = ",
+                         round(expected_fails_at_launch)),
            size = 3, color = 'blue') +
   ggtitle("Challenger Space Shuttle O-Ring Data",
           subtitle = "Number of O-rings experiencing thermal distress")
@@ -306,7 +302,7 @@ p + xlab("Temperature at launch (F)") + ylab("") +
 
 ### References
 
--   @fowlkes1989: Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure
+-   @fowlkes1989: Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure.
 
 -   @martz1992: The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.
 :::
@@ -363,26 +359,26 @@ Source: [The New York Times, March 9, 2021](https://www.nytimes.com/2021/03/09/u
 
 ## Programming and Statistics in the Age of AI {.smaller}
 
-::: columns
-::: {.column width="55%"}
-::: incremental
--   LLMs (Claude, ChatGPT, Gemini) write R, derive integrals, and explain statistics --- use them; they will make you faster
+A frontier LLM generated 20 independent solutions to the same statistical programming task. Three did not run, and several that ran produced catastrophic errors.
 
--   But they are *confident*: they hallucinate functions, invent citations, and make subtle statistical errors that look completely right
+![](images/rmse.png){fig-align="center" width="92%"}
 
--   AI raises the **ceiling** of what you can build, but you still need a **floor** --- enough understanding to prompt well, verify the output, and notice when the answer is wrong
+::: {.fragment style="font-size: 78%;"}
+Each red point is a different ChatGPT Codex 5.2 submission. The worst RMSE exceeded **100 billion outcome standard deviations**.
 
--   The computing, calculus, and probability in this course are exactly the skills that let you *supervise* the machine instead of trusting it
-:::
+Source: [Perrett, Elliott, Hill, and Scott (2026), *Flaws in the LLM Automation Narrative*](https://arxiv.org/abs/2606.11166).
 :::
 
-::: {.column width="45%"}
-![](images/ai-confident-wrong.png){fig-align="center"}
-:::
-:::
+## A Plausible Answer Can Be Catastrophically Wrong {.smaller}
 
-::: fragment
-The goal isn't to beat AI at arithmetic --- it's to ask the right question and know when the answer is wrong.
+The same prompt produced estimates ranging from competitive to billions of standard deviations from the truth.
+
+![](images/bias.png){fig-align="center" width="92%"}
+
+::: {.fragment style="font-size: 78%;"}
+The danger is not that every LLM answer is wrong; it is that a plausible-looking answer may be catastrophically wrong. Statistical and programming knowledge lets you verify the output instead of merely trusting it.
+
+Source: [Perrett, Elliott, Hill, and Scott (2026), *Flaws in the LLM Automation Narrative*](https://arxiv.org/abs/2606.11166).
 :::
 
 ## Example: Differential Calculus {.smaller}
@@ -408,9 +404,9 @@ mu <- c(1, 0.5)
 x <- seq(0, 10, len = 50)
 y <- mu[1] + mu[2] * x + rnorm(50)
 p <- ggplot(data.frame(x, y), aes(x, y))
-p + geom_point() + geom_smooth(method = "lm", size = 0.3, 
+p + geom_point() + geom_smooth(method = "lm", size = 0.3,
                                color = "yellow", fill = "blue") +
-# p + geom_point() + geom_abline(slope = mu[2], intercept = mu[1], 
+# p + geom_point() + geom_abline(slope = mu[2], intercept = mu[1],
 #                                size = 0.2, color = 'red') +
   xlim(0, 10) + ylim(0, 10) +
   ggtitle("Regression line with slope = 0.5 and intercept = 1")
@@ -449,13 +445,13 @@ p %>% add_surface() %>% layout(title = 'Normal Likelihood',
                                         plot_bgcolor = "#f0f1eb",
                                        paper_bgcolor = "#f0f1eb")
 # library(plot3D)
-# 
+#
 # # Generate grid data
 # grid_data <- expand.grid(alpha = alpha, beta = beta)
-# 
+#
 # # Apply function to each row of the grid data
 # grid_data$lik <- apply(grid_data, 1, function(row) f(row['alpha'], row['beta']))
-# 
+#
 # par(mar = c(3,3,2,1), mgp = c(2,.7,0), tck = -.01, bg = "#f0f1eb")
 # scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
 #           phi = 10, theta = 30,
@@ -505,13 +501,13 @@ library(ggdist)
 nd <- tibble::tribble(
   ~ dist,      ~ args,
   "norm",      list(1, 1),
-) 
+)
 
 nd %>%
   ggplot(aes(xdist = dist, args = args)) +
   stat_slab(aes(fill = stat(x > 0))) +
   scale_fill_manual(values = c("gray85", "skyblue")) +
-  theme(legend.position = "none") + 
+  theme(legend.position = "none") +
   xlab(expression(theta)) + ylab("") +
   annotate("text", x = 1.2, y = 0.3, label = "P(theta > 0) == 0.84", parse = TRUE) +
   ggtitle("Normal distribution with mean 1 and standard deviation 1")
@@ -568,8 +564,8 @@ data {
   array[N_rows] int<lower=0, upper=N> y; // number of "successes" in y ~ Binom(N, p)
 }
 parameters {
-  real alpha; 
-  real beta;  
+  real alpha;
+  real beta;
 }
 model {
   alpha ~ normal(0, 2.5); // we can encode what we know about plausible values
@@ -583,7 +579,7 @@ $$
 \text{BinomialLogit}(y~|~N,\theta) & = &
 \text{Binomial}(y~|~N,\text{logit}^{-1}(\theta)) \\[6pt] & = &
 \binom{N}{y} \left( \text{logit}^{-1}(\theta) \right)^{y}  \left( 1 -
-\text{logit}^{-1}(\theta) \right)^{N - y}  
+\text{logit}^{-1}(\theta) \right)^{N - y}
 \end{eqnarray*}
 $$
 
@@ -707,8 +703,8 @@ round(exp(1i * pi) + 1)
 die <- 1:6
 die <- seq(1, 6, by = 1)
 die
-length(die) 
-str(die)     
+length(die)
+str(die)
 sum(die)
 prod(die)
 mean(die)
@@ -847,15 +843,15 @@ library(HistData)
 library(lubridate)
 
 # set up the plotting area so it looks nice
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), 
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0),
     tck = -.01, bg = "#f0f1eb")
-clr <- ifelse(Snow.dates$date < mdy("09/08/1854"), 
+clr <- ifelse(Snow.dates$date < mdy("09/08/1854"),
               "red", "darkgreen")
-plot(deaths ~ date, data = Snow.dates, 
+plot(deaths ~ date, data = Snow.dates,
      type = "h", lwd = 2, col = clr, xlab = "")
-points(deaths ~ date, data = Snow.dates, 
+points(deaths ~ date, data = Snow.dates,
        cex = 0.5, pch = 16, col = clr)
-text(mdy("09/08/1854"), 40, 
+text(mdy("09/08/1854"), 40,
      "Pump handle\nremoved Sept. 8", pos = 4)
 ```
 
@@ -927,7 +923,7 @@ n <- 100
 x <- 1:n
 s <- 0
 for (i in 1:n) {
-  s <- s + x[i] 
+  s <- s + x[i]
 }
 # test
 s == sum(x)
@@ -951,7 +947,7 @@ for (i in 1:n) {
   }
 }
 cat(s)
-# test 
+# test
 s == sum(seq(2, 100, by = 2))
 ```
 :::
@@ -1011,12 +1007,12 @@ x <- seq(0, 100, by = 5)
 y <- x^2
 
 quadratic <- tibble(x = x, y = y)
-p1 <- ggplot(data = quadratic, 
+p1 <- ggplot(data = quadratic,
              mapping = aes(x = x, y = y))
 p2 <- p1 + geom_point(size = 0.5)
-p3 <- p1 + geom_line(linewidth = 0.2, 
+p3 <- p1 + geom_line(linewidth = 0.2,
                      color = 'red')
-p4 <- p1 + geom_point(size = 0.5) + 
+p4 <- p1 + geom_point(size = 0.5) +
   geom_line(linewidth = 0.2, color = 'red')
 
 grid.arrange(p1, p2, p3, p4, nrow = 2)
@@ -1036,9 +1032,9 @@ grid.arrange(p1, p2, p3, p4, nrow = 2)
 #| eval: false
 #| echo: true
 
-set.seed(1) 
+set.seed(1)
 n <- 1e4
-est_prop <- numeric(n) 
+est_prop <- numeric(n)
 for (i in 1:n) {
   x <- sample(coin, i, replace = TRUE)
   est_prop[i] <- mean(x)
@@ -1047,7 +1043,7 @@ for (i in 1:n) {
 library(scales)
 data <- tibble(num_flips = 1:n, est_prop = est_prop)
 p <- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))
-p + geom_line(size = 0.1) + 
+p + geom_line(size = 0.1) +
   geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
   scale_x_continuous(trans = 'log10', label = comma) +
   xlab("Number of flips on Log10 scale") +
@@ -1075,7 +1071,7 @@ for (i in 1:n) {
 library(scales)
 data <- tibble(num_flips = 1:n, est_prop = est_prop)
 p <- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))
-p + geom_line(size = 0.1) + 
+p + geom_line(size = 0.1) +
   geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
   scale_x_continuous(trans = 'log10', label = comma) +
   xlab("Number of flips on Log10 scale") +
@@ -1131,8 +1127,8 @@ head(x)
 ```{r}
 #| eval: false
 #| echo: true
-hist(x, 
-     xlab = "", 
+hist(x,
+     xlab = "",
      main = "Distribution of Proportions of Heads")
 ```
 :::

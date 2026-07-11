@@ -2,10 +2,11 @@
 
 Branch: `course-restructure-moon-ai`
 
-Goal: make the course **more interesting and useful** by (1) adding a slide on
+Goal: make the course **more interesting and useful** by (1) adding slides on
 programming and statistics in the age of AI, (2) replacing the generic "motion
-in a straight line" example with a memorable Moon-drop story, and (3) turning
-that story into a unifying mission that pays off across multiple lectures.
+in a straight line" example with a memorable Moon-drop story, (3) turning that
+story into a unifying mission that pays off across multiple lectures, and (4)
+creating separate read and show versions of each lecture deck.
 
 ---
 
@@ -70,40 +71,25 @@ x(t) = ½ · g · t²
 existing *Some Mistakes Are Silly / Deadly* thread (humans err; now machines err
 *confidently, at scale*).
 
-**Draft slide:**
+**Implemented slides:**
 
-```markdown
-## Programming and Statistics in the Age of AI {.smaller}
+The original mockup of a confidently wrong chat response was replaced with
+empirical results from an actual frontier LLM. The first slide shows the root
+mean squared error and the second shows standardized bias across 20 independent
+ChatGPT Codex 5.2 submissions to the same statistical programming task. Three
+submissions did not run, while several others produced plausible-looking but
+catastrophically wrong results.
 
-::: columns
-::: {.column width="55%"}
-::: incremental
--   LLMs (Claude, ChatGPT, Gemini) write R, derive integrals, and explain
-    statistics — use them; they will make you faster
--   But they are *confident*: they hallucinate functions, invent citations,
-    and make subtle statistical errors that look completely right
--   AI raises the **ceiling** of what you can build, but you still need a
-    **floor** — enough understanding to prompt well, verify output, and
-    notice when the answer is wrong
--   The computing, calculus, and probability in this course are exactly the
-    skills that let you *supervise* the machine instead of trusting it
-:::
-:::
+**Assets:**
 
-::: {.column width="45%"}
-![](images/ai-confident-wrong.png)
-:::
-:::
+- `images/rmse.png`
+- `images/bias.png`
 
-::: fragment
-The goal isn't to beat AI at arithmetic — it's to ask the right question
-and know when the answer is wrong.
-:::
-```
-
-**Asset needed:** one screenshot of a confidently-wrong AI answer
-(`images/ai-confident-wrong.png`) — ideally a stats/base-rate example.
-TODO: produce a reproducible example.
+Both slides cite [Perrett, Elliott, Hill, and Scott (2026), *Flaws in the LLM
+Automation Narrative*](https://arxiv.org/abs/2606.11166). The figures replace
+the now-removed `images/ai-confident-wrong.png` mockup and provide a concrete,
+real-world example of why statistical and programming knowledge remains
+necessary when using LLMs.
 
 ---
 
@@ -230,8 +216,8 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 
 ## 7. Implementation checklist
 
-- [x] L1: add "Programming and Statistics in the Age of AI" slide after *SMaC: Why Bother?*
-- [x] L1: create `images/ai-confident-wrong.png` asset (base-rate confidently-wrong chat mockup; wired into the slide as a two-column layout)
+- [x] L1: add "Programming and Statistics in the Age of AI" slides after *SMaC: Why Bother?*
+- [x] L1: replace the mock AI image with `images/rmse.png` and `images/bias.png`, showing actual ChatGPT Codex 5.2 results and citing Perrett et al. (2026)
 - [x] L2: replace *Motion in a Straight Line* with the *A Cruel Joke* + *Setting Up the Equation of Motion* arc (include the light-flash sensor detail)
 - [x] L2: add simulated Moon-drop data plot
 - [x] L2: reinterpret the existing derivative slides' constants as `g`
@@ -287,3 +273,51 @@ visceral: their own reaction time *is* the noise.
   the L2 narrative; reconcile with the OLS-on-position framing used in L6.
 - **Scope**: MVP = single drop, click-to-time, CSV export. Stretch = class
   pooling, latency calibration, adjustable tower height / gravity.
+
+---
+
+## 9. Separate read and show lecture decks
+
+Create two versions of each lecture deck for different purposes:
+
+- **Read version** — a self-contained deck with the explanatory prose needed to
+  understand the material without an instructor present. These decks will be
+  posted online for students to read and review.
+- **Show version** — a presentation-first deck with almost no explanatory text.
+  It should contain only images, plots, computer code, and equations, with
+  concise labels where essential. Every externally sourced image, plot, or
+  factual visual must include a proper reference.
+
+For Lecture 1, replace `01-lecture/01-Lecture.qmd` with:
+
+- `01-lecture/01-lecture-read.qmd`
+- `01-lecture/01-lecture-show.qmd`
+
+Use the same `-read.qmd` and `-show.qmd` naming convention when this structure
+is propagated to the remaining lectures. The current deck should serve as the
+starting point for the read version; the show version should then be distilled
+from it rather than independently rewritten.
+
+### Implementation considerations
+
+- Keep code, equations, data, and local assets synchronized between the two
+  versions so corrections do not drift apart.
+- Decide whether shared content should use Quarto includes or another common
+  source mechanism before duplicating substantial executable code.
+- Update internal links, website navigation, and render/publish configuration
+  to point students to the read versions.
+- Render both variants and verify that all plots, code, equations, citations,
+  and local asset paths work independently.
+- After migration, remove `01-lecture/01-Lecture.qmd` so there is a single,
+  unambiguous source for each variant.
+
+### Read/show implementation checklist
+
+- [ ] Choose and document the shared-content strategy.
+- [ ] Create `01-lecture/01-lecture-read.qmd` from the current Lecture 1 deck.
+- [ ] Create the minimal-text `01-lecture/01-lecture-show.qmd` presentation deck.
+- [ ] Audit every image and plot in the show deck for a proper reference.
+- [ ] Update links and Quarto render/publish configuration for the read deck.
+- [ ] Render and review both Lecture 1 variants.
+- [ ] Remove the superseded `01-lecture/01-Lecture.qmd`.
+- [ ] Propagate the read/show structure to Lectures 2–8.
