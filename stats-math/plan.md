@@ -66,7 +66,7 @@ x(t) = ½ · g · t²
 ## 2. Requested change A — Lecture 1: "Programming and Statistics in the Age of AI"
 
 **Placement:** right after *SMaC: Why Bother?*
-[`01-lecture/01-Lecture.qmd:342`](01-lecture/01-Lecture.qmd) — it extends
+[`01-lecture/01-lecture-read.qmd`](01-lecture/01-lecture-read.qmd) — it extends
 "why learn this?" into "why learn this when AI can do it?" and ties back to the
 existing *Some Mistakes Are Silly / Deadly* thread (humans err; now machines err
 *confidently, at scale*).
@@ -177,7 +177,7 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 
 - Typos across decks:
   - "pricical" → "principal" ([`02-lecture/02-Lecture.qmd:212`](02-lecture/02-Lecture.qmd))
-  - "Bionomial" → "Binomial" ([`01-lecture/01-Lecture.qmd:531`](01-lecture/01-Lecture.qmd))
+  - "Bionomial" → "Binomial" (L1)
   - "Intergration" / "Ingegration" → "Integration" (L3)
   - "informative true prior" repeated 3× in the L1 IRT slide
 - Optional high-value addition: a recurring **"verify the AI"** micro-beat
@@ -298,12 +298,25 @@ is propagated to the remaining lectures. The current deck should serve as the
 starting point for the read version; the show version should then be distilled
 from it rather than independently rewritten.
 
+### Shared-content strategy
+
+The **read deck is the canonical, self-contained source**. The show deck is a
+separately curated presentation rather than an automatically stripped version
+of the read deck; automatic prose removal was rejected because it produces
+broken column layouts, orphaned citations, and unreadable slides.
+
+Both versions share the same `images/`, `data/`, bibliography, and other local
+assets. Substantive changes begin in the read deck and must be synchronized into
+the show deck during review. Each synchronization ends by rendering both decks
+and checking code, equations, data assumptions, asset paths, and citations.
+As repeated executable sections are revised, move them into Quarto includes only
+when the same complete block can be reused without compromising either deck's
+layout.
+
 ### Implementation considerations
 
 - Keep code, equations, data, and local assets synchronized between the two
   versions so corrections do not drift apart.
-- Decide whether shared content should use Quarto includes or another common
-  source mechanism before duplicating substantial executable code.
 - Update internal links, website navigation, and render/publish configuration
   to point students to the read versions.
 - Render both variants and verify that all plots, code, equations, citations,
@@ -313,11 +326,11 @@ from it rather than independently rewritten.
 
 ### Read/show implementation checklist
 
-- [ ] Choose and document the shared-content strategy.
-- [ ] Create `01-lecture/01-lecture-read.qmd` from the current Lecture 1 deck.
-- [ ] Create the minimal-text `01-lecture/01-lecture-show.qmd` presentation deck.
-- [ ] Audit every image and plot in the show deck for a proper reference.
-- [ ] Update links and Quarto render/publish configuration for the read deck.
-- [ ] Render and review both Lecture 1 variants.
-- [ ] Remove the superseded `01-lecture/01-Lecture.qmd`.
+- [x] Choose and document the shared-content strategy.
+- [x] Create `01-lecture/01-lecture-read.qmd` from the current Lecture 1 deck.
+- [x] Create the minimal-text `01-lecture/01-lecture-show.qmd` presentation deck.
+- [x] Audit every image and plot in the show deck for a proper reference.
+- [x] Update links and Quarto render/publish configuration for the read deck.
+- [x] Render and review both Lecture 1 variants.
+- [x] Remove the superseded `01-lecture/01-Lecture.qmd`.
 - [ ] Propagate the read/show structure to Lectures 2–8.
