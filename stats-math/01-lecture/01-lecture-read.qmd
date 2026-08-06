@@ -145,25 +145,24 @@ $$
 
 ## Some Mistakes Are Silly
 
-::: columns
+::: {.columns style="align-items: center;"}
 ::: {.column width="33%"}
 ::: fragment
-\
 ![](images/nikki-haley.jpg){width="386"}
 :::
 :::
 
 ::: {.column width="33%"}
 ::: fragment
-\
 ![](images/bill-gates-sharks.png){width="557"}
 :::
 :::
 
 ::: {.column width="34%"}
 ::: fragment
-\
+::: {style="margin-top: 1.6rem;"}
 {{< video src="images/huberman-probability.mp4" >}}
+:::
 :::
 :::
 :::
@@ -331,7 +330,7 @@ Source: [The New York Times, March 9, 2021](https://www.nytimes.com/2021/03/09/u
 ## SMaC: Why Bother?
 
 ::: columns
-::: {.column width="47.5%"}
+::: {.column width="60%"}
 ::: {.incremental style="font-size: 80%;"}
 -   Programming: a cheap way to do experiments and a lazy way to do math
 -   Differential calculus: optimize functions, Frequentist statistics
@@ -342,11 +341,8 @@ Source: [The New York Times, March 9, 2021](https://www.nytimes.com/2021/03/09/u
 :::
 :::
 
-::: {.column width="5%"}
-:::
-
-::: {.column width="47.5%"}
-![](images/dowhat.jpg){height="550"}
+::: {.column width="40%"}
+![](images/dowhat.jpg){height="520"}
 :::
 :::
 
@@ -510,9 +506,57 @@ nd %>%
 :::
 :::
 
+## Probabilistic Programming {.smaller}
+
+::: columns
+::: {.column width="44%"}
+::: {style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; align-items: center;"}
+::: {style="text-align: center;"}
+![](images/logo-stan.png){fig-align="center" height="125"}
+:::
+
+::: {style="text-align: center;"}
+![](images/logo-pymc.png){fig-align="center" width="180"}
+:::
+
+::: {style="text-align: center;"}
+![](images/logo-jax.png){fig-align="center" width="150"}
+:::
+
+::: {style="text-align: center;"}
+![](images/logo-numpyro.png){fig-align="center" height="105"}
+
+**NumPyro**
+:::
+:::
+:::
+
+::: {.column width="56%"}
+::: incremental
+-   A probabilistic program specifies a forward generative process using random variables and data.
+
+-   Unknown parameters $\theta$ (RVs) are represented explicitly; observed data $x$ and measurements $y$ condition the model.
+
+-   An inference engine uses the model to solve the inverse problem (perform inference) without requiring a separate hand-derived solution for every model.
+
+-   Model specification is separated from algorithms such as numerical optimization (MLE), Hamiltonian Monte Carlo, and variational inference.
+
+-   R, Python, Julia are not probabilistic programming languages.
+:::
+:::
+:::
+
+::: footer
+Logo assets: [Stan](https://github.com/stan-dev/logos), [PyMC](https://github.com/pymc-devs/pymc/tree/main/docs/logos), [JAX](https://github.com/jax-ml/jax/tree/main/docs/_static), and [NumPyro](https://github.com/pyro-ppl/numpyro/tree/master/docs/source/_static/img).
+:::
+
 ## Example: Linear Regression {.smaller}
 
 Notice a Linear Algebra notation $X \beta$, which is matrix-vector multiplication. <br>
+
+::: {.columns style="align-items: flex-start; gap: 1.2rem; font-size: 80%;"}
+::: {.column width="49%"}
+### Stan
 
 ```{stan output.var="model0"}
 #| echo: true
@@ -529,16 +573,50 @@ parameters {
   real<lower=0> sigma;  // error scale
 }
 model {
-  y ~ normal(X * beta + alpha, sigma);  // likelihood
+  // parameters with Normal(0, 1) priors
+  alpha ~ normal(0, 1);
+  beta ~ normal(0, 1);
+
+  // sigma with Exp(1) prior
+  sigma ~ exponential(1);
+
+  // likelihood: y ~ normal(X * beta + alpha, sigma)
+  y ~ normal(X * beta + alpha, sigma);
 }
 ```
+:::
+
+::: {.column width="49%"}
+### NumPyro
+
+```python
+import numpyro
+import numpyro.distributions as dist
+
+
+def model(X, y=None):
+    N, K = X.shape
+
+    # parameters with Normal(0, 1) priors
+    alpha = numpyro.sample("alpha", dist.Normal(0.0, 1.0))
+    beta = numpyro.sample("beta", dist.Normal(0.0, 1.0).expand([K]))
+
+    # sigma with Exp(1) prior
+    sigma = numpyro.sample("sigma", dist.Exponential(1.0))
+
+    # likelihood: y ~ normal(X * beta + alpha, sigma)
+    mu = X @ beta + alpha
+    numpyro.sample("y", dist.Normal(mu, sigma), obs=y)
+```
+:::
+:::
 
 ::: footer
-Linear Regression in Stan. Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/linear-regression.html)
+Equivalent linear regression models. Sources: [Stan User's Guide](https://mc-stan.org/docs/stan-users-guide/linear-regression.html) and [NumPyro documentation](https://num.pyro.ai/en/stable/).
 :::
 
 ::: aside
-Stan is a probabilistic programming language. You write your data-generating process (model), and Stan performs inference for all the unknowns.
+Stan and NumPyro are probabilistic programming systems. You write the data-generating process, and the system performs inference for the unknown parameters.
 :::
 
 ## Example: Binomial Regression {.smaller}
@@ -607,6 +685,15 @@ model {
 }
 ```
 
+$$
+\begin{eqnarray*}
+\text{BernoulliLogit}(y~|~\theta) & = &
+\text{Bernoulli}(y~|~\text{logit}^{-1}(\theta)) \\[6pt] & = &
+\left(\text{logit}^{-1}(\theta)\right)^y
+\left(1-\text{logit}^{-1}(\theta)\right)^{1-y}
+\end{eqnarray*}
+$$
+
 ::: footer
 1PL item-response model. Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/item-response-models.html)
 :::
@@ -667,13 +754,23 @@ Download [R](https://www.r-project.org/), Download [RStudio](https://www.rstudio
 :::
 :::
 
-## Hands-On: Very Basics {.smaller}
+## R Documentation
+
+```{r}
+#| echo: true
+#| eval: false
+
+?mean # same as help(mean)
+```
+
+![](images/r-help.png){fig-align="center" height="500"}
+
+## Hands-On: Very Basics 1/2 {.smaller}
 
 ::: columns
 ::: {.column width="47.5%"}
 ```{r}
 #| echo: true
-
 2 + 3
 10^3
 10 - 5 / 2
@@ -698,26 +795,81 @@ die <- seq(1, 6, by = 1)
 die
 length(die)
 str(die)
+die[1]
+die[c(1, 6)]
+die > 3
+die[die > 3]
 sum(die)
 prod(die)
+```
+:::
+:::
+
+## Hands-On: Very Basics 2/2 {.smaller}
+
+::: columns
+::: {.column width="47.5%"}
+```{r}
+#| echo: true
 mean(die)
 sum(die) / length(die)
 median(die)
 sd(die)
+scores <- c(2, 4, NA, 8)
+mean(scores)
+mean(scores, na.rm = TRUE)
 ```
 :::
+
+::: {.column width="5%"}
 :::
 
-## R Documentation
-
+::: {.column width="47.5%"}
 ```{r}
 #| echo: true
-#| eval: false
-
-?mean # same as help(mean)
+fib <- function(n) {
+  if (n == 0) {
+    return(0)
+  } else if (n == 1) {
+    return(1)
+  } else {
+    return(fib(n - 1) + fib(n - 2))
+  }
+}
+fib10 <- 0:9 |> purrr::map_int(fib)
+print(fib10)
+fib10[0]
+fib10[1]
+fib10[2:5]
+fib10[-6]
 ```
+:::
+:::
 
-![](images/r-help.png){fig-align="center" height="500"}
+
+
+## Leonardo da Pisa {.smaller}
+
+::: {.illustration-center}
+::: {.columns style="align-items: center;"}
+::: {.column width="34%"}
+![](images/leonardo-da-pisa.jpg){fig-align="center" height="430"}
+:::
+
+::: {.column width="6%"}
+:::
+
+::: {.column width="60%"}
+::: {style="font-size: 105%; line-height: 1.35;"}
+> A man put one pair of rabbits in a certain place entirely surrounded by a wall. How many pairs of rabbits can be produced from that pair in a year, if the nature of these rabbits is such that every month each pair bears a new pair which from the second month on becomes productive?
+:::
+:::
+:::
+:::
+
+::: footer
+Quote: Leonardo da Pisa, *Liber Abaci* (1202), translated by L. E. Sigler (Springer, 2002), pp. 404–405. Retrospective portrait from [*I benefattori dell'umanità*, vol. VI (1850)](https://commons.wikimedia.org/wiki/File:Fibonacci2.jpg), public domain.
+:::
 
 ## Your Turn {.smaller}
 
@@ -1245,16 +1397,81 @@ p + geom_point(aes(color = inside)) + theme(legend.position = "none")
 
 ### Estimate
 
-```{r}
-#| echo: true
-cat("Estimated value of pi =", 4*sum(inside) / n)
-```
+```{ojs}
+//| echo: false
+viewof n = {
+  const form = html`<form style="display: flex; align-items: center; justify-content: flex-start; gap: 0.8rem; width: 780px; max-width: 100%; box-sizing: border-box; padding-left: 8px; margin: 0.2rem auto 0.7rem;">
+    <label for="pi-draws" style="font-size: 0.65em; white-space: nowrap;">Number of draws, <i>n</i></label>
+    <input id="pi-draws" type="range" min="0" max="10" step="1" value="3" style="flex: 1; min-width: 0;">
+    <output style="font-size: 0.65em; min-width: 5.5em; text-align: left;"></output>
+  </form>`;
 
-::: fragment
-```{r}
-knitr::kable(data[1:5, ], label = "First 5 rows of the data table")
+  const slider = form.querySelector("input");
+  const output = form.querySelector("output");
+  const update = () => {
+    form.value = 100 * 2 ** Number(slider.value);
+    output.value = form.value.toLocaleString();
+  };
+
+  slider.addEventListener("input", update);
+  update();
+  return form;
+}
+
+piSimulation = {
+  const size = 320;
+  const padding = 8;
+  const span = size - 2 * padding;
+  const pixelRatio = window.devicePixelRatio || 1;
+  const canvas = DOM.canvas(size * pixelRatio, size * pixelRatio);
+  canvas.style.width = `${size}px`;
+  canvas.style.height = `${size}px`;
+
+  const context = canvas.getContext("2d");
+  context.scale(pixelRatio, pixelRatio);
+  context.fillStyle = "#ffffff";
+  context.fillRect(padding, padding, span, span);
+
+  let inside = 0;
+  const dotSize = n <= 5000 ? 2 : 1;
+
+  for (let i = 0; i < n; i++) {
+    const x = 2 * Math.random() - 1;
+    const y = 2 * Math.random() - 1;
+    const isInside = x * x + y * y < 1;
+    inside += isInside;
+
+    context.fillStyle = isInside
+      ? "rgba(25, 135, 84, 0.65)"
+      : "rgba(220, 53, 69, 0.65)";
+    context.fillRect(
+      padding + (x + 1) * span / 2,
+      padding + (1 - y) * span / 2,
+      dotSize,
+      dotSize
+    );
+  }
+
+  context.strokeStyle = "#222222";
+  context.lineWidth = 1;
+  context.strokeRect(padding, padding, span, span);
+  context.beginPath();
+  context.arc(size / 2, size / 2, span / 2, 0, 2 * Math.PI);
+  context.stroke();
+
+  const estimate = 4 * inside / n;
+
+  return html`<div style="display: grid; grid-template-columns: 340px 1fr; align-items: center; gap: 1.4rem; max-width: 780px; margin: 0 auto;">
+    <div>${canvas}</div>
+    <div style="text-align: center;">
+      <div style="font-size: 0.65em;">Monte Carlo estimate</div>
+      <div style="font-size: 2.2em; font-weight: 600; line-height: 1.15;">${estimate.toFixed(5)}</div>
+      <div style="font-size: 0.55em; margin-top: 0.4rem;">${inside.toLocaleString()} of ${n.toLocaleString()} points inside</div>
+      <div style="font-size: 0.5em; margin-top: 0.5rem;"><span style="color: #198754;">● inside</span>&nbsp;&nbsp;<span style="color: #dc3545;">● outside</span></div>
+    </div>
+  </div>`;
+}
 ```
-:::
 :::
 
 

@@ -1,10 +1,36 @@
 ---
-title: "SMaC: Statistics, Math, and Computing (Show)"
+title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
 author: "Eric.Novik@nyu.edu | Summer 2026 | Session 1"
 format:
   revealjs:
     theme: ../../custom.scss
+    include-in-header:
+      text: |
+        <style>
+        .reveal .slides section.slide.level2 > h2 {
+          display: none;
+        }
+
+        .reveal .slides section.slide.level2[id^="hands-on"] > h2,
+        .reveal .slides section.slide.level2[id^="your-turn"] > h2 {
+          display: block;
+        }
+
+        .smac-why-grid p,
+        .smac-why-grid img {
+          margin: 0;
+        }
+
+        .smac-why-grid img {
+          display: block;
+        }
+
+        .reveal:has(.slides section.clean-slide.present) .footer.footer-default,
+        .reveal:has(.slides section.clean-slide.present) .slide-number {
+          display: none !important;
+        }
+        </style>
     scrollable: true
     slide-number: true
     chalkboard:
@@ -26,6 +52,7 @@ library(readr)
 library(scales)
 library(HistData)
 library(lubridate)
+#library(MASS)
 
 theme_set(
   theme_minimal() +
@@ -72,17 +99,23 @@ launch_index <- which.min(abs(oring_fit$temp - 36))
 launch_failures <- oring_fit$mean_failures[launch_index]
 ```
 
-## Course Objectives
+$$
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\P}{\mathbb{P}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\L}{\mathscr{L}}
+\DeclareMathOperator{\I}{\text{I}}
+$$
+
+##
+
+<br>
 
 ::: columns
 ::: {.column width="60%"}
 > “If you want to be a writer, you must do two things above all others: read a lot and write a lot. There's no way around these two things that I'm aware of, no shortcut.”
 >
 > — Stephen King, *On Writing: A Memoir of the Craft*
-
-::: {.fragment style="font-size: 90%;"}
-**Read code. Write code. Check code.**
-:::
 
 [Course syllabus (PDF)](../syllabus.pdf)
 :::
@@ -96,777 +129,1483 @@ Photo: [Kevin Payravi / WikiPortraits](https://commons.wikimedia.org/wiki/File:S
 :::
 :::
 
-## Course Format
+## Course format
+
+<br>
+<br>
+
+::: {.illustration-center}
+::: columns
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-calendar-week.svg){fig-align="center" width="105"}
+
+::: {style="font-size: 145%;"}
+**2 × 5 days**
+:::
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-chat-dots.svg){fig-align="center" width="105"}
+
+::: {style="font-size: 145%;"}
+**30 min**
+:::
+questions
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-easel.svg){fig-align="center" width="105"}
+
+::: {style="font-size: 145%;"}
+**90 min**
+:::
+lecture
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-laptop.svg){fig-align="center" width="105"}
+
+::: {style="font-size: 145%;"}
+**60 min**
+:::
+code
+:::
+:::
+:::
+:::
+
+::: footer
+Icons: [Bootstrap Icons](https://icons.getbootstrap.com/), MIT License.
+:::
+
+## Course outline
+
+ <br>
+ <br>
+
+::: {.illustration-center}
+```{r}
+#| echo: false
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 5.6
+#| out-width: 100%
+
+accent <- "#5C5CFF"
+ink <- "#222222"
+bg <- "#f0f1eb"
+old_par <- par(mfrow = c(2, 4), mar = c(0.5, 0.5, 1.8, 0.5), bg = bg)
+panel_title <- function(label) mtext(label, side = 3, line = 0.2, font = 2, cex = 1.05, col = ink)
+
+# Programming
+plot.new(); panel_title("program")
+text(0.5, 0.55, "f <- function(x)", family = "mono", cex = 1.15, col = ink)
+
+# Differentiation
+x <- seq(-1.2, 1.2, length.out = 200)
+plot(x, x^2, type = "l", axes = FALSE, xlab = "", ylab = "", lwd = 2.4, col = ink); panel_title("differentiate")
+abline(a = -1, b = 2, col = accent, lwd = 2.4)
+points(1, 1, pch = 16, col = accent, cex = 1.1)
+text(-0.72, 1.15, "d/dt", cex = 1.15, col = ink)
+
+# Integration
+z <- seq(-3, 3, length.out = 300); dz <- dnorm(z)
+plot(z, dz, type = "l", axes = FALSE, xlab = "", ylab = "", lwd = 2.4, col = ink); panel_title("integrate")
+keep <- z >= 0
+polygon(c(0, z[keep], 3), c(0, dz[keep], 0), col = adjustcolor(accent, 0.28), border = NA)
+lines(z, dz, lwd = 2.4, col = ink)
+text(-2.15, 0.31, expression(integral(f(x) * dx)), cex = 1.05, col = ink)
+
+# Probability
+plot.new(); panel_title("probability")
+rect(0.16, 0.28, 0.50, 0.72, border = ink, lwd = 2.2)
+points(c(0.25, 0.41, 0.25, 0.41), c(0.38, 0.38, 0.62, 0.62), pch = 16, cex = 1.2, col = accent)
+curve(dnorm(x, 0.72, 0.09) * 0.11 + 0.25, from = 0.53, to = 0.92, add = TRUE, lwd = 2.2, col = ink)
+
+# Linear algebra
+plot.new(); panel_title("solve")
+text(0.5, 0.57, expression(bold(X) * beta == bold(y)), cex = 1.7, col = ink)
+text(0.5, 0.34, expression(hat(beta) == (bold(X)^T * bold(X))^{-1} * bold(X)^T * bold(y)), cex = 0.95, col = accent)
+
+# Data
+plot.new(); panel_title("explore")
+for (i in 0:4) segments(0.18, 0.25 + i * 0.11, 0.82, 0.25 + i * 0.11, col = if (i == 4) ink else "#999999", lwd = if (i == 4) 2 else 1)
+for (i in 0:3) segments(0.18 + i * 0.21, 0.25, 0.18 + i * 0.21, 0.69, col = if (i == 0) ink else "#999999", lwd = if (i == 0) 2 else 1)
+points(c(0.30, 0.50, 0.71), c(0.36, 0.56, 0.45), pch = 16, cex = 1.2, col = accent)
+
+# Simulation
+set.seed(42)
+plot(runif(90), runif(90), axes = FALSE, xlab = "", ylab = "", pch = 16, cex = 0.65, col = adjustcolor(ink, 0.68)); panel_title("simulate")
+points(runif(12), runif(12), pch = 16, cex = 0.8, col = accent)
+
+# Regression
+set.seed(7); rx <- seq(0, 1, length.out = 32); ry <- 0.18 + 0.68 * rx + rnorm(32, 0, 0.09)
+plot(rx, ry, axes = FALSE, xlab = "", ylab = "", pch = 16, col = ink); panel_title("model")
+abline(lm(ry ~ rx), col = accent, lwd = 2.6)
+
+par(old_par)
+```
+:::
+
+## Session 1 outline
+
+<br>
+
+::: {.illustration-center}
+::: columns
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-binoculars.svg){fig-align="center" width="82"}
+
+**Big picture**
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-laptop.svg){fig-align="center" width="82"}
+
+**Environment**
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-folder-open.svg){fig-align="center" width="82"}
+
+**R project**
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-terminal.svg){fig-align="center" width="82"}
+
+**R console**
+:::
+:::
+:::
 
 ::: columns
-::: {.column width="33%"}
-### 2 weeks
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-code-slash.svg){fig-align="center" width="82"}
 
-5 days/week
+**Syntax**
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-database.svg){fig-align="center" width="82"}
+
+**Data**
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-graph-up.svg){fig-align="center" width="82"}
+
+**Graphics**
+:::
+:::
+
+::: {.column width="25%"}
+::: {style="text-align: center;"}
+![](images/icon-dice.svg){fig-align="center" width="82"}
+
+**Monte Carlo**
+:::
+:::
+:::
+:::
+
+::: footer
+Icons: [Bootstrap Icons](https://icons.getbootstrap.com/), MIT License.
+:::
+
+## Some mistakes are silly
+
+<br>
+<br>
+
+::: {.columns style="align-items: center;"}
+::: {.column width="33%"}
+::: fragment
+![](images/nikki-haley.jpg){width="386"}
+:::
 :::
 
 ::: {.column width="33%"}
-### 3 hours/day
-
-Questions → lecture → practice
+::: fragment
+![](images/bill-gates-sharks.png){width="557"}
+:::
 :::
 
 ::: {.column width="34%"}
-### Computational
-
-Many small programs
+::: fragment
+::: {style="margin-top: 1.6rem;"}
+{{< video src="images/huberman-probability.mp4" >}}
 :::
 :::
-
-## Course Map {.smaller}
-
-::: columns
-::: {.column width="50%"}
-- **R + data**
-- **Differentiation + optimization**
-- **Integration + probability**
-- **Discrete + continuous distributions**
 :::
-
-::: {.column width="50%"}
-- **Linear algebra**
-- **Simulation**
-- **Statistical inference**
-- **Linear regression**
-:::
-:::
-
-::: {.fragment style="text-align: center; font-size: 115%;"}
-**model → compute → visualize → verify**
-:::
-
-## Session 1
-
-::: incremental
-1. Why SMaC?
-2. R objects and syntax
-3. Data frames and plots
-4. Loops and functions
-5. Monte Carlo simulation
 :::
 
 ## Some Mistakes Are Deadly
 
-::: {style="text-align: center; font-size: 120%;"}
-**Challenger · January 28, 1986**
-:::
-
-::: {.fragment style="text-align: center;"}
-7 crew members · 36°F at launch · O-ring thermal distress
-:::
-
-::: {.fragment style="text-align: center; font-size: 125%;"}
-**What did the data say before launch?**
-:::
-
-::: footer
-Sources: [NASA, STS-51L mission](https://www.nasa.gov/mission/sts-51l/) and @fowlkes1989.
-:::
-
-## Challenger O-Rings {.smaller}
+On January 28, 1986, shortly after launch, Shuttle Challenger exploded, killing all seven crew members.
 
 ::: panel-tabset
-### Evidence
+### O-Ring Data
 
 ::: columns
-::: {.column width="52%"}
+::: {.column width="50%"}
 ```{r}
-#| echo: false
-#| fig-width: 5.2
-#| fig-height: 4.2
+#| fig-width: 5
+#| fig-height: 3.5
 
-ggplot(oring, aes(temp, n_distress)) +
-  geom_point(size = 2) +
-  scale_y_continuous(breaks = 0:2) +
-  labs(
-    x = "Launch temperature (°F)",
-    y = "Distressed O-rings",
-    title = "Pre-Challenger launches"
-  )
+library(ggplot2)
+library(scales)
+
+# Challenger O-Ring data
+file <- "https://archive.ics.uci.edu/ml/machine-learning-databases/space-shuttle/o-ring-erosion-only.data"
+
+d <- readr::read_table(file, col_names = FALSE)
+colnames(d) <- c("n_rings", "n_distress", "temp", "psi", "flight_order")
+
+p <- ggplot(d, aes(temp, n_distress))
+p + geom_point() + xlab("Temperature at launch (F)") + ylab("") +
+  ggtitle("Challenger Space Shuttle O-Ring Data",
+          subtitle = "Number of O-rings experiencing thermal distress") +
+  scale_y_continuous(breaks = c(0, 1, 2))
 ```
 :::
 
-::: {.column width="48%"}
-$$
-Y_i \sim \operatorname{Binomial}(6, p_i)
-$$
-
-$$
-\operatorname{logit}(p_i) = \alpha + \beta T_i
-$$
-
-::: {.fragment style="text-align: center; font-size: 115%;"}
-**Extrapolate to 36°F**
-:::
+::: {.column width="50%"}
+![](images/o-rings.png)
 :::
 :::
 
-### Model
+### Binomial Model
 
+::: columns
+::: {.column width="50%"}
 ```{r}
-#| echo: false
-#| fig-width: 8.5
-#| fig-height: 4.1
-#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3.5
 
-ggplot(oring_fit, aes(temp, mean_failures)) +
-  geom_line(color = "red", linewidth = 0.7) +
-  geom_point(data = oring, aes(temp, n_distress), inherit.aes = FALSE) +
-  geom_point(x = 36, y = launch_failures, color = "blue", size = 3) +
-  annotate(
-    "text", x = 50, y = launch_failures,
-    label = paste("Expected failures at 36°F ≈", round(launch_failures)),
-    color = "blue", size = 4
+library(dplyr)
+library(readr)
+
+library(rstanarm)
+d <- d %>%
+  mutate(not_in_distress = n_rings - n_distress)
+
+# $$
+# \begin{eqnarray*}
+# \text{BinomialLogit}(n~|~N,\alpha) & = &
+# \text{Binomial}(n~|~N,\text{logit}^{-1}(\alpha)) \\[6pt] & = &
+# \binom{N}{n} \left( \text{logit}^{-1}(\alpha) \right)^{n}  \left( 1 -
+# \text{logit}^{-1}(\alpha) \right)^{N - n}
+# \end{eqnarray*}
+# $$
+
+# or_model <- stan_glm(
+#   cbind(n_distress, not_in_distress) ~ temp,
+#   data = d,
+#   family = binomial(link = "logit"),
+#   cores = 4
+# )
+# temps <- seq(30, 81, len = 100)
+# newdata <-
+#   tibble(
+#     temp = temps,
+#     n_distress = rep(0, 100),
+#     not_in_distress = rep(6, 100)
+# )
+# y_epred <- posterior_epred(or_model, newdata)
+# write_rds(y_epred, file = "data/oring_epred.rds")
+
+y_pred <- read_rds("data/oring_pred.rds")
+y_epred <- read_rds("data/oring_epred.rds")
+
+temps <- seq(30, 81, len = 100)
+y_expected <- y_epred * 6 # expectation of the binomial Np, N=6
+mean_failures <- colMeans(y_expected)
+pred <- tibble(mean_failures, temp = temps)
+temp_at_launch <- 36
+idx <- which.min(abs(pred$temp - 36))
+expected_fails_at_launch <- pred$mean_failures[idx]
+
+p <- ggplot(pred, aes(temp, n_distress))
+p + xlab("Temperature at launch (F)") + ylab("") +
+  geom_line(
+    aes(x = temp, y = mean_failures),
+    linewidth = 0.2,
+    color = 'red'
   ) +
-  labs(x = "Launch temperature (°F)", y = "Distressed O-rings")
+  geom_point(
+    x = temp_at_launch,
+    y = expected_fails_at_launch,
+    color = 'blue',
+    size = 2
+  ) +
+  geom_point(
+    data = d,
+    aes(x = temp, y = n_distress)
+  ) +
+  annotate("segment", x = temp_at_launch + 10, xend = temp_at_launch + 1,
+             y = expected_fails_at_launch, yend = expected_fails_at_launch,
+           colour = "blue", size = 0.2, arrow = arrow(type = "closed",
+                                                      length = unit(0.1, "inches"))) +
+  annotate("text", x = temp_at_launch + 24,
+           y = expected_fails_at_launch,
+           label = paste("Expected number of failures at launch = ",
+                         round(expected_fails_at_launch)),
+           size = 3, color = 'blue') +
+  ggtitle("Challenger Space Shuttle O-Ring Data",
+          subtitle = "Number of O-rings experiencing thermal distress")
+
 ```
-
-### Risk at Launch
-
-::: columns
-::: {.column width="50%"}
-::: {style="text-align: center; font-size: 170%;"}
-**`r round(mean(y_pred[, 7] > 0), 2)`**
 :::
 
-Probability of **≥ 1** damaged O-ring
-:::
+::: column
+-   Probability of *1 or more* rings being damaged at launch is about **`r round(mean(y_pred[, 7] > 0), 2)`**
 
-::: {.column width="50%"}
-::: {style="text-align: center; font-size: 170%;"}
-**`r round(mean(y_pred[, 7] == 6), 2)`**
-:::
-
-Probability of **all 6** damaged O-rings
+-   Probability of *all 6 rings* being damaged at launch is about **`r round(mean(y_pred[, 7] == 6), 2)`**
 :::
 :::
 
-### Sources
+### References
 
-- Data: [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/92/challenger+usa+space+shuttle+o+ring)
-- Pre-launch analysis: @fowlkes1989
-- Failure risk: @martz1992
+-   @fowlkes1989: Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure.
+
+-   @martz1992: The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.
 :::
 
 ::: footer
-Data: [UCI Challenger O-ring dataset](https://archive.ics.uci.edu/dataset/92/challenger+usa+space+shuttle+o+ring). Model draws: local `data/oring_epred.rds` and `data/oring_pred.rds`.
+Data source: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Challenger+USA+Space+Shuttle+O-Ring)
 :::
 
-## Allan McDonald
+## Allan McDonald dies at 83
 
+<br>
+<br>
+
+::: {.illustration-center}
 ::: columns
 ::: {.column width="50%"}
-![](images/mcdonald.png){fig-align="center" height="400"}
+::: fragment
+![](images/mcdonald.png){fig-align="center" height="340"}
+:::
 :::
 
 ::: {.column width="50%"}
-![](images/hearing.png){fig-align="center" height="400"}
+::: fragment
+![](images/hearing.png){fig-align="center" height="340"}
 :::
 :::
-
-::: {.fragment style="text-align: center; font-size: 105%;"}
-**Analysis must be communicated.**
+:::
 :::
 
 ::: footer
-Images and reporting: [The New York Times, “Allan McDonald, Who Refused to Approve Shuttle Launch, Dies at 83,” March 9, 2021](https://www.nytimes.com/2021/03/09/us/allan-mcdonald-dead.html).
+Source: [The New York Times, March 9, 2021](https://www.nytimes.com/2021/03/09/us/allan-mcdonald-dead.html)
 :::
 
-## SMaC: Why Bother?
+## SMaC: Why bother?
 
-::: columns
-::: {.column width="50%"}
-- **Programming** → experiments
-- **Calculus** → change + optimization
-- **Linear algebra** → many equations
+<br>
+<br>
+
+::: {.illustration-center}
+::: {.smac-why-grid style="min-height: 500px; display: flex; flex-wrap: wrap; align-content: center; align-items: center; justify-content: center; gap: 1.25rem 2rem; max-width: 1040px; margin: 0 auto;"}
+::: {style="width: 470px; height: 205px; display: flex; align-items: center; justify-content: center;"}
+![](images/monte-carlo-estimate.png){style="width: auto; height: 200px; max-width: 100%; object-fit: contain;"}
 :::
 
-::: {.column width="50%"}
-- **Probability** → population → sample
-- **Statistics** → sample → population
-- **Communication** → decisions
-:::
+::: {style="width: 220px; height: 205px; display: flex; align-items: center; justify-content: center;"}
+![](images/ronald-fisher.jpg){style="width: 200px; height: 200px; object-fit: cover; object-position: center 18%; border-radius: 50%;"}
 :::
 
-## One Moon Drop, Many Tools
-
-::: {style="text-align: center; font-size: 150%;"}
-$$x(t) = \tfrac{1}{2}gt^2$$
+::: {style="width: 220px; height: 205px; display: flex; align-items: center; justify-content: center;"}
+![](images/thomas-bayes.gif){style="width: 200px; height: 200px; object-fit: cover; object-position: center top; border-radius: 50%;"}
 :::
 
-::: {.fragment style="text-align: center; font-size: 110%;"}
-**calculus → code → simulation → regression → uncertainty**
+::: {style="width: 370px; height: 205px; display: flex; align-items: center; justify-content: center;"}
+![](images/projection-geometry.svg){style="width: auto; height: 200px; max-width: 100%; object-fit: contain;"}
 :::
 
-::: {.fragment style="text-align: center;"}
-One unknown: lunar gravity $g$
+::: {style="width: 220px; height: 205px; display: flex; align-items: center; justify-content: center;"}
+![](images/statistics-probability.png){style="width: auto; height: 200px; max-width: 100%; object-fit: contain;"}
+:::
+:::
 :::
 
-## Programming and Statistics in the Age of AI {.smaller}
+<!-- Portrait sources: Ronald Fisher, https://commons.wikimedia.org/wiki/File:Youngronaldfisher2.JPG; traditionally attributed Thomas Bayes, https://commons.wikimedia.org/wiki/File:Thomas_Bayes.gif. Both Wikimedia Commons, public domain. -->
+
+## Programming and statistics in the age of AI {.smaller}
+
+<br>
 
 ![](images/rmse.png){fig-align="center" width="92%"}
 
-::: {.fragment style="font-size: 76%; text-align: center;"}
-20 solutions · 3 did not run · worst RMSE > **100 billion outcome SDs**
-:::
 
 ::: footer
 Plot and findings: [Perrett, Elliott, Hill, and Scott (2026), *Flaws in the LLM Automation Narrative*](https://arxiv.org/abs/2606.11166).
 :::
 
-## Plausible ≠ Correct {.smaller}
+## Plausible ≠ correct {.smaller}
+
+<br>
 
 ![](images/bias.png){fig-align="center" width="92%"}
 
-::: {.fragment style="font-size: 88%; text-align: center;"}
-**Generate → inspect → test → verify**
-:::
 
 ::: footer
 Plot and findings: [Perrett, Elliott, Hill, and Scott (2026), *Flaws in the LLM Automation Narrative*](https://arxiv.org/abs/2606.11166).
 :::
 
-## Differential Calculus {.smaller}
+## Example: Differential Calculus {.smaller}
 
 ::: panel-tabset
-### Fit
+### Regression Line View
 
-::: columns
-::: {.column width="38%"}
-$$
-y_n \sim \operatorname{Normal}(\alpha + \beta x_n,\sigma)
-$$
-
-::: {.fragment style="text-align: center; font-size: 120%;"}
-Find $(\hat\alpha,\hat\beta)$
-:::
-:::
-
-::: {.column width="62%"}
+::: {style="display: flex; justify-content: center; align-items: center;"}
 ```{r}
 #| echo: false
-#| fig-width: 5.7
-#| fig-height: 4.2
-set.seed(123)
-reg <- tibble(x = seq(0, 10, length.out = 50)) |>
-  mutate(y = 1 + 0.5 * x + rnorm(n()))
+#| fig-height: 4.8
+#| fig-width: 7.2
+#| fig-align: center
+#| out-width: 72%
 
-ggplot(reg, aes(x, y)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, linewidth = 0.7) +
-  labs(x = "x", y = "y")
+set.seed(123)
+mu <- c(1, 0.5)
+x <- seq(0, 10, len = 50)
+y <- mu[1] + mu[2] * x + rnorm(50)
+p <- ggplot(data.frame(x, y), aes(x, y))
+p + geom_point() + geom_smooth(method = "lm", size = 0.3,
+                               color = "yellow", fill = "blue") +
+# p + geom_point() + geom_abline(slope = mu[2], intercept = mu[1],
+#                                size = 0.2, color = 'red') +
+  xlim(0, 10) + ylim(0, 10) +
+  ggtitle("Regression line with slope = 0.5 and intercept = 1")
 ```
 :::
-:::
 
-### Optimize
+### Likelihood View
 
+::: {style="max-width: 900px; margin: 0 auto;"}
 ```{r}
 #| echo: false
-#| fig-width: 7
+#| fig-width: 8.5
 #| fig-height: 4.5
 #| fig-align: center
-alpha <- seq(-2, 4, length.out = 100)
-beta <- seq(-2.5, 3.5, length.out = 100)
-likelihood <- tidyr::expand_grid(alpha = alpha, beta = beta) |>
-  mutate(z = mvtnorm::dmvnorm(cbind(alpha, beta), c(1, 0.5),
-                              matrix(c(2, -1, -1, 2), nrow = 2)))
+#| out-width: 90%
 
-ggplot(likelihood, aes(alpha, beta, z = z)) +
-  geom_contour_filled(bins = 12) +
-  guides(fill = "none") +
-  labs(x = expression(alpha), y = expression(beta), title = "Likelihood")
+alpha <- seq(-2, 4, 0.1)
+beta <- seq(-2.5, 3.5, 0.1)
+sigma <- matrix(c(2,-1,-1, 2), nrow = 2)
+f <- function(x, y) mvtnorm::dmvnorm(cbind(x, y), mu, sigma)
+lik <- outer(alpha, beta, f)
+
+library(plotly)
+p <- plot_ly(x = ~alpha, y = ~beta, z = ~lik) %>%
+  add_surface() %>%
+  layout(
+    title = list(
+      text = "$y_n \\sim \\operatorname{Normal}(\\alpha + \\beta x_n, \\, \\sigma)$",
+      x = 0.5,
+      xanchor = "center"
+    ),
+    plot_bgcolor = "#f0f1eb",
+    paper_bgcolor = "#f0f1eb",
+    margin = list(l = 20, r = 20, b = 20, t = 70)
+  ) %>%
+  config(displayModeBar = FALSE, responsive = TRUE)
+p
+
+# library(plot3D)
+#
+# # Generate grid data
+# grid_data <- expand.grid(alpha = alpha, beta = beta)
+#
+# # Apply function to each row of the grid data
+# grid_data$lik <- apply(grid_data, 1, function(row) f(row['alpha'], row['beta']))
+#
+# par(mar = c(3,3,2,1), mgp = c(2,.7,0), tck = -.01, bg = "#f0f1eb")
+# scatter3D(x = grid_data$alpha, y = grid_data$beta, z = grid_data$lik,
+#           phi = 10, theta = 30,
+#           xlab = "Alpha", ylab = "Beta", zlab = "Likelihood",
+#           col = "blue", ticktype = "detailed", pch = ".")
 ```
-
-$$
-\nabla \ell(\hat\alpha,\hat\beta) = \mathbf{0}
-$$
+:::
 :::
 
-## Integral Calculus {.smaller}
-
-::: columns
-::: {.column width="42%"}
-$$
-\theta \sim \operatorname{Normal}(1,1)
-$$
+## Example: Integral Calculus {style="font-size: 75%;"}
 
 $$
-\mathbb{P}(\theta > 0)
-= \int_0^\infty p(\theta)\,d\theta
-\approx 0.84
+    \P(\theta > 0) = \int_{0}^{\infty} p_{\theta}\, \text{d}\theta
 $$
-:::
 
-::: {.column width="58%"}
+
 ```{r}
-#| echo: false
-#| fig-width: 5.5
-#| fig-height: 4.2
-normal_curve <- tibble(theta = seq(-3, 5, length.out = 600)) |>
-  mutate(density = dnorm(theta, 1, 1))
+#| fig-width: 5
+#| fig-height: 3.5
+#| fig-align: center
 
-ggplot(normal_curve, aes(theta, density)) +
-  geom_area(data = filter(normal_curve, theta > 0), fill = "skyblue") +
-  geom_line() +
-  labs(x = expression(theta), y = NULL)
+library(ggdist)
+nd <- tibble::tribble(
+  ~ dist,      ~ args,
+  "norm",      list(1, 1),
+)
+
+nd %>%
+  ggplot(aes(xdist = dist, args = args)) +
+  stat_slab(aes(fill = stat(x > 0))) +
+  scale_fill_manual(values = c("gray85", "skyblue")) +
+  theme(legend.position = "none") +
+  xlab(expression(theta)) + ylab("") +
+  annotate("text", x = 1.2, y = 0.3, label = "P(theta > 0) == 0.84", parse = TRUE) +
+  ggtitle("Normal(0, 1) distribution")
+
 ```
+
+## Probabilistic Programming
+
+::: {style="height: 620px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between;"}
+::: {style="min-height: 0; flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;"}
+<img src="images/prob-prog.png" alt="Deterministic and probabilistic programming compared" style="display: block; width: min(900px, 92%); max-height: 500px; object-fit: contain; margin: 0;">
+:::
+
+::: {style="height: 82px; width: 620px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; align-items: end; justify-items: center; margin-top: 0.8rem;"}
+<img src="images/logo-stan.png" alt="Stan" style="display: block; width: auto; height: 72px; margin: 0;">
+<img src="images/logo-pymc.png" alt="PyMC" style="display: block; width: 118px; height: auto; margin: 0 0 0.6rem;">
+<img src="images/logo-jax.png" alt="JAX" style="display: block; width: 100px; height: auto; margin: 0 0 0.6rem;">
+<div style="height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;">
+  <img src="images/logo-numpyro.png" alt="NumPyro" style="display: block; width: auto; height: 48px; margin: 0;">
+  <div style="margin-top: 0.1rem; font-size: 0.58em; font-weight: 700; line-height: 1;">NumPyro</div>
+</div>
 :::
 :::
 
-## Models Are Programs {.smaller}
 
-```stan
+
+::: footer
+Logo assets: [Stan](https://github.com/stan-dev/logos), [PyMC](https://github.com/pymc-devs/pymc/tree/main/docs/logos), [JAX](https://github.com/jax-ml/jax/tree/main/docs/_static), and [NumPyro](https://github.com/pyro-ppl/numpyro/tree/master/docs/source/_static/img).
+:::
+
+## Example: Linear Regression {.smaller}
+
+Notice a Linear Algebra notation $X \beta$, which is matrix-vector multiplication. <br>
+
+::: {.columns style="align-items: flex-start; gap: 1.2rem; font-size: 80%;"}
+::: {.column width="45%"}
+### Stan
+
+```{stan output.var="model0"}
+#| echo: true
+#| eval: false
 data {
-  int<lower=0> N;
-  int<lower=0> K;
-  matrix[N, K] X;
-  vector[N] y;
+  int<lower=0> N;   // number of data items
+  int<lower=0> K;   // number of predictors
+  matrix[N, K] X;   // predictor matrix
+  vector[N] y;      // outcome vector
 }
 parameters {
-  real alpha;
-  vector[K] beta;
-  real<lower=0> sigma;
+  real alpha;           // intercept
+  vector[K] beta;       // coefficients for predictors
+  real<lower=0> sigma;  // error scale
 }
 model {
+  // parameters with Normal(0, 1) priors
+  alpha ~ normal(0, 1);
+  beta ~ normal(0, 1);
+
+  // sigma with Exp(1) prior
+  sigma ~ exponential(1);
+
+  // likelihood
   y ~ normal(X * beta + alpha, sigma);
 }
 ```
-
-::: footer
-Linear regression program adapted from the [Stan User’s Guide](https://mc-stan.org/docs/stan-users-guide/regression.html).
 :::
 
-## Binomial Regression {.smaller}
-
-::: columns
 ::: {.column width="55%"}
-```stan
+### NumPyro
+
+```python
+import numpyro
+import numpyro.distributions as dist
+
+
+def model(X, y=None):
+    N, K = X.shape
+
+    # parameters with Normal(0, 1) priors
+    alpha = numpyro.sample("alpha", dist.Normal(0.0, 1.0))
+    beta = numpyro.sample("beta", dist.Normal(0.0, 1.0).expand([K]))
+
+    # sigma with Exp(1) prior
+    sigma = numpyro.sample("sigma", dist.Exponential(1.0))
+
+    # likelihood
+    mu = X @ beta + alpha
+    numpyro.sample("y", dist.Normal(mu, sigma), obs=y)
+```
+:::
+:::
+
+
+## Example: Binomial Regression {.smaller}
+
+This is the type of model we fit to the O-Rings data.
+
+<br>
+
+```{stan output.var="model1"}
+#| echo: true
+#| eval: false
+data {
+  int<lower=0> N_rows; // number of rows in data
+  int<lower=0> N;      // number of possible "successes" in Binom(N, p)
+  vector[N_rows] x;    // temperature for the O-Rings example
+  array[N_rows] int<lower=0, upper=N> y; // number of "successes" in y ~ Binom(N, p)
+}
 parameters {
   real alpha;
   real beta;
 }
 model {
-  alpha ~ normal(0, 2.5);
-  beta ~ normal(0, 1);
-  y ~ binomial_logit(N, alpha + beta * x);
+  alpha ~ normal(0, 2.5); // we can encode what we know about plausible values
+  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the data
+  y ~ binomial_logit(N, alpha + beta * x); // likehood (conditioned on x)
 }
 ```
-:::
-
-::: {.column width="45%"}
-$$
-p_i = \operatorname{logit}^{-1}(\alpha + \beta x_i)
-$$
 
 $$
-Y_i \sim \operatorname{Binomial}(N,p_i)
+\begin{eqnarray*}
+\text{BinomialLogit}(y~|~N,\theta) & = &
+\text{Binomial}(y~|~N,\text{logit}^{-1}(\theta)) \\[6pt] & = &
+\binom{N}{y} \left( \text{logit}^{-1}(\theta) \right)^{y}  \left( 1 -
+\text{logit}^{-1}(\theta) \right)^{N - y}
+\end{eqnarray*}
 $$
-:::
-:::
+
+## Example: IRT Model {.smaller}
+
+```{stan output.var="model2"}
+#| echo: true
+#| eval: false
+
+data {
+  int<lower=1> J;                     // number of students
+  int<lower=1> K;                     // number of questions
+  int<lower=1> N;                     // number of observations
+  array[N] int<lower=1, upper=J> jj;  // student for observation n
+  array[N] int<lower=1, upper=K> kk;  // question for observation n
+  array[N] int<lower=0, upper=1> y;   // correctness for observation n
+}
+parameters {
+  real delta;            // mean student ability
+  array[J] real alpha;   // ability of student j - mean ability
+  array[K] real beta;    // difficulty of question k
+}
+model {
+  alpha ~ std_normal();         // informative true prior
+  beta ~ std_normal();          // informative true prior
+  delta ~ normal(0.75, 1);      // informative true prior
+  for (n in 1:N) {
+    y[n] ~ bernoulli_logit(alpha[jj[n]] - beta[kk[n]] + delta);
+  }
+}
+```
+
+$$
+\begin{eqnarray*}
+\text{BernoulliLogit}(y~|~\theta) & = &
+\text{Bernoulli}(y~|~\text{logit}^{-1}(\theta)) \\[6pt] & = &
+\left(\text{logit}^{-1}(\theta)\right)^y
+\left(1-\text{logit}^{-1}(\theta)\right)^{1-y}
+\end{eqnarray*}
+$$
 
 ::: footer
-Model form adapted from the [Stan User’s Guide](https://mc-stan.org/docs/stan-users-guide/regression.html#logistic-and-probit-regression).
+1PL item-response model. Source: [Stan Manual](https://mc-stan.org/docs/stan-users-guide/item-response-models.html)
 :::
 
-## R
+## Analysis Environment {.smaller .clean-slide background-image="images/rstudio.png" background-size="contain" background-position="center" background-repeat="no-repeat"}
+
+## What is R
 
 ::: columns
-::: {.column width="42%"}
-- open source
-- interpreted
-- vectorized
-- statistical
-- extensible
+::: {.column width="47.5%"}
+::: {.incremental style="font-size: 75%;"}
+-   R is an open-source, interpreted, weakly typed, (somewhat) functional programming language
+
+-   R is an implementation of the S language developed at Bell Labs around 1976
+
+-   [Ross Ihaka](https://en.wikipedia.org/wiki/Ross_Ihaka "Ross Ihaka") and [Robert Gentleman](https://en.wikipedia.org/wiki/Robert_Gentleman_(statistician) "Robert Gentleman (statistician)") started working on R in the early 1990s
+
+-   Version 1.0 was released in 2000
+
+-   There are ~20,000+ R packages available on [CRAN](https://cran.r-project.org/)
+
+-   R has a large and mostly friendly [user community](https://stackoverflow.com/questions/tagged/r)
+:::
 :::
 
-::: {.column width="58%"}
-![](images/pr-lang-pop.png){fig-align="center" width="630"}
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+
+::: {.fragment}
+![](images/pr-lang-pop.png)
+<span style="font-size: 70%;">Source: [StackOverflow Developer Survey 2025](https://survey.stackoverflow.co/2025/technology#most-popular-technologies-language)</span>
+:::
+
 :::
 :::
 
-::: footer
-Chart: [Stack Overflow Developer Survey 2025, “Programming, scripting, and markup languages”](https://survey.stackoverflow.co/2025/technology#most-popular-technologies-language).
-:::
+## R Documentation
 
-## R: Very Basics {.smaller}
+```{r}
+#| echo: true
+#| eval: false
+
+?mean # same as help(mean)
+```
+
+![](images/r-help.png){fig-align="center" height="500"}
+
+## Hands-On: Very Basics 1/2 {.smaller}
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="47.5%"}
 ```{r}
 #| echo: true
 2 + 3
 10^3
+10 - 5 / 2
 (10 - 5) / 2
 1:10
-sin(pi / 2)
+1:10 + 1
+sin(pi/2) + cos(pi/2)
+1i
 round(exp(1i * pi) + 1)
+(exp(1i * pi) + 1) |> round()
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
 ```{r}
 #| echo: true
 die <- 1:6
+die <- seq(1, 6, by = 1)
+die
 length(die)
+str(die)
+die[1]
+die[c(1, 6)]
+die > 3
+die[die > 3]
 sum(die)
-mean(die)
-median(die)
-sd(die)
+prod(die)
 ```
 :::
 :::
 
-## Your Turn: Vectors
+## Hands-On: Very Basics 2/2 {.smaller}
 
 ::: columns
-::: {.column width="50%"}
-### Fibonacci
-
-`0, 1, 1, 2, 3, 5, 8, 13, 21, 34`
-
-- `length()`
-- `sum()`
-- `prod()`
-- `diff()`
-:::
-
-::: {.column width="50%"}
-### Gauss
-
-$$
-\sum_{i=1}^{N}i = \frac{N(N+1)}{2}
-$$
-
-Verify for $N=100$.
-:::
-:::
-
-## Lists {.smaller}
-
+::: {.column width="47.5%"}
 ```{r}
 #| echo: true
-x <- list(
-  A = pi,
-  B = c(0, 1),
-  C = 1:10,
-  D = c("one", "two")
-)
-
-x$A
-x[1]
-x[[1]]
+mean(die)
+sum(die) / length(die)
+median(die)
+sd(die)
+scores <- c(2, 4, NA, 8)
+mean(scores)
+mean(scores, na.rm = TRUE)
 ```
+The following code (`fib`) is not very basic, but just type it in for now.
+:::
 
-::: {.fragment style="text-align: center;"}
-**object · sub-list · element**
+::: {.column width="5%"}
+:::
+
+::: {.column width="47.5%"}
+```{r}
+#| echo: true
+fib <- function(n) {
+  if (n == 0) {
+    return(0)
+  } else if (n == 1) {
+    return(1)
+  } else {
+    return(fib(n - 1) + fib(n - 2))
+  }
+}
+fib10 <- 0:9 |> purrr::map_int(fib)
+print(fib10)
+fib10[0]
+fib10[1]
+fib10[2:5]
+fib10[-6]
+```
+:::
+:::
+
+
+
+## Leonardo da Pisa {.smaller}
+
+::: {.illustration-center}
+::: {.columns style="align-items: center;"}
+::: {.column width="34%"}
+![](images/leonardo-da-pisa.jpg){fig-align="center" height="430"}
+:::
+
+::: {.column width="6%"}
+:::
+
+::: {.column width="60%"}
+::: {style="font-size: 105%; line-height: 1.35;"}
+> A man put one pair of rabbits in a certain place entirely surrounded by a wall. How many pairs of rabbits can be produced from that pair in a year, if the nature of these rabbits is such that every month each pair bears a new pair which from the second month on becomes productive?
+:::
+:::
+:::
+:::
+
+::: footer
+Quote: Leonardo da Pisa, *Liber Abaci* (1202), translated by L. E. Sigler (Springer, 2002), pp. 404–405. Retrospective portrait from [*I benefattori dell'umanità*, vol. VI (1850)](https://commons.wikimedia.org/wiki/File:Fibonacci2.jpg), public domain.
+:::
+
+## Your Turn {.smaller}
+
+-   Work with the `fib10` sequence you creared before
+-   Compute the length of this vector in R
+-   Compute the sum, the product, and the difference (`diff()`) between successive numbers
+-   What do you notice about the pattern in the differences?
+-   Now, create a vector of 100 integers from 1 to 100
+-   Young Gauss (allegedly) was asked to sum them by hand
+-   He figured out that the sum has to be $N (N + 1) / 2$
+-   Verify that Gauss was right (just for 100)
+-   Now compute the sum of the first hundred squares. Does it equal to $N (N + 1)(2N + 1) / 6$, for $N = 100$?
+
+## Hands-On: Lists {.smaller}
+
+::: incremental
+-   Lists are collections of objects of different types and shapes
+-   Contrast with a data frame, which we will discuss later, that contains objects of different types but is rectangular
+:::
+
+::: fragment
+```{r}
+#| echo: true
+list_x <- list(A = pi, B = c(0, 1), C = 1:10, D = c("one", "two"))
+list_x
+str(list_x)
+list_x$A
+list_x[1]
+str(list_x[1])
+list_x[[1]] # same as x$A
+```
+:::
+
+## Data Frames {.smaller}
+
+::: incremental
+-   Data frames are rectangular structures that are often used in data analysis
+
+-   There is a built-in function called `data.frame`, but we recommend `tibble`, which is part of the `dplyr` package
+
+-   You can look up the documentation of any R function this way: `?dplyr::tibble`. If the package is loaded by using `library(dplyr)` you can omit `dplyr::` prefix
+
+-   John F. W. Herschel's data on the orbit of the Twin Stars $\gamma$ Virginis
+:::
+
+::: fragment
+![](images/gamma-virginis.png){fig-align="center" width="672"}
 :::
 
 ## Data Frames {.smaller}
 
 ::: columns
-::: {.column width="43%"}
+::: {.column width="50%"}
+::: fragment
 ```{r}
 #| echo: true
+library(HistData)
 data("Virginis.interp")
-virginis <- as_tibble(Virginis.interp)
-class(virginis)
-virginis$velocity |> mean()
+class(Virginis.interp)
+Virginis.interp |> dplyr::as_tibble()
+Virginis.interp |> dplyr::as_tibble() |> class()
 ```
-
-**rows = observations**  
-**columns = variables**
+:::
 :::
 
-::: {.column width="57%"}
-![](images/herschel.png){fig-align="center" width="600"}
+::: {.column width="50%"}
+::: fragment
+![](images/herschel.png){fig-align="center" width="672"}
+Code for generated the above plot can be found [here](https://friendly.github.io/HistDataVis/fig-code/06_9-herschel.R).
+:::
 :::
 :::
 
 ::: footer
-Plot and historical data context: [Friendly and Wainer, *A History of Data Visualization and Graphic Communication*, “The Origin and Development of the Scatterplot”](https://friendly.github.io/HistDataVis/ch06-scat.html). Data via the R `HistData` package.
+[The Origin and Development of the Scatterplot by M Friendly and H Wainer](https://friendly.github.io/HistDataVis/ch06-scat.html)
 :::
 
-## Plotting: John Snow {.smaller}
+## Your Turn
+
+-   Save `Virginis.interp` in a new tibble called `virginis` using `as_tibble()` function
+-   Compute average velocity in `virginis`
+-   Hint: you can access columns of tibbles and data frames with an `$` like this: `dataframe_name$variable_name`
+-   We will do a lot more work with tibbles and data frames in later sessions
+
+## Basic Plotting {.smaller}
 
 ::: panel-tabset
+### John Snow
+
+::: columns
+::: {.column width="50%"}
+![](images/cholera.png){fig-align="center" width="672"}
+:::
+
+::: {.column width="50%"}
+::: incremental
+-   R base plotting system is great for making quick graphs with relatively little typing
+
+- In base plot, you add elements to the plot directly, as opposed to describing how the graph is constructed
+
+-   We will demonstrate with John Snow's data from the 1854 cholera outbreak
+:::
+:::
+:::
+
 ### Deaths Over Time
 
 ```{r}
-#| echo: false
 #| fig-width: 8
-#| fig-height: 4.8
+#| fig-height: 5
 #| fig-align: center
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
-colors <- ifelse(Snow.dates$date < mdy("09/08/1854"), "red", "darkgreen")
-plot(deaths ~ date, data = Snow.dates, type = "h", lwd = 2,
-     col = colors, xlab = "", ylab = "Deaths")
-points(deaths ~ date, data = Snow.dates, cex = 0.6, pch = 16, col = colors)
-text(mdy("09/08/1854"), 40, "Pump handle removed\nSeptember 8", pos = 4)
+#| echo: true
+#| output-location: column
+library(HistData)
+library(lubridate)
+
+# set up the plotting area so it looks nice
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0),
+    tck = -.01, bg = "#f0f1eb")
+clr <- ifelse(Snow.dates$date < mdy("09/08/1854"),
+              "red", "darkgreen")
+plot(deaths ~ date, data = Snow.dates,
+     type = "h", lwd = 2, col = clr, xlab = "")
+points(deaths ~ date, data = Snow.dates,
+       cex = 0.5, pch = 16, col = clr)
+text(mdy("09/08/1854"), 40,
+     "Pump handle\nremoved Sept. 8", pos = 4)
 ```
 
-### Map
+### Map of Cholera in London
 
 ```{r}
-#| echo: false
-#| fig-width: 7.5
-#| fig-height: 5.2
+#| fig-width: 8
+#| fig-height: 6
 #| fig-align: center
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+par(
+  mar = c(3, 3, 2, 1),
+  mgp = c(2, .7, 0),
+  tck = -.01,
+  bg = "#f0f1eb"
+)
 SnowMap(
-  xlim = c(7.5, 16.5), ylim = c(7, 16),
-  polygons = FALSE, density = TRUE,
+  xlim = c(7.5, 16.5),
+  ylim = c(7, 16),
+  polygons = FALSE,
+  density = TRUE,
   main = "Snow's Cholera Map"
 )
 ```
 :::
 
-::: footer
-Data and maps via the R `HistData` package; source context: [Friendly and Wainer, “John Snow’s Cholera Map”](https://friendly.github.io/HistDataVis/ch04-snow.html).
-:::
+## Hands-On: Simulating Coin Flips {.smaller}
 
-## Simulating Coin Flips {.smaller}
+We can learn a lot through simulation. We will start with the `sample()` function.
+
+`sample(x, size, replace = FALSE, prob = NULL)`
 
 ```{r}
 #| echo: true
-coin <- c(H = 1, T = 0)
 
+# simulating coin flips
+coin <- c("H", "T")
+
+# flip a fair coin 10 times; try it with replace = FALSE
 sample(coin, 10, replace = TRUE)
-sample(coin, 10, replace = TRUE,
-       prob = c(0.6, 0.4))
+
+# flip a coin that has P(H = 0.6) 10 times
+sample(coin, 10, replace = TRUE, prob = c(0.6, 0.4))
+
+# it's more convenient to make H = 1 and T = 0
+coin <- c(1, 0)
+sample(coin, 10, replace = TRUE)
 ```
 
-::: {.fragment style="text-align: center; font-size: 115%;"}
-**Flip 1,000 times. Estimate $\mathbb{P}(H)$.**
+::: incremental
+-   Your turn: flip a coin 1000 times and compute the proportion of heads
 :::
 
-## For Loops {.smaller}
+
+## For Loops
 
 ::: panel-tabset
-### Pattern
 
+### For Loops
+
+::: incremental
+-   Suppose you want to add the first 100 integers as before but without using the `sum()` function or the formula
+-   In math notation: $\sum_{i = 1}^{100}x_i$, $\mathbf{x} = (1, 2, 3, \dots, 100)$
+:::
+
+::: fragment
 ```{r}
 #| echo: true
-x <- 1:100
+n <- 100
+x <- 1:n
 s <- 0
-
-for (i in seq_along(x)) {
+for (i in 1:n) {
   s <- s + x[i]
 }
-
+# test
 s == sum(x)
 ```
+:::
 
-### Prompt
+::: incremental
+-   Your turn: modify the loop to add only even numbers in 1:100. Look up `help(if)` statement and modulo operator `help(%%)`; write a test to check your work
+:::
 
-```r
-s <- 0
-for (i in seq_along(x)) {
-  if (________________) {
-    s <- ______________
-  }
-}
-```
+### Solution
 
-**Add only the even values. Write a test.**
-
-### Check
-
+::: fragment
 ```{r}
 #| echo: true
+
 s <- 0
-for (i in seq_along(x)) {
+for (i in 1:n) {
   if (x[i] %% 2 == 0) {
     s <- s + x[i]
   }
 }
-
+cat(s)
+# test
 s == sum(seq(2, 100, by = 2))
+```
+:::
+
+::: incremental
+-   Congratulations, you are now [Turing Complete](https://youtu.be/RPQD7-AOjMI)!
+:::
+:::
+
+
+## Simulate Coin Flips {.smaller}
+
+::: incremental
+-   If we flip a coin more and more times, would the estimate of the proportion become better?
+-   If so, what is the rate of convergence?
+:::
+
+::: fragment
+```{r}
+#| echo: true
+#| eval: false
+
+set.seed(1) # why do we do this?
+n <- 1e4
+est_prop <- numeric(n) # allocate a vector of size n
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i] <- mean(x)
+}
+```
+:::
+
+::: incremental
+-   Your turn: write down in plain English what the above code is doing
+-   At the end of the loop, what does the variable `est_prop` contain?
+:::
+
+## Introduction to ggplot {.smaller}
+
+::: incremental
+-   Our task is to visualize the estimated proportion as a function of the number of coin flips
+-   This can be done in base `plot()`, but we will do it with `ggplot`
+:::
+
+::: fragment
+```{r}
+#| cache: true
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+#| echo: true
+#| output-location: column
+library(ggplot2)
+library(gridExtra)
+
+x <- seq(0, 100, by = 5)
+y <- x^2
+
+quadratic <- tibble(x = x, y = y)
+p1 <- ggplot(data = quadratic,
+             mapping = aes(x = x, y = y))
+p2 <- p1 + geom_point(size = 0.5)
+p3 <- p1 + geom_line(linewidth = 0.2,
+                     color = 'red')
+p4 <- p1 + geom_point(size = 0.5) +
+  geom_line(linewidth = 0.2, color = 'red')
+
+grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 :::
 
 ## Law of Large Numbers {.smaller}
 
 ::: panel-tabset
-### Code
+## Code
 
 ```{r}
+#| fig-width: 7
+#| fig-height: 3.5
+#| fig-align: center
+#| cache: true
+#| eval: false
 #| echo: true
+
 set.seed(1)
 n <- 1e4
-flips <- sample(c(0, 1), n, replace = TRUE)
+est_prop <- numeric(n)
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i] <- mean(x)
+}
 
-lln <- tibble(
-  num_flips = seq_len(n),
-  est_prop = cumsum(flips) / num_flips
-)
+library(scales)
+data <- tibble(num_flips = 1:n, est_prop = est_prop)
+p <- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))
+p + geom_line(size = 0.1) +
+  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
+  scale_x_continuous(trans = 'log10', label = comma) +
+  xlab("Number of flips on Log10 scale") +
+  ylab("Estimated proportion of Heads") +
+  ggtitle("Error decreases with the size of the sample")
 ```
 
-$$
-\overline X_n \xrightarrow{\;P\;} \mathbb{E}[X]
-$$
+## Plot
 
-### Plot
+We can see some evidence for the Law of Large Numbers.
 
 ```{r}
-#| echo: false
-#| fig-width: 8
-#| fig-height: 4.4
+#| fig-width: 7
+#| fig-height: 3.5
 #| fig-align: center
+#| cache: true
+set.seed(1) # why do we do this?
+n <- 1e4
+est_prop <- numeric(n) # allocate a vector of size n
+for (i in 1:n) {
+  x <- sample(coin, i, replace = TRUE)
+  est_prop[i] <- mean(x)
+}
 
-ggplot(lln, aes(num_flips, est_prop)) +
-  geom_line(linewidth = 0.25) +
-  geom_hline(yintercept = 0.5, color = "red") +
-  scale_x_log10(labels = comma) +
-  labs(x = "Number of flips (log scale)", y = "Proportion of heads")
+library(scales)
+data <- tibble(num_flips = 1:n, est_prop = est_prop)
+p <- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))
+p + geom_line(size = 0.1) +
+  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +
+  scale_x_continuous(trans = 'log10', label = comma) +
+  xlab("Number of flips on Log10 scale") +
+  ylab("Estimated proportion of Heads") +
+  ggtitle("Error decreases with the size of the sample")
 ```
+WLLN: $\lim_{n \to \infty} \mathbb{P}\left( \left| \overline{X}_n - \mu \right| \geq \epsilon \right) = 0$
 
-$$
-\lim_{n\to\infty}\mathbb{P}\left(\left|\overline X_n-\mu\right|\geq\epsilon\right)=0
-$$
 :::
 
-## Functions
+## Functions {.smaller}
 
-![](images/function.png){fig-align="center" height="420"}
+::: panel-tabset
+### Structure
 
-::: {.fragment style="text-align: center;"}
-**arguments → body → return value**
+::: incremental
+-   Functions help you break up the code into self-contained, understandable pieces.
+
+-   Functions take in arguments and return results. You saw functions like `sum()` and `mean()` before. Here, you will learn how to write your own.
+:::
+
+::: fragment
+![](images/function.png){fig-align="center"}
 :::
 
 ::: footer
-Diagram: [Grolemund, *Hands-On Programming with R*, “R Objects”](https://rstudio-education.github.io/hopr/r-objects.html), @grolemund2014.
+Source: [Hands-On Programming with R](https://rstudio-education.github.io/hopr/basics.html)
 :::
 
-## Write a Function {.smaller}
+### Writing Your Own Function
 
 ::: columns
 ::: {.column width="50%"}
+We will write a function that produces one estimate of the proportion given a fixed sample size `n`.
+
+::: fragment
 ```{r}
 #| echo: true
+
 estimate_proportion <- function(n) {
-  flips <- sample(c(0, 1), n,
-                  replace = TRUE)
-  mean(flips)
+  coin <- c(1, 0)
+  x <- sample(coin, n, replace = TRUE)
+  est <- mean(x)
+  return(est)
 }
-
-estimates <- replicate(
-  1000,
-  estimate_proportion(10)
-)
+estimate_proportion(10)
+x <- replicate(1e3, estimate_proportion(10))
+head(x)
 ```
 :::
 
-::: {.column width="50%"}
+::: fragment
 ```{r}
-#| echo: false
-#| fig-width: 4.5
-#| fig-height: 4
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
-hist(estimates, xlab = "Proportion of heads", main = "1,000 estimates")
-```
-:::
-:::
-
-## Continuous Uniform Draws {.smaller}
-
-::: columns
-::: {.column width="42%"}
-```r
-runif(n, min = 0, max = 1)
-```
-
-::: {.fragment}
-Predict:
-
-```r
-mean(runif(1000, -1, 0))
-```
-:::
-:::
-
-::: {.column width="58%"}
-```{r}
-#| echo: false
-#| fig-width: 5.5
-#| fig-height: 4.2
-set.seed(2)
-uniform_draws <- tibble(x = runif(1000))
-ggplot(uniform_draws, aes(x)) +
-  geom_histogram(bins = 25, color = "white") +
-  labs(x = "x", y = "Count")
-```
-:::
-:::
-
-## Estimating $\pi$ {.smaller}
-
-::: columns
-::: {.column width="50%"}
-$$
-A_c = \pi r^2
-$$
-
-$$
-A_s = (2r)^2 = 4r^2
-$$
-:::
-
-::: {.column width="50%"}
-$$
-\frac{A_c}{A_s} = \frac{\pi}{4}
-$$
-
-$$
-\pi = 4\frac{A_c}{A_s}
-$$
-:::
-:::
-
-::: {.fragment style="text-align: center; font-size: 110%;"}
-**Throw darts at the square. Count hits inside the circle.**
-:::
-
-## Monte Carlo $\pi$ {.smaller}
-
-::: panel-tabset
-### Code + Plot
-
-```{r}
+#| eval: false
 #| echo: true
+hist(x,
+     xlab = "",
+     main = "Distribution of Proportions of Heads")
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+```{r}
 #| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
-set.seed(3)
-n <- 1000
-pi_draws <- tibble(
-  x = runif(n, -1, 1),
-  y = runif(n, -1, 1)
-) |>
-  mutate(inside = x^2 + y^2 < 1)
-
-ggplot(pi_draws, aes(x, y, color = inside)) +
-  geom_point(size = 1) +
-  coord_equal() +
-  guides(color = "none")
+#| cache: true
+par(
+  mar = c(3, 3, 2, 1),
+  mgp = c(2, .7, 0),
+  tck = -.01,
+  bg = "#f0f1eb"
+)
+hist(x, xlab = "", main = "Distribution of Proportions of Heads")
 ```
+:::
+:::
+:::
+
+### Coin Flip Example
+
+::: fragment
+To reproduce our earlier example, generating estimates for increasing sample sizes, use `map_dbl()` function from `purrr` package. More on that [here](https://adv-r.hadley.nz/functionals.html).
+:::
+
+::: fragment
+```{r}
+#| fig-width: 8
+#| fig-height: 3.5
+#| fig-align: center
+#| cache: true
+#| echo: true
+#| code-line-numbers: "|3|5"
+library(purrr)
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+y <- map_dbl(2:500, estimate_proportion)
+# above is the same as sapply(2:500, estimate_proportion)
+plot(2:500, y, xlab = "", ylab = "", type = 'l')
+```
+:::
+:::
+
+## Generating Continuous Uniform Draws {.smaller}
+
+::: incremental
+-   Here, we will examine a continuous version of the `sample()` function: `runif(n, min = 0, max = 1)`
+-   `runif` generates realizations of a random variable uniformly distributed between `min` and `max`.
+:::
+
+::: fragment
+```{r}
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+
+par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = "#f0f1eb")
+hist(runif(1e3))
+```
+:::
+
+::: incremental
+-   Your turn: what is the approximate value of this line of code: `mean(runif(1e3, min = -1, max = 0))`? Guess before running it.
+:::
+
+## Estimating $\pi$ by Simulation
+
+The idea is that we can approximate the ratio of the area of an inscribed circle, $A_c$, to the area of the square, $A_s$, by uniformly "throwing darts" at the square with the side $2r$ and counting how many darts land inside the circle versus inside the square.
+
+::: fragment
+$$
+\begin{align}
+A_{c}& = \pi r^2 \\
+A_{s}& = (2r)^2 = 4r^2 \\
+\frac{A_{c}}{A_{s}}& = \frac{\pi r^2}{4r^2} = \frac{\pi}{4} \implies \pi = \frac{4A_{c}}{A_{s}}
+\end{align}
+$$
+:::
+
+## Estimating $\pi$ by Simulation
+
+To estimate $\pi$, we perform the following simulation:
+
+::: fragment
+$$
+\begin{align}
+X& \sim \text{Uniform}(-1, 1) \\
+Y& \sim \text{Uniform}(-1, 1) \\
+\pi& \approx \frac{4 \sum_{i=1}^{N} \I(x_i^2 + y_i^2 < 1)}{N}
+\end{align}
+$$
+:::
+
+::: fragment
+The numerator is a sum over an indicator function $\I$, which evaluates to $1$ if the inequality holds and $0$ otherwise.
+:::
+
+## Estimating $\pi$ by Simulation
+
+::: panel-tabset
+### Code and Plot
+
+::: fragment
+```{r}
+#| echo: true
+#| fig-width: 3
+#| fig-height: 3
+#| fig-align: center
+n <- 1e3
+x <- runif(n, -1, 1); y <- runif(n, -1, 1)
+inside <- x^2 + y^2 < 1
+data <- tibble(x, y, inside)
+p <- ggplot(aes(x = x, y = y), data = data)
+p + geom_point(aes(color = inside)) + theme(legend.position = "none")
+```
+:::
 
 ### Estimate
 
-$$
-\widehat\pi
-= \frac{4}{N}\sum_{i=1}^{N}
-\mathbb{I}(x_i^2+y_i^2<1)
-$$
+```{ojs}
+//| echo: false
+viewof n = {
+  const form = html`<form style="display: flex; align-items: center; justify-content: flex-start; gap: 0.8rem; width: 780px; max-width: 100%; box-sizing: border-box; padding-left: 8px; margin: 0.2rem auto 0.7rem;">
+    <label for="pi-draws" style="font-size: 0.65em; white-space: nowrap;">Number of draws, <i>n</i></label>
+    <input id="pi-draws" type="range" min="0" max="10" step="1" value="3" style="flex: 1; min-width: 0;">
+    <output style="font-size: 0.65em; min-width: 5.5em; text-align: left;"></output>
+  </form>`;
 
-::: {style="text-align: center; font-size: 180%;"}
-**`r round(4 * mean(pi_draws$inside), 3)`**
+  const slider = form.querySelector("input");
+  const output = form.querySelector("output");
+  const update = () => {
+    form.value = 100 * 2 ** Number(slider.value);
+    output.value = form.value.toLocaleString();
+  };
+
+  slider.addEventListener("input", update);
+  update();
+  return form;
+}
+
+piSimulation = {
+  const size = 320;
+  const padding = 8;
+  const span = size - 2 * padding;
+  const pixelRatio = window.devicePixelRatio || 1;
+  const canvas = DOM.canvas(size * pixelRatio, size * pixelRatio);
+  canvas.style.width = `${size}px`;
+  canvas.style.height = `${size}px`;
+
+  const context = canvas.getContext("2d");
+  context.scale(pixelRatio, pixelRatio);
+  context.fillStyle = "#ffffff";
+  context.fillRect(padding, padding, span, span);
+
+  let inside = 0;
+  const dotSize = n <= 5000 ? 2 : 1;
+
+  for (let i = 0; i < n; i++) {
+    const x = 2 * Math.random() - 1;
+    const y = 2 * Math.random() - 1;
+    const isInside = x * x + y * y < 1;
+    inside += isInside;
+
+    context.fillStyle = isInside
+      ? "rgba(25, 135, 84, 0.65)"
+      : "rgba(220, 53, 69, 0.65)";
+    context.fillRect(
+      padding + (x + 1) * span / 2,
+      padding + (1 - y) * span / 2,
+      dotSize,
+      dotSize
+    );
+  }
+
+  context.strokeStyle = "#222222";
+  context.lineWidth = 1;
+  context.strokeRect(padding, padding, span, span);
+  context.beginPath();
+  context.arc(size / 2, size / 2, span / 2, 0, 2 * Math.PI);
+  context.stroke();
+
+  const estimate = 4 * inside / n;
+
+  return html`<div style="display: grid; grid-template-columns: 340px 1fr; align-items: center; gap: 1.4rem; max-width: 780px; margin: 0 auto;">
+    <div>${canvas}</div>
+    <div style="text-align: center;">
+      <div style="font-size: 0.65em;">Monte Carlo estimate</div>
+      <div style="font-size: 2.2em; font-weight: 600; line-height: 1.15;">${estimate.toFixed(5)}</div>
+      <div style="font-size: 0.55em; margin-top: 0.4rem;">${inside.toLocaleString()} of ${n.toLocaleString()} points inside</div>
+      <div style="font-size: 0.5em; margin-top: 0.5rem;"><span style="color: #198754;">● inside</span>&nbsp;&nbsp;<span style="color: #dc3545;">● outside</span></div>
+    </div>
+  </div>`;
+}
+```
 :::
+
+
+## Elements of (R) style
+
+::: {.illustration-center}
+<a href="https://style.tidyverse.org/" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%;">
+  <img src="images/elements-of-r-style.png" alt="First page of the Tidyverse style guide" style="display: block; width: 100%; max-height: 620px; object-fit: contain; margin: 0 auto;">
+</a>
+:::
+
+::: footer
+[Tidyverse style guide](https://style.tidyverse.org/)
 :::
 
 ## Resources {.smaller}
