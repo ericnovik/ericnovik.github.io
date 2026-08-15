@@ -15,7 +15,7 @@ creating separate read and show versions of each lecture deck.
 The "motion in a straight line" example is the **hidden spine of the whole
 course**, not just a Lecture 2 throwaway:
 
-- **L2** [`02-lecture/02-Lecture.qmd:548`](02-lecture/02-Lecture.qmd) — derivatives: position → velocity → acceleration
+- **L2** [`02-lecture/02-lecture-read.qmd`](02-lecture/02-lecture-read.qmd) — derivatives: position → velocity → acceleration
 - **L3** [`03-lecture/03-lecture.qmd:381`](03-lecture/03-lecture.qmd) — integration: "From Velocity to Position Functions" (the inverse)
 - **L6** [`06-lecture/06-lecture.qmd:881`](06-lecture/06-lecture.qmd) — linear algebra: the overdetermined system `X β̂ = y` fitting `x = a + b t²`
 - **L7** — statistical inference / measurement-error models
@@ -95,7 +95,7 @@ necessary when using LLMs.
 
 ## 3. Requested change B — Lecture 2: the Moon drop
 
-**Replace** the slide at [`02-lecture/02-Lecture.qmd:548`](02-lecture/02-Lecture.qmd)
+**Replace** the slide in [`02-lecture/02-lecture-read.qmd`](02-lecture/02-lecture-read.qmd)
 (*Example: Motion in a Straight Line*) with a two-slide arc, then let the
 *existing* derivative slides flow on with the constants reinterpreted as `g`.
 
@@ -176,7 +176,7 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 ## 5. Smaller polish
 
 - Typos across decks:
-  - "pricical" → "principal" ([`02-lecture/02-Lecture.qmd:212`](02-lecture/02-Lecture.qmd))
+  - "pricical" → "principal" ([`02-lecture/02-lecture-read.qmd`](02-lecture/02-lecture-read.qmd))
   - "Bionomial" → "Binomial" (L1)
   - "Intergration" / "Ingegration" → "Integration" (L3)
   - "informative true prior" repeated 3× in the L1 IRT slide
@@ -333,4 +333,5 @@ layout.
 - [x] Update links and Quarto render/publish configuration for the read deck.
 - [x] Render and review both Lecture 1 variants.
 - [x] Remove the superseded `01-lecture/01-Lecture.qmd`.
-- [ ] Propagate the read/show structure to Lectures 2–8.
+- [x] Propagate the read/show structure to Lecture 2.
+- [ ] Propagate the read/show structure to Lectures 3–8.

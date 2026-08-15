@@ -1,7 +1,7 @@
 ---
-title: "SMaC: Statistics, Math, and Computing"
+title: "SMaC: Statistics, Math, and Computing (Read)"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
-author: "Eric.Novik@nyu.edu | Summer 2025 | Session 2"
+author: "Eric.Novik@nyu.edu | Summer 2026 | Session 2"
 format:
   revealjs: 
     theme: ../../custom.scss
@@ -30,7 +30,7 @@ bibliography: ../references.bib
 
 -   Rules of differentiation
 
--   The chain rule and product rules
+-   The chain rule and product rule
 
 :::
 :::
@@ -51,10 +51,9 @@ Image source: [Wikipedia](https://en.wikipedia.org/wiki/Derivative)
 
 ::: incremental
 
--   We typically use the slope-intercept form of the line: $y = a + bx$, where $a$ is the intercept, and $b$ is the slope (rise over run).
--   For example: $y = 1.5 + 0.5x$
--   $1.5$ is the value of the function when either $x = 0$ or $b = 0$.
--   In practice, $b$ is almost never zero.
+-   We typically use the slope-intercept form of the line: $y = a + bx$, where $a = y(0)$ is the intercept and $b = \Delta y / \Delta x$ is the slope (rise over run).
+-   For example: $y = 1.5 + 0.5x$.
+-   If $b = 0$, the line is horizontal.
 
 ::: 
 
@@ -88,7 +87,7 @@ A graph of a line with the equation $y = 7.5 - 2x$.
 #| fig-height: 3
 
 p <- ggplot() + xlim(0, 5) + ylim(0, 10)
-p + geom_abline(slope = -2, intercept = 7.5, size = 0.2)
+p + geom_abline(slope = -2, intercept = 7.5, linewidth = 0.2)
 ```
 :::
 :::
@@ -101,11 +100,11 @@ p + geom_abline(slope = -2, intercept = 7.5, size = 0.2)
 
 # y = 1 + 2x
 p <- ggplot() + xlim(0, 5) + ylim(0, 10)
-p + geom_abline(slope = 2, intercept = 1, size = 0.2)
+p + geom_abline(slope = 2, intercept = 1, linewidth = 0.2)
 
-# y = 7.5 + -2x
+# y = 7.5 - 2x
 p <- ggplot() + xlim(0, 5) + ylim(0, 10)
-p + geom_abline(slope = -2, intercept = 7.5, size = 0.2)
+p + geom_abline(slope = -2, intercept = 7.5, linewidth = 0.2)
 
 # to see some other ways of plotting lines
 ?geom_abline
@@ -121,8 +120,10 @@ p + geom_abline(slope = -2, intercept = 7.5, size = 0.2)
 #| eval: false
 #| echo: true
 p <- ggplot() + xlim(0, 5) + ylim(0, 10)
-p + geom_abline(slope = 2, intercept = 1, size = 0.2)
+p + geom_abline(slope = 2, intercept = 1, linewidth = 0.2)
 ```
+
+Choose test values whose lines are visible in the fixed plotting window.
 
 ## Exponential Functions
 
@@ -137,7 +138,7 @@ $$
 :::
 
 ::: incremental
--   The solution to this differential equation is the exponential function.
+-   The general solution to this differential equation is $y(t) = C e^{kt}$, where $C = y(0)$.
 
 -   Think of population growth or growth of an interest-bearing asset.
 :::
@@ -167,7 +168,7 @@ $$
 And after year $t$, the value is:
 
 $$
-P_n = A(1 + r)^t
+P(t) = A(1 + r)^t
 $$ 
 :::
 
@@ -180,10 +181,10 @@ $$
 :::
 
 ::: {.fragment}
-If we compound $n$ times per year, the principal would be:
+If we compound $n$ times per year, the balance after one year would be:
 
 $$
-P_1 = A \left (1 + \frac{r}{n} \right)^n
+P_n(1) = A \left (1 + \frac{r}{n} \right)^n
 $$ 
 
 :::
@@ -192,10 +193,10 @@ $$
 Combining these ideas, if we compound $n$ times per year, for $t$ years, we get:
 
 $$
-P = A \left (1 + \frac{r}{n} \right)^{nt}
+P_n(t) = A \left (1 + \frac{r}{n} \right)^{nt}
 $$ 
 
-If we let $n \to \infty$, we call this process exponential growth.
+Letting $n \to \infty$ gives **continuous compounding**. Both the finite- and continuous-compounding formulas are exponential functions of time.
 :::
 
 ## Example: Compound Interest
@@ -219,8 +220,8 @@ pe <- Pe(A = P, r = rate, t = 50)
 
 d <- data.frame(n_comp, pn)
 p <- ggplot(d, aes(n_comp, pn))
-p + geom_line(size = 0.2) +
-  geom_hline(yintercept = pe, color = 'red', size = 0.2) +
+p + geom_line(linewidth = 0.2) +
+  geom_hline(yintercept = pe, color = 'red', linewidth = 0.2) +
   xlab("Number of times the interest is compounded") +
   ylab("Value of an asset") +
   ggtitle("Value of $100 at r = 0.05 after 50 years") 
@@ -238,15 +239,15 @@ P <- 100
 n_comp <- 1:100
 
 Pn <- function(n, A, r, t) A * (1 + r/n)^(t*n)
-Pe <- function(A, r, t) P * exp(r * t)
+Pe <- function(A, r, t) A * exp(r * t)
 
 pn <- Pn(n = n_comp, A = P, r = rate, t = 50)
 pe <- Pe(A = P, r = rate, t = 50)
 
 d <- data.frame(n_comp, pn)
 p <- ggplot(d, aes(n_comp, pn))
-p + geom_line(size = 0.2) +
-  geom_hline(yintercept = pe, color = 'red', size = 0.2) +
+p + geom_line(linewidth = 0.2) +
+  geom_hline(yintercept = pe, color = 'red', linewidth = 0.2) +
   xlab("Number of times the interest is compounded") +
   ylab("Asset value") +
   ggtitle("Value of $100 at r = 0.05 after 50 years") +
@@ -271,8 +272,8 @@ p1 <- Pn(n = 1, A = P, r = rate, t = time)
 pe <- Pe(A = P, r = rate, t = time)
 
 p <- ggplot(data.frame(time, p1, pe), aes(time, p1))
-p + geom_line(size = 0.2) + 
-  geom_line(aes(y = pe), size = 0.2, color = 'red') +
+p + geom_line(linewidth = 0.2) + 
+  geom_line(aes(y = pe), linewidth = 0.2, color = 'red') +
   scale_y_continuous(labels = scales::dollar_format()) +
   xlab("Time (years)") + ylab("Asset value") +
   ggtitle("Growth of $100 with 5% interest") +
@@ -290,8 +291,8 @@ p + geom_line(size = 0.2) +
 #| fig-align: center
 
 p <- ggplot(data.frame(time, p1 = log10(p1), pe = log10(pe)), aes(time, p1))
-p + geom_line(size = 0.2) + 
-  geom_line(aes(y = pe), size = 0.2, color = 'red') +
+p + geom_line(linewidth = 0.2) + 
+  geom_line(aes(y = pe), linewidth = 0.2, color = 'red') +
   xlab("Time (years)") + ylab("Asset value on Log10 scale") + 
   ggtitle("Growth of $100 with 5% interest") +
   annotate("text", 18, 2.87,
@@ -311,15 +312,15 @@ Suppose a particular population of bacteria is known to double in size every 4 h
 -   Recall the equation for asset value after $t$ years compounded $n$ times:
 
 $$
-P = A \left (1 + \frac{r}{n} \right)^n = A \left (1 + \frac{r}{n} \right)^{nt}
+P_n(t) = A \left (1 + \frac{r}{n} \right)^{nt}
 $$
 :::
 
 ::: {.fragment}
--   Let's make a substituion $m = n/r$ and take limit and $m \to \infty$.
+-   Let $m = n/r$ and take the limit as $m \to \infty$.
 
 $$
-P = \lim_{m \to \infty}A \left ( 1 + \frac{1}{m} \right)^{m(rt)}
+P_\infty(t) = A \lim_{m \to \infty} \left ( 1 + \frac{1}{m} \right)^{m(rt)}
 $$
 :::
 
@@ -340,11 +341,11 @@ $$
 #| fig-height: 3
 #| fig-align: center
 f <- function(m) (1 + 1/m)^m
-x <- 0:100
+x <- 1:100
 y <- f(x)
 p <- ggplot(data.frame(x, y), aes(x, y))
-p + geom_line(size = 0.2) +
-  geom_hline(yintercept = exp(1), color = 'red', size = 0.2)
+p + geom_line(linewidth = 0.2) +
+  geom_hline(yintercept = exp(1), color = 'red', linewidth = 0.2)
 ```
 :::
 
@@ -356,7 +357,7 @@ p + geom_line(size = 0.2) +
 -   The number that this limit approaches is called $e$.
 
 $$
-P = \lim_{ m \to \infty}A \left ( 1 + \frac{1}{m} \right)^{m(rt)} = 
+P_\infty(t) = A \lim_{m \to \infty} \left ( 1 + \frac{1}{m} \right)^{m(rt)} = 
 A e^{rt} 
 $$
 :::
@@ -371,11 +372,11 @@ $$
 #| echo: true
 #| eval: false
 f <- function(m) (1 + 1/m)^m
-x <- 0:100
+x <- 1:100
 y <- f(x)
 p <- ggplot(data.frame(x, y), aes(x, y))
-p + geom_line(size = 0.2) +
-  geom_hline(yintercept = exp(1), color = 'red', size = 0.2)
+p + geom_line(linewidth = 0.2) +
+  geom_hline(yintercept = exp(1), color = 'red', linewidth = 0.2)
 ```
 :::
 
@@ -422,8 +423,7 @@ p + geom_line(size = 0.2) +
 
 ```{r}
 #| echo: true
-2^4 / 3^4 == (2/3)^4
-all.equal(2^4 / 3^4, (2/3)^4)
+isTRUE(all.equal(2^4 / 3^4, (2/3)^4))
 ```
 :::
 
@@ -439,11 +439,11 @@ Find the amount of money in the account after 5 years, 10 years, and 50 years.
 ::: incremental
  
 
--   Exponential function of the form $f(x) = a^x$ is one-to-one, so it has an inverse called a logarithmic function.
+-   For $a > 0$ and $a \ne 1$, an exponential function of the form $f(x) = a^x$ is one-to-one, so it has an inverse called a logarithmic function. Logarithm arguments must be positive.
 
--   In Statistics, when we write $\log$ we mean natural log, base $e$. This makes it easier to interpret the log regression coefficients as percentage changes. For example, $\log(1.04) \approx 4\%$.
+-   In R and this course, $\log$ means the natural log, base $e$. For a log-scale coefficient $\beta$, the exact percentage change is $100(e^\beta - 1)\%$; $100\beta\%$ is a useful approximation only when $\beta$ is small. For example, $\log(1.04) \approx 0.0392$.
 
--   The following relationship always holds: $a^t = e^{\log(a)t}$ since $e^{\log(a)} = a$
+-   The following relationship always holds for $a > 0$: $a^t = e^{\log(a)t}$ since $e^{\log(a)} = a$
 
 -   $\log_a(uv) = \log_a(u) + \log_a(v)$
 -   $\log_a(u/v) = \log_a(u) - \log_a(v)$
@@ -453,96 +453,89 @@ Find the amount of money in the account after 5 years, 10 years, and 50 years.
 
 ### Example: Log-Sum-Exp
 
-In statistics and Machine Learning, we often want to normalize a vector so that it adds to one. One such function is called a `softmax`:
+In statistics and machine learning, we often want to normalize a vector so its components add to one. The softmax function is
 
 ::: {.fragment}
 $$
-\text{softmax}(x)  = \frac{\exp(x)} {\sum_{n=1}^N \exp(x_n)}
+\operatorname{softmax}(x)_i =
+\frac{\exp(x_i)}{\sum_{j=1}^N \exp(x_j)}.
 $$
 
--   If $x$ is a vector of size 3, the numerator is component-wise $\exp$ of size 3, the denominator is a scalar, and the function value is a vector of size 3 that adds to 1
+If $x$ has length 3, the numerator is a length-3 vector, the denominator is a scalar, and the resulting length-3 vector adds to 1.
 :::
 
 ::: {.fragment}
 ```{r}
 #| echo: true
-y <- 1:3
-(numer <- exp(y))
-(denom <- sum(exp(y)))
-(softmax <- numer / denom)
-
-y <- c(1e3, 1e3 + 1, 1e3 + 2)
-exp(y)
-```
-
--   This produces overflow -- the numbers are too big for the computer. Let's compute the $\log \text{softmax}(x)$.
-:::
-
-::: {.fragment}
-$$
-    \log\text{softmax}(x) = x - \log \sum_{n=1}^N \exp(x_n)
-$$
-
--   The second term is the log-sum-exp or LSE for short. It has the same problem, as it will overflow or underflow. 
-
-- The idea is that we need to reduce the magnitude of $x_n$ while preserving the integrity of the LSE function.
-:::
-
-::: {.fragment}
-$$
-    \begin{eqnarray}
-    \text{Let } c & = & \max(x_1, x_2, x_3, ..., x_N) \\
-    y & = & \log \sum_{n=1}^N \exp(x_n) \\
-    \exp(y) & = & \sum_{n=1}^N \exp(x_n) \\
-    \exp(y) & = & \exp(c) \sum_{n=1}^N \exp(x_n - c) \\
-    y & = & c + \log \sum_{n=1}^N \exp(x_n - c) 
-    \end{eqnarray}
-$$
-
--   Because $c = \max(x)$, the largest exponent is zero.
-:::
-
-::: {.fragment}
-- **Your Turn**: write a function called `LSE` that takes in vector $x$ and implements the last equation and tests it on small and large values of $x$. Now implement the `softmax_log` function using the `LSE` function. Now compute the same version of the softmax function and check that it sums to 1.
-:::
-
-::: {.fragment}
-```{r}
-#| echo: true
-
-LSE <- function(x) {
-  c <- max(x)
-  y <- c + log(sum(exp(x - c)))
-  return(y)
-}
-softmax_log <- function(x) {
-  x - LSE(x)
-}
 softmax_unsafe <- function(x) exp(x) / sum(exp(x))
 
-softmax_unsafe(1:3)
-softmax_log(1:3)
-exp(softmax_log(1:3))
-y
-softmax_unsafe(y)
-exp(softmax_log(y))
-sum(exp(softmax_log(y)))
+y_small <- 1:3
+softmax_unsafe(y_small)
+
+y_large <- c(1e3, 1e3 + 1, 1e3 + 2)
+exp(y_large)
+softmax_unsafe(y_large)
+```
+
+The large inputs overflow: their exponentials are too large for the computer to represent directly.
+:::
+
+::: {.fragment}
+We can instead work on the log scale:
+
+$$
+\log \operatorname{softmax}(x)_i =
+x_i - \log \sum_{j=1}^N \exp(x_j).
+$$
+
+The second term is the **log-sum-exp**, or LSE. To evaluate it stably, subtract the largest input before exponentiating.
+:::
+
+::: {.fragment}
+$$
+\begin{aligned}
+m &= \max_j x_j, \\
+\operatorname{LSE}(x)
+&= \log \sum_{j=1}^N \exp(x_j) \\
+&= m + \log \sum_{j=1}^N \exp(x_j - m).
+\end{aligned}
+$$
+
+Because $m = \max_j x_j$, the largest shifted exponent is zero and every other shifted exponent is negative.
+:::
+
+::: {.fragment}
+**Your Turn:** write `LSE(x)` and `log_softmax(x)`, test them on small and large inputs, exponentiate the log probabilities, and check that they add to 1.
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+LSE <- function(x) {
+  m <- max(x)
+  m + log(sum(exp(x - m)))
+}
+
+log_softmax <- function(x) x - LSE(x)
+softmax <- function(x) exp(log_softmax(x))
+
+softmax(y_small)
+softmax(y_large)
+sum(softmax(y_large))
 ```
 :::
 :::
 
 ## Limits
 
-The idea of the limit is to evaluate what the function *approaches* as we increase or decrease the inputs.
+A limit is the value a function approaches as its input gets arbitrarily close to a specified point. The limit can exist even when the function is undefined there or has a different value there.
 
 ![](images/secant.jpeg){fig-align="center"}
 
 [This](https://mathinsight.org/applet/secant_line_slope) demo shows what happens to the secant line as it approaches the tangent.
 
 ::: footer
-::: footer
 Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/1-4-inverse-functions)
-:::
 :::
 
 ## A Cruel Joke {.smaller}
@@ -562,7 +555,7 @@ A thousand years from now, your friends drug you, load you onto a ship, and fire
 ## Setting Up the Equation of Motion {.smaller}
 
 ::: incremental
--   There is no atmosphere on the Moon, so the only force on the ball is gravity. Newton's second law gives:
+-   Let $x$ measure downward distance from the release point, so downward is positive. There is no atmosphere on the Moon, so the only force on the ball is gravity. Newton's second law gives:
 
 $$
 m\,\ddot{x} = m\,g \quad\Rightarrow\quad \ddot{x} = g
@@ -591,9 +584,9 @@ Low gravity is a *feature*: on the Moon a 100 m drop takes about 11 s, slow enou
 #| fig-height: 4
 #| fig-align: center
 
-g <- 1.625                          # true (unknown) lunar gravity, m/s^2
+g_ref <- 1.625                      # accepted lunar gravity, m/s^2
 
-# Real data: one click per light flash, collected by hand in the browser app.
+# One noisy time reading per known sensor position, collected in the browser app.
 raw <- read.csv("data/moon-drop.csv")
 d <- data.frame(t = raw$t_obs_s, x = raw$x_m)
 
@@ -607,15 +600,15 @@ print(p)
 
 ::: {.column width="50%"}
 ::: {.fragment}
-The inference problem (Session 6) is to recover $g$ from the noisy $(t_k, x_k)$ pairs, assuming $x(t) = \tfrac{1}{2} g t^2$. Here is the curve at the value we will recover, $g \approx 1.62$.
+The inference problem (Session 6) is to recover $g$ from noisy time readings at the known sensor positions, assuming $x(t) = \tfrac{1}{2} g t^2$. The curve below uses the accepted reference value $g_{\mathrm{ref}} = 1.625\ \text{m/s}^2$; it is not an estimate from these observations.
 
 ```{r}
 #| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 
-tt  <- seq(0, max(d$t), length = 200)
-sol <- data.frame(t = tt, x = 0.5 * g * tt^2)
+tt  <- seq(0, max(d$t), length.out = 200)
+sol <- data.frame(t = tt, x = 0.5 * g_ref * tt^2)
 p + geom_line(data = sol, aes(t, x), color = 'red', linewidth = 0.2) +
   annotate("text", 3, 80, label = "x(t) == frac(1, 2) * g * t^2",
            parse = TRUE, color = 'red')
@@ -649,7 +642,7 @@ $$
 #| fig-align: center
 #| echo: true
 t1 <- 4; t2 <- 9
-x1 <- 0.5 * g * t1^2; x2 <- 0.5 * g * t2^2
+x1 <- 0.5 * g_ref * t1^2; x2 <- 0.5 * g_ref * t2^2
 slope <- (x2 - x1) / (t2 - t1)            # avg velocity = ½ g (t1 + t2)
 ggplot(sol, aes(t, x)) + geom_line(linewidth = 0.2) +
   geom_abline(slope = slope, intercept = x1 - slope * t1,
@@ -683,7 +676,7 @@ $$
 $$
 \begin{eqnarray}
 \bar v & = & \frac{x(a + h) - x(a)}{a + h - a} = \frac{x(a + h) - x(a)}{h} \\
-v & = & \lim_{\Delta h \to 0} \frac{x(a + h) - x(a)}{h} \\
+v & = & \lim_{h \to 0} \frac{x(a + h) - x(a)}{h} \\
 \end{eqnarray}
 $$
 :::
@@ -695,15 +688,15 @@ $$
 
 $$
 \begin{eqnarray}
-v & = & \lim_{\Delta h \to 0} \frac{x(t + h) - x(t)}{h} =
-\lim_{\Delta h \to 0} \frac{\tfrac{1}{2} g (t + h)^2 - \tfrac{1}{2} g t^2}{h} = \\
-& \lim_{\Delta h \to 0} & \frac{g t h + \tfrac{1}{2} g h^2}{h} = \lim_{\Delta h \to 0} \left(g t + \tfrac{1}{2} g h\right) = g t
+v & = & \lim_{h \to 0} \frac{x(t + h) - x(t)}{h} =
+\lim_{h \to 0} \frac{\tfrac{1}{2} g (t + h)^2 - \tfrac{1}{2} g t^2}{h} = \\
+& \lim_{h \to 0} & \frac{g t h + \tfrac{1}{2} g h^2}{h} = \lim_{h \to 0} \left(g t + \tfrac{1}{2} g h\right) = g t
 \end{eqnarray}
 $$
 :::
 
 ::: {.fragment}
-- With our estimate $g \approx 1.62$, the speedometer at $t = 4$ reads $1.62 \cdot 4 \approx 6.5 \text{ m/s}$.
+- Using the accepted value $g \approx 1.62\ \text{m/s}^2$, the speedometer at $t = 4$ reads $1.62 \cdot 4 \approx 6.5\ \text{m/s}$ downward.
 
 -   The velocity is the derivative of position with respect to time, and we can write:
 
@@ -728,8 +721,8 @@ $$
 -   We take the limit again, this time of the velocity function $v(t) = g t$:
 
 $$
-a = \frac{dv}{dt} = \lim_{\Delta h \to 0} \frac{g(t + h) - g t}{h} =
-\lim_{\Delta h \to 0} \frac{g h}{h} = \lim_{\Delta h \to 0} g = g
+a = \frac{dv}{dt} = \lim_{h \to 0} \frac{g(t + h) - g t}{h} =
+\lim_{h \to 0} \frac{g h}{h} = \lim_{h \to 0} g = g
 $$
 :::
 
@@ -752,7 +745,9 @@ $$
 \frac{d}{dx}(x^n) & = & n x^{n-1} \\
 \frac{d}{dx}[c f(x)] & = & c \frac{d}{dx}[f(x)] \\
 \frac{d}{dx}[f(x) + g(x)] & = & \frac{d}{dx}f(x) + \frac{d}{dx}g(x) \\
-\frac{d}{dx}(e^x) & = & e^x \\                                                            \end{eqnarray}                                                               
+\frac{d}{dx}(e^x) & = & e^x \\
+\frac{d}{dx}\log(x) & = & \frac{1}{x}
+\end{eqnarray}                                                               
 $$
 
 ::: incremental
@@ -781,8 +776,8 @@ $$
 ## Product Rule and Chain Rule {.smaller}
 
 -   Product and chain rules help us differentiate products and compositions of functions, respectively.
--   Intuition for those can be found in the [Essense of Calculus](https://youtu.be/YG15m2VwSjA) video.
--   We will state them here without derivation. Product rule: Right d left, Left d right.
+-   Intuition for them can be found in the [Essence of Calculus](https://youtu.be/YG15m2VwSjA) video.
+-   We will state them here without derivation.
 
 $$
 \frac{d}{dx}[f(x) g(x)] = f(x) \frac{d}{dx}[g(x)] + g(x)\frac{d}{dx}[f(x)]
@@ -818,24 +813,25 @@ $$
 library(ggplot2)
 library(dplyr)
 n <- 100
-t <- seq(0, pi, length = n)
+t <- seq(0, pi, length.out = n)
 x <- sin(t) * cos(t)
 dxdt <- cos(t)^2 - sin(t)^2
 
 d <- tibble(t, x, dxdt)
 p <- ggplot(d, aes(t, x))
-p + geom_line() + geom_line(aes(y = dxdt), col = 'red')
+p + geom_line() + geom_line(aes(y = dxdt), color = "red")
 
-# approximate the derivative
-s <- pi / (n - 1)        # choose the same step s as the increment in the t sequence
-all.equal(s, diff(t)[1]) # check that the above statement is true
+# approximate the derivative on each interval and align it to the midpoint
+appr <- tibble(
+  t = (t[-1] + t[-n]) / 2,
+  appr_dxdt = diff(x) / diff(t)
+)
 
-appr_dxdt <- diff(x)/s   # derivative ≈ rise / run
-d <- d |>
-  mutate(appr_dxdt = c(NA, appr_dxdt))
-p <- ggplot(d, aes(t, x))
-p + geom_line() + geom_line(aes(y = dxdt), col = 'red') +
-  geom_line(aes(y = appr_dxdt), col = 'blue', linewidth = 5, alpha = 1/5)
+p + geom_line(aes(y = dxdt), color = "red") +
+  geom_line(
+    data = appr, aes(t, appr_dxdt),
+    color = "blue", linewidth = 5, alpha = 1/5
+  )
 ```
 
 ## Examples of the Chain Rule
@@ -843,26 +839,31 @@ p + geom_line() + geom_line(aes(y = dxdt), col = 'red') +
 
 - Your turn:
 $$
-\frac{d}{dx} \left( e^{\cos(x) x^2} \right ) = 
+\frac{d}{dx} \left( e^{x^2 \cos(x)} \right ) = 
 $$
+
+::: fragment
+$$
+e^{x^2 \cos(x)} \left(2x \cos(x) - x^2 \sin(x)\right)
+$$
+:::
 
 ## Homework {.smaller}
 
-- A particle is moving in a counter-clockwise uniform circular motion according to the following equations:
+- A particle moves counter-clockwise in uniform circular motion, with $R > 0$ and $\omega > 0$:
 
 $$
 x(t) = R \cos(\omega t) \\
 y(t) = R \sin(\omega t)
 $$
 
-- Where $\omega$ is called angular frequency (radians per unit of time) and $R$ is the radius of rotation. The full cycle is achieved when $T = 2 \pi/ \omega$
-- Create two functions that take $R$, $t$, and $\omega$ as parameters 
-- Create a vector $t$ of length 100 that achieves one full rotation
-- Plot the $x$ position against $t$ and the $y$ position against $t$ on the same graph
-- Now plot $x$ against $y$. Do the plots make sense?
-- Create 4 more functions: 2 for velocity (in x and y direction) and 2 for acceleration
-- Plot the velocity against the position (say in the x direction) and the velocity against acceleration
-- What have you learned?
+- Here $R$ is the radius, $\omega$ is the angular frequency in radians per unit time, and the period is $T = 2\pi / \omega$.
+- Create position functions that take $R$, $t$, and $\omega$ as arguments.
+- Create a length-100 vector $t$ covering one full rotation.
+- Plot $x(t)$ and $y(t)$ against $t$ on the same graph, then plot $y$ against $x$. Explain the geometry.
+- Create four more functions: velocity and acceleration in the $x$ and $y$ directions.
+- Plot each velocity component with its corresponding position component, and each acceleration component with its corresponding position component.
+- Verify that $\mathbf{a}(t) = -\omega^2 \mathbf{r}(t)$. Explain what the position, velocity, and acceleration vectors show.
 
 
 

@@ -1,3 +1,25 @@
+x <- matrix(sample(12), ncol = 3)
+x
+
+a <- 10
+s <- 0
+for (i in 1:4) {
+  for (j in 1:3) {
+    s <- s + x[i, j]
+    cat("s =", s, "\n")
+  }
+}
+
+# lots of ways to do the same thing in R
+sum(x)
+rowSums(x) |> sum() # |> is a shortcut for sum(rowSums(x))
+colSums(x) |> sum()
+apply(x, 1, sum) # same as rowSums(x)
+apply(x, 2, sum) # same as colSums(x)
+apply(x, 1, sum) |> sum()
+apply(x, 2, sum) |> sum()
+
+
 print_stack <- function() {
   calls <- sys.calls()
   for (i in seq_along(calls)) {
@@ -89,5 +111,5 @@ bin_counter <- function(n_bits = 4) {
 bin_counter()
 
 N <- 100
-N^2 * (N + 1) /2  - sum(1:(N-1) * (N-1):1)
+N^2 * (N + 1)/2  - sum(1:(N - 1) * (N - 1):1)
 sum((1:N)^2)

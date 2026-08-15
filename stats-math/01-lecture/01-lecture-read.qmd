@@ -967,9 +967,9 @@ Code for generated the above plot can be found [here](https://friendly.github.io
 
 ::: {.column width="50%"}
 ::: incremental
--   R base plotting system is great for making quick graphs with relatively little typing
+-   `ggplot2` implements a grammar of graphics for building plots from data
 
-- In base plot, you add elements to the plot directly, as opposed to describing how the graph is constructed
+-   Start with data and aesthetic mappings, then add geometric layers with `+`
 
 -   We will demonstrate with John Snow's data from the 1854 cholera outbreak
 :::
@@ -978,47 +978,118 @@ Code for generated the above plot can be found [here](https://friendly.github.io
 
 ### Deaths Over Time
 
+::: {style="font-size: 58%;"}
 ```{r}
 #| fig-width: 8
-#| fig-height: 5
+#| fig-height: 3
 #| fig-align: center
+#| out-width: 70%
 #| echo: true
-#| output-location: column
+#| output-location: fragment
 library(HistData)
 library(lubridate)
+library(ggplot2)
+library(dplyr)
 
-# set up the plotting area so it looks nice
-par(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0),
-    tck = -.01, bg = "#f0f1eb")
-clr <- ifelse(Snow.dates$date < mdy("09/08/1854"),
-              "red", "darkgreen")
-plot(deaths ~ date, data = Snow.dates,
-     type = "h", lwd = 2, col = clr, xlab = "")
-points(deaths ~ date, data = Snow.dates,
-       cex = 0.5, pch = 16, col = clr)
-text(mdy("09/08/1854"), 40,
-     "Pump handle\nremoved Sept. 8", pos = 4)
+# identify dates before and after the pump handle was removed
+snow_dates <- Snow.dates |>
+  mutate(period = if_else(
+    date < mdy("09/08/1854"), "Before Sept. 8", "Sept. 8 onward"
+  ))
+
+ggplot(snow_dates, aes(x = date, y = deaths, color = period)) +
+  geom_linerange(aes(ymin = 0, ymax = deaths), linewidth = 0.8) +
+  geom_point(size = 1.5) +
+  annotate(
+    "text", x = mdy("09/08/1854"), y = 40,
+    label = "Pump handle\nremoved Sept. 8", hjust = 0
+  ) +
+  scale_color_manual(
+    values = c("Before Sept. 8" = "red", "Sept. 8 onward" = "darkgreen"),
+    guide = "none"
+  ) + labs(x = NULL, y = "Deaths")
 ```
+:::
 
 ### Map of Cholera in London
 
 ```{r}
-#| fig-width: 8
+#| fig-width: 6
 #| fig-height: 6
 #| fig-align: center
-par(
-  mar = c(3, 3, 2, 1),
-  mgp = c(2, .7, 0),
-  tck = -.01,
-  bg = "#f0f1eb"
+#| fig-bg: "#f0f1eb"
+library(HistData)
+library(ggplot2)
+
+data("Snow.streets")
+data("Snow.deaths")
+data("Snow.pumps")
+
+# reproduce the density estimate used by HistData::SnowMap()
+kde <- KernSmooth::bkde2D(
+  Snow.deaths[, c("x", "y")], bandwidth = c(0.5, 0.5)
 )
-SnowMap(
-  xlim = c(7.5, 16.5),
-  ylim = c(7, 16),
-  polygons = FALSE,
-  density = TRUE,
-  main = "Snow's Cholera Map"
-)
+snow_density <- expand.grid(x = kde$x1, y = kde$x2)
+snow_density$density <- as.vector(kde$fhat)
+scale_ticks <- data.frame(x = 3.5:7.5, y = 19.7)
+
+ggplot() +
+  geom_path(
+    data = Snow.streets,
+    aes(x = x, y = y, group = street),
+    color = "grey72", linewidth = 0.35
+  ) +
+  geom_raster(
+    data = snow_density, aes(x = x, y = y, fill = density),
+    interpolate = TRUE
+  ) +
+  geom_contour(
+    data = snow_density, aes(x = x, y = y, z = density),
+    color = "black", linewidth = 0.3, bins = 10
+  ) +
+  geom_point(
+    data = Snow.deaths, aes(x = x, y = y),
+    color = "red", shape = 15, size = 1.15, alpha = 0.85
+  ) +
+  geom_point(
+    data = Snow.pumps, aes(x = x, y = y),
+    color = "blue", shape = 17, size = 3.2
+  ) +
+  geom_text(
+    data = Snow.pumps, aes(x = x, y = y, label = label),
+    color = "black", size = 3, vjust = 1.65
+  ) +
+  annotate(
+    "segment", x = 3.5, xend = 7.5,
+    y = 19.7, yend = 19.7, linewidth = 0.45
+  ) +
+  geom_segment(
+    data = scale_ticks,
+    aes(x = x, xend = x, y = y - 0.12, yend = y + 0.12),
+    linewidth = 0.4
+  ) +
+  annotate(
+    "text", x = c(3.5, 5.5, 7.5), y = 19.4,
+    label = c("0", "2", "4"), size = 2.8
+  ) +
+  annotate(
+    "text", x = 7.75, y = 19.7, label = "100 m.",
+    hjust = 0, size = 2.8
+  ) +
+  scale_fill_gradient(
+    low = scales::alpha("green", 0),
+    high = scales::alpha("red", 0.8),
+    guide = "none"
+  ) +
+  coord_equal(
+    xlim = c(3, 20.5), ylim = c(3, 20.5), expand = FALSE
+  ) +
+  theme_void() +
+  theme(
+    plot.background = element_rect(fill = "#f0f1eb", color = NA),
+    panel.background = element_rect(fill = "#f0f1eb", color = NA),
+    plot.margin = margin(2, 2, 2, 2)
+  )
 ```
 :::
 
