@@ -77,15 +77,15 @@ $$
 ## Measurement Error Models
 ::: incremental
 - We are trying to estimate the parameters of some data-generating process
-- For our car example, we assumed that the car position data are coming from the following model:
+- For the Moon drop, we assumed the distance-fallen data come from the following model, with $b = g/2$:
 
 ::: {.fragment}
 $$
-x_i(t) = a + bt_i^2 + \epsilon_i
+x_i(t) = \tfrac{1}{2} g\, t_i^2 + \epsilon_i = b\, t_i^2 + \epsilon_i
 $$
 :::
 
-- We also assumed that time $t$ was observed precisely, but we can also have an error in $t$
+- We also assumed that time $t$ was observed precisely, but the stopwatch reading at each light flash can have an error in $t$ too
 - Errors may be multiplicative, not just additive
 :::
 
@@ -97,8 +97,8 @@ $$
 - Sampling distribution is typically unknown and depends on the data collection, how subjects are assigned to treatment conditions, sampling process
 - **Examples**
   - Simple random sample of size $n$ from the population of size $N$. Here, each person has the same probability of being selected
-  - Our constant acceleration model $x_i(t) = a + bt_i^2 + \epsilon_i$, where we fix $a$ and $b$, and $t$, and draw $\epsilon$ from an error distribition, such as $\text{Normal}(0, 1)$
-  - We can write some code to generate observations according to this process (which is what I did for the car example)
+  - Our constant acceleration model $x_i(t) = b\,t_i^2 + \epsilon_i$, where we fix $b = g/2$ and $t$, and draw $\epsilon$ from an error distribition, such as $\text{Normal}(0, 1)$
+  - We can write some code to generate observations according to this process (which is what we did for the Moon drop)
 :::
 
 ## Standard Errors {.smaller}
@@ -192,6 +192,43 @@ ggplot(results, aes(x = sample_id)) +
        caption = "50% CI in bold, 95% CI is thin black")
 
 ```
+:::
+
+## Moon Drop: How Many Drops? {.smaller}
+
+Each drop gives 20 timed marks (every 5 m), and each drop costs oxygen. How many drops do we need to pin down $g$? We simulate: for each number of drops, fit $\hat{g} = 2\hat{\beta}_1$ many times and measure the spread.
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+set.seed(1)
+g_true <- 1.625
+sigma  <- 1              # distance-reading noise, meters
+reps   <- 500
+marks  <- seq(5, 100, by = 5)             # 20 marks, every 5 m
+tsq    <- (sqrt(2 * marks / g_true))^2    # squared pass times
+
+se_ghat <- function(n_drops) {
+  z <- rep(tsq, n_drops)                  # pool n_drops worth of marks
+  ghat <- replicate(reps, {
+    y <- 0.5 * g_true * z + rnorm(length(z), 0, sigma)
+    2 * coef(lm(y ~ 0 + z))[1]            # g = 2 * slope
+  })
+  sd(ghat)                               # empirical SE of g_hat
+}
+
+drops <- c(1, 2, 3, 6, 10, 20)
+se <- sapply(drops, se_ghat)
+data.frame(drops = drops, marks = drops * 20, se = round(se, 4),
+           ci_half_width = round(1.96 * se, 4))
+```
+:::
+
+::: {.fragment}
+- **One decimal** ($\pm 0.05$): a single drop (20 marks) is already more than enough
+- **Two decimals** ($\pm 0.005$): you need ~6 drops --- the second decimal costs ~6× the oxygen of the first
+- Spreading marks over the whole tower gives each drop a lot of leverage
 :::
 
 ## Confidence Intervals for Proportions {.smaller}
