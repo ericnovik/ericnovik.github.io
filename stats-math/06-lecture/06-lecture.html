@@ -98,7 +98,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-55e901d4a1d8c683ab8d5163e36fc3bd.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-ee57b70c84776557ca9bc4b9d4619b03.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -312,9 +312,9 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 6
 </div>
 <div class="fragment">
 <ul>
-<li>You can also take dot product: <span class="math inline">\(v \cdot w\)</span>, which results in a scalar</li>
+<li>You can also take dot product: <span class="math inline">\(v \cdot w\)</span>, which results in a scalar
+<span class="math display">\[\begin{aligned} v \cdot w = \left[\begin{matrix}3 &amp; 1 &amp; 2\end{matrix}\right]\left[\begin{matrix}2\\1\\3\end{matrix}\right]=\left[\begin{matrix}13\end{matrix}\right] \end{aligned}\]</span></li>
 </ul>
-<span class="math display">\[\begin{aligned} v \cdot w = \left[\begin{matrix}3 &amp; 1 &amp; 2\end{matrix}\right]\left[\begin{matrix}2\\1\\3\end{matrix}\right]=\left[\begin{matrix}13\end{matrix}\right] \end{aligned}\]</span>
 </div>
 <div class="fragment">
 <ul>
@@ -1033,11 +1033,11 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 </div>
 </div>
 </section>
-<section id="motion-in-the-straight-line" class="slide level2 smaller">
-<h2>Motion in the Straight Line</h2>
+<section id="recovering-g-from-the-moon-drop" class="slide level2 smaller">
+<h2>Recovering g from the Moon Drop</h2>
 <ul>
-<li class="fragment">Recall, from lecture 1, our example of a car moving in a straight line where we have noisy measurements of its position over time</li>
-<li class="fragment">At the time, we assumed we were able somehow to find the intercept and slope of the equation</li>
+<li class="fragment">Recall, from Session 2, the Moon mission: we drop a ball from a tower and record the distance fallen at noisy time points to infer the Moon’s gravity <span class="math inline">\(g\)</span></li>
+<li class="fragment">At the time, we promised we would later learn how to find <span class="math inline">\(g\)</span> from the data</li>
 <li class="fragment">We are now in a position to solve the problem</li>
 </ul>
 <div class="fragment">
@@ -1052,20 +1052,20 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 </div>
 </div>
 </section>
-<section id="motion-in-the-straight-line-1" class="slide level2 smaller">
-<h2>Motion in the Straight Line</h2>
+<section id="recovering-g-from-the-moon-drop-1" class="slide level2 smaller">
+<h2>Recovering g from the Moon Drop</h2>
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Setup</a></li><li><a href="#tabset-5-2">Solution</a></li><li><a href="#tabset-5-3">Plot the Fit</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
 <ul>
 <li class="fragment"><p>This is a quadratic function. How can we solve it using linear regression (the least squares method)?</p></li>
-<li class="fragment"><p>We assumed the equation of motion was <span class="math inline">\(x(t) = a + bt^2\)</span>, which we will write as <span class="math inline">\(y(t) = \beta_0 + \beta_1 t^2\)</span></p></li>
-<li class="fragment"><p>The unknowns are <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span></p></li>
+<li class="fragment"><p>The equation of motion is <span class="math inline">\(x(t) = \tfrac{1}{2} g t^2\)</span>, which we will write as <span class="math inline">\(y(t) = \beta_0 + \beta_1 t^2\)</span></p></li>
+<li class="fragment"><p>We keep an intercept <span class="math inline">\(\beta_0\)</span> as a check: since the ball is dropped from rest at <span class="math inline">\(x = 0\)</span>, we expect <span class="math inline">\(\hat{\beta}_0 \approx 0\)</span>, while <span class="math inline">\(\hat{\beta}_1 \approx g/2\)</span>, so <span class="math inline">\(\hat{g} = 2\hat{\beta}_1\)</span></p></li>
 <li class="fragment"><p>Let’s express it in the matrix notation</p></li>
-<li class="fragment"><p>What is our design matrix <span class="math inline">\(X\)</span>? We have 51 observations, so <span class="math inline">\(X\)</span> will have two columns and 51 rows: a column of 1s for the intercept and a column of times squared <span class="math inline">\(t^2\)</span></p></li>
+<li class="fragment"><p>What is our design matrix <span class="math inline">\(X\)</span>? We have 20 observations (one per mark), so <span class="math inline">\(X\)</span> will have two columns and 20 rows: a column of 1s for the intercept and a column of times squared <span class="math inline">\(t^2\)</span></p></li>
 <li class="fragment"><p>Our unknown vector <span class="math inline">\(\hat{\beta}\)</span> has two elements <span class="math inline">\((\hat{\beta_0},\, \hat{\beta_1)}\)</span></p></li>
-<li class="fragment"><p><span class="math inline">\(y\)</span> is our outcome vector of length 51, capturing the car’s position at each time point <span class="math inline">\(t\)</span></p></li>
+<li class="fragment"><p><span class="math inline">\(y\)</span> is our outcome vector of length 20, capturing the distance fallen at each time point <span class="math inline">\(t\)</span></p></li>
 <li class="fragment"><p><span class="math inline">\(y = X\hat{\beta}\)</span> captures our system in matrix form</p></li>
 </ul>
 </div>
@@ -1077,33 +1077,33 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="co"># length of t (our time vector)</span></span>
 <span id="cb73-2"><a></a><span class="fu">length</span>(t)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 51</code></pre>
+<pre><code>[1] 20</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="co"># first few elements of t</span></span>
 <span id="cb75-2"><a></a><span class="fu">head</span>(t)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.0 0.1 0.2 0.3 0.4 0.5</code></pre>
+<pre><code>[1] 2.480695 3.508232 4.296689 4.961389 5.547002 6.076436</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="co"># construct the design matrix</span></span>
 <span id="cb77-2"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(t)), t<span class="sc">^</span><span class="dv">2</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
 <span id="cb77-3"><a></a><span class="fu">head</span>(X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     [,1] [,2]
-[1,]    1 0.00
-[2,]    1 0.01
-[3,]    1 0.04
-[4,]    1 0.09
-[5,]    1 0.16
-[6,]    1 0.25</code></pre>
+<pre><code>     [,1]      [,2]
+[1,]    1  6.153846
+[2,]    1 12.307692
+[3,]    1 18.461538
+[4,]    1 24.615385
+[5,]    1 30.769231
+[6,]    1 36.923077</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="co"># inspect the vector y</span></span>
 <span id="cb79-2"><a></a><span class="fu">length</span>(y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 51</code></pre>
+<pre><code>[1] 20</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="fu">head</span>(y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -2.4417028  6.7615084 -0.7502334 -0.4900157 -3.5129263  1.9331119</code></pre>
+<pre><code>[1]  3.815546 11.261736 14.234604 19.263996 23.401886 29.782163</code></pre>
 </div>
 </div>
 </div>
@@ -1118,40 +1118,46 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>beta_hat <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X) <span class="sc">%*%</span> y</span>
 <span id="cb83-2"><a></a>beta_hat <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     [,1]
-[1,] 1.46
-[2,] 3.01</code></pre>
+<pre><code>      [,1]
+[1,] -0.66
+[2,]  0.82</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y, <span class="at">t_squared =</span> t<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb85-2"><a></a><span class="co"># compare to R's lm()</span></span>
-<span id="cb85-3"><a></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> t_squared, <span class="at">data =</span> data)</span>
-<span id="cb85-4"><a></a>arm<span class="sc">::</span><span class="fu">display</span>(fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a><span class="co"># intercept is ~0 (dropped from rest); g = 2 * beta_1</span></span>
+<span id="cb85-2"><a></a>g_hat <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> beta_hat[<span class="dv">2</span>]</span>
+<span id="cb85-3"><a></a><span class="fu">round</span>(g_hat, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.637</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y, <span class="at">t_squared =</span> t<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb87-2"><a></a><span class="co"># compare to R's lm()</span></span>
+<span id="cb87-3"><a></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> t_squared, <span class="at">data =</span> data)</span>
+<span id="cb87-4"><a></a>arm<span class="sc">::</span><span class="fu">display</span>(fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lm(formula = y ~ t_squared, data = data)
             coef.est coef.se
-(Intercept) 1.46     0.54   
-t_squared   3.01     0.05   
+(Intercept) -0.66     0.31  
+t_squared    0.82     0.00  
 ---
-n = 51, k = 2
-residual sd = 2.60, R-Squared = 0.99</code></pre>
+n = 20, k = 2
+residual sd = 0.67, R-Squared = 1.00</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
 <ul>
-<li>Warning: do not use <span class="math inline">\((X^TX)^{-1}X^Ty\)</span> directly as above; it’s computationally inefficient</li>
+<li>We recover <span class="math inline">\(\hat{g} = 2\hat{\beta}_1 \approx 1.62\)</span> — the mission is a go. (Warning: do not use <span class="math inline">\((X^TX)^{-1}X^Ty\)</span> directly as above; it’s computationally inefficient.)</li>
 </ul>
 </div>
 </div></div>
 </div>
 <div id="tabset-5-3">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">yhat =</span> beta_hat[<span class="dv">1</span>] <span class="sc">+</span> beta_hat[<span class="dv">2</span>] <span class="sc">*</span> x<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb87-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> yhat), <span class="at">data =</span> d, <span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'red'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">t =</span> t, <span class="at">yhat =</span> beta_hat[<span class="dv">1</span>] <span class="sc">+</span> beta_hat[<span class="dv">2</span>] <span class="sc">*</span> t<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb89-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> yhat), <span class="at">data =</span> d, <span class="at">size =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">'red'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>

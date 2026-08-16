@@ -98,7 +98,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-55e901d4a1d8c683ab8d5163e36fc3bd.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-ee57b70c84776557ca9bc4b9d4619b03.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -735,7 +735,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </figure>
 </div>
 <ul>
-<li class="fragment">Unknowns are sometimes called parameters, like our <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>, in the <span class="math inline">\(x(t) = a + bt^2\)</span> model</li>
+<li class="fragment">Unknowns are sometimes called parameters, like the Moon’s gravity <span class="math inline">\(g\)</span> in our drop model <span class="math inline">\(x(t) = \tfrac{1}{2} g t^2\)</span></li>
 </ul>
 </div></div>
 </section>
@@ -768,24 +768,24 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <div class="tab-content">
 <div id="tabset-3-1">
 <ul>
-<li class="fragment">Recal our position function <span class="math inline">\(x(t) = 2 + 3t^2\)</span></li>
-<li class="fragment">We found the velocity function by differentiating and we can <em>almost</em> get back the position function by integrating.</li>
+<li class="fragment">Recall the Moon drop: from <span class="math inline">\(\ddot{x} = g\)</span> we found the velocity <span class="math inline">\(v(t) = g t\)</span></li>
+<li class="fragment">This is the promised derivation: integrate <span class="math inline">\(v(t)\)</span> once to <em>recover the position function</em> <span class="math inline">\(x(t)\)</span></li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{eqnarray}
-v(t) &amp; = &amp; \frac{d}{dt} \left( 2 + 3t^2 \right) = 6t \\
-x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
+v(t) &amp; = &amp; \int{g\, dt} = g t + C_1 \\
+x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 \end{eqnarray}
 \]</span></p>
 </div>
 <ul>
-<li class="fragment"><p>Why almost? Look at the constant <span class="math inline">\(2\)</span> in <span class="math inline">\(\frac{d}{dt}(2 + 3t^2)\)</span>. You can replace it with any other constant and the result will still be <span class="math inline">\(6t\)</span>.</p></li>
-<li class="fragment"><p>To put it another way, to characterize the position fucntion you need to know the intial position and you can’t get that from the velocity function alone.</p></li>
+<li class="fragment"><p>The ball is <em>dropped from rest</em> at the top of the tower, so the initial velocity is zero (<span class="math inline">\(C_1 = 0\)</span>), and we measure distance fallen from the release point, so the initial position is zero (<span class="math inline">\(C_2 = 0\)</span>).</p></li>
+<li class="fragment"><p>That leaves <span class="math inline">\(x(t) = \tfrac{1}{2} g t^2\)</span>. In general, to characterize the position function you need the initial position and velocity — you can’t get those from the acceleration alone.</p></li>
 </ul>
 </div>
 <div id="tabset-3-2">
-<p>The position function for different values of initial position <span class="math inline">\(C\)</span>. Notice that the only thing that changes is the intercept.</p>
+<p>The position function for different values of initial position <span class="math inline">\(C_2\)</span>. Notice that the only thing that changes is the intercept.</p>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -808,8 +808,8 @@ x(t) &amp; = &amp; \int{6t\, dt} = 3t^2 + C
 <p>OpenStax: <a href="https://openstax.org/books/calculus-volume-1/pages/a-table-of-integrals">Here is a more complete list</a></p>
 </div>
 </section>
-<section id="techniques-of-intergration" class="slide level2 smaller">
-<h2>Techniques of Intergration</h2>
+<section id="techniques-of-integration" class="slide level2 smaller">
+<h2>Techniques of Integration</h2>
 <ul>
 <li class="fragment">Integral, like a derivative, is a linear operator:</li>
 </ul>
@@ -981,8 +981,8 @@ f(x) = \lambda e^{-\lambda x}, \, x &gt; 0, \text{and } \lambda &gt; 0
 \int_{0}^{\infty} \lambda e^{-\lambda x} dx =
 \]</span></p>
 </section>
-<section id="ingegration-by-parts" class="slide level2 smaller">
-<h2>Ingegration by Parts</h2>
+<section id="integration-by-parts" class="slide level2 smaller">
+<h2>Integration by Parts</h2>
 <p><span class="math display">\[
 \begin{eqnarray}
 (f g)' &amp; = &amp; f'g + g'f \\

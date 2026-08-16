@@ -98,7 +98,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-55e901d4a1d8c683ab8d5163e36fc3bd.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-ee57b70c84776557ca9bc4b9d4619b03.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -258,15 +258,15 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 7
 <h2>Measurement Error Models</h2>
 <ul>
 <li class="fragment">We are trying to estimate the parameters of some data-generating process</li>
-<li class="fragment">For our car example, we assumed that the car position data are coming from the following model:</li>
+<li class="fragment">For the Moon drop, we assumed the distance-fallen data come from the following model, with <span class="math inline">\(b = g/2\)</span>:</li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
-x_i(t) = a + bt_i^2 + \epsilon_i
+x_i(t) = \tfrac{1}{2} g\, t_i^2 + \epsilon_i = b\, t_i^2 + \epsilon_i
 \]</span></p>
 </div>
 <ul>
-<li class="fragment">We also assumed that time <span class="math inline">\(t\)</span> was observed precisely, but we can also have an error in <span class="math inline">\(t\)</span></li>
+<li class="fragment">We also assumed that time <span class="math inline">\(t\)</span> was observed precisely, but the stopwatch reading at each light flash can have an error in <span class="math inline">\(t\)</span> too</li>
 <li class="fragment">Errors may be multiplicative, not just additive</li>
 </ul>
 </section>
@@ -278,8 +278,8 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 <li class="fragment"><strong>Examples</strong>
 <ul>
 <li class="fragment">Simple random sample of size <span class="math inline">\(n\)</span> from the population of size <span class="math inline">\(N\)</span>. Here, each person has the same probability of being selected</li>
-<li class="fragment">Our constant acceleration model <span class="math inline">\(x_i(t) = a + bt_i^2 + \epsilon_i\)</span>, where we fix <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>, and <span class="math inline">\(t\)</span>, and draw <span class="math inline">\(\epsilon\)</span> from an error distribition, such as <span class="math inline">\(\text{Normal}(0, 1)\)</span></li>
-<li class="fragment">We can write some code to generate observations according to this process (which is what I did for the car example)</li>
+<li class="fragment">Our constant acceleration model <span class="math inline">\(x_i(t) = b\,t_i^2 + \epsilon_i\)</span>, where we fix <span class="math inline">\(b = g/2\)</span> and <span class="math inline">\(t\)</span>, and draw <span class="math inline">\(\epsilon\)</span> from an error distribition, such as <span class="math inline">\(\text{Normal}(0, 1)\)</span></li>
+<li class="fragment">We can write some code to generate observations according to this process (which is what we did for the Moon drop)</li>
 </ul></li>
 </ul>
 </section>
@@ -347,6 +347,50 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 </div>
 </div>
 </section>
+<section id="moon-drop-how-many-drops" class="slide level2 smaller">
+<h2>Moon Drop: How Many Drops?</h2>
+<p>Each drop gives 20 timed marks (every 5 m), and each drop costs oxygen. How many drops do we need to pin down <span class="math inline">\(g\)</span>? We simulate: for each number of drops, fit <span class="math inline">\(\hat{g} = 2\hat{\beta}_1\)</span> many times and measure the spread.</p>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb11-2"><a></a>g_true <span class="ot">&lt;-</span> <span class="fl">1.625</span></span>
+<span id="cb11-3"><a></a>sigma  <span class="ot">&lt;-</span> <span class="dv">1</span>              <span class="co"># distance-reading noise, meters</span></span>
+<span id="cb11-4"><a></a>reps   <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb11-5"><a></a>marks  <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>)             <span class="co"># 20 marks, every 5 m</span></span>
+<span id="cb11-6"><a></a>tsq    <span class="ot">&lt;-</span> (<span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> marks <span class="sc">/</span> g_true))<span class="sc">^</span><span class="dv">2</span>    <span class="co"># squared pass times</span></span>
+<span id="cb11-7"><a></a></span>
+<span id="cb11-8"><a></a>se_ghat <span class="ot">&lt;-</span> <span class="cf">function</span>(n_drops) {</span>
+<span id="cb11-9"><a></a>  z <span class="ot">&lt;-</span> <span class="fu">rep</span>(tsq, n_drops)                  <span class="co"># pool n_drops worth of marks</span></span>
+<span id="cb11-10"><a></a>  ghat <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
+<span id="cb11-11"><a></a>    y <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> g_true <span class="sc">*</span> z <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(z), <span class="dv">0</span>, sigma)</span>
+<span id="cb11-12"><a></a>    <span class="dv">2</span> <span class="sc">*</span> <span class="fu">coef</span>(<span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> z))[<span class="dv">1</span>]            <span class="co"># g = 2 * slope</span></span>
+<span id="cb11-13"><a></a>  })</span>
+<span id="cb11-14"><a></a>  <span class="fu">sd</span>(ghat)                               <span class="co"># empirical SE of g_hat</span></span>
+<span id="cb11-15"><a></a>}</span>
+<span id="cb11-16"><a></a></span>
+<span id="cb11-17"><a></a>drops <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">20</span>)</span>
+<span id="cb11-18"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sapply</span>(drops, se_ghat)</span>
+<span id="cb11-19"><a></a><span class="fu">data.frame</span>(<span class="at">drops =</span> drops, <span class="at">marks =</span> drops <span class="sc">*</span> <span class="dv">20</span>, <span class="at">se =</span> <span class="fu">round</span>(se, <span class="dv">4</span>),</span>
+<span id="cb11-20"><a></a>           <span class="at">ci_half_width =</span> <span class="fu">round</span>(<span class="fl">1.96</span> <span class="sc">*</span> se, <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  drops marks     se ci_half_width
+1     1    20 0.0060        0.0118
+2     2    40 0.0041        0.0081
+3     3    60 0.0036        0.0071
+4     6   120 0.0025        0.0049
+5    10   200 0.0019        0.0038
+6    20   400 0.0014        0.0027</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>One decimal</strong> (<span class="math inline">\(\pm 0.05\)</span>): a single drop (20 marks) is already more than enough</li>
+<li><strong>Two decimals</strong> (<span class="math inline">\(\pm 0.005\)</span>): you need ~6 drops — the second decimal costs ~6× the oxygen of the first</li>
+<li>Spreading marks over the whole tower gives each drop a lot of leverage</li>
+</ul>
+</div>
+</section>
 <section id="confidence-intervals-for-proportions" class="slide level2 smaller scrollable">
 <h2>Confidence Intervals for Proportions</h2>
 <div class="columns">
@@ -360,28 +404,28 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb11-2"><a></a>y <span class="ot">&lt;-</span> <span class="dv">355</span></span>
-<span id="cb11-3"><a></a>theta_hat <span class="ot">&lt;-</span> y<span class="sc">/</span>n</span>
-<span id="cb11-4"><a></a>theta_hat <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb13-2"><a></a>y <span class="ot">&lt;-</span> <span class="dv">355</span></span>
+<span id="cb13-3"><a></a>theta_hat <span class="ot">&lt;-</span> y<span class="sc">/</span>n</span>
+<span id="cb13-4"><a></a>theta_hat <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.71</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(theta_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta_hat) <span class="sc">/</span> n)</span>
-<span id="cb13-2"><a></a>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(theta_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta_hat) <span class="sc">/</span> n)</span>
+<span id="cb15-2"><a></a>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.02</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.75</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.67</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>ci_95 <span class="ot">&lt;-</span> theta_hat <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">*</span> se</span>
-<span id="cb19-2"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>ci_95 <span class="ot">&lt;-</span> theta_hat <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">*</span> se</span>
+<span id="cb21-2"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.67 0.75</code></pre>
 </div>
@@ -413,68 +457,68 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 <li>These demos are taken from the book <a href="https://avehtari.github.io/ActiveStatistics/">Active Statistics</a> by Gelman and Vehtari</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="co"># Generate fake data</span></span>
-<span id="cb21-2"><a></a>p <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
-<span id="cb21-3"><a></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
-<span id="cb21-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, n, p)</span>
-<span id="cb21-5"><a></a><span class="fu">print</span>(data)</span>
-<span id="cb21-6"><a></a></span>
-<span id="cb21-7"><a></a><span class="co"># Estimate proportion and calculate confidence interval</span></span>
-<span id="cb21-8"><a></a>p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
-<span id="cb21-9"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
-<span id="cb21-10"><a></a>ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
-<span id="cb21-11"><a></a><span class="fu">print</span>(ci) </span>
-<span id="cb21-12"><a></a></span>
-<span id="cb21-13"><a></a><span class="co"># Put it in a loop</span></span>
-<span id="cb21-14"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">100</span></span>
-<span id="cb21-15"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>reps) {</span>
-<span id="cb21-16"><a></a>  data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, n, p)</span>
-<span id="cb21-17"><a></a>  p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
-<span id="cb21-18"><a></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
-<span id="cb21-19"><a></a>  ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
-<span id="cb21-20"><a></a>  <span class="fu">print</span>(ci) </span>
-<span id="cb21-21"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="co"># Generate fake data</span></span>
+<span id="cb23-2"><a></a>p <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb23-3"><a></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb23-4"><a></a>data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, n, p)</span>
+<span id="cb23-5"><a></a><span class="fu">print</span>(data)</span>
+<span id="cb23-6"><a></a></span>
+<span id="cb23-7"><a></a><span class="co"># Estimate proportion and calculate confidence interval</span></span>
+<span id="cb23-8"><a></a>p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
+<span id="cb23-9"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
+<span id="cb23-10"><a></a>ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
+<span id="cb23-11"><a></a><span class="fu">print</span>(ci) </span>
+<span id="cb23-12"><a></a></span>
+<span id="cb23-13"><a></a><span class="co"># Put it in a loop</span></span>
+<span id="cb23-14"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb23-15"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>reps) {</span>
+<span id="cb23-16"><a></a>  data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, n, p)</span>
+<span id="cb23-17"><a></a>  p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
+<span id="cb23-18"><a></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
+<span id="cb23-19"><a></a>  ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
+<span id="cb23-20"><a></a>  <span class="fu">print</span>(ci) </span>
+<span id="cb23-21"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="computer-demo-proportions-means-and-differences-of-means" class="slide level2 smaller">
 <h2>Computer Demo: Proportions, Means, and Differences of Means</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># Read data from here:  https://github.com/avehtari/ROS-Examples</span></span>
-<span id="cb22-2"><a></a><span class="fu">library</span>(<span class="st">"foreign"</span>)</span>
-<span id="cb22-3"><a></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb22-4"><a></a>pew_pre <span class="ot">&lt;-</span> <span class="fu">read.dta</span>(</span>
-<span id="cb22-5"><a></a>  <span class="fu">paste0</span>(</span>
-<span id="cb22-6"><a></a>    <span class="st">"https://raw.githubusercontent.com/avehtari/"</span>,</span>
-<span id="cb22-7"><a></a>    <span class="st">"ROS-Examples/master/Pew/data/"</span>,</span>
-<span id="cb22-8"><a></a>    <span class="st">"pew_research_center_june_elect_wknd_data.dta"</span></span>
-<span id="cb22-9"><a></a>  )</span>
-<span id="cb22-10"><a></a>)</span>
-<span id="cb22-11"><a></a>pew_pre <span class="ot">&lt;-</span> pew_pre <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"regicert"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb22-12"><a></a>  <span class="fu">na.omit</span>() <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">!=</span> <span class="dv">99</span>)</span>
-<span id="cb22-13"><a></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(pew_pre)</span>
-<span id="cb22-14"><a></a></span>
-<span id="cb22-15"><a></a><span class="co"># Estimate a proportion (certain to have registered for voting?)</span></span>
-<span id="cb22-16"><a></a>registered <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pew_pre<span class="sc">$</span>regicert <span class="sc">==</span> <span class="st">"absolutely certain"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb22-17"><a></a>p_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(registered)</span>
-<span id="cb22-18"><a></a>se_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat)) <span class="sc">/</span> n)</span>
-<span id="cb22-19"><a></a><span class="fu">round</span>(p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_hat, <span class="dv">4</span>) <span class="co"># ci</span></span>
-<span id="cb22-20"><a></a></span>
-<span id="cb22-21"><a></a><span class="co"># Estimate an average (mean age)</span></span>
-<span id="cb22-22"><a></a>age <span class="ot">&lt;-</span> pew_pre<span class="sc">$</span>age</span>
-<span id="cb22-23"><a></a>y_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age)</span>
-<span id="cb22-24"><a></a>se_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age) <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span>
-<span id="cb22-25"><a></a><span class="fu">round</span>(y_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_hat, <span class="dv">4</span>) <span class="co"># ci</span></span>
-<span id="cb22-26"><a></a></span>
-<span id="cb22-27"><a></a><span class="co"># Estimate a difference of means</span></span>
-<span id="cb22-28"><a></a>age2 <span class="ot">&lt;-</span> age[registered <span class="sc">==</span> <span class="dv">1</span>]</span>
-<span id="cb22-29"><a></a>age1 <span class="ot">&lt;-</span> age[registered <span class="sc">==</span> <span class="dv">0</span>]</span>
-<span id="cb22-30"><a></a>y_2_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age2)</span>
-<span id="cb22-31"><a></a>se_2_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age2) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(age2))</span>
-<span id="cb22-32"><a></a>y_1_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age1)</span>
-<span id="cb22-33"><a></a>se_1_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age1) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(age1))</span>
-<span id="cb22-34"><a></a>diff_hat <span class="ot">&lt;-</span> y_2_hat <span class="sc">-</span> y_1_hat</span>
-<span id="cb22-35"><a></a>se_diff_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(se_1_hat <span class="sc">^</span> <span class="dv">2</span> <span class="sc">+</span> se_2_hat <span class="sc">^</span> <span class="dv">2</span>)</span>
-<span id="cb22-36"><a></a><span class="fu">round</span>(diff_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_diff_hat, <span class="dv">4</span>) <span class="co"># ci</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># Read data from here:  https://github.com/avehtari/ROS-Examples</span></span>
+<span id="cb24-2"><a></a><span class="fu">library</span>(<span class="st">"foreign"</span>)</span>
+<span id="cb24-3"><a></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb24-4"><a></a>pew_pre <span class="ot">&lt;-</span> <span class="fu">read.dta</span>(</span>
+<span id="cb24-5"><a></a>  <span class="fu">paste0</span>(</span>
+<span id="cb24-6"><a></a>    <span class="st">"https://raw.githubusercontent.com/avehtari/"</span>,</span>
+<span id="cb24-7"><a></a>    <span class="st">"ROS-Examples/master/Pew/data/"</span>,</span>
+<span id="cb24-8"><a></a>    <span class="st">"pew_research_center_june_elect_wknd_data.dta"</span></span>
+<span id="cb24-9"><a></a>  )</span>
+<span id="cb24-10"><a></a>)</span>
+<span id="cb24-11"><a></a>pew_pre <span class="ot">&lt;-</span> pew_pre <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"regicert"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-12"><a></a>  <span class="fu">na.omit</span>() <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">!=</span> <span class="dv">99</span>)</span>
+<span id="cb24-13"><a></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(pew_pre)</span>
+<span id="cb24-14"><a></a></span>
+<span id="cb24-15"><a></a><span class="co"># Estimate a proportion (certain to have registered for voting?)</span></span>
+<span id="cb24-16"><a></a>registered <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pew_pre<span class="sc">$</span>regicert <span class="sc">==</span> <span class="st">"absolutely certain"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb24-17"><a></a>p_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(registered)</span>
+<span id="cb24-18"><a></a>se_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat)) <span class="sc">/</span> n)</span>
+<span id="cb24-19"><a></a><span class="fu">round</span>(p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_hat, <span class="dv">4</span>) <span class="co"># ci</span></span>
+<span id="cb24-20"><a></a></span>
+<span id="cb24-21"><a></a><span class="co"># Estimate an average (mean age)</span></span>
+<span id="cb24-22"><a></a>age <span class="ot">&lt;-</span> pew_pre<span class="sc">$</span>age</span>
+<span id="cb24-23"><a></a>y_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age)</span>
+<span id="cb24-24"><a></a>se_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age) <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span>
+<span id="cb24-25"><a></a><span class="fu">round</span>(y_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_hat, <span class="dv">4</span>) <span class="co"># ci</span></span>
+<span id="cb24-26"><a></a></span>
+<span id="cb24-27"><a></a><span class="co"># Estimate a difference of means</span></span>
+<span id="cb24-28"><a></a>age2 <span class="ot">&lt;-</span> age[registered <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb24-29"><a></a>age1 <span class="ot">&lt;-</span> age[registered <span class="sc">==</span> <span class="dv">0</span>]</span>
+<span id="cb24-30"><a></a>y_2_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age2)</span>
+<span id="cb24-31"><a></a>se_2_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age2) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(age2))</span>
+<span id="cb24-32"><a></a>y_1_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(age1)</span>
+<span id="cb24-33"><a></a>se_1_hat <span class="ot">&lt;-</span> <span class="fu">sd</span>(age1) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(age1))</span>
+<span id="cb24-34"><a></a>diff_hat <span class="ot">&lt;-</span> y_2_hat <span class="sc">-</span> y_1_hat</span>
+<span id="cb24-35"><a></a>se_diff_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(se_1_hat <span class="sc">^</span> <span class="dv">2</span> <span class="sc">+</span> se_2_hat <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb24-36"><a></a><span class="fu">round</span>(diff_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se_diff_hat, <span class="dv">4</span>) <span class="co"># ci</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="degrees-of-freedom" class="slide level2">
@@ -492,7 +536,7 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 <li>t distribution has a degrees freedom parameter, and with a low number of degrees of freedom, it has heavier tails than the Normal</li>
 </ul>
 
-<img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="576"></section>
+<img data-src="07-lecture_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="576"></section>
 <section id="confidence-intervals-from-the-t-distribution" class="slide level2 smaller">
 <h2>Confidence Intervals from the t Distribution</h2>
 <div class="columns">
@@ -505,36 +549,36 @@ x_i(t) = a + bt_i^2 + \epsilon_i
 </div><div class="column" style="width:60%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="co"># Distance from the bull's eye in cm</span></span>
-<span id="cb23-2"><a></a>data <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">18</span>)</span>
-<span id="cb23-3"><a></a></span>
-<span id="cb23-4"><a></a><span class="co"># Calculate the sample mean</span></span>
-<span id="cb23-5"><a></a>mean_data <span class="ot">&lt;-</span> <span class="fu">mean</span>(data)</span>
-<span id="cb23-6"><a></a></span>
-<span id="cb23-7"><a></a><span class="co"># Calculate the standard error of the mean</span></span>
-<span id="cb23-8"><a></a>se_mean <span class="ot">&lt;-</span> <span class="fu">sd</span>(data) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(data))</span>
-<span id="cb23-9"><a></a></span>
-<span id="cb23-10"><a></a><span class="co"># Degrees of freedom</span></span>
-<span id="cb23-11"><a></a>df <span class="ot">&lt;-</span> <span class="fu">length</span>(data) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb23-12"><a></a></span>
-<span id="cb23-13"><a></a><span class="co"># Calculate the 95% and 50% confidence interval </span></span>
-<span id="cb23-14"><a></a>ci_95 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), df) <span class="sc">*</span> se_mean</span>
-<span id="cb23-15"><a></a>ci_50 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), df) <span class="sc">*</span> se_mean</span>
-<span id="cb23-16"><a></a></span>
-<span id="cb23-17"><a></a><span class="co"># Output the results</span></span>
-<span id="cb23-18"><a></a>mean_data <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Distance from the bull's eye in cm</span></span>
+<span id="cb25-2"><a></a>data <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">18</span>)</span>
+<span id="cb25-3"><a></a></span>
+<span id="cb25-4"><a></a><span class="co"># Calculate the sample mean</span></span>
+<span id="cb25-5"><a></a>mean_data <span class="ot">&lt;-</span> <span class="fu">mean</span>(data)</span>
+<span id="cb25-6"><a></a></span>
+<span id="cb25-7"><a></a><span class="co"># Calculate the standard error of the mean</span></span>
+<span id="cb25-8"><a></a>se_mean <span class="ot">&lt;-</span> <span class="fu">sd</span>(data) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(data))</span>
+<span id="cb25-9"><a></a></span>
+<span id="cb25-10"><a></a><span class="co"># Degrees of freedom</span></span>
+<span id="cb25-11"><a></a>df <span class="ot">&lt;-</span> <span class="fu">length</span>(data) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb25-12"><a></a></span>
+<span id="cb25-13"><a></a><span class="co"># Calculate the 95% and 50% confidence interval </span></span>
+<span id="cb25-14"><a></a>ci_95 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), df) <span class="sc">*</span> se_mean</span>
+<span id="cb25-15"><a></a>ci_50 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), df) <span class="sc">*</span> se_mean</span>
+<span id="cb25-16"><a></a></span>
+<span id="cb25-17"><a></a><span class="co"># Output the results</span></span>
+<span id="cb25-18"><a></a>mean_data <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 9.4</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>se_mean <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>se_mean <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2.32</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  2.97 15.83</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>ci_50 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>ci_50 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  7.69 11.11</code></pre>
 </div>
