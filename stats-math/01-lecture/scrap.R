@@ -1,23 +1,28 @@
-x <- matrix(sample(12), ncol = 3)
-x
+m <- matrix(sample(12), ncol = 3)
+m
 
-a <- 10
-s <- 0
-for (i in 1:4) {
-  for (j in 1:3) {
-    s <- s + x[i, j]
-    cat("s =", s, "\n")
+sum_mat <- function(x) {
+  I <- nrow(x)
+  J <- ncol(x)
+  for (i in 1:I) {
+    for (j in 1:J) {
+      s <- s + x[i, j]
+      cat("s =", s, "i =", i, "j=", j, "\n")
+    }
   }
 }
+a <- 10
+s <- 0
+sum_mat(m)
 
 # lots of ways to do the same thing in R
-sum(x)
-rowSums(x) |> sum() # |> is a shortcut for sum(rowSums(x))
-colSums(x) |> sum()
-apply(x, 1, sum) # same as rowSums(x)
-apply(x, 2, sum) # same as colSums(x)
-apply(x, 1, sum) |> sum()
-apply(x, 2, sum) |> sum()
+sum(m)
+rowSums(m) |> sum() # |> is a shortcut for sum(rowSums(x))
+colSums(m) |> sum()
+apply(m, 1, sum) # same as rowSums(x)
+apply(m, 2, sum) # same as colSums(x)
+apply(m, 1, sum) |> sum()
+apply(m, 2, sum) |> sum()
 
 
 print_stack <- function() {
