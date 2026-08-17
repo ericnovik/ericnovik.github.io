@@ -879,7 +879,14 @@
     "href": "stats-math/01-lecture/01-lecture-show.html#data-frames",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Data Frames",
-    "text": "Data Frames\n\nData frames are rectangular structures that are often used in data analysis\nThere is a built-in function called data.frame, but we recommend tibble, which is part of the dplyr package\nYou can look up the documentation of any R function this way: ?dplyr::tibble. If the package is loaded by using library(dplyr) you can omit dplyr:: prefix\nJohn F. W. Herschel’s data on the orbit of the Twin Stars \\(\\gamma\\) Virginis"
+    "text": "Data Frames\n\nData frames are rectangular structures that are often used in data analysis\nThere is a built-in function called data.frame, but we recommend tibble, which is part of the dplyr package\nYou can look up the documentation of any R function this way: ?dplyr::tibble. If the package is loaded by using library(dplyr) you can omit dplyr:: prefix\nJohn F. W. Herschel’s data on the orbit of the Twin Stars \\(\\gamma\\) Virginis\n\n\n\n\n\n\nJohn F. W. Herschel 1792–1871\n\n\n\n\n\n\n\n\nPortrait: Julia Margaret Cameron (1867), public domain via Wikimedia Commons."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-lecture-show.html#the-frame-on-the-sky",
+    "href": "stats-math/01-lecture/01-lecture-show.html#the-frame-on-the-sky",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "The Frame on the Sky",
+    "text": "The Frame on the Sky\n\n\n\nData: HistData::Virginis.interp. Position angle is measured from north through east; east appears left in the sky frame."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-show.html#data-frames-1",
@@ -900,7 +907,7 @@
     "href": "stats-math/01-lecture/01-lecture-show.html#basic-plotting",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Basic Plotting",
-    "text": "Basic Plotting\n\nJohn SnowDeaths Over TimeMap of Cholera in London\n\n\n\n\n\n\n\n\n\n\n\nggplot2 implements a grammar of graphics for building plots from data\nStart with data and aesthetic mappings, then add geometric layers with +\nWe will demonstrate with John Snow’s data from the 1854 cholera outbreak\n\n\n\n\n\n\nlibrary(HistData)\nlibrary(lubridate)\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# identify dates before and after the pump handle was removed\nsnow_dates &lt;- Snow.dates |&gt;\n  mutate(period = if_else(\n    date &lt; mdy(\"09/08/1854\"), \"Before Sept. 8\", \"Sept. 8 onward\"\n  ))\n\nggplot(snow_dates, aes(x = date, y = deaths, color = period)) +\n  geom_linerange(aes(ymin = 0, ymax = deaths), linewidth = 0.8) +\n  geom_point(size = 1.5) +\n  annotate(\n    \"text\", x = mdy(\"09/08/1854\"), y = 40,\n    label = \"Pump handle\\nremoved Sept. 8\", hjust = 0\n  ) +\n  scale_color_manual(\n    values = c(\"Before Sept. 8\" = \"red\", \"Sept. 8 onward\" = \"darkgreen\"),\n    guide = \"none\"\n  ) + labs(x = NULL, y = \"Deaths\")"
+    "text": "Basic Plotting\n\nJohn SnowDeaths Over TimeMap of Cholera in London\n\n\n\n\n\n\nDr. John Snow 1813–1858\n\n\n\n\n\n\n\n\nggplot2 implements a grammar of graphics for building plots from data\nStart with data and aesthetic mappings, then add geometric layers with +\nWe will demonstrate with John Snow’s data from the 1854 cholera outbreak\n\n\n\nPortrait: Dr. John Snow (1856), public domain via Wikimedia Commons.\n\n\n\n\n\nlibrary(HistData)\nlibrary(lubridate)\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# identify dates before and after the pump handle was removed\nsnow_dates &lt;- Snow.dates |&gt;\n  mutate(period = if_else(\n    date &lt; mdy(\"09/08/1854\"), \"Before Sept. 8\", \"Sept. 8 onward\"\n  ))\n\nggplot(snow_dates, aes(x = date, y = deaths, color = period)) +\n  geom_linerange(aes(ymin = 0, ymax = deaths), linewidth = 0.8) +\n  geom_point(size = 1.5) +\n  annotate(\n    \"text\", x = mdy(\"09/08/1854\"), y = 40,\n    label = \"Pump handle\\nremoved Sept. 8\", hjust = 0\n  ) +\n  scale_color_manual(\n    values = c(\"Before Sept. 8\" = \"red\", \"Sept. 8 onward\" = \"darkgreen\"),\n    guide = \"none\"\n  ) + labs(x = NULL, y = \"Deaths\")"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-show.html#hands-on-simulating-coin-flips",
@@ -1059,273 +1066,280 @@
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#section",
     "href": "stats-math/01-lecture/01-lecture-read.html#section",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "",
     "text": "“If you want to be a writer, you must do two things above all others: read a lot and write a lot. There’s no way around these two things that I’m aware of, no shortcut.”\n— Stephen King, On Writing: A Memoir of the Craft\n\nCourse syllabus (PDF)\n\n\n\n\n\n\n\nPhoto: Kevin Payravi / WikiPortraits, CC BY-SA 4.0.\n\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#course-format",
     "href": "stats-math/01-lecture/01-lecture-read.html#course-format",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Course Format",
     "text": "Course Format\n\nThe course will run for two weeks, five days per week, 3 hours per day\nEach day will consist of:\n\n~30-minute going over questions\n~1.5-hour lecture\n~1-hour hands of exercises\n\nThe course will be computationally intensive – we will write many small programs."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#course-outline",
     "href": "stats-math/01-lecture/01-lecture-read.html#course-outline",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Course Outline",
     "text": "Course Outline\n\n\n\nIntroduction to the R language, RStudio, and R Markdown.\nBasic differentiation. Meaning of the derivative. Numeric and symbolic differentiation and optimization.\nBasic integration. Riemann integral and basic rules of integration.\nReview of one-dimensional probability. Conditional probability, random variables, and expectations. Solving probability problems by simulation.\n\n\n\nDiscrete distributions like Bernoulli and Binomial and continuous distributions like Normal and Exponential\nIntroduction to Linear Algebra. Vectors and vector arithmetic. Matrixes and matrix operations.\nManipulating and graphing data and Exploratory Data Analysis\nProgramming basics: variables, flow control, loops, functions, and writing simulations\nIntroduction to basic statistical inference and linear regression."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#session-1-outline",
     "href": "stats-math/01-lecture/01-lecture-read.html#session-1-outline",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Session 1 Outline",
     "text": "Session 1 Outline\n\nThe big picture – costs and benefits\nSetting up an analysis environment\nRStudio projects\nWorking with interpreted languages like R\nSome basic R syntax and elements of R style\nGenerating data with R\nSome basic R and ggplot graphics\nWriting your first Monte Carlo simulation"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#some-mistakes-are-silly",
     "href": "stats-math/01-lecture/01-lecture-read.html#some-mistakes-are-silly",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Some Mistakes Are Silly",
     "text": "Some Mistakes Are Silly"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#some-mistakes-are-deadly",
     "href": "stats-math/01-lecture/01-lecture-read.html#some-mistakes-are-deadly",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Some Mistakes Are Deadly",
     "text": "Some Mistakes Are Deadly\nOn January 28, 1986, shortly after launch, Shuttle Challenger exploded, killing all seven crew members.\n\nO-Ring DataBinomial ModelReferences\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProbability of 1 or more rings being damaged at launch is about 0.99\nProbability of all 6 rings being damaged at launch is about 0.46\n\n\n\n\n\nFowlkes and Hoadley (1989): Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure.\nMartz and Zimmer (1992): The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.\n\n\n\n\n\nData source: UCI Machine Learning Repository"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#allan-mcdonald-dies-at-83",
     "href": "stats-math/01-lecture/01-lecture-read.html#allan-mcdonald-dies-at-83",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Allan McDonald Dies at 83",
     "text": "Allan McDonald Dies at 83\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCommunication is part of the job — it’s worth learning how to do it well.\n\n\nSource: The New York Times, March 9, 2021"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#smac-why-bother",
     "href": "stats-math/01-lecture/01-lecture-read.html#smac-why-bother",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "SMaC: Why Bother?",
     "text": "SMaC: Why Bother?\n\n\n\n\nProgramming: a cheap way to do experiments and a lazy way to do math\nDifferential calculus: optimize functions, Frequentist statistics\nIntegral calculus: compute probabilities, expectations, Bayesian statistics\nLinear algebra: the language for solving many equations at once\nProbability: given a (known) population, how likely is this sample\nStatistics: given a sample, what are the attributes of a population"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#programming-and-statistics-in-the-age-of-ai",
     "href": "stats-math/01-lecture/01-lecture-read.html#programming-and-statistics-in-the-age-of-ai",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Programming and Statistics in the Age of AI",
     "text": "Programming and Statistics in the Age of AI\nA frontier LLM generated 20 independent solutions to the same statistical programming task. Three did not run, and several that ran produced catastrophic errors.\n\n\nEach red point is a different ChatGPT Codex 5.2 submission. The worst RMSE exceeded 100 billion outcome standard deviations.\nSource: Perrett, Elliott, Hill, and Scott (2026), Flaws in the LLM Automation Narrative."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#a-plausible-answer-can-be-catastrophically-wrong",
     "href": "stats-math/01-lecture/01-lecture-read.html#a-plausible-answer-can-be-catastrophically-wrong",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "A Plausible Answer Can Be Catastrophically Wrong",
     "text": "A Plausible Answer Can Be Catastrophically Wrong\nThe same prompt produced estimates ranging from competitive to billions of standard deviations from the truth.\n\n\nThe danger is not that every LLM answer is wrong; it is that a plausible-looking answer may be catastrophically wrong. Statistical and programming knowledge lets you verify the output instead of merely trusting it.\nSource: Perrett, Elliott, Hill, and Scott (2026), Flaws in the LLM Automation Narrative."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#example-differential-calculus",
     "href": "stats-math/01-lecture/01-lecture-read.html#example-differential-calculus",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Differential Calculus",
     "text": "Example: Differential Calculus\n\nRegression Line ViewLikelihood View\n\n\n\n\n\nDifferentiation comes up when you want to find the most likely values of parameters (unknowns) in optimization-based (sometimes called frequentist) inference\nImagine that we need to find the values of the slope and intercept such that the yellow line fits “nicely” through the cloud of points\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSuppose you have linear regression model of the form \\(y_n \\sim \\operatorname{normal}(\\alpha + \\beta x_n, \\, \\sigma)\\) and you want to learn the most likely values of \\(\\alpha\\) and \\(\\beta\\)\nThe most likely values for slope (beta) and intercept (alpha) are at the peak of this function, which can be found by using (partial) derivatives"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#example-integral-calculus",
     "href": "stats-math/01-lecture/01-lecture-read.html#example-integral-calculus",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Integral Calculus",
     "text": "Example: Integral Calculus\n\n\n\nSuppose we have a probability distribution of some parameter \\(\\theta\\), which represents the differences between the treated and control units\nFurther, suppose that \\(\\theta &gt; 0\\) favors the treatment group\nWe want to know the probability that treatment is better than control\nThis probability can be written as:\n\n\n\\[\n    \\P(\\theta &gt; 0) = \\int_{0}^{\\infty} p_{\\theta}\\, \\text{d}\\theta\n\\]\n\n\n\n\n\nAssuming \\(\\theta\\) is normally distributed with \\(\\mu = 1\\) and \\(\\sigma = 1\\) we can evaluate the integral as an area under the normal curve from \\(0\\) to \\(\\infty\\)."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#probabilistic-programming",
     "href": "stats-math/01-lecture/01-lecture-read.html#probabilistic-programming",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Probabilistic Programming",
     "text": "Probabilistic Programming\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNumPyro\n\n\n\n\nA probabilistic program specifies a forward generative process using random variables and data.\nUnknown parameters \\(\\theta\\) (RVs) are represented explicitly; observed data \\(x\\) and measurements \\(y\\) condition the model.\nAn inference engine uses the model to solve the inverse problem (perform inference) without requiring a separate hand-derived solution for every model.\nModel specification is separated from algorithms such as numerical optimization (MLE), Hamiltonian Monte Carlo, and variational inference.\nR, Python, Julia are not probabilistic programming languages.\n\n\n\nLogo assets: Stan, PyMC, JAX, and NumPyro."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#example-linear-regression",
     "href": "stats-math/01-lecture/01-lecture-read.html#example-linear-regression",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Linear Regression",
     "text": "Example: Linear Regression\nNotice a Linear Algebra notation \\(X \\beta\\), which is matrix-vector multiplication. \n\n\nStan\n\ndata {\n  int&lt;lower=0&gt; N;   // number of data items\n  int&lt;lower=0&gt; K;   // number of predictors\n  matrix[N, K] X;   // predictor matrix\n  vector[N] y;      // outcome vector\n}\nparameters {\n  real alpha;           // intercept\n  vector[K] beta;       // coefficients for predictors\n  real&lt;lower=0&gt; sigma;  // error scale\n}\nmodel {\n  // parameters with Normal(0, 1) priors\n  alpha ~ normal(0, 1);\n  beta ~ normal(0, 1);\n\n  // sigma with Exp(1) prior\n  sigma ~ exponential(1);\n\n  // likelihood: y ~ normal(X * beta + alpha, sigma)\n  y ~ normal(X * beta + alpha, sigma);\n}\n\n\nNumPyro\nimport numpyro\nimport numpyro.distributions as dist\n\n\ndef model(X, y=None):\n    N, K = X.shape\n\n    # parameters with Normal(0, 1) priors\n    alpha = numpyro.sample(\"alpha\", dist.Normal(0.0, 1.0))\n    beta = numpyro.sample(\"beta\", dist.Normal(0.0, 1.0).expand([K]))\n\n    # sigma with Exp(1) prior\n    sigma = numpyro.sample(\"sigma\", dist.Exponential(1.0))\n\n    # likelihood: y ~ normal(X * beta + alpha, sigma)\n    mu = X @ beta + alpha\n    numpyro.sample(\"y\", dist.Normal(mu, sigma), obs=y)\n\n\nEquivalent linear regression models. Sources: Stan User’s Guide and NumPyro documentation.\n\n\n\nStan and NumPyro are probabilistic programming systems. You write the data-generating process, and the system performs inference for the unknown parameters."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#example-binomial-regression",
     "href": "stats-math/01-lecture/01-lecture-read.html#example-binomial-regression",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Binomial Regression",
     "text": "Example: Binomial Regression\nThis is the type of model we fit to the O-Rings data.\n\n\ndata {\n  int&lt;lower=0&gt; N_rows; // number of rows in data\n  int&lt;lower=0&gt; N;      // number of possible \"successes\" in Binom(N, p)\n  vector[N_rows] x;    // temperature for the O-Rings example\n  array[N_rows] int&lt;lower=0, upper=N&gt; y; // number of \"successes\" in y ~ Binom(N, p)\n}\nparameters {\n  real alpha;\n  real beta;\n}\nmodel {\n  alpha ~ normal(0, 2.5); // we can encode what we know about plausible values\n  beta ~ normal(0, 1);    // of alpha and beta prior to conditioning on the data\n  y ~ binomial_logit(N, alpha + beta * x); // likehood (conditioned on x)\n}\n\n\\[\n\\begin{eqnarray*}\n\\text{BinomialLogit}(y~|~N,\\theta) & = &\n\\text{Binomial}(y~|~N,\\text{logit}^{-1}(\\theta)) \\\\[6pt] & = &\n\\binom{N}{y} \\left( \\text{logit}^{-1}(\\theta) \\right)^{y}  \\left( 1 -\n\\text{logit}^{-1}(\\theta) \\right)^{N - y}\n\\end{eqnarray*}\n\\]"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#example-irt-model",
     "href": "stats-math/01-lecture/01-lecture-read.html#example-irt-model",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: IRT Model",
     "text": "Example: IRT Model\nItem-Response Theory models are popular in education research but generalize to other applications. \n\ndata {\n  int&lt;lower=1&gt; J;                     // number of students\n  int&lt;lower=1&gt; K;                     // number of questions\n  int&lt;lower=1&gt; N;                     // number of observations\n  array[N] int&lt;lower=1, upper=J&gt; jj;  // student for observation n\n  array[N] int&lt;lower=1, upper=K&gt; kk;  // question for observation n\n  array[N] int&lt;lower=0, upper=1&gt; y;   // correctness for observation n\n}\nparameters {\n  real delta;            // mean student ability\n  array[J] real alpha;   // ability of student j - mean ability\n  array[K] real beta;    // difficulty of question k\n}\nmodel {\n  alpha ~ std_normal();         // informative true prior\n  beta ~ std_normal();          // informative true prior\n  delta ~ normal(0.75, 1);      // informative true prior\n  for (n in 1:N) {\n    y[n] ~ bernoulli_logit(alpha[jj[n]] - beta[kk[n]] + delta);\n  }\n}\n\n\\[\n\\begin{eqnarray*}\n\\text{BernoulliLogit}(y~|~\\theta) & = &\n\\text{Bernoulli}(y~|~\\text{logit}^{-1}(\\theta)) \\\\[6pt] & = &\n\\left(\\text{logit}^{-1}(\\theta)\\right)^y\n\\left(1-\\text{logit}^{-1}(\\theta)\\right)^{1-y}\n\\end{eqnarray*}\n\\]\n\n1PL item-response model. Source: Stan Manual"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#analysis-environment",
     "href": "stats-math/01-lecture/01-lecture-read.html#analysis-environment",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Analysis Environment",
     "text": "Analysis Environment\n\n\n\nInstructions for installing R and RStudio\nInstall the latest version of R\nInstall the latest version of the RStudio Desktop\nCreate a directory on your hard drive and give it a simple name. Mine is called statsmath\nIn RStudio, go to File -&gt; New Project and select: “Existing Directory”\nHow many of you have not used RStudio?\n\n\n\n\n\nDownload R, Download RStudio"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#what-is-r",
     "href": "stats-math/01-lecture/01-lecture-read.html#what-is-r",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "What is R",
     "text": "What is R\n\n\n\n\nR is an open-source, interpreted, weakly typed, (somewhat) functional programming language\nR is an implementation of the S language developed at Bell Labs around 1976\nRoss Ihaka and Robert Gentleman started working on R in the early 1990s\nVersion 1.0 was released in 2000\nThere are ~20,000+ R packages available on CRAN\nR has a large and mostly friendly user community\n\n\n\n\n\n\n Source: StackOverflow Developer Survey"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#r-documentation",
     "href": "stats-math/01-lecture/01-lecture-read.html#r-documentation",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "R Documentation",
     "text": "R Documentation\n\n?mean # same as help(mean)"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#hands-on-very-basics-12",
     "href": "stats-math/01-lecture/01-lecture-read.html#hands-on-very-basics-12",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Hands-On: Very Basics 1/2",
     "text": "Hands-On: Very Basics 1/2\n\n\n\n2 + 3\n\n[1] 5\n\n10^3\n\n[1] 1000\n\n10 - 5 / 2\n\n[1] 7.5\n\n(10 - 5) / 2\n\n[1] 2.5\n\n1:10\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n1:10 + 1\n\n [1]  2  3  4  5  6  7  8  9 10 11\n\nsin(pi/2) + cos(pi/2)\n\n[1] 1\n\n1i\n\n[1] 0+1i\n\nround(exp(1i * pi) + 1)\n\n[1] 0+0i\n\n(exp(1i * pi) + 1) |&gt; round()\n\n[1] 0+0i\n\n\n\n\n\n\ndie &lt;- 1:6\ndie &lt;- seq(1, 6, by = 1)\ndie\n\n[1] 1 2 3 4 5 6\n\nlength(die)\n\n[1] 6\n\nstr(die)\n\n num [1:6] 1 2 3 4 5 6\n\ndie[1]\n\n[1] 1\n\ndie[c(1, 6)]\n\n[1] 1 6\n\ndie &gt; 3\n\n[1] FALSE FALSE FALSE  TRUE  TRUE  TRUE\n\ndie[die &gt; 3]\n\n[1] 4 5 6\n\nsum(die)\n\n[1] 21\n\nprod(die)\n\n[1] 720"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#hands-on-very-basics-22",
     "href": "stats-math/01-lecture/01-lecture-read.html#hands-on-very-basics-22",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Hands-On: Very Basics 2/2",
     "text": "Hands-On: Very Basics 2/2\n\n\n\nmean(die)\n\n[1] 3.5\n\nsum(die) / length(die)\n\n[1] 3.5\n\nmedian(die)\n\n[1] 3.5\n\nsd(die)\n\n[1] 1.870829\n\nscores &lt;- c(2, 4, NA, 8)\nmean(scores)\n\n[1] NA\n\nmean(scores, na.rm = TRUE)\n\n[1] 4.666667\n\n\n\n\n\n\nfib &lt;- function(n) {\n  if (n == 0) {\n    return(0)\n  } else if (n == 1) {\n    return(1)\n  } else {\n    return(fib(n - 1) + fib(n - 2))\n  }\n}\nfib10 &lt;- 0:9 |&gt; purrr::map_int(fib)\nprint(fib10)\n\n [1]  0  1  1  2  3  5  8 13 21 34\n\nfib10[0]\n\ninteger(0)\n\nfib10[1]\n\n[1] 0\n\nfib10[2:5]\n\n[1] 1 1 2 3\n\nfib10[-6]\n\n[1]  0  1  1  2  3  8 13 21 34"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#leonardo-da-pisa",
     "href": "stats-math/01-lecture/01-lecture-read.html#leonardo-da-pisa",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Leonardo da Pisa",
     "text": "Leonardo da Pisa\n\n\n\n\n\n\n\n\n\n\n\n\n\nA man put one pair of rabbits in a certain place entirely surrounded by a wall. How many pairs of rabbits can be produced from that pair in a year, if the nature of these rabbits is such that every month each pair bears a new pair which from the second month on becomes productive?\n\n\n\n\n\nQuote: Leonardo da Pisa, Liber Abaci (1202), translated by L. E. Sigler (Springer, 2002), pp. 404–405. Retrospective portrait from I benefattori dell’umanità, vol. VI (1850), public domain."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#your-turn",
     "href": "stats-math/01-lecture/01-lecture-read.html#your-turn",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
     "text": "Your Turn\n\nCreate a variable called fib that contains the first 10 Fibonacci numbers\nThey are: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34\nCompute the length of this vector in R\nCompute the sum, the product, and the difference (diff()) between successive numbers\nWhat do you notice about the pattern in the differences?\nNow, create a vector of 100 integers from 1 to 100\nYoung Gauss (allegedly) was asked to sum them by hand\nHe figured out that the sum has to be \\(N (N + 1) / 2\\)\nVerify that Gauss was right (just for 100)\nNow compute the sum of the first hundred squares"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#hands-on-lists",
     "href": "stats-math/01-lecture/01-lecture-read.html#hands-on-lists",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Hands-On: Lists",
     "text": "Hands-On: Lists\n\nLists are collections of objects of different types and shapes\nContrast with a data frame, which we will discuss later, that contains objects of different types but is rectangular\n\n\n\nlist_x &lt;- list(A = pi, B = c(0, 1), C = 1:10, D = c(\"one\", \"two\"))\nlist_x\n\n$A\n[1] 3.141593\n\n$B\n[1] 0 1\n\n$C\n [1]  1  2  3  4  5  6  7  8  9 10\n\n$D\n[1] \"one\" \"two\"\n\nstr(list_x)\n\nList of 4\n $ A: num 3.14\n $ B: num [1:2] 0 1\n $ C: int [1:10] 1 2 3 4 5 6 7 8 9 10\n $ D: chr [1:2] \"one\" \"two\"\n\nlist_x$A\n\n[1] 3.141593\n\nlist_x[1]\n\n$A\n[1] 3.141593\n\nstr(list_x[1])\n\nList of 1\n $ A: num 3.14\n\nlist_x[[1]] # same as x$A\n\n[1] 3.141593"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#data-frames",
     "href": "stats-math/01-lecture/01-lecture-read.html#data-frames",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Data Frames",
-    "text": "Data Frames\n\nData frames are rectangular structures that are often used in data analysis\nThere is a built-in function called data.frame, but we recommend tibble, which is part of the dplyr package\nYou can look up the documentation of any R function this way: ?dplyr::tibble. If the package is loaded by using library(dplyr) you can omit dplyr:: prefix\nJohn F. W. Herschel’s data on the orbit of the Twin Stars \\(\\gamma\\) Virginis"
+    "text": "Data Frames\n\nData frames are rectangular structures that are often used in data analysis\nThere is a built-in function called data.frame, but we recommend tibble, which is part of the dplyr package\nYou can look up the documentation of any R function this way: ?dplyr::tibble. If the package is loaded by using library(dplyr) you can omit dplyr:: prefix\nJohn F. W. Herschel’s data on the orbit of the Twin Stars \\(\\gamma\\) Virginis\n\n\n\n\n\n\nJohn F. W. Herschel 1792–1871\n\n\n\n\n\n\n\n\nPortrait: Julia Margaret Cameron (1867), public domain via Wikimedia Commons."
+  },
+  {
+    "objectID": "stats-math/01-lecture/01-lecture-read.html#the-frame-on-the-sky",
+    "href": "stats-math/01-lecture/01-lecture-read.html#the-frame-on-the-sky",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "The Frame on the Sky",
+    "text": "The Frame on the Sky\n\n\n\nData: HistData::Virginis.interp. Position angle is measured from north through east; east appears left in the sky frame."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#data-frames-1",
     "href": "stats-math/01-lecture/01-lecture-read.html#data-frames-1",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Data Frames",
     "text": "Data Frames\n\n\n\n\nlibrary(HistData)\ndata(\"Virginis.interp\")\nclass(Virginis.interp)\n\n[1] \"data.frame\"\n\nVirginis.interp |&gt; dplyr::as_tibble()\n\n# A tibble: 14 × 4\n    year posangle distance velocity\n   &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;\n 1  1720    160      17.2    -0.32 \n 2  1730    157.     16.8    -0.354\n 3  1740    153      16.3    -0.376\n 4  1750    149.     15.5    -0.416\n 5  1760    144.     14.5    -0.478\n 6  1770    140.     13.7    -0.533\n 7  1780    134.     13.5    -0.547\n 8  1790    129.     12.9    -0.597\n 9  1800    122.     12.6    -0.632\n10  1810    116.     11.2    -0.8  \n11  1815    111.     10.4    -0.929\n12  1820    106.      9.57   -1.09 \n13  1825     98.3     7.09   -1.99 \n14  1830     84.3     4.9    -4.16 \n\nVirginis.interp |&gt; dplyr::as_tibble() |&gt; class()\n\n[1] \"tbl_df\"     \"tbl\"        \"data.frame\"\n\n\n\n\n\n Code for generated the above plot can be found here.\n\n\n\nThe Origin and Development of the Scatterplot by M Friendly and H Wainer"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#your-turn-1",
     "href": "stats-math/01-lecture/01-lecture-read.html#your-turn-1",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Your Turn",
     "text": "Your Turn\n\nSave Virginis.interp in a new tibble called virginis using as_tibble() function\nCompute average velocity in virginis\nHint: you can access columns of tibbles and data frames with an $ like this: dataframe_name$variable_name\nWe will do a lot more work with tibbles and data frames in later sessions"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#basic-plotting",
     "href": "stats-math/01-lecture/01-lecture-read.html#basic-plotting",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Basic Plotting",
-    "text": "Basic Plotting\n\nJohn SnowDeaths Over TimeMap of Cholera in London\n\n\n\n\n\n\n\n\n\n\n\nggplot2 implements a grammar of graphics for building plots from data\nStart with data and aesthetic mappings, then add geometric layers with +\nWe will demonstrate with John Snow’s data from the 1854 cholera outbreak\n\n\n\n\n\n\nlibrary(HistData)\nlibrary(lubridate)\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# identify dates before and after the pump handle was removed\nsnow_dates &lt;- Snow.dates |&gt;\n  mutate(period = if_else(\n    date &lt; mdy(\"09/08/1854\"), \"Before Sept. 8\", \"Sept. 8 onward\"\n  ))\n\nggplot(snow_dates, aes(x = date, y = deaths, color = period)) +\n  geom_linerange(aes(ymin = 0, ymax = deaths), linewidth = 0.8) +\n  geom_point(size = 1.5) +\n  annotate(\n    \"text\", x = mdy(\"09/08/1854\"), y = 40,\n    label = \"Pump handle\\nremoved Sept. 8\", hjust = 0\n  ) +\n  scale_color_manual(\n    values = c(\"Before Sept. 8\" = \"red\", \"Sept. 8 onward\" = \"darkgreen\"),\n    guide = \"none\"\n  ) + labs(x = NULL, y = \"Deaths\")"
+    "text": "Basic Plotting\n\nJohn SnowDeaths Over TimeMap of Cholera in London\n\n\n\n\n\n\nDr. John Snow 1813–1858\n\n\n\n\n\n\n\n\nggplot2 implements a grammar of graphics for building plots from data\nStart with data and aesthetic mappings, then add geometric layers with +\nWe will demonstrate with John Snow’s data from the 1854 cholera outbreak\n\n\n\nPortrait: Dr. John Snow (1856), public domain via Wikimedia Commons.\n\n\n\n\n\nlibrary(HistData)\nlibrary(lubridate)\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# identify dates before and after the pump handle was removed\nsnow_dates &lt;- Snow.dates |&gt;\n  mutate(period = if_else(\n    date &lt; mdy(\"09/08/1854\"), \"Before Sept. 8\", \"Sept. 8 onward\"\n  ))\n\nggplot(snow_dates, aes(x = date, y = deaths, color = period)) +\n  geom_linerange(aes(ymin = 0, ymax = deaths), linewidth = 0.8) +\n  geom_point(size = 1.5) +\n  annotate(\n    \"text\", x = mdy(\"09/08/1854\"), y = 40,\n    label = \"Pump handle\\nremoved Sept. 8\", hjust = 0\n  ) +\n  scale_color_manual(\n    values = c(\"Before Sept. 8\" = \"red\", \"Sept. 8 onward\" = \"darkgreen\"),\n    guide = \"none\"\n  ) + labs(x = NULL, y = \"Deaths\")"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#hands-on-simulating-coin-flips",
     "href": "stats-math/01-lecture/01-lecture-read.html#hands-on-simulating-coin-flips",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Hands-On: Simulating Coin Flips",
     "text": "Hands-On: Simulating Coin Flips\nWe can learn a lot through simulation. We will start with the sample() function.\nsample(x, size, replace = FALSE, prob = NULL)\n\n# simulating coin flips\ncoin &lt;- c(\"H\", \"T\")\n\n# flip a fair coin 10 times; try it with replace = FALSE\nsample(coin, 10, replace = TRUE)\n\n [1] \"H\" \"T\" \"T\" \"H\" \"T\" \"T\" \"H\" \"H\" \"H\" \"T\"\n\n# flip a coin that has P(H = 0.6) 10 times\nsample(coin, 10, replace = TRUE, prob = c(0.6, 0.4))\n\n [1] \"T\" \"H\" \"H\" \"T\" \"T\" \"H\" \"H\" \"T\" \"H\" \"H\"\n\n# it's more convenient to make H = 1 and T = 0\ncoin &lt;- c(1, 0)\nsample(coin, 10, replace = TRUE)\n\n [1] 1 0 1 1 1 0 0 1 1 1\n\n\n\nYour turn: flip a coin 1000 times and compute the proportion of heads"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#for-loops",
     "href": "stats-math/01-lecture/01-lecture-read.html#for-loops",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "For Loops",
     "text": "For Loops\n\nFor LoopsSolution\n\n\n\nSuppose you want to add the first 100 integers as before but without using the sum() function or the formula\nIn math notation: \\(\\sum_{i = 1}^{100}x_i\\), \\(\\mathbf{x} = (1, 2, 3, \\dots, 100)\\)\n\n\n\nn &lt;- 100\nx &lt;- 1:n\ns &lt;- 0\nfor (i in 1:n) {\n  s &lt;- s + x[i]\n}\n# test\ns == sum(x)\n\n[1] TRUE\n\n\n\n\nYour turn: modify the loop to add only even numbers in 1:100. Look up help(if) statement and modulo operator help(%%); write a test to check your work\n\n\n\n\n\ns &lt;- 0\nfor (i in 1:n) {\n  if (x[i] %% 2 == 0) {\n    s &lt;- s + x[i]\n  }\n}\ncat(s)\n\n2550\n\n# test\ns == sum(seq(2, 100, by = 2))\n\n[1] TRUE\n\n\n\n\nCongratulations, you are now Turing Complete!"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#simulate-coin-flips",
     "href": "stats-math/01-lecture/01-lecture-read.html#simulate-coin-flips",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Simulate Coin Flips",
     "text": "Simulate Coin Flips\n\nIf we flip a coin more and more times, would the estimate of the proportion become better?\nIf so, what is the rate of convergence?\n\n\n\nset.seed(1) # why do we do this?\nn &lt;- 1e4\nest_prop &lt;- numeric(n) # allocate a vector of size n\nfor (i in 1:n) {\n  x &lt;- sample(coin, i, replace = TRUE)\n  est_prop[i] &lt;- mean(x)\n}\n\n\n\nYour turn: write down in plain English what the above code is doing\nAt the end of the loop, what does the variable est_prop contain?"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#introduction-to-ggplot",
     "href": "stats-math/01-lecture/01-lecture-read.html#introduction-to-ggplot",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Introduction to ggplot",
     "text": "Introduction to ggplot\n\nOur task is to visualize the estimated proportion as a function of the number of coin flips\nThis can be done in base plot(), but we will do it with ggplot\n\n\n\n\nlibrary(ggplot2)\nlibrary(gridExtra)\n\nx &lt;- seq(0, 100, by = 5)\ny &lt;- x^2\n\nquadratic &lt;- tibble(x = x, y = y)\np1 &lt;- ggplot(data = quadratic,\n             mapping = aes(x = x, y = y))\np2 &lt;- p1 + geom_point(size = 0.5)\np3 &lt;- p1 + geom_line(linewidth = 0.2,\n                     color = 'red')\np4 &lt;- p1 + geom_point(size = 0.5) +\n  geom_line(linewidth = 0.2, color = 'red')\n\ngrid.arrange(p1, p2, p3, p4, nrow = 2)"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#law-of-large-numbers",
     "href": "stats-math/01-lecture/01-lecture-read.html#law-of-large-numbers",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Law of Large Numbers",
     "text": "Law of Large Numbers\n\nCodePlot\n\n\n\nset.seed(1)\nn &lt;- 1e4\nest_prop &lt;- numeric(n)\nfor (i in 1:n) {\n  x &lt;- sample(coin, i, replace = TRUE)\n  est_prop[i] &lt;- mean(x)\n}\n\nlibrary(scales)\ndata &lt;- tibble(num_flips = 1:n, est_prop = est_prop)\np &lt;- ggplot(data = data, mapping = aes(x = num_flips, y = est_prop))\np + geom_line(size = 0.1) +\n  geom_hline(yintercept = 0.5, size = 0.2, color = 'red') +\n  scale_x_continuous(trans = 'log10', label = comma) +\n  xlab(\"Number of flips on Log10 scale\") +\n  ylab(\"Estimated proportion of Heads\") +\n  ggtitle(\"Error decreases with the size of the sample\")\n\n\n\nWe can see some evidence for the Law of Large Numbers.\n\n\n\n\n\n\n\n\n\nWLLN: \\(\\lim_{n \\to \\infty} \\mathbb{P}\\left( \\left| \\overline{X}_n - \\mu \\right| \\geq \\epsilon \\right) = 0\\)"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#functions",
     "href": "stats-math/01-lecture/01-lecture-read.html#functions",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Functions",
     "text": "Functions\n\nStructureWriting Your Own FunctionCoin Flip Example\n\n\n\nFunctions help you break up the code into self-contained, understandable pieces.\nFunctions take in arguments and return results. You saw functions like sum() and mean() before. Here, you will learn how to write your own.\n\n\n\n\n\n\n\n\n\nSource: Hands-On Programming with R\n\n\n\n\n\nWe will write a function that produces one estimate of the proportion given a fixed sample size n.\n\n\nestimate_proportion &lt;- function(n) {\n  coin &lt;- c(1, 0)\n  x &lt;- sample(coin, n, replace = TRUE)\n  est &lt;- mean(x)\n  return(est)\n}\nestimate_proportion(10)\n\n[1] 0.4\n\nx &lt;- replicate(1e3, estimate_proportion(10))\nhead(x)\n\n[1] 0.3 0.7 0.5 0.8 0.5 0.6\n\n\n\n\n\nhist(x,\n     xlab = \"\",\n     main = \"Distribution of Proportions of Heads\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo reproduce our earlier example, generating estimates for increasing sample sizes, use map_dbl() function from purrr package. More on that here.\n\n\n\nlibrary(purrr)\npar(mar = c(3, 3, 2, 1), mgp = c(2, .7, 0), tck = -.01, bg = \"#f0f1eb\")\ny &lt;- map_dbl(2:500, estimate_proportion)\n# above is the same as sapply(2:500, estimate_proportion)\nplot(2:500, y, xlab = \"\", ylab = \"\", type = 'l')"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#generating-continuous-uniform-draws",
     "href": "stats-math/01-lecture/01-lecture-read.html#generating-continuous-uniform-draws",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Generating Continuous Uniform Draws",
     "text": "Generating Continuous Uniform Draws\n\nHere, we will examine a continuous version of the sample() function: runif(n, min = 0, max = 1)\nrunif generates realizations of a random variable uniformly distributed between min and max.\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour turn: what is the approximate value of this line of code: mean(runif(1e3, min = -1, max = 0))? Guess before running it."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#estimating-pi-by-simulation",
     "href": "stats-math/01-lecture/01-lecture-read.html#estimating-pi-by-simulation",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Estimating \\(\\pi\\) by Simulation",
     "text": "Estimating \\(\\pi\\) by Simulation\nThe idea is that we can approximate the ratio of the area of an inscribed circle, \\(A_c\\), to the area of the square, \\(A_s\\), by uniformly “throwing darts” at the square with the side \\(2r\\) and counting how many darts land inside the circle versus inside the square.\n\n\\[\n\\begin{align}\nA_{c}& = \\pi r^2 \\\\\nA_{s}& = (2r)^2 = 4r^2 \\\\\n\\frac{A_{c}}{A_{s}}& = \\frac{\\pi r^2}{4r^2} = \\frac{\\pi}{4} \\implies \\pi = \\frac{4A_{c}}{A_{s}}\n\\end{align}\n\\]"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#estimating-pi-by-simulation-1",
     "href": "stats-math/01-lecture/01-lecture-read.html#estimating-pi-by-simulation-1",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Estimating \\(\\pi\\) by Simulation",
     "text": "Estimating \\(\\pi\\) by Simulation\nTo estimate \\(\\pi\\), we perform the following simulation:\n\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\I(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\nThe numerator is a sum over an indicator function \\(\\I\\), which evaluates to \\(1\\) if the inequality holds and \\(0\\) otherwise."
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#estimating-pi-by-simulation-2",
     "href": "stats-math/01-lecture/01-lecture-read.html#estimating-pi-by-simulation-2",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "Estimating \\(\\pi\\) by Simulation",
     "text": "Estimating \\(\\pi\\) by Simulation\n\nCode and PlotEstimate\n\n\n\n\nn &lt;- 1e3\nx &lt;- runif(n, -1, 1); y &lt;- runif(n, -1, 1)\ninside &lt;- x^2 + y^2 &lt; 1\ndata &lt;- tibble(x, y, inside)\np &lt;- ggplot(aes(x = x, y = y), data = data)\np + geom_point(aes(color = inside)) + theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\n\n\n\nviewof n = {\n  const form = html`&lt;form style=\"display: flex; align-items: center; justify-content: flex-start; gap: 0.8rem; width: 780px; max-width: 100%; box-sizing: border-box; padding-left: 8px; margin: 0.2rem auto 0.7rem;\"&gt;\n    &lt;label for=\"pi-draws\" style=\"font-size: 0.65em; white-space: nowrap;\"&gt;Number of draws, &lt;i&gt;n&lt;/i&gt;&lt;/label&gt;\n    &lt;input id=\"pi-draws\" type=\"range\" min=\"0\" max=\"10\" step=\"1\" value=\"3\" style=\"flex: 1; min-width: 0;\"&gt;\n    &lt;output style=\"font-size: 0.65em; min-width: 5.5em; text-align: left;\"&gt;&lt;/output&gt;\n  &lt;/form&gt;`;\n\n  const slider = form.querySelector(\"input\");\n  const output = form.querySelector(\"output\");\n  const update = () =&gt; {\n    form.value = 100 * 2 ** Number(slider.value);\n    output.value = form.value.toLocaleString();\n  };\n\n  slider.addEventListener(\"input\", update);\n  update();\n  return form;\n}\n\npiSimulation = {\n  const size = 320;\n  const padding = 8;\n  const span = size - 2 * padding;\n  const pixelRatio = window.devicePixelRatio || 1;\n  const canvas = DOM.canvas(size * pixelRatio, size * pixelRatio);\n  canvas.style.width = `${size}px`;\n  canvas.style.height = `${size}px`;\n\n  const context = canvas.getContext(\"2d\");\n  context.scale(pixelRatio, pixelRatio);\n  context.fillStyle = \"#ffffff\";\n  context.fillRect(padding, padding, span, span);\n\n  let inside = 0;\n  const dotSize = n &lt;= 5000 ? 2 : 1;\n\n  for (let i = 0; i &lt; n; i++) {\n    const x = 2 * Math.random() - 1;\n    const y = 2 * Math.random() - 1;\n    const isInside = x * x + y * y &lt; 1;\n    inside += isInside;\n\n    context.fillStyle = isInside\n      ? \"rgba(25, 135, 84, 0.65)\"\n      : \"rgba(220, 53, 69, 0.65)\";\n    context.fillRect(\n      padding + (x + 1) * span / 2,\n      padding + (1 - y) * span / 2,\n      dotSize,\n      dotSize\n    );\n  }\n\n  context.strokeStyle = \"#222222\";\n  context.lineWidth = 1;\n  context.strokeRect(padding, padding, span, span);\n  context.beginPath();\n  context.arc(size / 2, size / 2, span / 2, 0, 2 * Math.PI);\n  context.stroke();\n\n  const estimate = 4 * inside / n;\n\n  return html`&lt;div style=\"display: grid; grid-template-columns: 340px 1fr; align-items: center; gap: 1.4rem; max-width: 780px; margin: 0 auto;\"&gt;\n    &lt;div&gt;${canvas}&lt;/div&gt;\n    &lt;div style=\"text-align: center;\"&gt;\n      &lt;div style=\"font-size: 0.65em;\"&gt;Monte Carlo estimate&lt;/div&gt;\n      &lt;div style=\"font-size: 2.2em; font-weight: 600; line-height: 1.15;\"&gt;${estimate.toFixed(5)}&lt;/div&gt;\n      &lt;div style=\"font-size: 0.55em; margin-top: 0.4rem;\"&gt;${inside.toLocaleString()} of ${n.toLocaleString()} points inside&lt;/div&gt;\n      &lt;div style=\"font-size: 0.5em; margin-top: 0.5rem;\"&gt;&lt;span style=\"color: #198754;\"&gt;● inside&lt;/span&gt;&nbsp;&nbsp;&lt;span style=\"color: #dc3545;\"&gt;● outside&lt;/span&gt;&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;`;\n}"
   },
   {
     "objectID": "stats-math/01-lecture/01-lecture-read.html#references-1",
     "href": "stats-math/01-lecture/01-lecture-read.html#references-1",
-    "title": "SMaC: Statistics, Math, and Computing (Read)",
+    "title": "SMaC: Statistics, Math, and Computing",
     "section": "References",
     "text": "References\n\n\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846."
   },
