@@ -1,19 +1,32 @@
 m <- matrix(sample(12), ncol = 3)
 m
 
-sum_mat <- function(x) {
-  I <- nrow(x)
-  J <- ncol(x)
-  for (i in 1:I) {
-    for (j in 1:J) {
-      s <- s + x[i, j]
-      cat("s =", s, "i =", i, "j=", j, "\n")
-    }
-  }
-}
 a <- 10
 s <- 0
-sum_mat(m)
+for (i in 1:4) {
+  for (j in 1:3) {
+    s <- s + m[i, j]
+#    cat("s =", s, "i =", i, "j=", j, "\n")
+  }
+}
+
+sum_mat <- function(x, a = 1, print = FALSE) {
+  I <- nrow(x)
+  J <- ncol(x)
+  s <- 0 # see what happens if you forget to set it here
+  for (i in 1:I) {
+    for (j in 1:J) {
+      s <- s + a * x[i, j]
+      if (print) {
+        cat("s =", s, "i =", i, "j=", j, "\n")
+      }
+    }
+  }
+  return(s)
+}
+
+# you can compare integers this way, but not real numbers. try it.
+100 * sum_mat(m) == sum_mat(m, 100) 
 
 # lots of ways to do the same thing in R
 sum(m)
@@ -118,3 +131,24 @@ bin_counter()
 N <- 100
 N^2 * (N + 1)/2  - sum(1:(N - 1) * (N - 1):1)
 sum((1:N)^2)
+
+library(HistData); library(ggplot2); library(dplyr)
+data("Virginis.interp")
+
+Virginis.interp |>
+  mutate(x = distance * sin(posangle * pi/180),   # East
+         y = distance * cos(posangle * pi/180)) |># North
+  ggplot(aes(x, y)) +
+  geom_path() + geom_point() +
+  annotate("point", x = 0, y = 0, size = 4) +
+  scale_x_reverse() +                              # East to the left
+  coord_fixed() +
+  labs(x = "East  →  (arb. units)", y = "North")
+
+# Herschel's interpolated curve
+plot(posangle ~ year, data = Virginis.interp,
+     pch = 15, type = "b", col = "red", cex = 0.8, lwd = 2)
+
+# The data points, and indication of their uncertainty
+points(posangle ~ year, data = Virginis, pch = 16)
+points(posangle ~ year, data = Virginis, cex = weight / 2)     # circle size = weight

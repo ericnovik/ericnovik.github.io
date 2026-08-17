@@ -1,0 +1,398 @@
+## The Frame on the Sky {.smaller}
+
+```{=html}
+<herschel-orbit-widget></herschel-orbit-widget>
+<script>
+(() => {
+  const tagName = "herschel-orbit-widget";
+  if (customElements.get(tagName)) return;
+
+  class HerschelOrbitWidget extends HTMLElement {
+    connectedCallback() {
+      if (this.shadowRoot) return;
+
+      const observations = [
+        {year: 1720, posangle: 160.0000, distance: 17.20, velocity: -0.320},
+        {year: 1730, posangle: 156.6667, distance: 16.81, velocity: -0.354},
+        {year: 1740, posangle: 153.0000, distance: 16.31, velocity: -0.376},
+        {year: 1750, posangle: 148.9167, distance: 15.50, velocity: -0.416},
+        {year: 1760, posangle: 144.4167, distance: 14.46, velocity: -0.478},
+        {year: 1770, posangle: 139.7500, distance: 13.70, velocity: -0.533},
+        {year: 1780, posangle: 134.0833, distance: 13.17, velocity: -0.547},
+        {year: 1790, posangle: 128.4167, distance: 12.78, velocity: -0.597},
+        {year: 1800, posangle: 122.4167, distance: 12.58, velocity: -0.632},
+        {year: 1810, posangle: 115.5000, distance: 11.18, velocity: -0.800},
+        {year: 1815, posangle: 111.3333, distance: 10.37, velocity: -0.929},
+        {year: 1820, posangle: 106.2500, distance: 9.57, velocity: -1.092},
+        {year: 1825, posangle: 98.3333, distance: 7.09, velocity: -1.987},
+        {year: 1830, posangle: 84.3333, distance: 4.90, velocity: -4.165}
+      ];
+
+      const root = this.attachShadow({mode: "open"});
+      root.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            color: #222220;
+            font-family: Inter, "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+          }
+
+          .card {
+            width: min(920px, 100%);
+            box-sizing: border-box;
+            margin: 0 auto;
+            padding: 13px 18px 14px;
+            border: 1px solid #d9d9d4;
+            border-radius: 14px;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+          }
+
+          .heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 2px;
+            color: #5f5f5b;
+          }
+
+          .heading-primary {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+          }
+
+          .heading-secondary {
+            font-size: 13px;
+          }
+
+          canvas {
+            display: block;
+            width: min(820px, 100%);
+            height: auto;
+            margin: 0 auto;
+          }
+
+          .control {
+            border-top: 1px solid #deded9;
+            padding-top: 8px;
+          }
+
+          .control-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 4px;
+            color: #555551;
+            font-size: 12px;
+          }
+
+          output {
+            min-width: 52px;
+            color: #333330;
+            font-weight: 650;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+          }
+
+          input[type="range"] {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            accent-color: #4779d7;
+          }
+
+          .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+            color: #222220;
+            font-variant-numeric: tabular-nums;
+          }
+
+          .metric-label {
+            color: #777772;
+            font-size: 11px;
+          }
+
+          .metric-value {
+            font-size: 22px;
+            font-weight: 650;
+            line-height: 1.15;
+          }
+
+          @media (max-width: 620px) {
+            .heading-secondary {
+              display: none;
+            }
+
+            .metrics {
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+          }
+        </style>
+        <div class="card">
+          <div class="heading">
+            <div class="heading-primary">The frame on the sky</div>
+            <div class="heading-secondary">apparent orbit of γ Virginis</div>
+          </div>
+          <canvas role="img"></canvas>
+          <div class="control">
+            <div class="control-label">
+              <label>Epoch — linear interpolation between Herschel's tabulated values</label>
+              <output>1760.0</output>
+            </div>
+            <input type="range" min="1720" max="1830" step="0.1" value="1760" aria-label="Epoch from 1720 to 1830">
+          </div>
+          <div class="metrics" aria-live="polite">
+            <div><div class="metric-label">Year</div><div class="metric-value" data-year>1760.0</div></div>
+            <div><div class="metric-label">θ position angle</div><div class="metric-value" data-theta>144.4°</div></div>
+            <div><div class="metric-label">ρ separation</div><div class="metric-value" data-rho>14.46″</div></div>
+            <div><div class="metric-label">dθ/dt</div><div class="metric-value" data-velocity>−0.48°/yr</div></div>
+          </div>
+        </div>`;
+
+      const width = 820;
+      const height = 440;
+      const pixelRatio = window.devicePixelRatio || 1;
+      const canvas = root.querySelector("canvas");
+      canvas.width = width * pixelRatio;
+      canvas.height = height * pixelRatio;
+
+      const context = canvas.getContext("2d");
+      context.scale(pixelRatio, pixelRatio);
+
+      const slider = root.querySelector('input[type="range"]');
+      const epochOutput = root.querySelector("output");
+      const yearOutput = root.querySelector("[data-year]");
+      const thetaOutput = root.querySelector("[data-theta]");
+      const rhoOutput = root.querySelector("[data-rho]");
+      const velocityOutput = root.querySelector("[data-velocity]");
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const outerRadius = 175;
+      const maxSeparation = 20;
+      const accent = "#4779d7";
+      const accentLight = "rgba(71, 121, 215, 0.38)";
+      const ink = "#3f3f3b";
+      const grid = "#d9d9d3";
+      const font = 'Inter, "Avenir Next", "Helvetica Neue", Arial, sans-serif';
+
+      const interpolate = (year) => {
+        if (year <= observations[0].year) return {...observations[0]};
+        if (year >= observations[observations.length - 1].year) {
+          return {...observations[observations.length - 1]};
+        }
+
+        const upperIndex = observations.findIndex((row) => row.year >= year);
+        const lower = observations[upperIndex - 1];
+        const upper = observations[upperIndex];
+        const weight = (year - lower.year) / (upper.year - lower.year);
+        const mix = (a, b) => a + weight * (b - a);
+
+        return {
+          year,
+          posangle: mix(lower.posangle, upper.posangle),
+          distance: mix(lower.distance, upper.distance),
+          velocity: mix(lower.velocity, upper.velocity)
+        };
+      };
+
+      const project = (row) => {
+        const theta = row.posangle * Math.PI / 180;
+        const radius = outerRadius * row.distance / maxSeparation;
+        return {
+          x: centerX - radius * Math.sin(theta),
+          y: centerY - radius * Math.cos(theta),
+          theta,
+          radius
+        };
+      };
+
+      const pointOnCompass = (degrees, radius) => {
+        const theta = degrees * Math.PI / 180;
+        return {
+          x: centerX - radius * Math.sin(theta),
+          y: centerY - radius * Math.cos(theta)
+        };
+      };
+
+      const drawLine = (x1, y1, x2, y2) => {
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.stroke();
+      };
+
+      const draw = () => {
+        const year = Number(slider.value);
+        const current = interpolate(year);
+        const currentPoint = project(current);
+
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, width, height);
+        context.lineCap = "round";
+        context.lineJoin = "round";
+
+        // Cardinal axes and radial separation rings.
+        context.save();
+        context.strokeStyle = "#e1e1dc";
+        context.lineWidth = 1;
+        context.setLineDash([4, 7]);
+        drawLine(centerX - outerRadius, centerY, centerX + outerRadius, centerY);
+        drawLine(centerX, centerY - outerRadius, centerX, centerY + outerRadius);
+        context.restore();
+
+        context.strokeStyle = grid;
+        context.lineWidth = 1;
+        for (const separation of [5, 10, 15]) {
+          context.beginPath();
+          context.arc(centerX, centerY, outerRadius * separation / maxSeparation, 0, 2 * Math.PI);
+          context.stroke();
+        }
+
+        // Outer compass and ticks every 5 degrees.
+        context.strokeStyle = "#bdbdb6";
+        context.lineWidth = 1.4;
+        context.beginPath();
+        context.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
+        context.stroke();
+
+        for (let degrees = 0; degrees < 360; degrees += 5) {
+          const major = degrees % 30 === 0;
+          const medium = degrees % 10 === 0;
+          const tickLength = major ? 13 : medium ? 8 : 5;
+          const inner = pointOnCompass(degrees, outerRadius - tickLength);
+          const outer = pointOnCompass(degrees, outerRadius);
+          context.strokeStyle = major ? "#aaa9a2" : "#c8c8c1";
+          context.lineWidth = major ? 1.6 : 1;
+          drawLine(inner.x, inner.y, outer.x, outer.y);
+        }
+
+        // Numeric angle labels.
+        context.font = `500 13px ${font}`;
+        context.fillStyle = "#777772";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        for (let degrees = 30; degrees < 360; degrees += 30) {
+          if (degrees % 90 === 0) continue;
+          const labelPoint = pointOnCompass(degrees, outerRadius + 20);
+          context.fillText(`${degrees}°`, labelPoint.x, labelPoint.y);
+        }
+
+        context.fillText("0°", centerX, centerY - outerRadius - 15);
+        context.fillText("90°", centerX - outerRadius - 24, centerY);
+        context.fillText("180°", centerX, centerY + outerRadius + 15);
+        context.fillText("270°", centerX + outerRadius + 25, centerY);
+
+        context.font = `700 18px ${font}`;
+        context.fillStyle = ink;
+        context.fillText("N", centerX, 11);
+        context.fillText("E", centerX - outerRadius - 55, centerY);
+        context.fillText("S", centerX, height - 10);
+        context.fillText("W", centerX + outerRadius + 55, centerY);
+
+        // Trail through tabulated epochs and the current interpolated point.
+        const trailRows = observations.filter((row) => row.year <= year);
+        if (trailRows.length === 0 || trailRows[trailRows.length - 1].year < year) {
+          trailRows.push(current);
+        }
+        const trail = trailRows.map(project);
+
+        if (trail.length > 1) {
+          context.strokeStyle = accentLight;
+          context.lineWidth = 3;
+          context.beginPath();
+          context.moveTo(trail[0].x, trail[0].y);
+          for (let i = 1; i < trail.length; i++) {
+            context.lineTo(trail[i].x, trail[i].y);
+          }
+          context.stroke();
+        }
+
+        context.fillStyle = "rgba(71, 121, 215, 0.5)";
+        for (const point of trail.slice(0, -1)) {
+          context.beginPath();
+          context.arc(point.x, point.y, 3.2, 0, 2 * Math.PI);
+          context.fill();
+        }
+
+        // Position angle and separation at the selected epoch.
+        context.strokeStyle = accent;
+        context.lineWidth = 2.5;
+        drawLine(centerX, centerY, currentPoint.x, currentPoint.y);
+
+        const angleRadius = 56;
+        context.beginPath();
+        context.arc(
+          centerX,
+          centerY,
+          angleRadius,
+          -Math.PI / 2,
+          -Math.PI / 2 - currentPoint.theta,
+          true
+        );
+        context.stroke();
+
+        const thetaLabel = pointOnCompass(current.posangle / 2, angleRadius + 15);
+        context.font = `700 17px ${font}`;
+        context.fillStyle = accent;
+        context.fillText("θ", thetaLabel.x, thetaLabel.y);
+
+        const rhoLabel = pointOnCompass(current.posangle, currentPoint.radius * 0.62);
+        context.fillText("ρ", rhoLabel.x + 17, rhoLabel.y + 5);
+
+        // Primary and secondary stars.
+        context.fillStyle = "#111111";
+        context.beginPath();
+        context.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+        context.fill();
+        context.font = `500 14px ${font}`;
+        context.fillStyle = ink;
+        context.textAlign = "left";
+        context.fillText("primary", centerX + 17, centerY + 1);
+
+        context.fillStyle = accent;
+        context.beginPath();
+        context.arc(currentPoint.x, currentPoint.y, 10, 0, 2 * Math.PI);
+        context.fill();
+
+        epochOutput.value = year.toFixed(1);
+        yearOutput.textContent = year.toFixed(1);
+        thetaOutput.textContent = `${current.posangle.toFixed(1)}°`;
+        rhoOutput.textContent = `${current.distance.toFixed(2)}″`;
+        const velocity = `${current.velocity < 0 ? "−" : "+"}${Math.abs(current.velocity).toFixed(2)}°/yr`;
+        velocityOutput.textContent = velocity;
+        this.dataset.ready = "true";
+        this.dataset.year = year.toFixed(1);
+        this.dataset.theta = current.posangle.toFixed(1);
+        this.dataset.rho = current.distance.toFixed(2);
+
+        canvas.setAttribute(
+          "aria-label",
+          `Gamma Virginis in year ${year.toFixed(1)}: position angle ${current.posangle.toFixed(1)} degrees, separation ${current.distance.toFixed(2)} arcseconds, angular velocity ${velocity}.`
+        );
+      };
+
+      slider.addEventListener("input", draw);
+      slider.addEventListener("keydown", (event) => event.stopPropagation());
+      slider.addEventListener("keyup", (event) => event.stopPropagation());
+      draw();
+    }
+  }
+
+  customElements.define(tagName, HerschelOrbitWidget);
+})();
+</script>
+```
+
+::: footer
+Data: `HistData::Virginis.interp`. Position angle is measured from north through east; east appears left in the sky frame.
+:::
