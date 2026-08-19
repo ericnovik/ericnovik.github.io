@@ -1,13 +1,13 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
-author: "Eric.Novik@nyu.edu | Summer 2025 | Session 3"
+author: "Eric.Novik@nyu.edu | Summer 2026 | Session 3"
 format:
-  revealjs: 
+  revealjs:
     theme: ../../custom.scss
     scrollable: true
     slide-number: true
-    chalkboard: 
+    chalkboard:
       buttons: false
       chalk-width: 5
     preview-links: auto
@@ -18,6 +18,8 @@ bibliography: ../references.bib
 ---
 
 ```{r}
+#| include: false
+
 library(ggplot2)
 library(dplyr)
 library(janitor)
@@ -35,7 +37,7 @@ thm <-
 theme_set(thm)
 
 dbinom_theta <- function(theta, N, y) {
-  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+  choose(N, y) * theta^y * (1 - theta)^(N - y)
 }
 
 dot_plot <- function(x, y) {
@@ -51,7 +53,7 @@ dot_plot <- function(x, y) {
 
 ::: incremental
 -   Transforming data for plotting
--   Antiderivative
+-   Deriving the free-fall equation with antiderivatives
 -   Some rules of integration
 -   Evaluating integrals numerically
 -   The waiting time distribution
@@ -70,8 +72,8 @@ $$
 ::: columns
 ::: {.column width="60%"}
 ::: incremental
--   We saw that *continuous compounding* does not make such a big difference over time
--   How would the value vary by rate?
+-   We saw how annual and *continuous compounding* compare at a fixed interest rate
+-   How does the asset value vary with the interest rate?
 -   We investigate with a common simulate-pivot-plot pattern
 :::
 :::
@@ -86,35 +88,35 @@ $$
 "The `purrr::map*` functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input."
 
 ::: incremental
-- Generate 10 vectors of 100 uniform random realizations, where the first vector has `min = 1`, second `min = 2` ... last vector has `min = 10`, and `max = 15` for all
-- Now compute the average value of each of the 10 vectors
+-   Generate 10 vectors of 100 uniform random values. The first vector has `min = 1`, the second has `min = 2`, and so on through `min = 10`; all have `max = 15`
+-   Then compute the mean of each of the 10 vectors
 :::
 
 ::: {.fragment}
 ```{r}
 #| echo: true
-#| eval: false 
+#| eval: false
 
 library(purrr)
 
+set.seed(2006)
 x <- 1:10
-y <- x |>
-  map(\(x) runif(n = 100, min = x, max = 15))
+samples <- x |>
+  map(\(minimum) runif(n = 100, min = minimum, max = 15))
 
-y <- x |>
-  map(\(x) runif(n = 100, min = x, max = 15)) |>
+means <- samples |>
   map_dbl(mean)
 
 ```
 :::
 
 ::: incremental
--   Run the code and look inside y after then first function call and after the second. What do you expect to see?
+-   Run the code and inspect `samples` and `means`. How do the two objects differ, and what did you expect to see?
 :::
 
 ## Pivot Functions {.smaller}
 
-"`pivot_longer()` "lengthens" data, increasing the number of rows and decreasing the number of columns. The inverse transformation is `pivot_wider()`"
+`pivot_longer()` “lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is `pivot_wider()`.
 
 ::: {.fragment}
 ```{r}
@@ -149,12 +151,12 @@ library(dplyr)
 library(ggplot2)
 
 rates <- seq(0.05, 0.20, length = 10)
-P <- 100 
+P <- 100
 time <- seq(1, 50, length = 50)
 
 Pe <- function(A, r, t) A * exp(r * t)
 d <- time |>
-  map(\(x) Pe(A = P, r = rates, t = x)) 
+  map(\(x) Pe(A = P, r = rates, t = x))
 class(d)
 d[[1]][1:4]
 names(d) <- as.character(time)
@@ -176,7 +178,7 @@ knitr::kable(d[1:10, 1:3])
 ### Loops and Maps
 
 ::: incremental
--   Modern R usage offers a lot of shortcuts but those may be confusing to beginners.
+-   Modern R usage offers many shortcuts, but those may be confusing to beginners.
 -   In particular, R loops have mostly been replaced with `map()` functions.
 -   We recommend `purrr::map()` functions instead of R's `*apply()`.
 :::
@@ -187,11 +189,11 @@ knitr::kable(d[1:10, 1:3])
 #| eval: false
 
 rates <- seq(0.05, 0.20, length = 10)
-P <- 100 
-time <- seq(1, 5, length = 50)
+P <- 100
+time <- seq(1, 50, length = 50)
 
 Pe <- function(A, r, t) A * exp(r * t)
-time |> map(\(x) Pe(A = P, r = rates, t = x)) 
+time |> map(\(x) Pe(A = P, r = rates, t = x))
 
 # above is a shortcut for
 map(time, function(x) Pe(A = P, r = rates, t = x))
@@ -213,21 +215,21 @@ for (i in seq_along(time)) {
 #| echo: true
 library(tidyr)
 # add rates as a column
-d <- d %>% mutate(rate = 
+d <- d %>% mutate(rate =
             round(rates, 2) |>
               as.character())
 
 # convert from wide format to long
-d <- d %>% 
-  pivot_longer(!rate, 
-               names_to = "year", 
-               values_to = "value") 
+d <- d %>%
+  pivot_longer(!rate,
+               names_to = "year",
+               values_to = "value")
 
 d$year <- as.numeric(d$year)
 ```
 
 - [Here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf) is a cheat sheet explaining `tidyr` functions.
-- And [here](https://gist.github.com/ericnovik/9ac7feb95ed89928faf3fa71b45eecdb) is much shorter version of the exercise.
+- And [here](https://gist.github.com/ericnovik/9ac7feb95ed89928faf3fa71b45eecdb) is a much shorter version of the exercise.
 
 :::
 
@@ -252,9 +254,9 @@ knitr::kable(d[1:10, ])
 #| eval: false
 p <- ggplot(d, aes(year, value))
 p + geom_line(aes(color = rate), linewidth = 0.2) +
-  scale_y_continuous(labels = 
+  scale_y_continuous(labels =
           scales::dollar_format()) +
-  xlab("Time (years)") + 
+  xlab("Time (years)") +
   ylab("Asset value") +
   ggtitle("Growth of $100 at different interest rates")
 ```
@@ -266,10 +268,10 @@ p + geom_line(aes(color = rate), linewidth = 0.2) +
 #| fig-align: center
 p <- ggplot(d, aes(year, value))
 p + geom_line(aes(color = rate), linewidth = 0.2) +
-  scale_y_continuous(labels = 
+  scale_y_continuous(labels =
           scales::dollar_format()) +
-  xlim(30, 50) +
-  xlab("Time (years)") + 
+  coord_cartesian(xlim = c(30, 50)) +
+  xlab("Time (years)") +
   ylab("Asset value") +
   ggtitle("Growth of $100 at different interest rates")
 ```
@@ -280,8 +282,9 @@ p + geom_line(aes(color = rate), linewidth = 0.2) +
 ::: {.fragment}
 ```{r}
 #| echo: true
-d |> group_by(rate) |> 
-  summarise(y50 = last(value)) |>
+d |>
+  filter(year == max(year)) |>
+  select(rate, y50 = value) |>
   knitr::kable()
 ```
 :::
@@ -290,7 +293,7 @@ d |> group_by(rate) |>
 :::
 
 ::: footer
-RStudio [cheatsheats](https://www.rstudio.com/resources/cheatsheets/)
+RStudio [cheat sheets](https://posit.co/resources/cheatsheets/)
 :::
 
 ## Your Turn {.smaller}
@@ -303,9 +306,9 @@ RStudio [cheatsheats](https://www.rstudio.com/resources/cheatsheets/)
 
 ### Instructions
 
--   Run the following command: `install.packages('HistData')`
--   Followed by `library(HistData)`
--   Tale a look at the Arbuthnot dataset: `?Arbuthnot`
+-   Run `install.packages("HistData")`
+-   Then run `library(HistData)`
+-   Take a look at the Arbuthnot dataset: `?Arbuthnot`
 
 ```{r}
 library(HistData)
@@ -314,14 +317,13 @@ knitr::kable(Arbuthnot[1:6, ])
 
 ### Output
 
--   Use the tools to produce the plot the looks something like this.
--   Bonus: compute the ratio of female births and plot it.
+-   Use these tools to produce a plot that looks something like this
+-   Bonus: compute and plot the proportion of christenings that were female, $\text{Females}/(\text{Males}+\text{Females})$
 
 ```{r}
 #| fig-width: 6
 #| fig-height: 4
 #| fig-align: center
-library(scales)
 d <- Arbuthnot %>%
   select(1:3) %>%
   pivot_longer(!Year)
@@ -329,8 +331,8 @@ d <- Arbuthnot %>%
 p <- ggplot(d, aes(Year, value))
 p + geom_line(aes(color = name)) + xlab("Year") +
   ylab("Number of Christenings") +
-  ggtitle("Male and female births in London 1629-1710") +
-  scale_y_continuous(label = comma) +
+  ggtitle("Male and female christenings in London, 1629–1710") +
+  scale_y_continuous(labels = scales::comma) +
   theme(legend.title = element_blank())
 ```
 :::
@@ -340,10 +342,10 @@ p + geom_line(aes(color = name)) + xlab("Year") +
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
--   Integration plays a central role in Statistics
--   It is a way to compute Expectations and Event Probabilities
--   In Bayesian Statistics, we use integration to compute posterior distributions of the unknowns
--   In Frequentist Statistics, we use derivatives to find the most likely values of the unknowns
+-   Integration describes **accumulated change** and plays a central role in statistics
+-   For continuous distributions, integrals compute probabilities and expectations
+-   Across Bayesian and frequentist statistics, integration is used to normalize densities and marginalize over unknown quantities
+-   Derivatives are often used for optimization, including maximum-likelihood and maximum-a-posteriori estimation
 :::
 :::
 
@@ -351,7 +353,7 @@ p + geom_line(aes(color = name)) + xlab("Year") +
 ![](images/int.jpg){fig-align="center" width="672"}
 
 ::: incremental
--   Unknowns are sometimes called parameters, like the Moon's gravity $g$ in our drop model $x(t) = \tfrac{1}{2} g t^2$
+-   Unknown quantities are often called parameters, such as the local gravitational acceleration $g$ in our Moon-drop model
 :::
 :::
 :::
@@ -361,11 +363,11 @@ p + geom_line(aes(color = name)) + xlab("Year") +
 ::: columns
 ::: {.column width="50%"}
 ::: incremental
--   Integration is a continous analog of summation
--   You can also think of an integral as undoing a derivative
-- You can also think of it as a signed area under a (one-dimensional) function $f$
--   In modern applications, integration is almost always done numerically on the computer
--   But it helps to understand what what the computer is doing
+-   A **definite integral** is a continuous analog of summation: it measures accumulated signed change over an interval
+-   Geometrically, it is the signed area between a one-dimensional function $f$ and the horizontal axis
+-   An **indefinite integral** represents a family of antiderivatives: $\int f(x)\,dx = F(x)+C$ when $F'(x)=f(x)$
+-   The Fundamental Theorem of Calculus connects the two: $\int_a^b f(x)\,dx = F(b)-F(a)$
+-   Many definite integrals are evaluated numerically, but it helps to understand what the computer is approximating
 :::
 :::
 
@@ -375,67 +377,10 @@ p + geom_line(aes(color = name)) + xlab("Year") +
 :::
 
 ::: footer
-Image Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas)
-:::
-
-## From Velocity to Postion Functions {.smaller}
-
-::: panel-tabset
-## Antiderivative
-
-::: incremental
--   Recall the Moon drop: from $\ddot{x} = g$ we found the velocity $v(t) = g t$
--   This is the promised derivation: integrate $v(t)$ once to *recover the position function* $x(t)$
-:::
-
-::: {.fragment}
-$$
-\begin{eqnarray}
-v(t) & = & \int{g\, dt} = g t + C_1 \\
-x(t) & = & \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
-\end{eqnarray}
-$$
-:::
-
-::: incremental
--   The ball is *dropped from rest* at the top of the tower, so the initial velocity is zero ($C_1 = 0$), and we measure distance fallen from the release point, so the initial position is zero ($C_2 = 0$).
-
--   That leaves $x(t) = \tfrac{1}{2} g t^2$. In general, to characterize the position function you need the initial position and velocity --- you can't get those from the acceleration alone.
-:::
-
-## Plot
-
-The position function for different values of initial position $C_2$. Notice that the only thing that changes is the intercept.
-
-::: {.fragment}
-```{r}
-#| fig-width: 6
-#| fig-height: 4
-#| fig-align: center
-
-g <- 1.625
-t <- (0:50 * 11) / 50
-c <- seq(0, 90, by = 10)
-y <- function(x) 0.5 * g * x^2
-
-d <- c %>% map(~ y(t) + .x)
-d <- as.data.frame(d)
-colnames(d) <- as.factor(c)
-d$time <- t
-d <- pivot_longer(d, !time)
-p <- ggplot(d, aes(time, value))
-p + geom_line(aes(color = name)) +
-  xlab("time t (s)") + ylab("position x (m)") +
-  ggtitle("Position functions for different initial positions") +
-  annotate("text", 2, 180, label = "x(t) == frac(1, 2) * g * t^2 + C[2]", parse = TRUE) +
-  guides(color = guide_legend(title = expression(C[2])))
-
-```
+Image source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas)
 :::
 
 
-
-:::
 
 ## Some Common Integrals
 
@@ -448,28 +393,30 @@ OpenStax: [Here is a more complete list](https://openstax.org/books/calculus-vol
 ## Techniques of Integration {.smaller}
 
 ::: incremental
--   Integral, like a derivative, is a linear operator:
+-   Definite integration, like differentiation, is linear:
 :::
 
 ::: {.fragment}
 $$
-\begin{eqnarray}
-\int [f(x) + g(x)] \, dx &=& \int f(x) \, dx + \int g(x) \, dx \\
-\int [c \cdot f(x)] \, dx &=& c \int f(x) \, dx
-\end{eqnarray}
+\begin{aligned}
+\int_a^b [f(x)+g(x)]\,dx
+  &= \int_a^b f(x)\,dx + \int_a^b g(x)\,dx, \\
+\int_a^b c f(x)\,dx
+  &= c\int_a^b f(x)\,dx.
+\end{aligned}
 $$
 :::
 
 ::: incremental
--   Unlike derivatives, there are generablly no rules for finding integrals 
+-   Unlike differentiation, integration has no universal procedure that produces a closed-form antiderivative for every function
 
--   Most integrals do not have a closed-form, analytical solutions. This is true for almost all integrals in statistics.
+-   Many common integrals have closed-form analytical solutions, but many important integrals in statistics do not
 
--   In one or two dimentions, it is easy to evaluate most integrals numerically.
+-   For well-behaved integrands in one or two dimensions, numerical quadrature is often practical
 
--   In higher dimentions, you need very sophisticated methods that rely on Markov Chain Monte Carlo ([MCMC](https://arxiv.org/abs/1701.02434)). We will not cover MCMC in this course.
+-   Higher-dimensional problems may use Monte Carlo, importance sampling, quasi-Monte Carlo, or Markov chain Monte Carlo ([MCMC](https://arxiv.org/abs/1701.02434))
 
--   For simple integrals we can somtimes find a closed-form solution by relying on u-substitution and integration by parts.
+-   For simple integrals, we can sometimes find a closed-form solution using substitution or integration by parts
 :::
 
 
@@ -477,9 +424,9 @@ $$
 ## Playing with Integrals {.smaller}
 
 ::: incremental
--   Given our intuition for integrals being singed areas, let's see how to compute them analytically and numerically.
--   Warning: these techniques only work in low dimentions. For high dimentional integrals you need to use MCMC.
--   Suppose we want evaluate the integral $\int_{1}^{3} x \sin(x^2)\, dx$
+-   Given our intuition for integrals as signed areas, let's see how to compute them analytically and numerically
+-   The numerical techniques shown here work best in low dimensions; high-dimensional integration requires other methods
+-   Suppose we want to evaluate the integral $\int_{1}^{3} x \sin(x^2)\,dx$
 :::
 
 ::: {.fragment}
@@ -489,14 +436,14 @@ $$
 #| fig-align: center
 
 f <- function(x) x * sin(x^2)
-x <- seq(0, pi, len = 100)
+x <- seq(0, pi, length.out = 100)
 p <- ggplot(data.frame(x, y = f(x)), aes(x, y))
-p + geom_line() + 
+p + geom_line() +
   annotate("text", 0.5, 2, label = "y == x %.% sin(x^2)", parse = TRUE) +
-  stat_function(fun = f, 
-                xlim = c(1,3),
+  stat_function(fun = f,
+                xlim = c(1, 3),
                 geom = "area",
-                fill = 'lightblue') 
+                fill = "lightblue")
 ```
 :::
 
@@ -509,23 +456,25 @@ p + geom_line() +
 ::: {.fragment}
 ```{r}
 #| echo: true
-riemann <- function(f, lower, upper, step_size) {
-  step <- seq(lower, upper, by = step_size)
-  s <- 0 # initialize the sum
-  for (i in 2:length(step)) {
-    # multiply base by the height of the rectangle
-    area <- step_size * f(step[i]) 
-    s <- s + area
+riemann <- function(f, lower, upper, n = 100) {
+  edges <- seq(lower, upper, length.out = n + 1)
+  total <- 0
+
+  for (i in seq_len(n)) {
+    width <- edges[i + 1] - edges[i]
+    height <- f(edges[i + 1]) # right endpoint
+    total <- total + width * height
   }
-  return(s)
+
+  total
 }
 ```
 :::
 
 
 ::: {.fragment}
-Notice that the function takes a function as an argument. These are called higher order functions.
-::: 
+Notice that the function takes another function as an argument. Functions that do this are called higher-order functions.
+:::
 
 ::: footer
 Source: [OpenStax Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas)
@@ -537,9 +486,9 @@ Source: [OpenStax Calculus Volume 1](https://openstax.org/books/calculus-volume-
 #| echo: true
 
 f <- function(x) x * sin(x^2)
-x <- seq(0, pi, len = 100)
+x <- seq(0, pi, length.out = 100)
 
-riemann(f, 1, 3, 0.01)
+riemann(f, 1, 3, n = 200)
 
 # compute using R's integrate function
 integrate(f, 1, 3)
@@ -549,18 +498,19 @@ integrate(f, 1, 3)
 ## Integrating Analytically {.smaller}
 
 ::: incremental
--   Most integrals can't be evaluated analytically but we can do $\int x \sin(x^2)\, dx$.
--   We make a substitution. Let $u = x^2$, then $du/dx = 2x$ and $dx = \frac{1}{2 \sqrt{u}}du$ 
+-   Many integrals cannot be evaluated analytically, but we can find an antiderivative of $x\sin(x^2)$
+-   Let $u=x^2$. Then $du=2x\,dx$, so $x\,dx=\tfrac{1}{2}du$
 :::
 
 ::: {.fragment}
 $$
-\begin{eqnarray}
-\int \sqrt{u} \cdot \sin(u) \frac{1}{2\sqrt{u}}du  & = & \\
-\frac{1}{2}\int \sin(u)\, du & = & \\
--\frac{1}{2} \cos(u) & = & -\frac{1}{2} \cos(x^2)  
-\end{eqnarray}
-$$ 
+\begin{aligned}
+\int x\sin(x^2)\,dx
+  &= \tfrac{1}{2}\int \sin(u)\,du \\
+  &= -\tfrac{1}{2}\cos(u)+C \\
+  &= -\tfrac{1}{2}\cos(x^2)+C.
+\end{aligned}
+$$
 :::
 
 ## Comparing the Results
@@ -594,7 +544,9 @@ f1(3) - f1(1)
 ::: incremental
 -   When in doubt, you can always try [WolframAlpha](https://www.wolframalpha.com/)
 
--   Python library [SymPy](https://live.sympy.org/) through R pacakge `caracas`
+-   The Python library [SymPy](https://live.sympy.org/) can be used through the R package `caracas`
+
+-   A computer algebra system returns one antiderivative and usually omits the arbitrary constant $+C$
 :::
 
 ::: {.fragment}
@@ -602,6 +554,8 @@ f1(3) - f1(1)
 #| echo: true
 #| cache: false
 #| results: asis
+#| message: false
+#| warning: false
 
 library(caracas); library(stringr)
 add_align <- function(latex) {
@@ -618,49 +572,66 @@ int(f, x) %>% tex() %>% add_align() %>% cat()
 
 ## Your Turn: Waiting Time {.smaller}
 
-- There is s famous distribution in statistics called Exponential distribution
-- Its probability density function (PDF) is given by:
+-   The **exponential distribution** is commonly used to model waiting times between events that occur at a constant average rate $\lambda>0$
+-   Its probability density function (PDF) is
 
 $$
-f(x) = \lambda e^{-\lambda x}, \, x > 0, \text{and } \lambda > 0
+f(x)=
+\begin{cases}
+\lambda e^{-\lambda x}, & x\ge 0, \\
+0, & x<0.
+\end{cases}
 $$
 
-- This distribution is sometimes called the waiting time (to some event) distribution, where $\lambda$ is the rate of events we expect 
-
-- One property of this distribution is that no matter how long you wait, the probability of seeing an event remains the same.
-
-- One of the properties of the PDF is that it must integrate to 1
-
-- Let's check that it's true
+-   Every PDF must integrate to 1. Verify that
 
 $$
-\int_{0}^{\infty} \lambda e^{-\lambda x} dx = 
+\int_0^\infty \lambda e^{-\lambda x}\,dx = 1.
+$$
+
+-   The exponential distribution is **memoryless**: conditional on having already waited $s$, the probability of waiting at least another $t$ does not depend on $s$
+
+$$
+\P(X>s+t\mid X>s)=\P(X>t)=e^{-\lambda t}.
 $$
 
 
 ## Integration by Parts {.smaller}
 
+::: {.fragment}
+The product rule gives a useful integration identity:
+
 $$
-\begin{eqnarray}
-(f g)' & = & f'g + g'f \\
-\int (f g)' \, dx & = & \int f'g dx + \int g'f \, dx \\
-fg & = & \int f'g \, dx + \int g'f \, dx \\
-\int f g' \, dx & = & fg - \int f' g \, dx \\
-u & = & f(x) \\
-v & = & g(x) \\
-du & = & f'(x) \, dx \\
-dv & = & g'(x) \, dx \\
-\int u \, dv & = & uv - \int v \, du
-\end{eqnarray}
+\begin{aligned}
+(fg)' &= f'g + fg', \\
+\int f(x)g'(x)\,dx
+  &= f(x)g(x)-\int f'(x)g(x)\,dx, \\
+\int u\,dv &= uv-\int v\,du.
+\end{aligned}
 $$
+:::
+
+::: {.fragment}
+For example, integration by parts gives the mean waiting time:
+
+$$
+\begin{aligned}
+\E[X]
+  &= \int_0^\infty x\lambda e^{-\lambda x}\,dx \\
+  &= \left[-xe^{-\lambda x}\right]_0^\infty
+     + \int_0^\infty e^{-\lambda x}\,dx \\
+  &= \frac{1}{\lambda}.
+\end{aligned}
+$$
+:::
 
 ## Exponential Growth (again) {.smaller}
 
-Recall, at the beginning we defined an exponential growth with the following differential equation:
+The exponential-growth function used earlier solves the following differential equation. Assume $y(t)>0$:
 
 ::: {.fragment}
 $$
-\frac{\text{d}[y(t)]}{\text{d}t} = k \cdot y(t) 
+\frac{\text{d}[y(t)]}{\text{d}t} = k \cdot y(t)
 $$
 :::
 
@@ -677,40 +648,157 @@ y(t) &= y_0 \cdot e^{kt}, \, y_0 = e^C
 $$
 :::
 
+## Deriving the Free-Fall Equation {.smaller}
+
+::: incremental
+-   Let $x(t)$ be the **downward distance fallen** from the release point, so downward is positive
+-   Treat the gravitational acceleration $g$ as constant near the surface
+-   The ball has constant mass $m$, and the only force acting on it is gravity, $F=mg$
+:::
+
+::: {.fragment}
+Newton's second law relates force to the rate of change of momentum:
+
+$$
+\begin{aligned}
+F
+  &= ma \\
+  &= \frac{d}{dt}\left(m\frac{d[x(t)]}{dt}\right) = \frac{d}{dt}\left(mv(t)\right)\\
+  &= mg.
+\end{aligned}
+$$
+
+Because $m$ is constant, take it outside the derivative and cancel it from both sides:
+
+$$
+m\frac{d^2[x(t)]}{dt^2}=mg
+\quad\Longrightarrow\quad
+\frac{d^2[x(t)]}{dt^2}=g.
+$$
+:::
+
+## Deriving the Free-Fall Equation {.smaller}
+
+::: {.fragment}
+Integrate twice with respect to $t$:
+
+$$
+\begin{aligned}
+\int \frac{d^2[x(t)]}{dt^2}\,dt
+  &= \int g\,dt, \\
+\frac{d[x(t)]}{dt}
+  &= gt+C_1, \\[0.6em]
+\int \frac{d[x(t)]}{dt}\,dt
+  &= \int (gt+C_1)\,dt, \\
+x(t)
+  &= \tfrac{1}{2}gt^2+C_1t+C_2.
+\end{aligned}
+$$
+:::
+
+::: {.fragment}
+The ball is released from rest, and distance is measured from the release point, so
+
+$$
+\left.\frac{d[x(t)]}{dt}\right|_{t=0}=0
+\Longrightarrow C_1=0,
+\qquad
+x(0)=0
+\Longrightarrow C_2=0.
+$$
+
+Therefore,
+
+$$
+\boxed{x(t)=\tfrac{1}{2}gt^2}.
+$$
+:::
+
+## Free Fall on Earth's Moon {.smaller}
+
+::: columns
+::: {.column width="58%"}
+::: {.fragment}
+```{r}
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+g_moon <- 1.625
+tower_height <- 100
+t_impact <- sqrt(2 * tower_height / g_moon)
+
+time <- seq(0, t_impact, length.out = 200)
+moon_drop <- data.frame(
+  time = time,
+  distance = 0.5 * g_moon * time^2
+)
+
+ggplot(moon_drop, aes(time, distance)) +
+  geom_line(linewidth = 0.4) +
+  geom_hline(yintercept = tower_height, linetype = "dashed", color = "red") +
+  geom_point(data = tail(moon_drop, 1), color = "red", size = 2) +
+  xlab("time t (s)") +
+  ylab("distance fallen x(t) (m)") +
+  ggtitle("A 100 m drop on Earth's Moon")
+```
+:::
+:::
+
+::: {.column width="42%"}
+::: {.fragment}
+Using the accepted value $g_{\text{Moon}}=1.625\ \text{m/s}^2$, the ball reaches the bottom when $x(t)=100$ m:
+
+$$
+\begin{aligned}
+100 &= \tfrac{1}{2}g_{\text{Moon}}t^2, \\
+t_{\text{impact}}
+  &= \sqrt{\frac{2(100)}{g_{\text{Moon}}}} \\
+  &\approx 11.1\ \text{s}.
+\end{aligned}
+$$
+:::
+
+::: {.fragment}
+The free-fall model describes the motion only until impact.
+:::
+:::
+:::
+
 ## Homework {.smaller}
 
-- Take a look at dataset `iris` (?iris)
-- Compute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width 
-- Compute the average by each Species of flower (hint: use `group_by` and `summarise` functions from `dplyr`)
-- Produce the plot that looks like this:
+-   Take a look at the `iris` dataset (`?iris`)
+-   Compute the overall means of `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`
+-   Compute these means by `Species` (hint: use `group_by()` and `summarise()` from `dplyr`)
+-   Produce a plot that looks like this:
 
 ![](images/iris.png){fig-align="center" width="500"}
 
-- Produce the plot that looks like this: (check out `geom_density` and `facet_wrap` functions)
+-   Produce a plot that looks like this (see `geom_density()` and `facet_wrap()`):
 
 ![](images/iris_dens.png){fig-align="center" width="500"}
 
-- Compute the following integral and show the steps:
+-   Compute the following integral and show the steps:
 
 $$
 \int 2x \cos(x^2)\, dx
 $$
 
-- Evaluate this integral (on paper) from $0$ to $2\pi$ and use R's `integrate` function to validate your answer.
+-   Evaluate this integral on paper from $0$ to $2\pi$, and use R's `integrate()` function to validate your answer.
 
 ```{r}
 #| eval: false
 library(ggplot2)
-png("~/Desktop/iris_dens.png", width=4, height=3, units="in", res=200)
-d <- pivot_longer(iris, !Species)
-p <- ggplot(d, aes(x = value))
-p <- p + geom_density(aes(color = Species, fill = Species), alpha = 1/5) + 
-  facet_wrap(~ name, scales = "free") + xlab("")
-print(p)
-dev.off()
+library(tidyr)
 
+iris_long <- pivot_longer(iris, !Species)
+density_plot <- ggplot(iris_long, aes(x = value)) +
+  geom_density(aes(color = Species, fill = Species), alpha = 1/5) +
+  facet_wrap(~ name, scales = "free") +
+  xlab("")
+density_plot
 
-p <- ggplot(iris, aes(Petal.Length, Sepal.Length))
-p <- p + geom_point(aes(color = Species))
+scatter_plot <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
+  geom_point(aes(color = Species))
+scatter_plot
 ```
-

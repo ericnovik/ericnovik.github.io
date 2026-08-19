@@ -1,43 +1,3 @@
-m <- matrix(sample(12), ncol = 3)
-m
-
-a <- 10
-s <- 0
-for (i in 1:4) {
-  for (j in 1:3) {
-    s <- s + m[i, j]
-#    cat("s =", s, "i =", i, "j=", j, "\n")
-  }
-}
-
-sum_mat <- function(x, a = 1, print = FALSE) {
-  I <- nrow(x)
-  J <- ncol(x)
-  s <- 0 # see what happens if you forget to set it here
-  for (i in 1:I) {
-    for (j in 1:J) {
-      s <- s + a * x[i, j]
-      if (print) {
-        cat("s =", s, "i =", i, "j=", j, "\n")
-      }
-    }
-  }
-  return(s)
-}
-
-# you can compare integers this way, but not real numbers. try it.
-100 * sum_mat(m) == sum_mat(m, 100) 
-
-# lots of ways to do the same thing in R
-sum(m)
-rowSums(m) |> sum() # |> is a shortcut for sum(rowSums(x))
-colSums(m) |> sum()
-apply(m, 1, sum) # same as rowSums(x)
-apply(m, 2, sum) # same as colSums(x)
-apply(m, 1, sum) |> sum()
-apply(m, 2, sum) |> sum()
-
-
 print_stack <- function() {
   calls <- sys.calls()
   for (i in seq_along(calls)) {
@@ -152,3 +112,50 @@ plot(posangle ~ year, data = Virginis.interp,
 # The data points, and indication of their uncertainty
 points(posangle ~ year, data = Virginis, pch = 16)
 points(posangle ~ year, data = Virginis, cex = weight / 2)     # circle size = weight
+
+m <- matrix(sample(12), ncol = 3)
+
+a <- 10
+s <- 0
+for (i in 1:4) {
+  for (j in 1:3) {
+    s <- s + m[i, j]
+    #    cat("s =", s, "i =", i, "j=", j, "\n")
+  }
+}
+
+sum_mat <- function(x, a = 1, print = FALSE) {
+  I <- nrow(x)
+  J <- ncol(x)
+  s <- 0 # see what happens if you forget to set it here
+  for (i in 1:I) {
+    for (j in 1:J) {
+      s <- s + a * x[i, j]
+      if (print) {
+        cat("s =", s, "i =", i, "j=", j, "\n")
+      }
+    }
+  }
+  return(s)
+}
+
+softmax_unsafe <- function(x) exp(x) / sum(exp(x))
+y_small <- 1:3
+softmax_unsafe(y_small)
+
+y_large <- c(1e3, 1e3 + 1, 1e3 + 2)
+exp(y_large)
+softmax_unsafe(y_large)
+
+# you can compare integers this way, but not real numbers. try it.
+100 * sum_mat(m, a = 1) == sum_mat(m, a = 100) 
+
+# lots of ways to do the same thing in R
+sum(m)
+rowSums(m) |> sum() # |> is a shortcut for sum(rowSums(x))
+colSums(m) |> sum()
+apply(m, 1, sum) # same as rowSums(x)
+apply(m, 2, sum) # same as colSums(x)
+apply(m, 1, sum) |> sum()
+apply(m, 2, sum) |> sum()
+

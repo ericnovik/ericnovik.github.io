@@ -1,13 +1,13 @@
 ---
-title: "SMaC: Statistics, Math, and Computing (Read)"
+title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
 author: "Eric.Novik@nyu.edu | Summer 2026 | Session 2"
 format:
-  revealjs: 
+  revealjs:
     theme: ../../custom.scss
     scrollable: true
     slide-number: true
-    chalkboard: 
+    chalkboard:
       buttons: false
       chalk-width: 5
     preview-links: auto
@@ -17,7 +17,7 @@ always_allow_html: true
 bibliography: ../references.bib
 ---
 
-## Session 2 Outline {.smaller}
+## Session 2 Outline
 
 ::: columns
 ::: {.column width="50%"}
@@ -32,11 +32,13 @@ bibliography: ../references.bib
 
 -   The chain rule and product rule
 
+-   Live experiments and data collection!
+
 :::
 :::
 
 ::: {.column width="50%"}
-![](images/Tangent_function_animation.gif){fig-align="center" width="396"}
+![](images/gravity.png){fig-align="center" width="396"}
 :::
 :::
 
@@ -55,7 +57,7 @@ Image source: [Wikipedia](https://en.wikipedia.org/wiki/Derivative)
 -   For example: $y = 1.5 + 0.5x$.
 -   If $b = 0$, the line is horizontal.
 
-::: 
+:::
 
 ### Examples
 
@@ -169,7 +171,7 @@ And after year $t$, the value is:
 
 $$
 P(t) = A(1 + r)^t
-$$ 
+$$
 :::
 
 ::: {.fragment}
@@ -185,7 +187,7 @@ If we compound $n$ times per year, the balance after one year would be:
 
 $$
 P_n(1) = A \left (1 + \frac{r}{n} \right)^n
-$$ 
+$$
 
 :::
 
@@ -194,7 +196,7 @@ Combining these ideas, if we compound $n$ times per year, for $t$ years, we get:
 
 $$
 P_n(t) = A \left (1 + \frac{r}{n} \right)^{nt}
-$$ 
+$$
 
 Letting $n \to \infty$ gives **continuous compounding**. Both the finite- and continuous-compounding formulas are exponential functions of time.
 :::
@@ -224,7 +226,7 @@ p + geom_line(linewidth = 0.2) +
   geom_hline(yintercept = pe, color = 'red', linewidth = 0.2) +
   xlab("Number of times the interest is compounded") +
   ylab("Value of an asset") +
-  ggtitle("Value of $100 at r = 0.05 after 50 years") 
+  ggtitle("Value of $100 at r = 0.05 after 50 years")
 ```
 
 ### Compounding
@@ -252,9 +254,9 @@ p + geom_line(linewidth = 0.2) +
   ylab("Asset value") +
   ggtitle("Value of $100 at r = 0.05 after 50 years") +
   scale_y_continuous(labels = scales::dollar_format()) +
-  annotate("text", 55, 1193, 
-           label = "P == 100 (1 + 0.05/n)^{50*n}", parse = TRUE) 
-#  annotate("text",  50, 1200, 
+  annotate("text", 55, 1193,
+           label = "P == 100 (1 + 0.05/n)^{50*n}", parse = TRUE)
+#  annotate("text",  50, 1200,
 #           label = "y(t) == 100 * e ^ {50*r}", parse = TRUE, color = 'red')
 ```
 
@@ -272,15 +274,16 @@ p1 <- Pn(n = 1, A = P, r = rate, t = time)
 pe <- Pe(A = P, r = rate, t = time)
 
 p <- ggplot(data.frame(time, p1, pe), aes(time, p1))
-p + geom_line(linewidth = 0.2) + 
+p + geom_line(linewidth = 0.2) +
   geom_line(aes(y = pe), linewidth = 0.2, color = 'red') +
   scale_y_continuous(labels = scales::dollar_format()) +
   xlab("Time (years)") + ylab("Asset value") +
   ggtitle("Growth of $100 with 5% interest") +
-  annotate("text", 20, 1e3, 
-           label = "y(t) == 100 %.% 1.05^t", parse = TRUE) 
-  # annotate("text", 18, 11e2, 
-  #          label = "y(t) == 100 * e ^ {rt}", parse = TRUE, color = 'red')
+  annotate("text", 34, 5e2,
+           label = "y(t) == 100 %.% 1.05^t", parse = TRUE, hjust = 0) +
+  annotate("text", 47, 11e2,
+           label = "y(t) == 100 * e^{0.05*t}", parse = TRUE,
+           color = 'red', hjust = 1)
 ```
 :::
 
@@ -291,12 +294,16 @@ p + geom_line(linewidth = 0.2) +
 #| fig-align: center
 
 p <- ggplot(data.frame(time, p1 = log10(p1), pe = log10(pe)), aes(time, p1))
-p + geom_line(linewidth = 0.2) + 
+p + geom_line(linewidth = 0.2) +
   geom_line(aes(y = pe), linewidth = 0.2, color = 'red') +
-  xlab("Time (years)") + ylab("Asset value on Log10 scale") + 
+  xlab("Time (years)") + ylab("Asset value on Log10 scale") +
   ggtitle("Growth of $100 with 5% interest") +
-  annotate("text", 18, 2.87,
-           label = "y(t) == 2 + log[10](1.05) * t", parse = TRUE)
+  annotate("text", 20, 2.4,
+           label = "y(t) == 2 + log[10](1.05) * t",
+           parse = TRUE, hjust = 0) +
+  annotate("text", 45, 3,
+           label = "y(t) == 2 + 0.05 * log[10](e) * t",
+           parse = TRUE, color = 'red', hjust = 1)
 ```
 :::
 :::
@@ -357,8 +364,10 @@ p + geom_line(linewidth = 0.2) +
 -   The number that this limit approaches is called $e$.
 
 $$
-P_\infty(t) = A \lim_{m \to \infty} \left ( 1 + \frac{1}{m} \right)^{m(rt)} = 
-A e^{rt} 
+\begin{aligned}
+P_\infty(t) &= A \lim_{m \to \infty} \left ( 1 + \frac{1}{m} \right)^{m(rt)} \\
+            &= A e^{rt}
+\end{aligned}
 $$
 :::
 
@@ -387,7 +396,7 @@ p + geom_line(linewidth = 0.2) +
 
 ```{r}
 #| echo: true
-2^7 * 2^8 == 2^(7 + 8) 
+2^7 * 2^8 == 2^(7 + 8)
 ```
 :::
 
@@ -396,7 +405,7 @@ p + geom_line(linewidth = 0.2) +
 
 ```{r}
 #| echo: true
-2^7 / 2^8 == 2^(7 - 8) 
+2^7 / 2^8 == 2^(7 - 8)
 ```
 :::
 
@@ -437,11 +446,10 @@ Find the amount of money in the account after 5 years, 10 years, and 50 years.
 ### Introduction
 
 ::: incremental
- 
+
 
 -   For $a > 0$ and $a \ne 1$, an exponential function of the form $f(x) = a^x$ is one-to-one, so it has an inverse called a logarithmic function. Logarithm arguments must be positive.
 
--   In R and this course, $\log$ means the natural log, base $e$. For a log-scale coefficient $\beta$, the exact percentage change is $100(e^\beta - 1)\%$; $100\beta\%$ is a useful approximation only when $\beta$ is small. For example, $\log(1.04) \approx 0.0392$.
 
 -   The following relationship always holds for $a > 0$: $a^t = e^{\log(a)t}$ since $e^{\log(a)} = a$
 
@@ -450,6 +458,60 @@ Find the amount of money in the account after 5 years, 10 years, and 50 years.
 -   $\log_a u^n = n \log_a u$
 :::
 
+
+### Natural logs
+
+::: {.fragment}
+In R and throughout this course, $\log$ means the **natural log**, base $e$. The natural log and the exponential function undo one another:
+
+$$
+\log(e^x) = x, \qquad e^{\log(y)} = y \quad (y > 0).
+$$
+:::
+
+::: {.fragment}
+For $x$ close to zero, the curve $e^x$ is close to its tangent line at zero:
+
+$$
+e^x \approx 1 + x \qquad \text{for small } x.
+$$
+
+For example, $e^{0.05} = 1.0513 \approx 1.05$.
+:::
+
+::: {.fragment}
+Apply $\log$ to the approximation $e^x \approx 1+x$:
+
+$$
+x = \log(e^x) \approx \log(1+x).
+$$
+
+Thus, for small $x$, $\log(1+x) \approx x$.
+:::
+
+::: {.fragment}
+Now suppose a regression for a positive outcome has the fitted relationship
+
+$$
+\log \widehat{y}(x) = \alpha + 0.05x.
+$$
+
+Holding the other regressors fixed, increasing $x$ by one increases the fitted log outcome by $0.05$.
+:::
+
+::: {.fragment}
+Transforming that change back to the original outcome scale:
+
+$$
+\begin{aligned}
+\log \widehat{y}(x+1) - \log \widehat{y}(x) &= 0.05, \\
+\log\!\left(\frac{\widehat{y}(x+1)}{\widehat{y}(x)}\right) &= 0.05, \\
+\frac{\widehat{y}(x+1)}{\widehat{y}(x)} &= e^{0.05} \approx 1.05.
+\end{aligned}
+$$
+
+So a coefficient of $0.05$ approximately **multiplies $y$ by $1.05$**, corresponding to a **5% increase**. The exact increase is $100(e^{0.05}-1)\% \approx 5.13\%$.
+:::
 
 ### Example: Log-Sum-Exp
 
@@ -540,86 +602,91 @@ Source: [Calculus Volume 1](https://openstax.org/books/calculus-volume-1/pages/1
 
 ## A Cruel Joke {.smaller}
 
-A thousand years from now, your friends drug you, load you onto a ship, and fire it at the Moon. You wake in a spacesuit on the surface: a ship, a 100 m tower beside you, a metal ball stamped **1 kg**, and a stopwatch.
+A thousand years from now, your friends drug you, load you onto a ship, and fire it toward an **unknown moon**. You wake in a spacesuit beside the ship, looking at a 100 m tower. A metal ball is mounted at the top, you can release it remotely, and you have a stopwatch.
 
 ::: incremental
--   The ship's autopilot has the equations of motion programmed in --- but it is missing one number: the Moon's gravitational acceleration $g$
+-   The ship's computer refuses to launch until you identify the moon and enter its gravitational acceleration $g$
 
--   Your plan: climb the tower, drop the ball, and record the time it passes each **red mark** (spaced 5 m apart, 20 marks down)
+-   Enter the correct answer and the autopilot takes you home. Enter the wrong answer and the ship follows the wrong trajectory --- and crashes
 
--   Each mark has a sensor: as the ball passes, it **flashes a light**, so from the top you read the time off your stopwatch at each flash
+-   You remain on the ground, where you can see the full tower, and remotely release the ball from the top
 
--   From those $(t_k, x_k)$ pairs you will *infer* $g$ --- and fly home
+-   A sensor **flashes a light** each time the falling ball crosses a 5 m mark, giving you 20 known distances down the tower
+
+-   You use the stopwatch to record the time of every flash, producing pairs $(t_k, x_k)$
+
+-   From those observations, you must estimate $g$, match it to the correct moon, and enter your answer
 :::
 
 ## Setting Up the Equation of Motion {.smaller}
 
 ::: incremental
--   Let $x$ measure downward distance from the release point, so downward is positive. There is no atmosphere on the Moon, so the only force on the ball is gravity. Newton's second law gives:
+-   Let $x(t)$ measure downward distance from the release point, with $x(0)=0$. The ball is released from rest at $t=0$
 
+-   Ignoring the atmosphere and treating $g$ as constant near the moon's surface, free fall is modeled by
+
+::: {.fragment}
 $$
-m\,\ddot{x} = m\,g \quad\Rightarrow\quad \ddot{x} = g
+x(t) = \tfrac{1}{2}\,g\,t^2
 $$
-
--   The mass cancels --- *that is why the 1 kg label is a red herring.* This is Galileo's insight, confirmed on the Moon by Apollo 15's hammer-and-feather drop.
-
--   Integrating twice (we cover integration in Session 3), and dropping from rest, gives the solution we will use:
-
-$$
-v(t) = g\,t, \qquad x(t) = \tfrac{1}{2}\, g\, t^2
-$$
-
--   So the **acceleration** is the second derivative of position --- a constant $g$ --- which is exactly the unknown the mission needs.
 :::
 
-## The Drop, in Data {.smaller}
+-   For now, take this equation as given. **We will derive it after we learn integration**
 
-Low gravity is a *feature*: on the Moon a 100 m drop takes about 11 s, slow enough to read marks with a stopwatch. On Earth it would take 4.5 s.
+-   In the game, $g$ is unknown. Each flash gives a known distance $x_k$ and a measured time $t_k$; later we will use those observations to estimate $g$
+:::
+
+## The Drop {.smaller}
+
+For this worked example, we are **not estimating $g$ yet**. We use the accepted gravity on Earth's Moon, $g_{\text{Moon}} = 1.625\ \text{m/s}^2$. At that value, a 100 m drop takes about 11 s, slow enough to time the flashes with a stopwatch; on Earth it would take only 4.5 s.
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="58%"}
 ::: {.fragment}
 ```{r}
-#| fig-width: 4
+#| fig-width: 4.8
 #| fig-height: 4
 #| fig-align: center
 
-g_ref <- 1.625                      # accepted lunar gravity, m/s^2
+g_ref <- 1.625                      # accepted gravity on Earth's Moon, m/s^2
+timing_delay <- 0.30                # seconds
+timing_sd <- 0.16                   # seconds
 
-# One noisy time reading per known sensor position, collected in the browser app.
-raw <- read.csv("data/moon-drop.csv")
-d <- data.frame(t = raw$t_obs_s, x = raw$x_m)
+x_marks <- seq(5, 95, by = 5)
+t_true <- sqrt(2 * x_marks / g_ref)
 
-p <- ggplot(d, aes(t, x)) + geom_point(size = 0.3) +
-  xlab("time t (s)") + ylab("distance fallen x (m)") +
-  ggtitle("Stopwatch reading at each light flash")
-print(p)
-```
-:::
-:::
+set.seed(2003)
+d <- data.frame(
+  t = t_true + timing_delay + rnorm(length(x_marks), sd = timing_sd),
+  x = x_marks
+)
 
-::: {.column width="50%"}
-::: {.fragment}
-The inference problem (Session 6) is to recover $g$ from noisy time readings at the known sensor positions, assuming $x(t) = \tfrac{1}{2} g t^2$. The curve below uses the accepted reference value $g_{\mathrm{ref}} = 1.625\ \text{m/s}^2$; it is not an estimate from these observations.
-
-```{r}
-#| fig-width: 4
-#| fig-height: 4
-#| fig-align: center
-
-tt  <- seq(0, max(d$t), length.out = 200)
+tt <- seq(0, max(d$t), length.out = 200)
 sol <- data.frame(t = tt, x = 0.5 * g_ref * tt^2)
-p + geom_line(data = sol, aes(t, x), color = 'red', linewidth = 0.2) +
+
+p <- ggplot(d, aes(t, x)) +
+  geom_line(data = sol, color = 'red', linewidth = 0.35) +
+  geom_point(size = 0.5) +
   annotate("text", 3, 80, label = "x(t) == frac(1, 2) * g * t^2",
-           parse = TRUE, color = 'red')
+           parse = TRUE, color = 'red') +
+  xlab("time t (s)") + ylab("distance fallen x (m)") +
+  ggtitle("Delayed, noisy stopwatch readings")
+p
 ```
 :::
 :::
+
+::: {.column width="42%"}
+::: {.fragment}
+- The red curve uses the accepted value of $g$; it is **not** estimated from these observations. Later, we will reverse the problem and recover an unknown $g$ from data like these.
+:::
+::: {.fragment style="font-size: 70%;"}
+- **Oxygen is limited**, so each drop costs you. One drop gives up to 20 timed marks (this run caught 19) --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
 :::
 
-::: {.fragment}
-**Oxygen is limited**, so each drop costs you. One drop gives up to 20 timed marks (this run caught 19) --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
 :::
+:::
+
 
 ## Average Velocity and the Secant {.smaller}
 
@@ -641,15 +708,22 @@ $$
 #| fig-height: 3.6
 #| fig-align: center
 #| echo: true
+#| output-location: column
 t1 <- 4; t2 <- 9
-x1 <- 0.5 * g_ref * t1^2; x2 <- 0.5 * g_ref * t2^2
-slope <- (x2 - x1) / (t2 - t1)            # avg velocity = ½ g (t1 + t2)
-ggplot(sol, aes(t, x)) + geom_line(linewidth = 0.2) +
-  geom_abline(slope = slope, intercept = x1 - slope * t1,
-              color = 'red', linewidth = 0.2) +
+x1 <- 0.5 * g_ref * t1^2
+x2 <- 0.5 * g_ref * t2^2
+
+# avg velocity = ½ g (t1 + t2)
+slope <- (x2 - x1) / (t2 - t1)
+ggplot(sol, aes(t, x)) +
+  geom_line(linewidth = 0.2) +
+  geom_abline(slope = slope,
+    intercept = x1 - slope * t1,
+    color = 'red', linewidth = 0.2) +
   geom_point(aes(x = t1, y = x1), color = 'blue') +
   geom_point(aes(x = t2, y = x2), color = 'blue') +
-  xlab("time t (s)") + ylab("distance fallen x (m)") +
+  xlab("time t (s)") +
+  ylab("distance fallen x (m)") +
   ggtitle("Position curve and a secant line")
 ```
 :::
@@ -664,21 +738,30 @@ $$
 
 ## The Derivative {.smaller}
 
+::: {.columns style="align-items: center;"}
+::: {.column width="48%"}
+::: {.fragment}
+![](images/position-function.png){fig-align="center" width="475"}
+:::
+:::
+
+::: {.column width="52%"}
 ::: {.fragment}
 -   How do we compute this limit, which we wrote as $dx/dt$?
 
-![](images/position-function.png){fig-align="center" width="400"}
+-   Re-write the secant, or average-velocity, equation:
+
+$$
+\begin{aligned}
+\bar v
+&= \frac{x(a+h)-x(a)}{a+h-a} \\
+&= \frac{x(a+h)-x(a)}{h}, \\[0.6em]
+v
+&= \lim_{h \to 0}\frac{x(a+h)-x(a)}{h}.
+\end{aligned}
+$$
 :::
-
-::: {.fragment}
--   We re-write the secant or average velocity equation in the following way:
-
-$$
-\begin{eqnarray}
-\bar v & = & \frac{x(a + h) - x(a)}{a + h - a} = \frac{x(a + h) - x(a)}{h} \\
-v & = & \lim_{h \to 0} \frac{x(a + h) - x(a)}{h} \\
-\end{eqnarray}
-$$
+:::
 :::
 
 ## The Derivative {.smaller}
@@ -707,8 +790,6 @@ $$
 
 ## The Derivative {.smaller}
 
--   But what about acceleration?
-
 ::: {.fragment}
 -   Acceleration is a change in velocity with respect to time or the second derivative of position:
 
@@ -730,13 +811,11 @@ $$
 - The acceleration $a(t) = g$ does not depend on $t$ --- it is **constant**. **This constant is exactly what the mission needs.** Recovering it from the drop data is the inference problem we solve in Sessions 6 and 7.
 :::
 
-::: {.fragment}
+::: {.fragment style="font-size: 70%;"}
 -   It would be cumbersome to compute derivatives this way. Fortunately, we have shortcuts.
 :::
 
 ## Rules of Differentiation {.smaller}
-
--   We will state a few rules of differentiation without deriving them
 
 $$
 \begin{eqnarray}
@@ -747,7 +826,7 @@ $$
 \frac{d}{dx}[f(x) + g(x)] & = & \frac{d}{dx}f(x) + \frac{d}{dx}g(x) \\
 \frac{d}{dx}(e^x) & = & e^x \\
 \frac{d}{dx}\log(x) & = & \frac{1}{x}
-\end{eqnarray}                                                               
+\end{eqnarray}
 $$
 
 ::: incremental
@@ -757,7 +836,7 @@ $$
 
 :::
 
-## Your Turn
+## Your Turn {.smaller}
 
 - Suppose that on a different moon a calibration drop (with a small initial push, so it is not released from rest) produced the position function:
 
@@ -771,7 +850,7 @@ $$
 
 - What is the velocity and acceleration at 5 seconds?
 
-- What is this moon's gravitational acceleration $g$? (Hint: compare $a(t)$ to $\ddot{x} = g$.)
+- What is this moon's gravitational acceleration $g$?
 
 ## Product Rule and Chain Rule {.smaller}
 
@@ -839,7 +918,7 @@ p + geom_line(aes(y = dxdt), color = "red") +
 
 - Your turn:
 $$
-\frac{d}{dx} \left( e^{x^2 \cos(x)} \right ) = 
+\frac{d}{dx} \left( e^{x^2 \cos(x)} \right ) =
 $$
 
 ::: fragment
@@ -864,7 +943,3 @@ $$
 - Create four more functions: velocity and acceleration in the $x$ and $y$ directions.
 - Plot each velocity component with its corresponding position component, and each acceleration component with its corresponding position component.
 - Verify that $\mathbf{a}(t) = -\omega^2 \mathbf{r}(t)$. Explain what the position, velocity, and acceleration vectors show.
-
-
-
-
