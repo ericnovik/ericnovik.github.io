@@ -9,7 +9,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.9.38">
 
-  <meta name="author" content="Eric.Novik@nyu.edu | Summer 2025 | Session 3">
+  <meta name="author" content="Eric.Novik@nyu.edu | Summer 2026 | Session 3">
   <title>Eric Novik – SMaC: Statistics, Math, and Computing</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -205,7 +205,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Eric.Novik@nyu.edu | Summer 2025 | Session 3 
+Eric.Novik@nyu.edu | Summer 2026 | Session 3 
 </div>
 </div>
 </div>
@@ -215,7 +215,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <h2>Session 3 Outline</h2>
 <ul>
 <li class="fragment">Transforming data for plotting</li>
-<li class="fragment">Antiderivative</li>
+<li class="fragment">Deriving the free-fall equation with antiderivatives</li>
 <li class="fragment">Some rules of integration</li>
 <li class="fragment">Evaluating integrals numerically</li>
 <li class="fragment">The waiting time distribution</li>
@@ -233,8 +233,8 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <div class="columns">
 <div class="column" style="width:60%;">
 <ul>
-<li class="fragment">We saw that <em>continuous compounding</em> does not make such a big difference over time</li>
-<li class="fragment">How would the value vary by rate?</li>
+<li class="fragment">We saw how annual and <em>continuous compounding</em> compare at a fixed interest rate</li>
+<li class="fragment">How does the asset value vary with the interest rate?</li>
 <li class="fragment">We investigate with a common simulate-pivot-plot pattern</li>
 </ul>
 </div><div class="column" style="width:40%;">
@@ -245,29 +245,29 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <h2>Map Function</h2>
 <p>“The <code>purrr::map*</code> functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.”</p>
 <ul>
-<li class="fragment">Generate 10 vectors of 100 uniform random realizations, where the first vector has <code>min = 1</code>, second <code>min = 2</code> … last vector has <code>min = 10</code>, and <code>max = 15</code> for all</li>
-<li class="fragment">Now compute the average value of each of the 10 vectors</li>
+<li class="fragment">Generate 10 vectors of 100 uniform random values. The first vector has <code>min = 1</code>, the second has <code>min = 2</code>, and so on through <code>min = 10</code>; all have <code>max = 15</code></li>
+<li class="fragment">Then compute the mean of each of the 10 vectors</li>
 </ul>
 <div class="fragment">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(purrr)</span>
 <span id="cb1-2"><a></a></span>
-<span id="cb1-3"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
-<span id="cb1-4"><a></a>y <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
-<span id="cb1-5"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> x, <span class="at">max =</span> <span class="dv">15</span>))</span>
-<span id="cb1-6"><a></a></span>
-<span id="cb1-7"><a></a>y <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
-<span id="cb1-8"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> x, <span class="at">max =</span> <span class="dv">15</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a></a><span class="fu">set.seed</span>(<span class="dv">2006</span>)</span>
+<span id="cb1-4"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb1-5"><a></a>samples <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a></a>  <span class="fu">map</span>(\(minimum) <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> minimum, <span class="at">max =</span> <span class="dv">15</span>))</span>
+<span id="cb1-7"><a></a></span>
+<span id="cb1-8"><a></a>means <span class="ot">&lt;-</span> samples <span class="sc">|&gt;</span></span>
 <span id="cb1-9"><a></a>  <span class="fu">map_dbl</span>(mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
-<li class="fragment">Run the code and look inside y after then first function call and after the second. What do you expect to see?</li>
+<li class="fragment">Run the code and inspect <code>samples</code> and <code>means</code>. How do the two objects differ, and what did you expect to see?</li>
 </ul>
 </section>
 <section id="pivot-functions" class="slide level2 smaller">
 <h2>Pivot Functions</h2>
-<p>“<code>pivot_longer()</code>”lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is <code>pivot_wider()</code>”</p>
+<p><code>pivot_longer()</code> “lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is <code>pivot_wider()</code>.</p>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(tidyr)</span>
@@ -312,12 +312,12 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <span id="cb6-4"><a></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb6-5"><a></a></span>
 <span id="cb6-6"><a></a>rates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="at">length =</span> <span class="dv">10</span>)</span>
-<span id="cb6-7"><a></a>P <span class="ot">&lt;-</span> <span class="dv">100</span> </span>
+<span id="cb6-7"><a></a>P <span class="ot">&lt;-</span> <span class="dv">100</span></span>
 <span id="cb6-8"><a></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">50</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
 <span id="cb6-9"><a></a></span>
 <span id="cb6-10"><a></a>Pe <span class="ot">&lt;-</span> <span class="cf">function</span>(A, r, t) A <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t)</span>
 <span id="cb6-11"><a></a>d <span class="ot">&lt;-</span> time <span class="sc">|&gt;</span></span>
-<span id="cb6-12"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x)) </span>
+<span id="cb6-12"><a></a>  <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x))</span>
 <span id="cb6-13"><a></a><span class="fu">class</span>(d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "list"</code></pre>
@@ -401,18 +401,18 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </div>
 <div id="tabset-1-2">
 <ul>
-<li class="fragment">Modern R usage offers a lot of shortcuts but those may be confusing to beginners.</li>
+<li class="fragment">Modern R usage offers many shortcuts, but those may be confusing to beginners.</li>
 <li class="fragment">In particular, R loops have mostly been replaced with <code>map()</code> functions.</li>
 <li class="fragment">We recommend <code>purrr::map()</code> functions instead of R’s <code>*apply()</code>.</li>
 </ul>
 <div class="fragment">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>rates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="at">length =</span> <span class="dv">10</span>)</span>
-<span id="cb11-2"><a></a>P <span class="ot">&lt;-</span> <span class="dv">100</span> </span>
-<span id="cb11-3"><a></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
+<span id="cb11-2"><a></a>P <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb11-3"><a></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">50</span>, <span class="at">length =</span> <span class="dv">50</span>)</span>
 <span id="cb11-4"><a></a></span>
 <span id="cb11-5"><a></a>Pe <span class="ot">&lt;-</span> <span class="cf">function</span>(A, r, t) A <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t)</span>
-<span id="cb11-6"><a></a>time <span class="sc">|&gt;</span> <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x)) </span>
+<span id="cb11-6"><a></a>time <span class="sc">|&gt;</span> <span class="fu">map</span>(\(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x))</span>
 <span id="cb11-7"><a></a></span>
 <span id="cb11-8"><a></a><span class="co"># above is a shortcut for</span></span>
 <span id="cb11-9"><a></a><span class="fu">map</span>(time, <span class="cf">function</span>(x) <span class="fu">Pe</span>(<span class="at">A =</span> P, <span class="at">r =</span> rates, <span class="at">t =</span> x))</span>
@@ -431,21 +431,21 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb12-2"><a></a><span class="co"># add rates as a column</span></span>
-<span id="cb12-3"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rate =</span> </span>
+<span id="cb12-3"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rate =</span></span>
 <span id="cb12-4"><a></a>            <span class="fu">round</span>(rates, <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
 <span id="cb12-5"><a></a>              <span class="fu">as.character</span>())</span>
 <span id="cb12-6"><a></a></span>
 <span id="cb12-7"><a></a><span class="co"># convert from wide format to long</span></span>
-<span id="cb12-8"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span> </span>
-<span id="cb12-9"><a></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>rate, </span>
-<span id="cb12-10"><a></a>               <span class="at">names_to =</span> <span class="st">"year"</span>, </span>
-<span id="cb12-11"><a></a>               <span class="at">values_to =</span> <span class="st">"value"</span>) </span>
+<span id="cb12-8"><a></a>d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>rate,</span>
+<span id="cb12-10"><a></a>               <span class="at">names_to =</span> <span class="st">"year"</span>,</span>
+<span id="cb12-11"><a></a>               <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
 <span id="cb12-12"><a></a></span>
 <span id="cb12-13"><a></a>d<span class="sc">$</span>year <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(d<span class="sc">$</span>year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li><a href="https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf">Here</a> is a cheat sheet explaining <code>tidyr</code> functions.</li>
-<li>And <a href="https://gist.github.com/ericnovik/9ac7feb95ed89928faf3fa71b45eecdb">here</a> is much shorter version of the exercise.</li>
+<li>And <a href="https://gist.github.com/ericnovik/9ac7feb95ed89928faf3fa71b45eecdb">here</a> is a much shorter version of the exercise.</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
@@ -523,9 +523,9 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(d, <span class="fu">aes</span>(year, value))</span>
 <span id="cb13-2"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> rate), <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb13-3"><a></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> </span>
+<span id="cb13-3"><a></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span></span>
 <span id="cb13-4"><a></a>          scales<span class="sc">::</span><span class="fu">dollar_format</span>()) <span class="sc">+</span></span>
-<span id="cb13-5"><a></a>  <span class="fu">xlab</span>(<span class="st">"Time (years)"</span>) <span class="sc">+</span> </span>
+<span id="cb13-5"><a></a>  <span class="fu">xlab</span>(<span class="st">"Time (years)"</span>) <span class="sc">+</span></span>
 <span id="cb13-6"><a></a>  <span class="fu">ylab</span>(<span class="st">"Asset value"</span>) <span class="sc">+</span></span>
 <span id="cb13-7"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Growth of $100 at different interest rates"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -543,9 +543,10 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>d <span class="sc">|&gt;</span> <span class="fu">group_by</span>(rate) <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a></a>  <span class="fu">summarise</span>(<span class="at">y50 =</span> <span class="fu">last</span>(value)) <span class="sc">|&gt;</span></span>
-<span id="cb14-3"><a></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>d <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="fu">max</span>(year)) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a></a>  <span class="fu">select</span>(rate, <span class="at">y50 =</span> value) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top">
 <thead>
@@ -605,7 +606,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </div>
 </div>
 <div class="footer">
-<p>RStudio <a href="https://www.rstudio.com/resources/cheatsheets/">cheatsheats</a></p>
+<p>RStudio <a href="https://posit.co/resources/cheatsheets/">cheat sheets</a></p>
 </div>
 </section>
 <section id="your-turn" class="slide level2 smaller">
@@ -622,9 +623,9 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </div>
 <div id="tabset-2-2">
 <ul>
-<li>Run the following command: <code>install.packages('HistData')</code></li>
-<li>Followed by <code>library(HistData)</code></li>
-<li>Tale a look at the Arbuthnot dataset: <code>?Arbuthnot</code></li>
+<li>Run <code>install.packages("HistData")</code></li>
+<li>Then run <code>library(HistData)</code></li>
+<li>Take a look at the Arbuthnot dataset: <code>?Arbuthnot</code></li>
 </ul>
 <div class="cell">
 <div class="cell-output-display">
@@ -702,8 +703,8 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </div>
 <div id="tabset-2-3">
 <ul>
-<li>Use the tools to produce the plot the looks something like this.</li>
-<li>Bonus: compute the ratio of female births and plot it.</li>
+<li>Use these tools to produce a plot that looks something like this</li>
+<li>Bonus: compute and plot the proportion of christenings that were female, <span class="math inline">\(\text{Females}/(\text{Males}+\text{Females})\)</span></li>
 </ul>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -723,10 +724,10 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li class="fragment">Integration plays a central role in Statistics</li>
-<li class="fragment">It is a way to compute Expectations and Event Probabilities</li>
-<li class="fragment">In Bayesian Statistics, we use integration to compute posterior distributions of the unknowns</li>
-<li class="fragment">In Frequentist Statistics, we use derivatives to find the most likely values of the unknowns</li>
+<li class="fragment">Integration describes <strong>accumulated change</strong> and plays a central role in statistics</li>
+<li class="fragment">For continuous distributions, integrals compute probabilities and expectations</li>
+<li class="fragment">Across Bayesian and frequentist statistics, integration is used to normalize densities and marginalize over unknown quantities</li>
+<li class="fragment">Derivatives are often used for optimization, including maximum-likelihood and maximum-a-posteriori estimation</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
@@ -735,7 +736,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </figure>
 </div>
 <ul>
-<li class="fragment">Unknowns are sometimes called parameters, like the Moon’s gravity <span class="math inline">\(g\)</span> in our drop model <span class="math inline">\(x(t) = \tfrac{1}{2} g t^2\)</span></li>
+<li class="fragment">Unknown quantities are often called parameters, such as the local gravitational acceleration <span class="math inline">\(g\)</span> in our Moon-drop model</li>
 </ul>
 </div></div>
 </section>
@@ -744,11 +745,11 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li class="fragment">Integration is a continous analog of summation</li>
-<li class="fragment">You can also think of an integral as undoing a derivative</li>
-<li class="fragment">You can also think of it as a signed area under a (one-dimensional) function <span class="math inline">\(f\)</span></li>
-<li class="fragment">In modern applications, integration is almost always done numerically on the computer</li>
-<li class="fragment">But it helps to understand what what the computer is doing</li>
+<li class="fragment">A <strong>definite integral</strong> is a continuous analog of summation: it measures accumulated signed change over an interval</li>
+<li class="fragment">Geometrically, it is the signed area between a one-dimensional function <span class="math inline">\(f\)</span> and the horizontal axis</li>
+<li class="fragment">An <strong>indefinite integral</strong> represents a family of antiderivatives: <span class="math inline">\(\int f(x)\,dx = F(x)+C\)</span> when <span class="math inline">\(F'(x)=f(x)\)</span></li>
+<li class="fragment">The Fundamental Theorem of Calculus connects the two: <span class="math inline">\(\int_a^b f(x)\,dx = F(b)-F(a)\)</span></li>
+<li class="fragment">Many definite integrals are evaluated numerically, but it helps to understand what the computer is approximating</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
@@ -758,47 +759,7 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 3
 </div>
 </div></div>
 <div class="footer">
-<p>Image Source: <a href="https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas">Calculus Volume 1</a></p>
-</div>
-</section>
-<section id="from-velocity-to-postion-functions" class="slide level2 smaller">
-<h2>From Velocity to Postion Functions</h2>
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Antiderivative</a></li><li><a href="#tabset-3-2">Plot</a></li></ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<ul>
-<li class="fragment">Recall the Moon drop: from <span class="math inline">\(\ddot{x} = g\)</span> we found the velocity <span class="math inline">\(v(t) = g t\)</span></li>
-<li class="fragment">This is the promised derivation: integrate <span class="math inline">\(v(t)\)</span> once to <em>recover the position function</em> <span class="math inline">\(x(t)\)</span></li>
-</ul>
-<div class="fragment">
-<p><span class="math display">\[
-\begin{eqnarray}
-v(t) &amp; = &amp; \int{g\, dt} = g t + C_1 \\
-x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
-\end{eqnarray}
-\]</span></p>
-</div>
-<ul>
-<li class="fragment"><p>The ball is <em>dropped from rest</em> at the top of the tower, so the initial velocity is zero (<span class="math inline">\(C_1 = 0\)</span>), and we measure distance fallen from the release point, so the initial position is zero (<span class="math inline">\(C_2 = 0\)</span>).</p></li>
-<li class="fragment"><p>That leaves <span class="math inline">\(x(t) = \tfrac{1}{2} g t^2\)</span>. In general, to characterize the position function you need the initial position and velocity — you can’t get those from the acceleration alone.</p></li>
-</ul>
-</div>
-<div id="tabset-3-2">
-<p>The position function for different values of initial position <span class="math inline">\(C_2\)</span>. Notice that the only thing that changes is the intercept.</p>
-<div class="fragment">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+<p>Image source: <a href="https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas">Calculus Volume 1</a></p>
 </div>
 </section>
 <section id="some-common-integrals" class="slide level2">
@@ -811,37 +772,39 @@ x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 <section id="techniques-of-integration" class="slide level2 smaller">
 <h2>Techniques of Integration</h2>
 <ul>
-<li class="fragment">Integral, like a derivative, is a linear operator:</li>
+<li class="fragment">Definite integration, like differentiation, is linear:</li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
-\begin{eqnarray}
-\int [f(x) + g(x)] \, dx &amp;=&amp; \int f(x) \, dx + \int g(x) \, dx \\
-\int [c \cdot f(x)] \, dx &amp;=&amp; c \int f(x) \, dx
-\end{eqnarray}
+\begin{aligned}
+\int_a^b [f(x)+g(x)]\,dx
+  &amp;= \int_a^b f(x)\,dx + \int_a^b g(x)\,dx, \\
+\int_a^b c f(x)\,dx
+  &amp;= c\int_a^b f(x)\,dx.
+\end{aligned}
 \]</span></p>
 </div>
 <ul>
-<li class="fragment"><p>Unlike derivatives, there are generablly no rules for finding integrals</p></li>
-<li class="fragment"><p>Most integrals do not have a closed-form, analytical solutions. This is true for almost all integrals in statistics.</p></li>
-<li class="fragment"><p>In one or two dimentions, it is easy to evaluate most integrals numerically.</p></li>
-<li class="fragment"><p>In higher dimentions, you need very sophisticated methods that rely on Markov Chain Monte Carlo (<a href="https://arxiv.org/abs/1701.02434">MCMC</a>). We will not cover MCMC in this course.</p></li>
-<li class="fragment"><p>For simple integrals we can somtimes find a closed-form solution by relying on u-substitution and integration by parts.</p></li>
+<li class="fragment"><p>Unlike differentiation, integration has no universal procedure that produces a closed-form antiderivative for every function</p></li>
+<li class="fragment"><p>Many common integrals have closed-form analytical solutions, but many important integrals in statistics do not</p></li>
+<li class="fragment"><p>For well-behaved integrands in one or two dimensions, numerical quadrature is often practical</p></li>
+<li class="fragment"><p>Higher-dimensional problems may use Monte Carlo, importance sampling, quasi-Monte Carlo, or Markov chain Monte Carlo (<a href="https://arxiv.org/abs/1701.02434">MCMC</a>)</p></li>
+<li class="fragment"><p>For simple integrals, we can sometimes find a closed-form solution using substitution or integration by parts</p></li>
 </ul>
 </section>
 <section id="playing-with-integrals" class="slide level2 smaller">
 <h2>Playing with Integrals</h2>
 <ul>
-<li class="fragment">Given our intuition for integrals being singed areas, let’s see how to compute them analytically and numerically.</li>
-<li class="fragment">Warning: these techniques only work in low dimentions. For high dimentional integrals you need to use MCMC.</li>
-<li class="fragment">Suppose we want evaluate the integral <span class="math inline">\(\int_{1}^{3} x \sin(x^2)\, dx\)</span></li>
+<li class="fragment">Given our intuition for integrals as signed areas, let’s see how to compute them analytically and numerically</li>
+<li class="fragment">The numerical techniques shown here work best in low dimensions; high-dimensional integration requires other methods</li>
+<li class="fragment">Suppose we want to evaluate the integral <span class="math inline">\(\int_{1}^{3} x \sin(x^2)\,dx\)</span></li>
 </ul>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -857,20 +820,22 @@ x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>riemann <span class="ot">&lt;-</span> <span class="cf">function</span>(f, lower, upper, step_size) {</span>
-<span id="cb15-2"><a></a>  step <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">by =</span> step_size)</span>
-<span id="cb15-3"><a></a>  s <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># initialize the sum</span></span>
-<span id="cb15-4"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(step)) {</span>
-<span id="cb15-5"><a></a>    <span class="co"># multiply base by the height of the rectangle</span></span>
-<span id="cb15-6"><a></a>    area <span class="ot">&lt;-</span> step_size <span class="sc">*</span> <span class="fu">f</span>(step[i]) </span>
-<span id="cb15-7"><a></a>    s <span class="ot">&lt;-</span> s <span class="sc">+</span> area</span>
-<span id="cb15-8"><a></a>  }</span>
-<span id="cb15-9"><a></a>  <span class="fu">return</span>(s)</span>
-<span id="cb15-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>riemann <span class="ot">&lt;-</span> <span class="cf">function</span>(f, lower, upper, <span class="at">n =</span> <span class="dv">100</span>) {</span>
+<span id="cb15-2"><a></a>  edges <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">length.out =</span> n <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb15-3"><a></a>  total <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb15-4"><a></a></span>
+<span id="cb15-5"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(n)) {</span>
+<span id="cb15-6"><a></a>    width <span class="ot">&lt;-</span> edges[i <span class="sc">+</span> <span class="dv">1</span>] <span class="sc">-</span> edges[i]</span>
+<span id="cb15-7"><a></a>    height <span class="ot">&lt;-</span> <span class="fu">f</span>(edges[i <span class="sc">+</span> <span class="dv">1</span>]) <span class="co"># right endpoint</span></span>
+<span id="cb15-8"><a></a>    total <span class="ot">&lt;-</span> total <span class="sc">+</span> width <span class="sc">*</span> height</span>
+<span id="cb15-9"><a></a>  }</span>
+<span id="cb15-10"><a></a></span>
+<span id="cb15-11"><a></a>  total</span>
+<span id="cb15-12"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="fragment">
-<p>Notice that the function takes a function as an argument. These are called higher order functions.</p>
+<p>Notice that the function takes another function as an argument. Functions that do this are called higher-order functions.</p>
 </div>
 <div class="footer">
 <p>Source: <a href="https://openstax.org/books/calculus-volume-1/pages/5-1-approximating-areas">OpenStax Calculus Volume 1</a></p>
@@ -880,9 +845,9 @@ x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 <h2>Evaluating the Integral</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">*</span> <span class="fu">sin</span>(x<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb16-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, pi, <span class="at">len =</span> <span class="dv">100</span>)</span>
+<span id="cb16-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, pi, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
 <span id="cb16-3"><a></a></span>
-<span id="cb16-4"><a></a><span class="fu">riemann</span>(f, <span class="dv">1</span>, <span class="dv">3</span>, <span class="fl">0.01</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-4"><a></a><span class="fu">riemann</span>(f, <span class="dv">1</span>, <span class="dv">3</span>, <span class="at">n =</span> <span class="dv">200</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7275414</code></pre>
 </div>
@@ -896,16 +861,17 @@ x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 <section id="integrating-analytically" class="slide level2 smaller">
 <h2>Integrating Analytically</h2>
 <ul>
-<li class="fragment">Most integrals can’t be evaluated analytically but we can do <span class="math inline">\(\int x \sin(x^2)\, dx\)</span>.</li>
-<li class="fragment">We make a substitution. Let <span class="math inline">\(u = x^2\)</span>, then <span class="math inline">\(du/dx = 2x\)</span> and <span class="math inline">\(dx = \frac{1}{2 \sqrt{u}}du\)</span></li>
+<li class="fragment">Many integrals cannot be evaluated analytically, but we can find an antiderivative of <span class="math inline">\(x\sin(x^2)\)</span></li>
+<li class="fragment">Let <span class="math inline">\(u=x^2\)</span>. Then <span class="math inline">\(du=2x\,dx\)</span>, so <span class="math inline">\(x\,dx=\tfrac{1}{2}du\)</span></li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
-\begin{eqnarray}
-\int \sqrt{u} \cdot \sin(u) \frac{1}{2\sqrt{u}}du  &amp; = &amp; \\
-\frac{1}{2}\int \sin(u)\, du &amp; = &amp; \\
--\frac{1}{2} \cos(u) &amp; = &amp; -\frac{1}{2} \cos(x^2)  
-\end{eqnarray}
+\begin{aligned}
+\int x\sin(x^2)\,dx
+  &amp;= \tfrac{1}{2}\int \sin(u)\,du \\
+  &amp;= -\tfrac{1}{2}\cos(u)+C \\
+  &amp;= -\tfrac{1}{2}\cos(x^2)+C.
+\end{aligned}
 \]</span></p>
 </div>
 </section>
@@ -945,7 +911,8 @@ x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 <h2>Analytical Integration on the Computer</h2>
 <ul>
 <li class="fragment"><p>When in doubt, you can always try <a href="https://www.wolframalpha.com/">WolframAlpha</a></p></li>
-<li class="fragment"><p>Python library <a href="https://live.sympy.org/">SymPy</a> through R pacakge <code>caracas</code></p></li>
+<li class="fragment"><p>The Python library <a href="https://live.sympy.org/">SymPy</a> can be used through the R package <code>caracas</code></p></li>
+<li class="fragment"><p>A computer algebra system returns one antiderivative and usually omits the arbitrary constant <span class="math inline">\(+C\)</span></p></li>
 </ul>
 <div class="fragment">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">library</span>(caracas); <span class="fu">library</span>(stringr)</span>
@@ -965,41 +932,58 @@ x(t) &amp; = &amp; \int{(g t + C_1)\, dt} = \tfrac{1}{2} g t^2 + C_1 t + C_2
 <section id="your-turn-waiting-time" class="slide level2 smaller">
 <h2>Your Turn: Waiting Time</h2>
 <ul>
-<li>There is s famous distribution in statistics called Exponential distribution</li>
-<li>Its probability density function (PDF) is given by:</li>
+<li>The <strong>exponential distribution</strong> is commonly used to model waiting times between events that occur at a constant average rate <span class="math inline">\(\lambda&gt;0\)</span></li>
+<li>Its probability density function (PDF) is</li>
 </ul>
 <p><span class="math display">\[
-f(x) = \lambda e^{-\lambda x}, \, x &gt; 0, \text{and } \lambda &gt; 0
+f(x)=
+\begin{cases}
+\lambda e^{-\lambda x}, &amp; x\ge 0, \\
+0, &amp; x&lt;0.
+\end{cases}
 \]</span></p>
 <ul>
-<li><p>This distribution is sometimes called the waiting time (to some event) distribution, where <span class="math inline">\(\lambda\)</span> is the rate of events we expect</p></li>
-<li><p>One property of this distribution is that no matter how long you wait, the probability of seeing an event remains the same.</p></li>
-<li><p>One of the properties of the PDF is that it must integrate to 1</p></li>
-<li><p>Let’s check that it’s true</p></li>
+<li>Every PDF must integrate to 1. Verify that</li>
 </ul>
 <p><span class="math display">\[
-\int_{0}^{\infty} \lambda e^{-\lambda x} dx =
+\int_0^\infty \lambda e^{-\lambda x}\,dx = 1.
+\]</span></p>
+<ul>
+<li>The exponential distribution is <strong>memoryless</strong>: conditional on having already waited <span class="math inline">\(s\)</span>, the probability of waiting at least another <span class="math inline">\(t\)</span> does not depend on <span class="math inline">\(s\)</span></li>
+</ul>
+<p><span class="math display">\[
+\P(X&gt;s+t\mid X&gt;s)=\P(X&gt;t)=e^{-\lambda t}.
 \]</span></p>
 </section>
 <section id="integration-by-parts" class="slide level2 smaller">
 <h2>Integration by Parts</h2>
+<div class="fragment">
+<p>The product rule gives a useful integration identity:</p>
 <p><span class="math display">\[
-\begin{eqnarray}
-(f g)' &amp; = &amp; f'g + g'f \\
-\int (f g)' \, dx &amp; = &amp; \int f'g dx + \int g'f \, dx \\
-fg &amp; = &amp; \int f'g \, dx + \int g'f \, dx \\
-\int f g' \, dx &amp; = &amp; fg - \int f' g \, dx \\
-u &amp; = &amp; f(x) \\
-v &amp; = &amp; g(x) \\
-du &amp; = &amp; f'(x) \, dx \\
-dv &amp; = &amp; g'(x) \, dx \\
-\int u \, dv &amp; = &amp; uv - \int v \, du
-\end{eqnarray}
+\begin{aligned}
+(fg)' &amp;= f'g + fg', \\
+\int f(x)g'(x)\,dx
+  &amp;= f(x)g(x)-\int f'(x)g(x)\,dx, \\
+\int u\,dv &amp;= uv-\int v\,du.
+\end{aligned}
 \]</span></p>
+</div>
+<div class="fragment">
+<p>For example, integration by parts gives the mean waiting time:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\E[X]
+  &amp;= \int_0^\infty x\lambda e^{-\lambda x}\,dx \\
+  &amp;= \left[-xe^{-\lambda x}\right]_0^\infty
+     + \int_0^\infty e^{-\lambda x}\,dx \\
+  &amp;= \frac{1}{\lambda}.
+\end{aligned}
+\]</span></p>
+</div>
 </section>
 <section id="exponential-growth-again" class="slide level2 smaller">
 <h2>Exponential Growth (again)</h2>
-<p>Recall, at the beginning we defined an exponential growth with the following differential equation:</p>
+<p>The exponential-growth function used earlier solves the following differential equation. Assume <span class="math inline">\(y(t)&gt;0\)</span>:</p>
 <div class="fragment">
 <p><span class="math display">\[
 \frac{\text{d}[y(t)]}{\text{d}t} = k \cdot y(t)
@@ -1017,13 +1001,102 @@ y(t) &amp;= y_0 \cdot e^{kt}, \, y_0 = e^C
 \]</span></p>
 </div>
 </section>
+<section id="deriving-the-free-fall-equation" class="slide level2 smaller">
+<h2>Deriving the Free-Fall Equation</h2>
+<ul>
+<li class="fragment">Let <span class="math inline">\(x(t)\)</span> be the <strong>downward distance fallen</strong> from the release point, so downward is positive</li>
+<li class="fragment">Treat the gravitational acceleration <span class="math inline">\(g\)</span> as constant near the surface</li>
+<li class="fragment">The ball has constant mass <span class="math inline">\(m\)</span>, and the only force acting on it is gravity, <span class="math inline">\(F=mg\)</span></li>
+</ul>
+<div class="fragment">
+<p>Newton’s second law relates force to the rate of change of momentum:</p>
+<p><span class="math display">\[
+\begin{aligned}
+F
+  &amp;= ma \\
+  &amp;= \frac{d}{dt}\left(m\frac{d[x(t)]}{dt}\right) = \frac{d}{dt}\left(mv(t)\right)\\
+  &amp;= mg.
+\end{aligned}
+\]</span></p>
+<p>Because <span class="math inline">\(m\)</span> is constant, take it outside the derivative and cancel it from both sides:</p>
+<p><span class="math display">\[
+m\frac{d^2[x(t)]}{dt^2}=mg
+\quad\Longrightarrow\quad
+\frac{d^2[x(t)]}{dt^2}=g.
+\]</span></p>
+</div>
+</section>
+<section id="deriving-the-free-fall-equation-1" class="slide level2 smaller">
+<h2>Deriving the Free-Fall Equation</h2>
+<div class="fragment">
+<p>Integrate twice with respect to <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\int \frac{d^2[x(t)]}{dt^2}\,dt
+  &amp;= \int g\,dt, \\
+\frac{d[x(t)]}{dt}
+  &amp;= gt+C_1, \\[0.6em]
+\int \frac{d[x(t)]}{dt}\,dt
+  &amp;= \int (gt+C_1)\,dt, \\
+x(t)
+  &amp;= \tfrac{1}{2}gt^2+C_1t+C_2.
+\end{aligned}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The ball is released from rest, and distance is measured from the release point, so</p>
+<p><span class="math display">\[
+\left.\frac{d[x(t)]}{dt}\right|_{t=0}=0
+\Longrightarrow C_1=0,
+\qquad
+x(0)=0
+\Longrightarrow C_2=0.
+\]</span></p>
+<p>Therefore,</p>
+<p><span class="math display">\[
+\boxed{x(t)=\tfrac{1}{2}gt^2}.
+\]</span></p>
+</div>
+</section>
+<section id="free-fall-on-earths-moon" class="slide level2 smaller">
+<h2>Free Fall on Earth’s Moon</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-lecture_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:42%;">
+<div class="fragment">
+<p>Using the accepted value <span class="math inline">\(g_{\text{Moon}}=1.625\ \text{m/s}^2\)</span>, the ball reaches the bottom when <span class="math inline">\(x(t)=100\)</span> m:</p>
+<p><span class="math display">\[
+\begin{aligned}
+100 &amp;= \tfrac{1}{2}g_{\text{Moon}}t^2, \\
+t_{\text{impact}}
+  &amp;= \sqrt{\frac{2(100)}{g_{\text{Moon}}}} \\
+  &amp;\approx 11.1\ \text{s}.
+\end{aligned}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The free-fall model describes the motion only until impact.</p>
+</div>
+</div></div>
+</section>
 <section id="homework" class="slide level2 smaller">
 <h2>Homework</h2>
 <ul>
-<li>Take a look at dataset <code>iris</code> (?iris)</li>
-<li>Compute the overall average Sepal.Length, Sepal.Width, Petal.Length, Petal.Width</li>
-<li>Compute the average by each Species of flower (hint: use <code>group_by</code> and <code>summarise</code> functions from <code>dplyr</code>)</li>
-<li>Produce the plot that looks like this:</li>
+<li>Take a look at the <code>iris</code> dataset (<code>?iris</code>)</li>
+<li>Compute the overall means of <code>Sepal.Length</code>, <code>Sepal.Width</code>, <code>Petal.Length</code>, and <code>Petal.Width</code></li>
+<li>Compute these means by <code>Species</code> (hint: use <code>group_by()</code> and <code>summarise()</code> from <code>dplyr</code>)</li>
+<li>Produce a plot that looks like this:</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1031,7 +1104,7 @@ y(t) &amp;= y_0 \cdot e^{kt}, \, y_0 = e^C
 </figure>
 </div>
 <ul>
-<li>Produce the plot that looks like this: (check out <code>geom_density</code> and <code>facet_wrap</code> functions)</li>
+<li>Produce a plot that looks like this (see <code>geom_density()</code> and <code>facet_wrap()</code>):</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1045,7 +1118,7 @@ y(t) &amp;= y_0 \cdot e^{kt}, \, y_0 = e^C
 \int 2x \cos(x^2)\, dx
 \]</span></p>
 <ul>
-<li>Evaluate this integral (on paper) from <span class="math inline">\(0\)</span> to <span class="math inline">\(2\pi\)</span> and use R’s <code>integrate</code> function to validate your answer.</li>
+<li>Evaluate this integral on paper from <span class="math inline">\(0\)</span> to <span class="math inline">\(2\pi\)</span>, and use R’s <code>integrate()</code> function to validate your answer.</li>
 </ul>
 
 
