@@ -974,15 +974,16 @@ F'(x) = f'(g(x))g'(x)
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># approximate the derivative on each interval and align it to the midpoint</span></span>
 <span id="cb29-2"><a></a>appr <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb29-3"><a></a>  <span class="at">t =</span> (t[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">+</span> t[<span class="sc">-</span>n]) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb29-3"><a></a>  <span class="at">t_mid =</span> (t[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">+</span> t[<span class="sc">-</span>n]) <span class="sc">/</span> <span class="dv">2</span>,</span>
 <span id="cb29-4"><a></a>  <span class="at">appr_dxdt =</span> <span class="fu">diff</span>(x) <span class="sc">/</span> <span class="fu">diff</span>(t)</span>
 <span id="cb29-5"><a></a>)</span>
 <span id="cb29-6"><a></a></span>
 <span id="cb29-7"><a></a>p <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> dxdt), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
 <span id="cb29-8"><a></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb29-9"><a></a>    <span class="at">data =</span> appr, <span class="fu">aes</span>(t, appr_dxdt),</span>
-<span id="cb29-10"><a></a>    <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linewidth =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
-<span id="cb29-11"><a></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb29-9"><a></a>    <span class="at">data =</span> appr,</span>
+<span id="cb29-10"><a></a>    <span class="fu">aes</span>(<span class="at">x =</span> t_mid, <span class="at">y =</span> appr_dxdt),</span>
+<span id="cb29-11"><a></a>    <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linewidth =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb29-12"><a></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

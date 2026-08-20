@@ -480,7 +480,7 @@
     "href": "stats-math/04-lecture/04-lecture.html#birthday-problem",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Birthday Problem",
-    "text": "Birthday Problem\n\nProblem DescriptionSimulationPlot\n\n\nThere are \\(j\\) people in a room. Assume each person’s birthday is equally likely to be any of the 365 days of the year (excluding February 29) and that people’s birthdays are independent. What is the probability that at least one pair of group members has the same birthday?\n\n\n\nn &lt;- 1e5\nn_people &lt;- 80 \nj &lt;- 2:n_people\ndays &lt;- 1:365 \n\nfind_match &lt;- function(x, d) {\n  y &lt;- sample(d, x, replace = TRUE)\n  match_found &lt;- length(unique(y)) &lt; length(y)\n}\n\nprop &lt;- numeric(n_people - 1)\nfor (i in seq_along(j)) {\n  matches &lt;- replicate(n, find_match(i, days))\n  prop[i] &lt;- mean(matches)\n}"
+    "text": "Birthday Problem\n\nProblem DescriptionSimulationPlot\n\n\nThere are \\(j\\) people in a room. Assume each person’s birthday is equally likely to be any of the 365 days of the year (excluding February 29) and that people’s birthdays are independent. What is the probability that at least one pair of group members has the same birthday?\n\n\n\nn &lt;- 1e5\nn_people &lt;- 80\nj &lt;- 2:n_people\ndays &lt;- 1:365\n\nfind_match &lt;- function(x, d) {\n  y &lt;- sample(d, x, replace = TRUE)\n  match_found &lt;- length(unique(y)) &lt; length(y)\n}\n\nprop &lt;- numeric(n_people - 1)\nfor (i in seq_along(j)) {\n  matches &lt;- replicate(n, find_match(i, days))\n  prop[i] &lt;- mean(matches)\n}"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#birthday-analysis",
@@ -718,7 +718,7 @@
     "href": "stats-math/02-lecture/02-lecture.html#approximating-derivatives",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Approximating Derivatives",
-    "text": "Approximating Derivatives\n\nlibrary(ggplot2)\nlibrary(dplyr)\nn &lt;- 100\nt &lt;- seq(0, pi, length.out = n)\nx &lt;- sin(t) * cos(t)\ndxdt &lt;- cos(t)^2 - sin(t)^2\n\nd &lt;- tibble(t, x, dxdt)\np &lt;- ggplot(d, aes(t, x))\np + geom_line() + geom_line(aes(y = dxdt), color = \"red\")\n\n\n\n\n\n\n\n# approximate the derivative on each interval and align it to the midpoint\nappr &lt;- tibble(\n  t = (t[-1] + t[-n]) / 2,\n  appr_dxdt = diff(x) / diff(t)\n)\n\np + geom_line(aes(y = dxdt), color = \"red\") +\n  geom_line(\n    data = appr, aes(t, appr_dxdt),\n    color = \"blue\", linewidth = 5, alpha = 1/5\n  )"
+    "text": "Approximating Derivatives\n\nlibrary(ggplot2)\nlibrary(dplyr)\nn &lt;- 100\nt &lt;- seq(0, pi, length.out = n)\nx &lt;- sin(t) * cos(t)\ndxdt &lt;- cos(t)^2 - sin(t)^2\n\nd &lt;- tibble(t, x, dxdt)\np &lt;- ggplot(d, aes(t, x))\np + geom_line() + geom_line(aes(y = dxdt), color = \"red\")\n\n\n\n\n\n\n\n# approximate the derivative on each interval and align it to the midpoint\nappr &lt;- tibble(\n  t_mid = (t[-1] + t[-n]) / 2,\n  appr_dxdt = diff(x) / diff(t)\n)\n\np + geom_line(aes(y = dxdt), color = \"red\") +\n  geom_line(\n    data = appr,\n    aes(x = t_mid, y = appr_dxdt),\n    color = \"blue\", linewidth = 5, alpha = 1/5\n  )"
   },
   {
     "objectID": "stats-math/02-lecture/02-lecture.html#examples-of-the-chain-rule",
@@ -1453,7 +1453,7 @@
     "href": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Constructing a Riemann Sum",
-    "text": "Constructing a Riemann Sum\n\n\n\n\n\n\n\nriemann &lt;- function(f, lower, upper, n = 100) {\n  edges &lt;- seq(lower, upper, length.out = n + 1)\n  total &lt;- 0\n\n  for (i in seq_len(n)) {\n    width &lt;- edges[i + 1] - edges[i]\n    height &lt;- f(edges[i + 1]) # right endpoint\n    total &lt;- total + width * height\n  }\n\n  total\n}\n\n\n\nNotice that the function takes another function as an argument. Functions that do this are called higher-order functions.\n\n\nSource: OpenStax Calculus Volume 1"
+    "text": "Constructing a Riemann Sum\n\n\n\n\n\n\n\nriemann &lt;- function(f, lower, upper, n = 100) {\n  edges &lt;- seq(lower, upper, length.out = n + 1)\n  total &lt;- 0\n\n  for (i in seq_len(n)) {\n    width &lt;- edges[i + 1] - edges[i]\n    height &lt;- f(edges[i + 1]) # right endpoint\n    total &lt;- total + width * height\n  }\n  return(total)\n}\n\n\n\nNotice that the function takes another function as an argument. Functions that do this are called higher-order functions.\n\n\nSource: OpenStax Calculus Volume 1"
   },
   {
     "objectID": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
@@ -1481,7 +1481,7 @@
     "href": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Analytical Integration on the Computer",
-    "text": "Analytical Integration on the Computer\n\nWhen in doubt, you can always try WolframAlpha\nThe Python library SymPy can be used through the R package caracas\nA computer algebra system returns one antiderivative and usually omits the arbitrary constant \\(+C\\)\n\n\nlibrary(caracas); library(stringr)\nadd_align &lt;- function(latex) {\n  str_c(\"\\\\begin{align} \", latex, \" \\\\end{align}\")\n}\nadd_int &lt;- function(latex) {\n  str_c(\"\\\\int \", latex, \"\\\\, dx\")\n}\nx &lt;- symbol('x'); f &lt;- x^2 / sqrt(x^2 + 4)\ntex(f) %&gt;% add_int() %&gt;% str_c(\" =\") %&gt;% add_align() %&gt;% cat()\n\\[\\begin{align} \\int \\frac{x^{2}}{\\sqrt{x^{2} + 4}}\\, dx = \\end{align}\\]\nint(f, x) %&gt;% tex() %&gt;% add_align() %&gt;% cat()\n\\[\\begin{align} \\frac{x \\sqrt{x^{2} + 4}}{2} - 2 \\operatorname{asinh}{\\left(\\frac{x}{2} \\right)} \\end{align}\\]"
+    "text": "Analytical Integration on the Computer\n\nWhen in doubt, you can always try WolframAlpha\nThe Python library SymPy can evaluate symbolic integrals directly\nA computer algebra system returns one antiderivative and usually omits the arbitrary constant \\(+C\\)\n\n\nimport sympy as sp\n\nx = sp.symbols(\"x\", real=True)\nf = x**2 / sp.sqrt(x**2 + 4)\nantiderivative = sp.integrate(f, x)\n\nequation = sp.Eq(\n    sp.Integral(f, x),\n    antiderivative,\n    evaluate=False,\n)\n\nprint(\"$$\\n\" + sp.latex(equation) + \"\\n$$\")\n\\[\n\\int \\frac{x^{2}}{\\sqrt{x^{2} + 4}}\\, dx = \\frac{x \\sqrt{x^{2} + 4}}{2} - 2 \\operatorname{asinh}{\\left(\\frac{x}{2} \\right)}\n\\]"
   },
   {
     "objectID": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
@@ -1502,7 +1502,7 @@
     "href": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Exponential Growth (again)",
-    "text": "Exponential Growth (again)\nThe exponential-growth function used earlier solves the following differential equation. Assume \\(y(t)&gt;0\\):\n\n\\[\n\\frac{\\text{d}[y(t)]}{\\text{d}t} = k \\cdot y(t)\n\\]\n\n\nWe can now solve it:\n\\[\n\\begin{align*}\n\\frac{1}{y} \\, \\text{d}y &= k \\, \\text{d}t \\\\\n\\int \\frac{1}{y} \\, \\text{d}y &= \\int k \\, \\text{d}t \\\\\n\\log(y) &= k \\cdot t + C \\\\\ny(t) &= y_0 \\cdot e^{kt}, \\, y_0 = e^C\n\\end{align*}\n\\]"
+    "text": "Exponential Growth (again)\nThe exponential-growth function used earlier solves the following differential equation. Assume \\(y(t)&gt;0\\):\n\n\\[\n\\frac{\\text{d}[y(t)]}{\\text{d}t} = k \\cdot y(t)\n\\]\n\n\nWe can now solve it:\n\\[\n\\begin{align*}\n\\frac{1}{y} \\, \\text{d}y &= k \\, \\text{d}t \\\\\n\\int \\frac{1}{y} \\, \\text{d}y &= \\int k \\, \\text{d}t \\\\\n\\log(y) &= k \\cdot t + C \\\\\ny(t) &= A \\cdot e^{kt}, \\, A = e^C\n\\end{align*}\n\\]"
   },
   {
     "objectID": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation",
