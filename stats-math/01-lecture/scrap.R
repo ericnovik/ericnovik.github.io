@@ -152,10 +152,65 @@ softmax_unsafe(y_large)
 
 # lots of ways to do the same thing in R
 sum(m)
-rowSums(m) |> sum() # |> is a shortcut for sum(rowSums(x))
-colSums(m) |> sum()
-apply(m, 1, sum) # same as rowSums(x)
+
+
+rowSums(m)
+colSums(m)
+
+apply(m, 1, prod) # same as rowSums(x)
+
+
 apply(m, 2, sum) # same as colSums(x)
 apply(m, 1, sum) |> sum()
 apply(m, 2, sum) |> sum()
 
+set.seed(2006)
+mv <- numeric(10)
+for (i in 1:10) {
+  x <- runif(100, min = i, max = 15)
+  mv[i] <- mean(x)
+}
+
+# from Lecture 4 homework
+n <- 1e5
+die <- 1:6
+denom <- 0
+numer <- 0
+for (i in 1:n) {
+  s <- sample(die, 2, replace = TRUE)
+  if (sum(s) == 8) {
+    denom <- denom + 1
+    if (s[1] == 5 || s[2] == 5)
+      numer <- numer + 1
+  }
+}
+numer / denom
+
+library(dplyr)
+iris |>
+  group_by(Species) |>
+  summarise(
+    across(where(is.numeric), mean),
+    .groups = "drop"
+  )
+
+set.seed(2006)
+mu_m <- 69.1   # mean height of US men in inches
+sigma_m <- 2.9 # corresponding standard deviation
+mu_w <- 63.7   # mean height of US women in inches
+sigma_w <- 2.7 
+n_m <- as.integer(1e5 * 0.48)
+n_w <- as.integer(1e5 * 0.52)
+
+h_m <- rnorm(n_m, mu_m, sigma_m)
+h_w <- rnorm(n_w, mu_w, sigma_w)
+h <- c(h_m, h_w)
+
+p <- ggplot(data.frame(h), aes(x = h))
+p + geom_density(linewidth = 0.2, bw = 0.5) +
+  xlab("Height (in)") + ylab("") + ylim(0, 0.15) +
+  ggtitle("Mixture of men's and women's height distributions") +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )

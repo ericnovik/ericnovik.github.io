@@ -465,8 +465,7 @@ riemann <- function(f, lower, upper, n = 100) {
     height <- f(edges[i + 1]) # right endpoint
     total <- total + width * height
   }
-
-  total
+  return(total)
 }
 ```
 :::
@@ -544,29 +543,30 @@ f1(3) - f1(1)
 ::: incremental
 -   When in doubt, you can always try [WolframAlpha](https://www.wolframalpha.com/)
 
--   The Python library [SymPy](https://live.sympy.org/) can be used through the R package `caracas`
+-   The Python library [SymPy](https://www.sympy.org/) can evaluate symbolic integrals directly
 
 -   A computer algebra system returns one antiderivative and usually omits the arbitrary constant $+C$
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 #| echo: true
 #| cache: false
 #| results: asis
-#| message: false
-#| warning: false
 
-library(caracas); library(stringr)
-add_align <- function(latex) {
-  str_c("\\begin{align} ", latex, " \\end{align}")
-}
-add_int <- function(latex) {
-  str_c("\\int ", latex, "\\, dx")
-}
-x <- symbol('x'); f <- x^2 / sqrt(x^2 + 4)
-tex(f) %>% add_int() %>% str_c(" =") %>% add_align() %>% cat()
-int(f, x) %>% tex() %>% add_align() %>% cat()
+import sympy as sp
+
+x = sp.symbols("x", real=True)
+f = x**2 / sp.sqrt(x**2 + 4)
+antiderivative = sp.integrate(f, x)
+
+equation = sp.Eq(
+    sp.Integral(f, x),
+    antiderivative,
+    evaluate=False,
+)
+
+print("$$\n" + sp.latex(equation) + "\n$$")
 ```
 :::
 
@@ -643,7 +643,7 @@ $$
 \frac{1}{y} \, \text{d}y &= k \, \text{d}t \\
 \int \frac{1}{y} \, \text{d}y &= \int k \, \text{d}t \\
 \log(y) &= k \cdot t + C \\
-y(t) &= y_0 \cdot e^{kt}, \, y_0 = e^C
+y(t) &= A \cdot e^{kt}, \, A = e^C
 \end{align*}
 $$
 :::

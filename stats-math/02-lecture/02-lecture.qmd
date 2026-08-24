@@ -902,13 +902,14 @@ p + geom_line() + geom_line(aes(y = dxdt), color = "red")
 
 # approximate the derivative on each interval and align it to the midpoint
 appr <- tibble(
-  t = (t[-1] + t[-n]) / 2,
+  t_mid = (t[-1] + t[-n]) / 2,
   appr_dxdt = diff(x) / diff(t)
 )
 
 p + geom_line(aes(y = dxdt), color = "red") +
   geom_line(
-    data = appr, aes(t, appr_dxdt),
+    data = appr,
+    aes(x = t_mid, y = appr_dxdt),
     color = "blue", linewidth = 5, alpha = 1/5
   )
 ```
@@ -936,10 +937,20 @@ x(t) = R \cos(\omega t) \\
 y(t) = R \sin(\omega t)
 $$
 
+- The particle's position vector is
+
+$$
+\mathbf{r}(t)=
+\begin{pmatrix}
+x(t) \\
+y(t)
+\end{pmatrix}.
+$$
+
 - Here $R$ is the radius, $\omega$ is the angular frequency in radians per unit time, and the period is $T = 2\pi / \omega$.
 - Create position functions that take $R$, $t$, and $\omega$ as arguments.
 - Create a length-100 vector $t$ covering one full rotation.
 - Plot $x(t)$ and $y(t)$ against $t$ on the same graph, then plot $y$ against $x$. Explain the geometry.
 - Create four more functions: velocity and acceleration in the $x$ and $y$ directions.
 - Plot each velocity component with its corresponding position component, and each acceleration component with its corresponding position component.
-- Verify that $\mathbf{a}(t) = -\omega^2 \mathbf{r}(t)$. Explain what the position, velocity, and acceleration vectors show.
+- Define the acceleration vector as $\mathbf{a}(t)=(a_x(t),a_y(t))^\mathsf{T}$ and verify that $\mathbf{a}(t)=-\omega^2\mathbf{r}(t)$. Explain what the position, velocity, and acceleration vectors show.

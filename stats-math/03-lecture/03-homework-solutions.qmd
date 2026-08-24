@@ -1,0 +1,232 @@
+---
+title: "Session 3 Homework Solutions"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric Novik"
+format:
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    geometry:
+      - margin=1in
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: source
+---
+
+This document provides worked solutions to the [Lecture 3 homework](https://ericnovik.github.io/stats-math/03-lecture/03-lecture.html#/homework).
+
+```{r}
+#| include: false
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+lecture_theme <-
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    plot.background = element_rect(fill = "#f0f1eb", color = "#f0f1eb"),
+    legend.key = element_rect(fill = "#f0f1eb", color = "#f0f1eb")
+  )
+
+theme_set(lecture_theme)
+```
+
+# Inspecting the `iris` data
+
+> **Task:** Take a look at the `iris` dataset using `?iris`.
+
+The built-in `iris` data frame contains 150 observations and five variables. Four variables are numeric flower measurements in centimeters, and `Species` identifies one of three iris species. Each species contributes 50 observations.
+
+```{r}
+dim(iris)
+names(iris)
+table(iris$Species)
+head(iris)
+```
+
+# Overall means
+
+> **Task:** Compute the overall means of `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`.
+
+Because the four measurement columns are numeric, `across(where(is.numeric), mean)` applies `mean()` to all four in one step.
+
+```{r}
+overall_means <- iris |>
+  summarise(across(where(is.numeric), mean))
+
+knitr::kable(
+  overall_means,
+  digits = 3,
+  caption = "Overall means of the iris measurements"
+)
+```
+
+Thus, the overall means are approximately 5.843 for sepal length, 3.057 for sepal width, 3.758 for petal length, and 1.199 for petal width.
+
+# Means by species
+
+> **Task:** Compute the four means by `Species` using `group_by()` and `summarise()`.
+
+`group_by(Species)` partitions the rows by species. The following `summarise()` call then computes each mean separately within those groups.
+
+```{r}
+species_means <- iris |>
+  group_by(Species) |>
+  summarise(
+    across(where(is.numeric), mean),
+    .groups = "drop"
+  )
+
+knitr::kable(
+  species_means,
+  digits = 3,
+  caption = "Mean iris measurements by species"
+)
+```
+
+The grouped means reveal substantial differences in petal size: setosa has much shorter and narrower petals than versicolor and virginica.
+
+# Petal-length and sepal-length scatter plot
+
+> **Task:** Reproduce the scatter plot of `Sepal.Length` against `Petal.Length`, colored by `Species`.
+
+Each point represents one flower. Mapping `Species` to color makes the three groups visible, while the axes reproduce the reference plot.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.2
+#| fig-align: center
+#| fig-cap: "Sepal length versus petal length, colored by species."
+
+scatter_plot <- ggplot(
+  iris,
+  aes(x = Petal.Length, y = Sepal.Length, color = Species)
+) +
+  geom_point(size = 2) +
+  labs(
+    x = "Petal.Length",
+    y = "Sepal.Length",
+    color = "Species"
+  )
+
+scatter_plot
+```
+
+The plot shows clear species clustering and a positive relationship between petal length and sepal length.
+
+# Faceted density plots
+
+> **Task:** Reproduce the faceted density plot using `geom_density()` and `facet_wrap()`.
+
+The measurements must first be transformed from wide to long form. In the long data, `name` identifies the measurement and `value` stores its observed value. We then draw one density panel per measurement.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.3
+#| fig-align: center
+#| fig-cap: "Distributions of the four iris measurements by species."
+
+iris_long <- iris |>
+  pivot_longer(
+    cols = -Species,
+    names_to = "name",
+    values_to = "value"
+  )
+
+density_plot <- ggplot(
+  iris_long,
+  aes(x = value, color = Species, fill = Species)
+) +
+  geom_density(alpha = 1/5) +
+  facet_wrap(~ name, scales = "free", ncol = 2) +
+  labs(x = NULL, y = "density", color = "Species", fill = "Species")
+
+density_plot
+```
+
+Because `name` is a character column, `facet_wrap()` orders the labels alphabetically by default, which matches the reference plot. The free scales are important because petal width and sepal length occupy very different numerical ranges.
+
+# Indefinite integral
+
+> **Task:** Compute the following integral and show the steps:
+>
+> $$
+> \int 2x\cos(x^2)\,dx.
+> $$
+
+Use substitution. Let
+
+$$
+u=x^2.
+$$
+
+Then
+
+$$
+du=2x\,dx,
+$$
+
+so the integral becomes
+
+$$
+\begin{aligned}
+\int 2x\cos(x^2)\,dx
+  &=\int\cos(u)\,du\\
+  &=\sin(u)+C\\
+  &=\boxed{\sin(x^2)+C}.
+\end{aligned}
+$$
+
+Differentiating the result checks the calculation:
+
+$$
+\frac{d}{dx}\sin(x^2)=\cos(x^2)(2x)=2x\cos(x^2).
+$$
+
+# Definite integral from $0$ to $2\pi$
+
+> **Task:** Evaluate the integral on paper from $0$ to $2\pi$, then validate the result with R's `integrate()` function.
+
+Using the antiderivative above,
+
+$$
+\begin{aligned}
+\int_0^{2\pi}2x\cos(x^2)\,dx
+  &=\left[\sin(x^2)\right]_0^{2\pi}\\
+  &=\sin\!\left((2\pi)^2\right)-\sin(0)\\
+  &=\boxed{\sin(4\pi^2)}\\
+  &\approx0.9783406.
+\end{aligned}
+$$
+
+Notice that $\sin(4\pi^2)$ is not zero: the argument is $4\pi^2$, not an integer multiple of $2\pi$.
+
+```{r}
+integrand <- function(x) {
+  2 * x * cos(x^2)
+}
+
+numeric_result <- integrate(
+  integrand,
+  lower = 0,
+  upper = 2 * pi
+)
+
+numeric_result
+
+c(
+  analytic = sin(4 * pi^2),
+  numerical = numeric_result$value,
+  difference = abs(sin(4 * pi^2) - numeric_result$value)
+)
+```
+
+The analytical and numerical values agree to numerical precision.

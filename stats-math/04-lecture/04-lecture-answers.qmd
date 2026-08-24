@@ -1,0 +1,385 @@
+---
+title: "Session 4 Questions: Explanatory Answers"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric Novik"
+format:
+  pdf:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+editor: source
+---
+
+This document follows `04-lecture.qmd` in slide order and answers every explicit question and **Your Turn** prompt. Questions that appear more than once, such as “What is probability?”, are answered once. The Monty Hall question visible in the historical newspaper image is also included.
+
+# Foundations
+
+## What is probability?
+
+> **Question:** What is probability?
+
+Probability is a mathematical way to quantify uncertainty. Formally, a probability measure assigns a number between 0 and 1 to each event in a sample space:
+
+- In the finite sample spaces used in this lecture, probability 0 means impossible and probability 1 means certain.
+- In more general probability spaces, the precise terms are **almost never** and **almost surely**: for example, an individual outcome in a continuous model can be possible even though it has probability 0.
+- Larger values indicate that an event is more likely than events with smaller values.
+
+Every probability measure obeys three axioms: probabilities are nonnegative, the entire sample space has probability 1, and probabilities add for disjoint events. Different interpretations—such as long-run frequency or degree of belief—give probability different meanings, but they use the same mathematical rules.
+
+## How does probability relate to statistics?
+
+> **Question:** How does probability relate to statistics?
+
+Probability and statistics reason in opposite directions:
+
+- **Probability** starts with a model and uses it to predict possible data. For example, if a coin is fair, probability tells us how often to expect four heads in ten flips.
+- **Statistics** starts with observed data and uses it to learn about the unknown model. For example, after observing seven heads in ten flips, statistics helps us assess whether the coin is plausibly fair.
+
+Probability therefore supplies the mathematical language that statistics uses to describe sampling variation, uncertainty, estimation, prediction, and evidence.
+
+## How can we count without listing every outcome?
+
+> **Outline prompt:** How do we count without counting every possibility one at a time?
+
+Use the multiplication principle. If one step has $a$ choices and a second step has $b$ choices for each first-step choice, then the two steps have $ab$ possible outcomes. This principle gives the standard counting formulas:
+
+- Arrange all $n$ distinct objects: $n!$ possibilities.
+- Select $k$ objects in order without replacement: $n!/(n-k)!$ possibilities.
+- Select $k$ objects without regard to order: $\binom{n}{k}=n!/[k!(n-k)!]$ possibilities.
+
+These formulas count large collections by describing how choices are constructed rather than enumerating every outcome.
+
+## De Morgan's law
+
+> **Your Turn:** For $S=\{1,2,3,4\}$, $A=\{1,2\}$, and $B=\{2,3\}$, compute $(A\cap B)^c=A^c\cup B^c$.
+
+First find the intersection:
+
+$$
+A\cap B=\{2\}.
+$$
+
+Its complement relative to $S$ is therefore
+
+$$
+(A\cap B)^c=S\setminus\{2\}=\{1,3,4\}.
+$$
+
+The other side of De Morgan's law gives the same result:
+
+$$
+A^c=\{3,4\},\qquad B^c=\{1,4\},
+$$
+
+so
+
+$$
+A^c\cup B^c=\{3,4\}\cup\{1,4\}=\boxed{\{1,3,4\}}.
+$$
+
+## Rolling an even number
+
+> **Question:** What is the probability of rolling an even number on a fair six-sided die?
+
+The sample space is $\{1,2,3,4,5,6\}$. Three outcomes—$2$, $4$, and $6$—are even. Because all six outcomes are equally likely,
+
+$$
+\Pr(\text{even})=\frac{3}{6}=\boxed{\frac12}.
+$$
+
+## Rolling a prime number
+
+> **Question:** What is the probability of rolling a prime number on a fair six-sided die?
+
+The prime outcomes are $2$, $3$, and $5$. The number $1$ is not prime. Thus,
+
+$$
+\Pr(\text{prime})=\frac{3}{6}=\boxed{\frac12}.
+$$
+
+## The dinner-and-dessert coin flips
+
+> **Question:** What is the probability of having a completely disappointing meal? What is the probability of being partly disappointed?
+
+Assume the two coin flips are fair and independent. Let the first letter represent dinner and the second represent dessert. The four equally likely outcomes are
+
+$$
+\{HH,HT,TH,TT\}.
+$$
+
+A completely disappointing meal requires broccoli and a cricket cookie, so both flips must be tails:
+
+$$
+\Pr(\text{completely disappointing})=\Pr(TT)=\boxed{\frac14}.
+$$
+
+If **partly disappointed** means that exactly one of the two courses is disappointing, the outcomes are $HT$ and $TH$:
+
+$$
+\Pr(\text{partly disappointed})=\frac{2}{4}=\boxed{\frac12}.
+$$
+
+If “partly” were instead intended to mean *at least one* disappointing course, it would include $HT$, $TH$, and $TT$, and the probability would be $3/4$. The usual interpretation here is exactly one disappointing course.
+
+## First-, second-, and third-place winners
+
+> **Question:** Ten people run a race with no ties. How many possibilities are there for the first-, second-, and third-place winners?
+
+Order matters: the same three people finishing in different positions produce a different result. There are 10 choices for first place, then 9 remaining choices for second, and 8 for third. Therefore,
+
+$$
+10\times9\times8=\frac{10!}{(10-3)!}=\boxed{720}.
+$$
+
+# Counting unordered selections
+
+## Why do we divide by $k!$?
+
+> **Question:** Why does the binomial coefficient divide the ordered-selection count by $k!$?
+
+The ordered-selection count
+
+$$
+\frac{n!}{(n-k)!}=n(n-1)\cdots(n-k+1)
+$$
+
+treats different arrangements of the same $k$ objects as different outcomes. Once a particular set of $k$ objects is fixed, it can be arranged in
+
+$$
+k(k-1)\cdots2\cdot1=k!
+$$
+
+different orders. For example, the single unordered subset $\{A,B,C\}$ appears six times in the ordered count:
+
+$$
+ABC,\ ACB,\ BAC,\ BCA,\ CAB,\ CBA.
+$$
+
+Because $6=3!$, dividing by $3!$ leaves this subset counted once. The same reasoning applies to every $k$, giving
+
+$$
+\boxed{\binom{n}{k}=\frac{n!}{k!(n-k)!}}.
+$$
+
+# Probability examples
+
+## The birthday problem
+
+> **Question:** For $j$ people, what is the probability that at least one pair shares a birthday?
+
+It is easier to calculate the complementary event: **no two people share a birthday**. Under the assumptions in the lecture, there are $365^j$ possible birthday assignments. For an assignment with no match, the first person can have any birthday, the second has 364 remaining choices, and so on. Thus, for $j\le365$,
+
+$$
+\begin{aligned}
+\Pr(\text{at least one match})
+&=1-\Pr(\text{no match})\\
+&=1-\frac{365\cdot364\cdots(365-j+1)}{365^j}\\
+&=\boxed{1-\frac{\prod_{i=0}^{j-1}(365-i)}{365^j}}.
+\end{aligned}
+$$
+
+For $j=23$,
+
+$$
+\Pr(\text{at least one match})\approx0.5073,
+$$
+
+so a shared birthday is already slightly more likely than not. If $j>365$, the probability is 1 by the pigeonhole principle.
+
+## Verifying the probability axioms
+
+> **Prompt:** For $S=\{1,2,3,4\}$, suppose $\Pr(\{s\})=1/4$ for every $s\in S$. Let $A_1=\{1\}$, $A_2=\{2\}$, and $A=A_1\cup A_2=\{1,2\}$. Verify the axioms for these events.
+
+Because all four singleton outcomes have probability $1/4$, every event $E\subseteq S$ has
+
+$$
+\Pr(E)=\frac{|E|}{4}.
+$$
+
+The axioms hold as follows:
+
+1. **Nonnegativity:**
+   $$
+   \Pr(A_1)=\Pr(A_2)=\frac14\ge0,
+   \qquad
+   \Pr(A)=\frac24=\frac12\ge0.
+   $$
+
+2. **Normalization:**
+   $$
+   \Pr(S)=\frac{|S|}{4}=\frac44=1.
+   $$
+
+3. **Additivity for disjoint events:** Since $A_1\cap A_2=\emptyset$,
+   $$
+   \Pr(A_1\cup A_2)=\Pr(A)=\frac12
+   =\frac14+\frac14
+   =\Pr(A_1)+\Pr(A_2).
+   $$
+
+More generally, disjoint events contain nonoverlapping outcomes, so their cardinalities—and therefore their probabilities—add.
+
+## One or more heads in four flips
+
+> **Question:** You flip a fair coin four times. What is the probability of obtaining one or more heads?
+
+Use the complement. The only way not to obtain at least one head is to obtain four tails. Independence gives
+
+$$
+\Pr(TTTT)=\left(\frac12\right)^4=\frac1{16}.
+$$
+
+Therefore,
+
+$$
+\Pr(\text{at least one head})
+=1-\frac1{16}
+=\boxed{\frac{15}{16}=0.9375}.
+$$
+
+## Your Turn: generalizing the simulation
+
+### One or more heads in $n$ trials
+
+> **Prompt:** Modify the function so that it computes one or more heads in $n$ trials.
+
+The function should accept $n$ as an argument and return whether the simulated sequence contains at least one head:
+
+```r
+one_or_more_heads <- function(n) {
+  flips <- sample(c(1, 0), size = n, replace = TRUE)
+  sum(flips) >= 1
+}
+
+set.seed(2006)
+estimate <- mean(replicate(1e4, one_or_more_heads(5)))
+```
+
+Logical values are treated as 1 for `TRUE` and 0 for `FALSE`, so their mean is the simulated proportion of successful experiments. For comparison, the exact probability for $n$ fair flips is
+
+$$
+\Pr(\text{at least one head})=1-\left(\frac12\right)^n.
+$$
+
+### At least $x$ heads in $n$ trials
+
+> **Prompt:** Modify the function to compute $x$ or more heads in $n$ trials, and simulate the probability of at least two heads in five trials.
+
+```r
+x_or_more_heads <- function(x, n) {
+  flips <- sample(c(1, 0), size = n, replace = TRUE)
+  sum(flips) >= x
+}
+
+set.seed(2006)
+estimate <- mean(replicate(1e4, x_or_more_heads(2, 5)))
+estimate
+```
+
+The simulation result will vary slightly from run to run but should be close to $0.8125$.
+
+### Analytical validation
+
+> **Question:** Can you solve the problem analytically to validate the simulation results?
+
+Let $X$ be the number of heads in $n$ independent fair-coin flips. Then $X\sim\operatorname{Binomial}(n,1/2)$, so
+
+$$
+\Pr(X\ge x)
+=\sum_{r=x}^{n}\binom{n}{r}\left(\frac12\right)^r
+ \left(\frac12\right)^{n-r}
+=\frac{1}{2^n}\sum_{r=x}^{n}\binom{n}{r}.
+$$
+
+For at least two heads in five flips, the complement consists of zero or one head:
+
+$$
+\begin{aligned}
+\Pr(X\ge2)
+&=1-\Pr(X=0)-\Pr(X=1)\\
+&=1-\frac{\binom50+\binom51}{2^5}\\
+&=1-\frac{1+5}{32}\\
+&=\boxed{\frac{13}{16}=0.8125}.
+\end{aligned}
+$$
+
+The equivalent R calculation is `pbinom(1, size = 5, prob = 0.5, lower.tail = FALSE)`.
+
+# Conditional probability and Bayes' rule
+
+## A positive COVID test
+
+> **Question:** A child tests positive. Given sensitivity $0.454$, specificity $0.998$, and prevalence $0.001$, what is the probability that the child has COVID?
+
+Let $D^+$ denote infection and $T^+$ denote a positive result. Specificity $0.998$ implies a false-positive rate of
+
+$$
+\Pr(T^+\mid D^-)=1-0.998=0.002.
+$$
+
+Bayes' rule gives
+
+$$
+\begin{aligned}
+\Pr(D^+\mid T^+)
+&=\frac{\Pr(T^+\mid D^+)\Pr(D^+)}
+        {\Pr(T^+\mid D^+)\Pr(D^+)
+        +\Pr(T^+\mid D^-)\Pr(D^-)}\\
+&=\frac{0.454(0.001)}{0.454(0.001)+0.002(0.999)}\\
+&=\frac{0.000454}{0.002452}\\
+&\approx\boxed{0.185}.
+\end{aligned}
+$$
+
+Thus, the probability is approximately **18.5%**. The result may initially seem low, but the prior prevalence is only $0.1\%$. In a hypothetical group of 100,000 people, the test would produce about 45 true positives and 200 false positives, so most positive results would come from the much larger uninfected group.
+
+# Final examples
+
+## Is a sum of 11 or 12 more likely?
+
+> **Question:** Two fair six-sided dice are rolled. Which sum is more likely: 11 or 12?
+
+There are 36 equally likely ordered outcomes. A sum of 11 can occur in two ways:
+
+$$
+(5,6),\qquad(6,5).
+$$
+
+A sum of 12 can occur only as
+
+$$
+(6,6).
+$$
+
+Therefore,
+
+$$
+\Pr(\text{sum}=11)=\frac2{36}=\frac1{18},
+\qquad
+\Pr(\text{sum}=12)=\frac1{36}.
+$$
+
+A sum of $\boxed{11}$ is twice as likely as a sum of 12. Leibniz's error was to count the possible sums without accounting for the fact that sums have different numbers of underlying outcomes.
+
+## Should you stick or switch in the Monty Hall problem?
+
+> **Question:** After Monty opens a door showing a goat, should you keep your original choice or switch to the other unopened door?
+
+Under the standard rules—Monty knows where the car is, always opens a goat door, always offers the switch, and chooses randomly when either goat door is available—you should **switch**.
+
+Your initial choice has probability $1/3$ of hiding the car and probability $2/3$ of hiding a goat:
+
+- If your initial choice is correct, which occurs with probability $1/3$, switching loses.
+- If your initial choice is wrong, which occurs with probability $2/3$, Monty must reveal the other goat, so switching wins the car.
+
+Therefore,
+
+$$
+\Pr(\text{win by staying})=\frac13,
+\qquad
+\Pr(\text{win by switching})=\boxed{\frac23}.
+$$
+
+Monty's action does not split the original $2/3$ probability equally between the two unchosen doors. Because he deliberately removes a goat door, the full $2/3$ probability associated with an initially incorrect choice transfers to the one unopened alternative.
+
+The **always-switch strategy** wins with probability $2/3$ before the game begins, regardless of how Monty chooses between two available goat doors. If we instead condition on Monty opening one particular numbered door, the posterior probability can depend on his tie-breaking policy; the standard random-choice rule stated above gives the familiar $2/3$ result.

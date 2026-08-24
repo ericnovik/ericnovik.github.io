@@ -1,13 +1,13 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
-author: "Eric.Novik@nyu.edu | Summer 2025 | Session 5"
+author: "Eric.Novik@nyu.edu | Summer 2026 | Session 5"
 format:
-  revealjs: 
+  revealjs:
     theme: ../../custom.scss
     scrollable: true
     slide-number: true
-    chalkboard: 
+    chalkboard:
       buttons: false
       chalk-width: 5
     preview-links: auto
@@ -17,29 +17,26 @@ always_allow_html: true
 bibliography: ../references.bib
 ---
 
-## Session 5 Outline
+## Session 5 Outline {.smaller}
 
 ::: incremental
 -   Random variables
--   Bernoulli, Binomial, Geometric
--   PDF and CDF
+-   Bernoulli, binomial, and geometric distributions
+-   PMFs, PDFs, and CDFs
 -   LOTUS
--   Poisson
--   Expectations, Variance
--   St. Petersburg Paradox
--   Normal
+-   Poisson distribution
+-   Expectation and variance
+-   St. Petersburg paradox
+-   Normal distribution
 
 :::
 
 ```{r}
+#| include: false
+
 library(ggplot2)
-library(dplyr)
-library(janitor)
-library(gridExtra)
-library(purrr)
 library(MASS)
 library(patchwork)
-reticulate::use_condaenv("miniconda3")
 
 thm <-
   theme_minimal() + theme(
@@ -50,7 +47,7 @@ thm <-
 theme_set(thm)
 
 dbinom_theta <- function(theta, N, y) {
-  choose(N, y) * theta^y * (1 - theta)^(N - y) 
+  choose(N, y) * theta^y * (1 - theta)^(N - y)
 }
 
 dot_plot <- function(x, y) {
@@ -70,7 +67,7 @@ $$
 \DeclareMathOperator{\I}{\text{I}}
 $$
 
-## Random Variables are Not Random {.smaller}
+## Random Variables Are Not Random {.smaller}
 
 ::: panel-tabset
 ### Story
@@ -78,53 +75,56 @@ $$
 ::: incremental
 -   It would be inconvenient to enumerate all possible events to describe a stochastic system
 
--   A more general approach is to introduce a function that maps sample space $S$ onto the Real line
+-   A random variable is a measurable function $X:S\to\mathbb{R}$ that maps the sample space $S$ into the real line
 
--   For each possible outcome $s$, random variable $X(s)$ performs this mapping
+-   For each possible outcome $s\in S$, the random variable assigns the value $X(s)$
 
 -   This mapping is deterministic. The randomness comes from the experiment, not from the random variable (RV)
 
--   While it makes sense to talk about $\P(A)$, where $A$ is an event, it does not make sense to talk about $\P(X)$, but you can say $\P(X(s) = x)$, which we usually write as $\P(X = x)$
+-   While $\P(A)$ is defined for an event $A$, $\P(X)$ is not meaningful. The event $\{s\in S:X(s)=x\}$ is abbreviated as $\{X=x\}$, so we write $\P(X=x)$
 
--   Let $X$ be the number of Heads in two coin flips. You flip the coin twice, and you get $HH$. In this case, $s = {HH}$, $X(s) = 2$, while $S = \{TT, TH, HT, HH\}$
+-   Let $X$ be the number of heads in two coin flips. If the outcome is $s=HH$, then $X(s)=2$, while $S=\{TT,TH,HT,HH\}$
 :::
 
 ### Picture
 
--   Random variable $X$ for the number of Heads in two flips
+-   Random variable $X$ for the number of heads in two flips
 
-![](images/nofheads.png){fig-align="center" width="800"}
+![](images/nofheads.png){fig-align="center" width="680"}
 :::
 
-## Characterising Random Variables {.smaller}
+## Characterizing Random Variables {.smaller}
 
 ::: panel-tabset
-### Introduction
+### CDF
 
 ::: incremental
--   Two ways of describing an RV are CDF (Cumulative Distribution Function) and PMF (Probability Mass Function) for discrete RVs and PDF (Probability Density Function) for continuous RVs. There are other ways, but we will stick with CDF and P\[D/M\]F.
--   CDF $F_X(x)$ is a function of $x$ and is bounded between 0 and 1:
+-   Every random variable has a cumulative distribution function (CDF). Discrete RVs have probability mass functions (PMFs), while the continuous RVs considered here have probability density functions (PDFs)
+-   The CDF $F_X(x)$ is a function of $x$ bounded between 0 and 1:
 :::
 
 ::: {.fragment}
 $$
-F_X(x) = \P(X \leq x)
+F_X(x)=\P(X\le x)
+$$
+:::
+
+### PMF
+
+::: {.fragment}
+-   The PMF $p_X(x)$ of a discrete RV gives its point probabilities
+
+$$
+p_X(x)=\P(X=x)
 $$
 :::
 
 ::: {.fragment}
--   PMF (for discrete RVs only) $f_X(x)$ is a function of $x$
+-   We obtain $F_X$ from $p_X$ by summing over all support points at or below $x$. For example,
 
 $$
-f_X(x) = \P(X = x)
-$$
-:::
-
-::: {.fragment}
--   You can get from $f_X$ to $F_X$ by summing. Let's say $x = 4$. In that case:
-
-$$
-F_X(4) = \P(X \leq 4) = \sum_{i = 4,3,2,...}\P(X = i)
+F_X(4)=\P(X\le4)
+=\sum_{\substack{t\in\operatorname{supp}(X)\\t\le4}}p_X(t).
 $$
 :::
 
@@ -132,21 +132,21 @@ $$
 
 ::: incremental
 
--   In R, PMFs and PDFs start with the letter `d`. For example `dbinom()` and `dnormal()` refer to binomial PMF and normal PDF
+-   In R, PMFs and PDFs start with `d`. For example, `dbinom()` evaluates the binomial PMF and `dnorm()` evaluates the normal PDF
 
 -   CDFs start with `p`, so `pbinom()` and `pnorm()`
 
--   Inverse CDFs or quantile functions, start with `q` so `qbinom()` and so on
+-   Quantile functions are generalized inverses of CDFs. In R they start with `q`; for example, `qbinom()`
 
 -   Random number generators start with `r`, so `rbinom()`
 
--   A binomial RV, which we will define later, represents the number of successes in N trials. In R, the PMF is `dbinom()` and CDF is `pbinom()`
+-   A binomial RV, defined below, represents the number of successes in $N$ trials. In R, its PMF is `dbinom()` and its CDF is `pbinom()`
 
 -   Here is the full function signature: `dbinom(x, size, prob, log = FALSE)`
 
-    -   `x` is the number of successes, `size` is the number of trials N, `prob` is the probability of success in each trial $\theta$, and `log` is a flag asking if we want the results on the log scale.
+    -   `x` is the number of successes, `size` is the number of trials $N$, `prob` is the success probability $\theta$, and `log` requests probabilities on the log scale
 
-::: 
+:::
 
 :::
 
@@ -156,33 +156,36 @@ $$
 ### Binomial PMF
 
 ::: incremental
--   Bernoulli RV is one coin flip with a set probability of success (say Heads)
+-   A Bernoulli RV represents one trial with a fixed probability of success, such as obtaining heads
 
--   If $X \sim \text{Bernoulli}(\theta)$, the PMF can be written directly as $\P(X = x) = \theta^x (1 - \theta)^{1-x}, \, x \in \{0, 1\}$
+-   If $X\sim\operatorname{Bernoulli}(\theta)$ with $0\le\theta\le1$, its support is $\{0,1\}$
 
--   Binomial can be thought of as the sum of $N$ independent Bernoulli trials. We can also write:
+-   If $X_1,\ldots,X_N$ are independent Bernoulli RVs with the same success probability $\theta$, then $X=\sum_{i=1}^{N}X_i\sim\operatorname{Binomial}(N,\theta)$
 :::
 
 ::: {.fragment}
 $$
-\text{Bernoulli}(x~|~\theta) = \left\{ \begin{array}{ll} \theta &
-\text{if } x = 1, \text{ and} \\ 1 - \theta & \text{if } x = 0
-\end{array} \right.
+p_X(x)=\left\{
+\begin{array}{ll}
+\theta & \text{if }x=1,\\
+1-\theta & \text{if }x=0.
+\end{array}
+\right.
 $$
 :::
 
 ::: {.fragment}
--   We can write the Binomial PMF, $X \sim \text{Binomial}(N, \theta)$ this way:
+-   The binomial PMF for $X\sim\operatorname{Binomial}(N,\theta)$ is
 
 $$
-\text{Binomial}(x~|~N,\theta) = \binom{N}{x}
-\theta^x (1 - \theta)^{N - x}
+p_X(x)=\binom{N}{x}\theta^x(1-\theta)^{N-x},
+\qquad x\in\{0,1,\ldots,N\}.
 $$
 :::
 
 ### PMF and CDF Plots
 
-$\text{Binomial}(x~|~N=4,\theta = 1/2)$
+$X\sim\operatorname{Binomial}(N=4,\theta=1/2)$
 
 ::: {.fragment}
 ```{r}
@@ -194,27 +197,29 @@ N <- 4
 
 # compute and plot the PMF
 pmf <- dbinom(x = 0:N, size = N, prob = 1/2)
-d <- data.frame(x =  0:N, y = pmf)
+d <- data.frame(x = 0:N, pmf)
 p1 <- ggplot(d, aes(x, pmf))
-p1 <- p1 + geom_col(width = .2) + 
+p1 <- p1 + geom_col(width = 0.2) +
   geom_text(aes(label = fractions(pmf)), nudge_y = 0.02) +
-  ylab("P(X = x)") + xlab("x = Number of Heads") +
+  ylab("P(X = x)") + xlab("x = Number of heads") +
   ggtitle("X ~ Binomial(4, 1/2)",
-          subtitle = expression(PDF: p[X](x) == P(X == x)))
+          subtitle = expression(PMF: p[X](x) == P(X == x)))
 
 # compute and plot the CDF
-x <- seq(-0.5, 4.5, length = 500)
+x <- seq(-0.5, 4.5, length.out = 500)
 cdf <- pbinom(q = x, size = N, prob = 1/2)
-d <- data.frame(q = x, y = cdf)
+d <- data.frame(x, cdf)
 dd <- data.frame(x = seq(-0.5, 4.5, by = 1), cdf = unique(cdf), x_empty = 0:5)
-p2 <- ggplot(d, aes(x, cdf)) 
-p2 <- p2 + geom_point(size = 0.2) + 
+closed <- data.frame(x = 0:N, cdf = pbinom(0:N, size = N, prob = 1/2))
+p2 <- ggplot(d, aes(x, cdf))
+p2 <- p2 + geom_point(size = 0.2) +
   geom_text(aes(x, cdf, label = fractions(cdf)), data = dd, nudge_y = 0.05) +
-  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = 'white') +
+  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = "white") +
   geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, shape = 1) +
+  geom_point(aes(x, cdf), data = closed, size = 2) +
   ggtitle("X ~ Binomial(4, 1/2)",
           subtitle = expression(CDF: F[X](x) == P(X <= x))) +
-  ylab(expression(P(X <= x))) + xlab("x = Number of Heads")
+  ylab(expression(P(X <= x))) + xlab("x = Number of heads")
 
 p1 + p2
 ```
@@ -228,31 +233,33 @@ p1 + p2
 library(patchwork)
 library(MASS)
 
-N <- 4 # Number of successes out of x trials
+N <- 4 # Number of trials; x is the number of successes
 
 # compute and plot the PMF
 pmf <- dbinom(x = 0:N, size = N, prob = 1/2)
-d <- data.frame(x =  0:N, y = pmf)
+d <- data.frame(x = 0:N, pmf)
 p1 <- ggplot(d, aes(x, pmf))
-p1 <- p1 + geom_col(width = .2) + 
+p1 <- p1 + geom_col(width = 0.2) +
   geom_text(aes(label = fractions(pmf)), nudge_y = 0.02) +
-  ylab("P(X = x)") + xlab("x = Number of Heads") +
+  ylab("P(X = x)") + xlab("x = Number of heads") +
   ggtitle("X ~ Binomial(4, 1/2)",
-          subtitle = expression(PDF: p[X](x) == P(X == x)))
+          subtitle = expression(PMF: p[X](x) == P(X == x)))
 
 # compute and plot the CDF
-x <- seq(-0.5, 4.5, length = 500)
+x <- seq(-0.5, 4.5, length.out = 500)
 cdf <- pbinom(q = x, size = N, prob = 1/2)
-d <- data.frame(q = x, y = cdf)
+d <- data.frame(x, cdf)
 dd <- data.frame(x = seq(-0.5, 4.5, by = 1), cdf = unique(cdf), x_empty = 0:5)
-p2 <- ggplot(d, aes(x, cdf)) 
-p2 <- p2 + geom_point(size = 0.2) + 
+closed <- data.frame(x = 0:N, cdf = pbinom(0:N, size = N, prob = 1/2))
+p2 <- ggplot(d, aes(x, cdf))
+p2 <- p2 + geom_point(size = 0.2) +
   geom_text(aes(x, cdf, label = fractions(cdf)), data = dd, nudge_y = 0.05) +
-  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = 'white') +
+  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = "white") +
   geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, shape = 1) +
+  geom_point(aes(x, cdf), data = closed, size = 2) +
   ggtitle("X ~ Binomial(4, 1/2)",
           subtitle = expression(CDF: F[X](x) == P(X <= x))) +
-  ylab(expression(P(X <= x))) + xlab("x = Number of Heads")
+  ylab(expression(P(X <= x))) + xlab("x = Number of heads")
 
 p1 + p2
 ```
@@ -260,57 +267,70 @@ p1 + p2
 
 ## Binomial in R {.smaller}
 
+::: panel-tabset
+### PMF
+
 ```{r}
 #| echo: true
 
-# What is the probability of getting 2 Heads out of 5 fair trials?
-N <- 5; x <- 2
+# What is the probability of getting 2 heads in 5 flips of a fair coin?
+N <- 5
+x <- 2
 dbinom(x = x, size = N, prob = 0.5) |> fractions()
 
-# What is the binomial PMF: P(X = x), for N = 5, p = 0.5?
-N <- 5; x <- -2:7 # notice we range x over any integers
+# Evaluate the PMF over values inside and outside its support
+x <- -2:7
 dbinom(x = x, size = N, prob = 0.5) |> fractions()
 
 # Verify that the PMF sums to 1
 sum(dbinom(x = x, size = N, prob = 0.5))
+```
 
-# What is the probability of 3 heads or fewer
-pbinom(3, size = N, prob = 0.5) |> fractions()
+### CDF
 
-# compute the CDF: P(X <= x), for N = 5, p = 0.5
-pbinom(x, size = N, prob = 0.5) |> fractions()
+```{r}
+#| echo: true
 
-# get from the PMF to CDF; cumsum() is the cumulative sum function
+N <- 5
+x <- -2:7
+
+# What is the probability of 3 heads or fewer?
+pbinom(q = 3, size = N, prob = 0.5) |> fractions()
+
+# Evaluate the CDF over x
+pbinom(q = x, size = N, prob = 0.5) |> fractions()
+
+# Recover the CDF by cumulatively summing the PMF
 dbinom(x = x, size = N, prob = 0.5) |> cumsum() |> fractions()
 ```
 
-::: incremental
-- **Your Turn**: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF.
+### Your Turn
+
+Suppose the probability of success is $1/3$ and $N=10$. What is the probability of 6 or more successes? Compute it from the PMF first, then verify it with the CDF.
 :::
 
 ## Geometric RV {.smaller}
 
 ::: panel-tabset
-### PMF
+### Definition
 
 ::: incremental
--   Geometric is a discrete waiting time distribution, and Exponential is its continuous analog
--   If $X$ is the number of failures before first success  $X \sim \text{Geometric}(\theta)$, where $\theta$ is probability of success 
--   Example: We keep flipping a coin until we get success, say Heads
-    -   Say we flip five times, which means we get the following sequence: T T T T H
-    -   The probability of this sequence is: $(\frac{1}{2})^4 (\frac{1}{2})^1$
-    -   Notice this is the only way to get this sequence
--   If $x$ is the number of failures, the PMF is $P(X = x) = (1 - \theta)^x \theta$, where $x = 0, 1, 2, ...$
+-   The geometric distribution is a discrete waiting-time distribution; the exponential distribution is its continuous analog
+-   Let $X$ be the number of failures before the first success. Then $X\sim\operatorname{Geometric}(\theta)$, where $0<\theta\le1$ is the probability of success on each independent trial
+-   Example: We flip a fair coin until the first head appears
+    -   If the sequence is T T T T H, then $X=4$
+    -   The probability of this sequence is $(1/2)^4(1/2)=1/32$
+-   The PMF is $\P(X=x)=(1-\theta)^x\theta$ for $x=0,1,2,\ldots$
 :::
 
-### Check Convergence
+### Check
 
 -   To check if this is a valid PMF, we need to sum over all $x$:
 
 ::: {.fragment}
 $$
 \begin{align}
-\sum_{x = 0}^{\infty} \theta (1 - \theta)^x  = 
+\sum_{x = 0}^{\infty} \theta (1 - \theta)^x  =
 \theta \sum_{x = 0}^{\infty} (1 - \theta)^x \\
 \text{Let } u = 1 - \theta \\
 \theta \sum_{x = 0}^{\infty} u^x = \theta \frac{1}{1-u} = \theta \frac{1}{1-1 + \theta} = \frac{\theta}{\theta} = 1
@@ -319,38 +339,40 @@ $$
 :::
 
 ::: {.fragment}
--   The last bit comes from geometric series for $|u| < 1$
+-   The final step uses the geometric-series formula for $|u|<1$
 :::
 
 ### Examples
 
--   The probability of T T T H (x = 3 failures) when $\theta = 1/2$, has to be $(1/2)^4$ or $1/16$
+-   For the sequence T T T H, $x=3$ failures. When $\theta=1/2$, its probability is $(1/2)^4=1/16$
 
 ::: {.fragment}
 ```{r}
 #| echo: true
 
-x <- 3; theta <- 1/2
+x <- 3
+theta <- 1/2
 dgeom(x = x, prob = theta) |> fractions()
 ```
-::: 
+:::
 
 ::: {.fragment}
--   If $\theta = 1/3$, the probability of the same sequence has to be $(2/3)^3 \cdot 1/3 = 8/81$
+-   If $\theta=1/3$, the probability of the same sequence is $(2/3)^3(1/3)=8/81$
 
 ```{r}
 #| echo: true
 
-x <- 3; theta <- 1/3
+x <- 3
+theta <- 1/3
 dgeom(x = x, prob = theta) |> fractions()
 ```
 :::
 
 ::: {.fragment}
--   The PMF is unbounded, but it converges to 1 as demonstrated before
+-   The support is unbounded, the PMF tends to 0 as $x\to\infty$, and the probabilities sum to 1
 :::
 
-### PMF
+### PMF Plot
 
 ```{r}
 #| cache: true
@@ -366,94 +388,64 @@ y <- dgeom(x = x, prob = theta)
 d <- data.frame(x, y)
 p <- ggplot(d, aes(x, y))
 p + geom_col(width = 0.2) +
-xlab("x = Number of failures before first success") +
- ylab(expression(P(X == x))) +
-ggtitle("X ~ Geom(1/5)", 
- subtitle = expression(PDF: p[X](x) == P(X == x)))
+  xlab("x = Number of failures before first success") +
+  ylab(expression(P(X == x))) +
+  ggtitle("X ~ Geometric(1/5)",
+          subtitle = expression(PMF: p[X](x) == P(X == x)))
 
 ```
 
 ### Summing the Geometric
 
-Let's consider the infinite geometric series:
+For $|u|<1$, let $S$ denote the infinite geometric series. Multiplying by $u$ shifts every term one position:
 
 $$
-S = \sum_{x=0}^{\infty} u^x = u^0 + u^1 + u^2 + u^3 + \dots
-$$
-This can be written explicitly as:
-$$
-S = 1 + u + u^2 + u^3 + \dots
-$$
-
-Next, multiply the entire series by $u$:
-
-$$
-uS = u \cdot (1 + u + u^2 + u^3 + \dots)
+\begin{aligned}
+S  &= 1+u+u^2+u^3+\cdots,\\
+uS &= \phantom{1+{}}u+u^2+u^3+\cdots.
+\end{aligned}
 $$
 
-This results in:
-$$
-uS = u + u^2 + u^3 + u^4 + \dots
-$$
-
-Now, subtract the equation for $uS$ from the equation for $S$:
+Subtracting the second line from the first cancels the infinite tail:
 
 $$
-S - uS = (1 + u + u^2 + u^3 + \dots) - (u + u^2 + u^3 + u^4 + \dots)
-$$
-
-Notice that all terms on the right-hand side except the first term (which is 1) cancel out:
-
-$$
-S - uS = 1
-$$
-
-Factor the left-hand side:
-
-$$
-S(1 - u) = 1
-$$
-
-Finally, solve for $S$:
-
-$$
-S = \frac{1}{1 - u}
+S-uS=1
+\quad\Longrightarrow\quad
+\boxed{S=\frac{1}{1-u}}.
 $$
 
 
 :::
 
-## Expectations {.smaller}
+## Expectation {.smaller}
 
 ::: panel-tabset
 ### Introduction
 
 ::: incremental
 -   An expectation is a kind of average, typically a weighted average
--   Expectation is a single number summary of the distribution
--   When computing a weighted average, the weights must add up to one
--   That's fortunate for us since the PMF satisfies this property
--   So, the expectation of a discrete RV is the sum of its values weighted by their respective probabilities
--   For a discrete RV, we have: $\E(X) = \sum_{x}^{} x f_X(x)$
--   For continuous RVs we have: $\E(X) = \int x f_X(x)\, dx$
+-   Expectation is a single-number summary of a distribution
+-   In a weighted average, the weights must add to 1; a PMF has exactly this property
+-   The expectation of a discrete RV is the sum of its possible values weighted by their probabilities
+-   For a discrete RV, $\E(X)=\sum_x x\,p_X(x)$ when $\sum_x|x|p_X(x)<\infty$
+-   For a continuous RV, $\E(X)=\int_{-\infty}^{\infty}x f_X(x)\,dx$ when $\int_{-\infty}^{\infty}|x|f_X(x)\,dx<\infty$
 :::
 
 ### Examples
 
 ::: incremental
--   Let's compute the expectation of the Geometric RV, $X \sim \text{Geom}(\theta)$
--   We can solve the expectation by differentiation, but we will skip the mechanics
--   Here, we will just write the answer:
+-   Consider the expectation of $X\sim\operatorname{Geometric}(\theta)$
+-   It can be derived by differentiating a geometric series; here we state the result:
 :::
 
 ::: {.fragment}
 $$
 \E(X) = \sum_{x=0}^{\infty} x \theta (1 - \theta)^x = \frac{1-\theta}{\theta}
-$$ 
+$$
 :::
 
 ::: incremental
-- In particular, for $X \sim \text{Geom}(1/5)$, what is the expected number of failures before the first success?
+- In particular, for $X\sim\operatorname{Geometric}(1/5)$, what is the expected number of failures before the first success?
 
 -   The answer is $4 = \frac{(1 - \frac{1}{5})}{\frac{1}{5}}$
 :::
@@ -479,73 +471,93 @@ sum(x * dgeom(x = x, prob = theta))
 
 ::: incremental
 
-- Question: Geometric is unbounded, yet summed a finite number (100) and got the right answer. What's going on?
+- Question: The geometric support is unbounded, yet summing only through 100 gives the analytic answer at the displayed precision. Why?
 
-- Geometric decays quickly, and higher terms are negligible for these choices of $\theta$
+- The geometric PMF decays quickly, so the omitted tail is negligible for these choices of $\theta$
 
-- Without doing any calculations at all, what is $\E(X)$, where $X \sim \text{Geom}(1/8)$
+- Without doing any calculations, what is $\E(X)$ when $X\sim\operatorname{Geometric}(1/8)$?
 :::
 
-### E(X) of Bernoulli and Binomial
+### Bernoulli and Binomial Expectations
 
 ::: incremental
--   If $X \sim \text{Bernoulli}(\theta)$, $\E(X) = \sum_{x=0}^{1} x \theta^x (1 - \theta)^{1-x} = 0 + 1 \cdot \theta \cdot 1 = \theta$
+-   If $X\sim\operatorname{Bernoulli}(\theta)$, then $\E(X)=\sum_{x=0}^{1}x\theta^x(1-\theta)^{1-x}=\theta$
 
--   For the Binomial, is it easier to think about it as a sum of iid Bernoulli RVs. Each Bernoulli RV has an expectation of $\theta$, and there are $n$ of them, so the expectation is $n \theta$.
+-   For $X\sim\operatorname{Binomial}(N,\theta)$, write $X$ as a sum of $N$ iid Bernoulli RVs. Each has expectation $\theta$, so $\E(X)=N\theta$
 
--   This argument relies on the linearity of expectations: $\E(X_1 + X_2 ... + X_n) = \E(X_1) + \E(X_2) + ... + \E(X_n) = \theta + ... + \theta = n\theta$
+-   This uses linearity of expectation:
+    $$
+    \E(X_1+\cdots+X_N)
+    =\E(X_1)+\cdots+\E(X_N)
+    =N\theta.
+    $$
 :::
 :::
 
-## St. Petersburg paradox {.smaller}
+## St. Petersburg Paradox {.smaller}
 
 ::: panel-tabset
 ### First Success Distribution
 
 ::: incremental
-- This is a slight modification to Geometric as we are counting the number of failures, including the first success vs. Geometric, where we counted the failures
-- $X \sim \text{FS}(\theta)$, if $\P(X = x) = (1 - \theta)^{x - 1} \theta$, for $x = 1, 2, 3, ...$
-- $X - 1 \sim \text{Geom}(\theta)$ 
-- Say, $Y \sim \text{Geom}(\theta)$, then $\E(X) = \E(Y + 1) = \E(Y) + 1 = \frac{1 - \theta}{\theta} + \frac{\theta}{\theta} = \frac{1}{\theta}$
+- The first-success distribution counts trials up to and including the first success; R's geometric distribution counts failures before that success
+- If $N\sim\operatorname{FS}(\theta)$, then $\P(N=n)=(1-\theta)^{n-1}\theta$ for $n=1,2,3,\ldots$
+- Therefore, $N-1\sim\operatorname{Geometric}(\theta)$
+- If $Y=N-1$, then
+  $$
+  \E(N)=\E(Y+1)=\frac{1-\theta}{\theta}+1=\frac{1}{\theta}.
+  $$
 :::
 
 ### The Paradox
 
 ::: incremental
-- Suppose you are offered the following game: you flip a coin until heads appear. You get \$2 if the game ends after round 1, \$4 after two rounds, \$8 after three, and so on.
+- Suppose you flip a fair coin until the first head appears. If the game ends on round $N$, the payout is $W=2^N$: \$2 after round 1, \$4 after round 2, \$8 after round 3, and so on.
 :::
 
 ::: {.fragment}
 $$
-\E(X) = \sum_{n=1}^{\infty} \frac{1}{2^n} \cdot 2^n =  \sum_{n=1}^{\infty} 1 = \infty
+\E(W)=\sum_{n=1}^{\infty}\P(N=n)2^n
+=\sum_{n=1}^{\infty}\frac{1}{2^n}2^n
+=\sum_{n=1}^{\infty}1
+=\infty
 $$
 :::
 
 ::: incremental
-- Vote how much are you willing to pay to play this game? (you can't lose)
-- How many rounds do we expect to play? If $N$ is the number of rounds, then $N \sim \text{FS}(1/2)$, and $\E(N) = \frac{1}{1/2} = 2$
-- In addition, the utility of money has been shown to be non-linear
+- Vote: How much would you be willing to pay to play this game?
+- How many rounds do we expect? Since $N\sim\operatorname{FS}(1/2)$, $\E(N)=1/(1/2)=2$
+- One proposed resolution is that the utility of money is nonlinear
 
 :::
 
 ### Expected Utility
 
 ::: incremental
-- Daniel Bernoulli (1700 - 1782) proposed that $\frac{dU}{dw} \propto \frac{1}{w}$, where $U$ is the utility function and $w$ is the wealth
-- This gives rise to the following differential equation $\frac{dU}{dw} = k \frac{1}{w}$, where $k$ is the constant of proportionality
-- Integrating both sides: $\int dU = k \int \frac{1}{w} dw$ we get:
-    - $U(w) = k \log(w) + C$, where $C$ is some initial wealth
-- For simplicity let's take $k=1$, and consider $\log = \log_2$
+- Daniel Bernoulli (1700–1782) proposed that $dU/dw\propto1/w$, where $U$ is utility and $w$ is wealth
+- Thus, $dU/dw=k/w$ for some $k>0$
+- Integrating gives $U(w)=k\ln(w)+C$, where $C$ is an arbitrary utility baseline
+- Positive changes of scale do not alter preferences, so for illustration we use $U(w)=\log_2(w)$ and treat the payout as wealth
 :::
 
 ::: {.fragment}
 $$
-\E(U) = \sum_{n=1}^{\infty} \frac{1}{2^n} \log_2(2^n) =  \sum_{n=1}^{\infty} \frac{n}{2^n} = 2 \neq \infty
+\E[U(W)]
+=\sum_{n=1}^{\infty}\frac{1}{2^n}\log_2(2^n)
+=\sum_{n=1}^{\infty}\frac{n}{2^n}
+=2<\infty
 $$
 :::
 
 ::: incremental
-- The last equality comes from summing the geometric series $\sum_{n=1}^{\infty} \frac{n}{2^n}$ using the same methods we used for Geometric distribution
+- The identity $\sum_{n=1}^{\infty}nr^n=r/(1-r)^2$ follows by differentiating a geometric series; setting $r=1/2$ gives 2
+:::
+
+### Ticket Price
+
+::: incremental
+- Finite expected utility does not by itself determine a fair ticket price
+- From initial wealth $w_0$, compare $\sum_{n\ge1}2^{-n}U(w_0-c+2^n)$ with $U(w_0)$, subject to $w_0-c+2>0$
 
 :::
 
@@ -554,33 +566,29 @@ $$
 ## Indicator Random Variable {.smaller}
 
 ::: panel-tabset
-### Recall our $\pi$ Simulation
+### Recall Our $\pi$ Simulation
 
 ::: {.fragment}
 $$
 \I_A(s) = \I(s \in A) = \left\{\begin{matrix}
-1 & \text{if } s \in A \\ 
+1 & \text{if } s \in A \\
 0 & \text{if } s \notin A
 \end{matrix}\right.
 $$
 :::
 
 ::: {.fragment}
-Recall from Lecture 1:
+Recall from Lecture 1. Sample iid points uniformly from the square, so each $X_i$ and $Y_i$ is uniform on $(-1,1)$ and the two coordinates are independent:
 
 $$
-\begin{align}
-X& \sim \text{Uniform}(-1, 1) \\
-Y& \sim \text{Uniform}(-1, 1) \\
-\pi& \approx \frac{4 \sum_{i=1}^{N} \text{I}(x_i^2 + y_i^2 < 1)}{N}
-\end{align}
+\pi\approx\frac{4}{N}\sum_{i=1}^{N}\I(X_i^2+Y_i^2<1).
 $$
 :::
 
 ### Fundamental Bridge
 
 ::: incremental
-- There is a link between probability and (expectations of) indicator RVs
+- There is a link between probabilities and expectations of indicator RVs
 - Joe Blitzstein calls it the fundamental bridge: $\P(A) = \E(\I_A)$
 :::
 
@@ -589,18 +597,19 @@ $$
 #| echo: true
 #| cache: true
 
-# Pr of two heads in five trials
+# Probability of exactly two heads in five trials
 (P2 <- dbinom(2, 5, prob = 1/2))
 
-# Let's create a realization Binom(5, 1/2)
+# Generate 1,000,000 independent Binomial(5, 1/2) realizations
+set.seed(2006)
 x <- rbinom(1e6, size = 5, prob = 1/2)
 x[1:30]
 
-# indicator RV: if x == 2 Ix = TRUE (1), else Ix = (0)
+# Indicator RV: I2 is TRUE (1) when x == 2 and FALSE (0) otherwise
 I2 <- (x == 2)
 I2[1:30] |> as.integer()
 
-# compute E(Ix) == P2
+# Estimate E(I2), which equals P(X = 2) = P2
 mean(I2)
 ```
 :::
@@ -611,22 +620,24 @@ mean(I2)
 ## LOTUS {.smaller}
 
 ::: incremental
-- LOTUS stands for the Law Of The Unconscious Statistician 
-- It allows us to work with PDFs of the original RV $X$, even though we want to compute an expectation of the function of that RV, say $g(X)$
+- LOTUS stands for the Law of the Unconscious Statistician
+- It lets us compute the expectation of $g(X)$ using the PMF or PDF of $X$, provided $\E[|g(X)|]<\infty$
 :::
 
 ::: {.fragment}
 $$
-\begin{eqnarray}
-E(g(X)) &=& \int_{-\infty}^{\infty} g(x) f_X(x) \, dx \\
-E(g(X)) &=& \sum_{x} g(x) p_X(x)
-\end{eqnarray}
+\begin{aligned}
+\E[g(X)]&=\int_{-\infty}^{\infty}g(x)f_X(x)\,dx
+&&\text{(continuous)},\\
+\E[g(X)]&=\sum_x g(x)p_X(x)
+&&\text{(discrete)}.
+\end{aligned}
 $$
 :::
 
 ::: incremental
-- Notice, that we don't need to compute $f_{g(X)}(x)$ or $p_{g(X)}(x)$ 
-- The idea is that even though the $x$s change from, say $x$ to $x^2$, reflecting the fact the $g(X) = X^2$, that did not change their probability assignments, we can still work with $\P(X = x)$ (in case of X discrete)
+- Notice that we do not need to derive $f_{g(X)}$ or $p_{g(X)}$
+- Although $g$ transforms the values of $X$, LOTUS averages $g(x)$ using the probabilities or density assigned to the original values $x$
 :::
 
 
@@ -636,22 +647,33 @@ $$
 ### Definitions
 
 ::: incremental
--   Variance is a measure of the spread of the distribution $\V(X) = \E(X - E(X))^2 = \E(X^2) - \E(X)^2$ 
--   If we let $\mu = \E(X)$, this becomes: $\E(X - \mu)^2 = \E(X^2) - \mu^2$ 
--   Unlike Expectation, Variance is not a linear operator. In particular, $\V(cX) = c^2 \V(X)$
--   $\V(c + X) = \V(X)$: constants don't vary
--   If $X$ and $Y$ are independent $\V(X + Y) = \V(X) + \V(Y)$, but unlike for Expectations, this is not true in general
--   Square root of Variance is called a standard deviation $\text{sd} := \sqrt{\V}$, which is easier to interpret as it is expressed in the same units as data $x$
+-   Assuming $\E(X^2)<\infty$, variance measures the spread of a distribution:
+    $$
+    \V(X)=\E\!\left[(X-\E(X))^2\right]
+    =\E(X^2)-[\E(X)]^2.
+    $$
+-   If $\mu=\E(X)$, then $\V(X)=\E[(X-\mu)^2]=\E(X^2)-\mu^2$
+-   Unlike expectation, variance is not linear. In particular, $\V(cX)=c^2\V(X)$
+-   $\V(c+X)=\V(X)$ because constants do not vary
+-   If $X$ and $Y$ are independent, $\V(X+Y)=\V(X)+\V(Y)$; this does not hold in general
+-   The standard deviation is $\operatorname{sd}(X)=\sqrt{\V(X)}$, which has the same units as $X$
 :::
 
-### Computation
+### Formulas
 
--   In R, estimated Variance can be computed with `var()` and standard deviation with `sd()`
--   For reference, the variance of the Geometric distribution is: $(1 - \theta)/\theta^2$
+-   In R, sample variance is computed with `var()` and sample standard deviation with `sd()`
+-   The variance of $X\sim\operatorname{Geometric}(\theta)$ is $(1-\theta)/\theta^2$
+
+### Simulation
 
 ```{r}
 #| echo: true
-n <- 1e5; theta1 <- 1/6; theta2 <- 1/3
+#| output-location: column
+
+set.seed(2006)
+n <- 1e5
+theta1 <- 1/6
+theta2 <- 1/3
 x <- rgeom(n, prob = theta1)
 var(x) |> round(2)
 y <- rgeom(n, prob = theta2)
@@ -659,9 +681,9 @@ var(y) |> round(2)
 (var(x) + var(y)) |> round(2)
 var(x + y) |> round(2)
 cov(x, y) |> round(2)
-(var(x) + var(y) + 2*cov(x, y)) |> round(2)
+(var(x) + var(y) + 2 * cov(x, y)) |> round(2)
 # compare to the analytic result
-(1 - theta1) / (theta1)^2 + (1 - theta2) / (theta2)^2 
+(1 - theta1) / (theta1)^2 + (1 - theta2) / (theta2)^2
 ```
 :::
 
@@ -670,23 +692,23 @@ cov(x, y) |> round(2)
 ## Poisson Random Variable {.smaller}
 
 ::: incremental
-- Poisson distributions arise when we are modeling counts
-- But not every type of counting can be modeled with Poisson, just like not every kind of waiting can be modeled by Geometric
-- We write $X \sim \text{Poisson}(\lambda)$
-- The PDF of Poisson is $\P(X=x) = \frac{{\lambda^x e^{-\lambda}}}{{x!}}$, where $x = 0, 1, 2, ...$ and $\lambda > 0$
+- The Poisson distribution is a model for counts
+- Not every count process is Poisson, just as not every waiting-time process is geometric
+- We write $X\sim\operatorname{Poisson}(\lambda)$
+- Its PMF is $\P(X=x)=\lambda^x e^{-\lambda}/x!$ for $x=0,1,2,\ldots$ and $\lambda>0$
 :::
 
 ::: {.fragment}
 $$
-\begin{eqnarray}
-\sum_{x=0}^{\infty} \frac{{\lambda^x e^{-\lambda}}}{{x!}} = e^{-\lambda} \sum_{x=0}^{\infty} \frac{\lambda^x}{x!} = 1
-\end{eqnarray}
+\sum_{x=0}^{\infty}\frac{\lambda^x e^{-\lambda}}{x!}
+=e^{-\lambda}\sum_{x=0}^{\infty}\frac{\lambda^x}{x!}
+=1
 $$
 :::
 
 ::: incremental
-- The last equality follows, because: $e^{\lambda} = \sum_{k=0}^{\infty} \frac{\lambda^k}{k!}$, which is its [Taylor Series expansion](https://www.mathsisfun.com/algebra/taylor-series.html)
-- For Poisson, $\E(X) = \lambda$ and $\V(X) = \lambda$, which is why most real count data do not follow this distribution
+- The final equality follows from the [Taylor series](https://www.mathsisfun.com/algebra/taylor-series.html) $e^{\lambda}=\sum_{k=0}^{\infty}\lambda^k/k!$
+- For a Poisson RV, $\E(X)=\V(X)=\lambda$. This equidispersion restriction is often violated by real count data, which may be overdispersed or underdispersed
 :::
 
 ## Poisson PMF {.smaller}
@@ -700,9 +722,9 @@ $$
 #| fig-align: center
 #| echo: true
 
-p1 <- dot_plot(0:10, dpois(0:10, lambda = 3)) + xlab("x") + 
+p1 <- dot_plot(0:10, dpois(0:10, lambda = 3)) + xlab("x") +
   ylab(expression(P(X == x))) + ggtitle("X ~ Poisson(3)")
-p2 <- dot_plot(0:22, dpois(0:22, lambda = 10)) + xlab("x") + 
+p2 <- dot_plot(0:22, dpois(0:22, lambda = 10)) + xlab("x") +
   ylab(expression(P(X == x))) + ggtitle("X ~ Poisson(10)")
 p1 + p2
 ```
@@ -714,92 +736,106 @@ p1 + p2
 
 ::: incremental
 -   We leave the discrete world and enter continuous RVs
--   We can no longer say, $\P(X = x)$, since for a continuous RV $\P(X = x) = 0$ for all $x$
--   Instead of PMFs, we will be working with PDFs, and we get probability out of them by integrating over the region that we care about
--   For a continuous RV: $\int_{-\infty}^{\infty} f_X(x)\, dx = 1$
+-   For a continuous RV, every point probability satisfies $\P(X=x)=0$, so point probabilities do not characterize the distribution
+-   We use PDFs and obtain probabilities over intervals by integrating the density
+-   A PDF satisfies $f_X(x)\ge0$ and $\int_{-\infty}^{\infty}f_X(x)\,dx=1$
 :::
 
 ::: {.fragment}
 $$
-\begin{eqnarray}
-P(a < X < b) & = & \int_{a}^{b} f_X(x)\, dx \\
-F_X(x) & = & \int_{-\infty}^{x} f_X(u)\, du
-\end{eqnarray}
+\begin{aligned}
+\P(a<X<b)&=\int_a^b f_X(x)\,dx,\\
+F_X(x)&=\int_{-\infty}^{x}f_X(u)\,du.
+\end{aligned}
 $$
 :::
 
 ### Uniform
 
 ::: {.fragment}
-Uniform $X \sim \text{Uniform}(\alpha, \beta)$ has the following PDF: 
+If $X\sim\operatorname{Uniform}(\alpha,\beta)$ with $\alpha<\beta$, its PDF is
 
 $$
-\text{Uniform}(x|\alpha,\beta) =
-\frac{1}{\beta - \alpha}, \,  \text{where } \alpha \in \mathbb{R} \text{ and } \beta \in (\alpha,\infty)
+f_X(x)=
+\begin{cases}
+\dfrac{1}{\beta-\alpha}, & \alpha\le x\le\beta,\\[4pt]
+0, & \text{otherwise}.
+\end{cases}
 $$
 :::
 
 ::: incremental
-- **Your Turn**: Guess the $\E(X)$
-- Now derive $\E(X)$ using the definition of the Expected Value: $\E(X) = \int x f_X(x)\, dx$
+- **Your Turn:** Guess $\E(X)$
+- Now derive it from $\E(X)=\int_{\alpha}^{\beta}x f_X(x)\,dx$
 :::
+
+### Uniform Plot
 
 ::: {.fragment}
 ```{r}
 #| echo: true
 #| fig-width: 5
-#| fig-height: 4
+#| fig-height: 3.9
 #| fig-align: center
 
-x <- seq(-0.5, 1.5, length = 100)
+x <- seq(-0.5, 1.5, length.out = 100)
 pdf_x <- dunif(x, min = 0, max = 1)
 p <- ggplot(data.frame(x, pdf_x), aes(x, pdf_x))
-p + geom_line() + ylab(expression(p[X](x))) +
-  ggtitle("X ~ Unif(0, 1)", subtitle = expression(PDF: p[X](x) == 1))
+p + geom_line() + ylab(expression(f[X](x))) +
+  ggtitle("X ~ Uniform(0, 1)", subtitle = "PDF: f_X(x) = 1 on [0, 1] and 0 otherwise")
 ```
 :::
 
 :::
 
-## Example: Stick breaking {.smaller}
+## Example: Stick Breaking {.smaller}
 
 ::: panel-tabset
 
-### Analysis
+### Setup
 ::: incremental
 -   You break a unit-length stick at a random point
--   Let $X$ be the breaking point so $X \sim \text{Uniform}(0, 1)$
+-   Let $X$ be the breaking point, so $X\sim\operatorname{Uniform}(0,1)$
 -   Let $Y$ be the larger piece. What is $\E(Y)$?
--   [LOTUS](https://en.wikipedia.org/wiki/Law_of_the_unconscious_statistician), says that we do not need $f_Y$, we can work with $f_X$
+-   [LOTUS](https://en.wikipedia.org/wiki/Law_of_the_unconscious_statistician) says that we do not need $f_Y$; we can work with $f_X$
 :::
 
 ::: {.fragment}
 $$
-\E(Y)= \int y(x) f_X(x) dx
-$$ 
+\E(Y)=\int_0^1 y(x)f_X(x)\,dx
+$$
 :::
+
+### Piecewise Function
 
 ::: incremental
-- This works only if $Y$ is a function of $X$. Here, $Y = \max\{X, 1 - X\}$. 
-- We consider two cases: when $x$ is larger than $1/2$, $y(x)$ is between $1/2$ and $1$ and when $1 - x$ is larger, it is between $0$ and $1/2$: 
+- This works only if $Y$ is a function of $X$. Here, $Y=\max\{X,1-X\}$
+- In both cases, the larger piece lies between $1/2$ and $1$:
 :::
 
 ::: {.fragment}
 $$
-y(x) = \left\{ 
-\begin{array}{ll} x &
-\text{if } 1/2 < x < 1, \text{ and} \\ 1 - x & 0 < x < 1/2
-\end{array}  \right.
+y(x)=
+\begin{cases}
+1-x, & 0\le x\le1/2,\\
+x, & 1/2<x\le1.
+\end{cases}
 $$
 :::
 
+### Expectation
+
 ::: {.fragment}
--   In other words, $\E(Y)$ can be computed as the sum of two integrals:
+-   Therefore, $\E(Y)$ is the sum of two integrals:
 
 $$
-\E(Y) = \int_{0}^{1} y(x) f_X(x)\, dx =    \\
-\int_{1/2}^{1} x \cdot 1 \, dx + \int_{0}^{1/2} (1-x) \cdot 1 \, dx = \\
-\frac{x^2}{2} \Biggr|_{1/2}^{1} + \frac{1}{2} - \frac{x^2}{2} \Biggr|_{0}^{1/2} = \frac{3}{4}
+\begin{aligned}
+\E(Y)
+&=\int_0^{1/2}(1-x)\,dx+\int_{1/2}^{1}x\,dx\\
+&=\left[x-\frac{x^2}{2}\right]_0^{1/2}
+ +\left[\frac{x^2}{2}\right]_{1/2}^{1}\\
+&=\frac34.
+\end{aligned}
 $$
 :::
 
@@ -810,6 +846,7 @@ $$
 ```{r}
 #| echo: true
 
+set.seed(2006)
 x <- runif(1e4, min = 0, max = 1) # pick a random breaking point on (0, 1)
 y <- ifelse(x > 0.5, x, 1 - x)    # generate y = max(x, 1-x)
 mean(y) |> round(3)               # estimate the expectation E(Y)
@@ -821,47 +858,51 @@ mean(y) |> round(3)               # estimate the expectation E(Y)
 ## Normal RV {.smaller}
 
 ::: panel-tabset
-### Normal
+### Definition
 
 ::: incremental
--   $X \sim \text{Normal}(\mu, \sigma)$ has the following PDF:
+-   If $X\sim\operatorname{Normal}(\mu,\sigma)$, with $\mu\in\mathbb{R}$ and $\sigma>0$, then for $x\in\mathbb{R}$ its PDF is
 :::
 
 ::: {.fragment}
 $$
-\text{Normal}(x \mid \mu,\sigma) = \frac{1}{\sqrt{2 \pi} \
-\sigma} \exp\left( - \, \frac{1}{2} \left(  \frac{x - \mu}{\sigma} \right)^2    \right) \!
-$$ 
+f_X(x)=\frac{1}{\sqrt{2\pi}\,\sigma}
+\exp\!\left[-\frac12\left(\frac{x-\mu}{\sigma}\right)^2\right].
+$$
 :::
 
 ::: incremental
-- The bell shape comes from the $\exp(-x^2)$ part 
-
-- The expected value is $\E(X) = \mu$, the mode (highest peak) and median are also $\mu$. 
-
-- Variance is $\V(X) = \sigma^2$ and standard deviation $\text{sd} = \sigma$ 
-
-- A Normal RV can be converted to standard normal by subtracting $\mu$ and dividing by $\sigma$
+- The negative quadratic in the exponent produces the bell shape
+- The mean, median, and mode are all $\mu$
+- The variance is $\V(X)=\sigma^2$, and the standard deviation is $\sigma$
+- Standardizing subtracts the mean and divides by the standard deviation
 :::
 
 ::: {.fragment}
 $$
-\text{Normal}(x \mid 0, 1) \ = \
-\frac{1}{\sqrt{2 \pi}} \, \exp \left( \frac{-x^2}{2} \right)\
+Z=\frac{X-\mu}{\sigma}\sim\operatorname{Normal}(0,1),
+\qquad
+f_Z(z)=\frac{1}{\sqrt{2\pi}}e^{-z^2/2}.
 $$
 :::
 
-### Properties of Standard Normal
+### Properties of the Standard Normal
 
-![](images/std-normal.png){fig-align="center"}
+![](images/std-normal.png){fig-align="center" width="1000"}
+:::
 
-### Example: Heights of US adults
+## Example: Heights of US Adults {.smaller}
+
+::: panel-tabset
+### Context
 
 ::: incremental
--   Sums of small contributions tend to have a normal distribution
--   Heights of people stratified by gender is a good example
--   The following data come from "Teaching Statistics, A Bag of Tricks" by Gelman and Nolan
+-   Under standard central-limit conditions, a standardized sum tends toward $\operatorname{Normal}(0,1)$; equivalently, a large sum is approximately normal with its own mean and standard deviation
+-   Human height reflects many small contributions and is often approximately normal within groups
+-   The following values come from *Teaching Statistics: A Bag of Tricks* by Gelman and Nolan
 :::
+
+### Plot and Code
 
 ::: {.fragment}
 ```{r}
@@ -869,160 +910,158 @@ $$
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
+#| output-location: column
 
+mu_m <- 69.1   # mean height of US men in inches
+sigma_m <- 2.9 # corresponding standard deviation
+mu_w <- 63.7   # mean height of US women in inches
+sigma_w <- 2.7 # corresponding standard deviation
 
-mu_m <- 69.1   # mean heights of US males in inches
-sigma_m <- 2.9 # standard deviation for same
-mu_w <- 63.7   # mean heights of US women in inches
-sigma_w <- 2.7 # standard deviation of the same
-
-x <- seq(50, 80, len = 1e3)
+x <- seq(50, 80, length.out = 1e3)
 pdf_m <- dnorm(x, mean = mu_m, sd = sigma_m)
 pdf_w <- dnorm(x, mean = mu_w, sd = sigma_w)
 p <- ggplot(data.frame(x, pdf_m, pdf_w), aes(x, pdf_m))
-p <- p + geom_line(size = 0.2, color = 'red') + 
-  geom_line(aes(y = pdf_w), size = 0.2, color = 'blue') +
+p <- p + geom_line(linewidth = 0.2, color = "red") +
+  geom_line(aes(y = pdf_w), linewidth = 0.2, color = "blue") +
   xlab("Height (in)") + ylab("") +
   ggtitle("Distribution of heights of US adults") +
-  annotate("text", x = 73.5, y = 0.10, label = "Men", color = 'red') +
-  annotate("text", x = 58, y = 0.10, label = "Women", color = 'blue') +
+  annotate("text", x = 73.5, y = 0.10, label = "Men", color = "red") +
+  annotate("text", x = 58, y = 0.10, label = "Women", color = "blue") +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
 
 print(p)
 ```
 :::
+:::
 
-::: {.fragment}
--   The combined distribution is not Normal:
+## A Mixture of Normal Distributions {.smaller}
+
+-   A mixture of normal distributions is not generally normal, even when each component is normal
 
 ```{r}
+#| echo: true
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
+#| output-location: column
 
-n_m <- 1e5 * 0.48
-n_w <- 1e5 * 0.52
+set.seed(2006)
+n_m <- as.integer(1e5 * 0.48)
+n_w <- as.integer(1e5 * 0.52)
 
 h_m <- rnorm(n_m, mu_m, sigma_m)
 h_w <- rnorm(n_w, mu_w, sigma_w)
 h <- c(h_m, h_w)
 
 p <- ggplot(data.frame(h), aes(x = h))
-p + geom_density(size = 0.2, bw = 0.5) + 
+p + geom_density(linewidth = 0.2, bw = 0.5) +
   xlab("Height (in)") + ylab("") + ylim(0, 0.15) +
-  ggtitle("Combined distribution of men and women") +
-  theme(axis.text.y = element_blank(),
-  axis.ticks.y = element_blank())
+  ggtitle("Mixture of men's and women's height distributions") +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )
 ```
-:::
+
+## Normal Probability Examples {.smaller}
 
 ::: {.fragment}
--   You randomly sample a man from the population. What is $\P(\text{Height}_m < 65)$
+-   You randomly sample a man from the population. What is $\P(\text{Height}_m<65)$?
 
 ```{r}
 #| echo: true
 
-integrate(dnorm, lower = -Inf, upper = 65, 
-          mean = mu_m, sd = sigma_m)$value |>
+pnorm(65, mean = mu_m, sd = sigma_m) |>
   round(2)
 ```
 :::
 
 ::: {.fragment}
--   You randomly sample a woman from the population. What is $\P(60 < \text{Height}_w < 70)$
+-   You randomly sample a woman from the population. What is $\P(60<\text{Height}_w<70)$?
 
 ```{r}
 #| echo: true
 
-integrate(dnorm, lower = 60, upper = 70, 
-          mean = mu_w, sd = sigma_w)$value |>
-  round(2)
-
-(integrate(dnorm, lower = -Inf, upper = 70, 
-          mean = mu_w, sd = sigma_w)$value - 
-integrate(dnorm, lower = -Inf, upper = 60, 
-          mean = mu_w, sd = sigma_w)$value) |>
+(pnorm(70, mean = mu_w, sd = sigma_w) -
+ pnorm(60, mean = mu_w, sd = sigma_w)) |>
   round(2)
 ```
 :::
 
 ::: incremental
--   What is the probability that a randomly chosen man is taller than a randomly chosen woman?
+-   What is the probability that a randomly chosen man is taller than an independently sampled woman?
 
--   We have two distributions $M \sim \text{Normal}(\mu_m, \sigma_m)$ and $W \sim \text{Normal}(\mu_w, \sigma_w)$. We want $\P(M > W) = P(Z > 0),\, \text{where }Z = M - W$
+-   Let $M\sim\operatorname{Normal}(\mu_m,\sigma_m)$ and $W\sim\operatorname{Normal}(\mu_w,\sigma_w)$ be independent. Define $Z=M-W$, so $\P(M>W)=\P(Z>0)$
 
--   Sum of two normals is normal where both means and variances sum:
-::: 
-
-::: {.fragment}
-$$
-\begin{eqnarray}
-Z & \sim & \text{Normal}(\mu_m + \mu_w,\, \sigma_m^2 + \sigma_m^2) \\
-E(Z) & = & E(M - W) = E(M) - E(W) = 69.1 - 63.7 = 5.4 \\
-\text{Var}(Z) & = & \text{Var}(M - W) = \text{Var}(M) + \text{Var}(W) =  2.9^2 + 2.7^2 = 15.7 \\
-\text{sd} & = & \sqrt{Var} = \sqrt{15.7} =3.96 \\
-Z & \sim & \text{Normal}(5.4, 3.96)
-\end{eqnarray}
-$$ 
+-   A linear combination of independent normal RVs is normal. Means combine linearly, while variances add after squaring the coefficients
 :::
 
 ::: {.fragment}
-- To figure out when $Z > 0$, we can integrate the PDF from 0 to Infinity:
+$$
+\begin{aligned}
+Z&\sim\operatorname{Normal}\!\left(
+\mu_m-\mu_w,\sqrt{\sigma_m^2+\sigma_w^2}
+\right),\\
+\E(Z)&=\mu_m-\mu_w=69.1-63.7=5.4,\\
+\V(Z)&=\sigma_m^2+\sigma_w^2=2.9^2+2.7^2=15.7,\\
+\operatorname{sd}(Z)&=\sqrt{15.7}\approx3.96,\\
+Z&\sim\operatorname{Normal}(5.4,\sqrt{15.7}),
+\qquad \sqrt{15.7}\approx3.96.
+\end{aligned}
+$$
+:::
+
+::: {.fragment}
+-   Compute $\P(Z>0)$ by integrating the PDF from 0 to infinity:
 
 ```{r}
 #| echo: true
 
-integrate(dnorm, lower = 0, upper = Inf, 
+integrate(dnorm, lower = 0, upper = Inf,
           mean = 5.4, sd = sqrt(15.7))$value |>
   round(2)
 ```
 :::
 
 ::: {.fragment}
--   We don't have to integrate. We can evaluate the CDF instead:
+-   Equivalently, evaluate the complementary CDF:
 
 ```{r}
 #| echo: true
-1 - pnorm(0, mean = 5.4, sd = sqrt(15.7)) |>
-  round(2)
+
+p_m_taller <- 1 - pnorm(0, mean = 5.4, sd = sqrt(15.7))
+p_m_taller |> round(2)
 ```
-:::
 
-::: incremental
--   By symmetry, the probability that a randomly chosen woman is taller than a randomly chosen man is 0.09
+Because $M$ and $W$ are continuous, $\P(M=W)=0$. Therefore,
 
--   How can we check the analytic solution? We can do a simulation!
+$$
+\P(W>M)=1-\P(M>W)\approx0.09.
+$$
 :::
 
 ::: {.fragment}
+-   Check the analytic result with simulation:
+
 ```{r}
 #| echo: true
 #| cache: true
 
+set.seed(2006)
 n <- 1e5
-taller_m <- numeric(n)
-for (i in 1:n) {
-  height_m <- rnorm(1, mu_m, sigma_m)
-  height_w <- rnorm(1, mu_w, sigma_w)
-  taller_m[i] <- height_m > height_w
-}
-mean(taller_m) |> round(2)
+height_m <- rnorm(n, mu_m, sigma_m)
+height_w <- rnorm(n, mu_w, sigma_w)
+z <- height_m - height_w
+mean(z > 0) |> round(2)
 ```
-:::
 
-::: {.fragment}
--   Suppose you wanted to compute the variance this way. How would you do it?
-:::
+-   Estimate $\V(Z)$ with `var(z)`. How close is it to the analytic value 15.7?
 
 :::
 
 ## What We Did Not Cover
 
-- Joint, Marginal, and Conditional P[M/D]Fs
+- Joint, marginal, and conditional distributions
 - Covariance and correlation
-- Conditional Expectations
-
-
-
-
+- Conditional expectations

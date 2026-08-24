@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Monty Hall decision tree for switching</title>
+  <desc id="desc">The contestant chooses Door 1. The tree shows each possible car location, which door Monty opens, and whether switching wins a car or a goat. No probabilities are shown.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#12aede"/>
+    </marker>
+    <style>
+      .door { stroke-width: 4; rx: 8; }
+      .node, .monty, .result { stroke-width: 2.5; rx: 10; }
+      .choice { stroke-width: 3; rx: 10; }
+      .door-1-color { fill: #66c2a5; stroke: #3a927b; }
+      .door-2-color { fill: #fc8d62; stroke: #d56a43; }
+      .door-3-color { fill: #8da0cb; stroke: #6277ac; }
+      .edge { fill: none; stroke: #12aede; stroke-width: 2.5; marker-end: url(#arrow); }
+      .title { font: 500 34px sans-serif; fill: #161616; }
+      .door-label { font: 600 25px sans-serif; fill: #111111; text-anchor: middle; }
+      .label { font: 600 20px sans-serif; fill: #161616; text-anchor: middle; dominant-baseline: middle; }
+      .small { font: 18px sans-serif; fill: #161616; text-anchor: middle; dominant-baseline: middle; }
+      .column-label { font: 600 18px sans-serif; fill: #50545c; text-anchor: middle; }
+      .outcome { font: 700 18px sans-serif; fill: #273142; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <g transform="translate(0 12)">
+  <rect class="door door-1-color" x="55" y="15" width="290" height="90"/>
+  <text class="door-label" x="200" y="53">
+    <tspan x="200">Door 1</tspan>
+    <tspan x="200" dy="29">Your choice</tspan>
+  </text>
+
+  <rect class="door door-2-color" x="455" y="15" width="290" height="90"/>
+  <text class="door-label" x="600" y="68">Door 2</text>
+
+  <rect class="door door-3-color" x="855" y="15" width="290" height="90"/>
+  <text class="door-label" x="1000" y="68">Door 3</text>
+
+  <text class="title" x="600" y="155" text-anchor="middle">Decision tree for switching</text>
+
+  <text class="column-label" x="120" y="205">Initial choice</text>
+  <text class="column-label" x="385" y="205">Car location</text>
+  <text class="column-label" x="680" y="205">Monty opens</text>
+  <text class="column-label" x="1035" y="205">After switching</text>
+
+  <path class="edge" d="M 215 365 L 280 260"/>
+  <path class="edge" d="M 215 365 L 280 365"/>
+  <path class="edge" d="M 215 365 L 280 470"/>
+
+  <path class="edge" d="M 490 260 L 585 240"/>
+  <path class="edge" d="M 490 260 L 585 300"/>
+  <path class="edge" d="M 490 365 L 585 365"/>
+  <path class="edge" d="M 490 470 L 585 470"/>
+
+  <path class="edge" d="M 765 240 L 930 240"/>
+  <path class="edge" d="M 765 300 L 930 300"/>
+  <path class="edge" d="M 765 365 L 930 365"/>
+  <path class="edge" d="M 765 470 L 930 470"/>
+
+  <rect class="choice door-1-color" x="45" y="337" width="170" height="56"/>
+  <text class="label" x="130" y="365">Choose Door 1</text>
+
+  <rect class="node door-1-color" x="280" y="235" width="210" height="50"/>
+  <text class="label" x="385" y="260">Car behind Door 1</text>
+
+  <rect class="node door-2-color" x="280" y="340" width="210" height="50"/>
+  <text class="label" x="385" y="365">Car behind Door 2</text>
+
+  <rect class="node door-3-color" x="280" y="445" width="210" height="50"/>
+  <text class="label" x="385" y="470">Car behind Door 3</text>
+
+  <rect class="monty door-2-color" x="585" y="215" width="180" height="50"/>
+  <text class="label" x="675" y="240">Opens Door 2</text>
+
+  <rect class="monty door-3-color" x="585" y="275" width="180" height="50"/>
+  <text class="label" x="675" y="300">Opens Door 3</text>
+
+  <rect class="monty door-3-color" x="585" y="340" width="180" height="50"/>
+  <text class="label" x="675" y="365">Opens Door 3</text>
+
+  <rect class="monty door-2-color" x="585" y="445" width="180" height="50"/>
+  <text class="label" x="675" y="470">Opens Door 2</text>
+
+  <rect class="result door-3-color" x="930" y="212" width="220" height="56"/>
+  <text class="small" x="1040" y="232">
+    <tspan x="1040">Switch to Door 3</tspan>
+    <tspan class="outcome" x="1040" dy="22">GOAT</tspan>
+  </text>
+
+  <rect class="result door-2-color" x="930" y="272" width="220" height="56"/>
+  <text class="small" x="1040" y="292">
+    <tspan x="1040">Switch to Door 2</tspan>
+    <tspan class="outcome" x="1040" dy="22">GOAT</tspan>
+  </text>
+
+  <rect class="result door-2-color" x="930" y="337" width="220" height="56"/>
+  <text class="small" x="1040" y="357">
+    <tspan x="1040">Switch to Door 2</tspan>
+    <tspan class="outcome" x="1040" dy="22">CAR</tspan>
+  </text>
+
+  <rect class="result door-3-color" x="930" y="442" width="220" height="56"/>
+  <text class="small" x="1040" y="462">
+    <tspan x="1040">Switch to Door 3</tspan>
+    <tspan class="outcome" x="1040" dy="22">CAR</tspan>
+  </text>
+
+  <text x="600" y="570" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#3b4252">
+    Monty always opens an unchosen door hiding a goat.
+  </text>
+  </g>
+</svg>
