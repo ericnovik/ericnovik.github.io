@@ -466,14 +466,14 @@
     "href": "stats-math/04-lecture/04-lecture.html#basic-counting",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Basic Counting",
-    "text": "Basic Counting\n\nHow many permutations of \\(n\\) objects are there?\nSampling with replacement (order matters): you select one object from \\(n\\) total objects, \\(k\\) times (and put it back each time).\nSampling without replacement (order matters): same as above, but you don’t put them back"
+    "text": "Basic Counting\n\nPermutations of \\(n\\) objects: arrange all \\(n\\) distinct objects in order; there are \\(n!\\) arrangements. For \\(S=\\{A,B,C\\}\\), the resulting set is \\[\n\\{ABC, ACB, BAC, BCA, CAB, CBA\\}.\n\\]\nSampling with replacement, where order matters: choose from \\(n\\) objects \\(k\\) times, replacing the selected object each time; there are \\(n^k\\) sequences. For \\(S=\\{A,B,C\\}\\) and \\(k=2\\), the resulting set contains \\(3^2=9\\) sequences: \\[\n\\{AA, AB, AC, BA, BB, BC, CA, CB, CC\\}.\n\\]\nSampling without replacement, where order matters: choose from \\(n\\) objects \\(k\\) times without returning selected objects; there are \\(n!/(n-k)!\\) sequences. For \\(S=\\{A,B,C\\}\\) and \\(k=2\\), the resulting set is \\[\n\\{AB, AC, BA, BC, CA, CB\\}.\n\\]"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#binomial-coefficient",
     "href": "stats-math/04-lecture/04-lecture.html#binomial-coefficient",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Binomial coefficient",
-    "text": "Binomial coefficient\n\n\nHow many ways are there to choose a \\(k\\)-element subset from an \\(n\\)-element set? For example, how many two-person teams can be formed from five people? (John and Jane form the same team as Jane and John.)\n\n\n\n\\[\n{n \\choose k} = \\frac{n!}{(n - k)! k!} = {n \\choose n-k}\n\\]\n\n\n\nWhat is the probability of a full house in poker? (Three cards of one rank and two cards of another rank.)\nHow many distinct orderings does a standard 52-card deck have?"
+    "section": "Binomial Coefficient",
+    "text": "Binomial Coefficient\n\nDerivationWhy \\(k!\\)?Pascal’s TrianglePascal’s RuleExamples\n\n\n\nTo choose an unordered \\(k\\)-element subset, first count ordered selections. Filling \\(k\\) positions gives \\(n\\) choices, then \\(n-1\\), and so on—the first \\(k\\) factors of \\(n!\\):\n\\[\n\\begin{aligned}\nn!\n&=\\underbrace{n(n-1)\\cdots(n-k+1)}_{\\text{first }k\\text{ factors}}\n  \\underbrace{(n-k)(n-k-1)\\cdots2\\cdot1}_{\\text{tail }=(n-k)!}, \\\\\n\\frac{n!}{(n-k)!}\n&=n(n-1)\\cdots(n-k+1).\n\\end{aligned}\n\\]\nDividing by \\((n-k)!\\) removes the unused tail.\n\n\nThe ordered count includes every unordered subset \\(k!\\) times, so divide once more:\n\\[\n\\boxed{\\binom{n}{k}=\\frac{n!}{k!(n-k)!}}.\n\\]\n\n\n\n\nA fixed set of \\(k\\) objects can be ordered in \\(k!\\) ways: there are \\(k\\) choices for the first position, \\(k-1\\) for the second, and so on, giving\n\\[\nk(k-1)\\cdots2\\cdot1=k!.\n\\]\n\n\nFor \\(k=3\\), the one subset \\(\\{A,B,C\\}\\) is counted as\n\\[\n\\begin{array}{ccc}\nABC & ACB & BAC \\\\\nBCA & CAB & CBA\n\\end{array}\n\\]\nAll six strings contain exactly the same objects, so they represent one unordered subset counted \\(3!=6\\) times.\n\n\nIn general, dividing the ordered count by \\(k!\\) leaves each unordered subset counted exactly once.\n\n\n\nEach entry in row \\(n\\) and column \\(k\\) is \\(\\binom{n}{k}\\):\n\n\nIndexed table\n\\[\n\\begin{array}{c|ccccc}\nn\\backslash k & 0 & 1 & 2 & 3 & 4 \\\\ \\hline\n0 & 1 &   &   &   &   \\\\\n1 & 1 & 1 &   &   &   \\\\\n2 & 1 & 2 & 1 &   &   \\\\\n3 & 1 & 3 & 3 & 1 &   \\\\\n4 & 1 & 4 & 6 & 4 & 1\n\\end{array}\n\\]\n\nComplete triangle\n\\[\n\\begin{array}{ccccccccc}\n  &   &   &   & 1 &   &   &   &   \\\\\n  &   &   & 1 &   & 1 &   &   &   \\\\\n  &   & 1 &   & 2 &   & 1 &   &   \\\\\n  & 1 &   & 3 &   & 3 &   & 1 &   \\\\\n1 &   & 4 &   & 6 &   & 4 &   & 1\n\\end{array}\n\\]\n\n\nEvery interior number is the sum of the two numbers above it; for example, \\(\\binom{4}{2}=\\binom{3}{1}+\\binom{3}{2}=3+3=6\\).\n\n\n\n\nChoose one distinguished object. A \\(k\\)-element subset either:\n\ncontains it, leaving \\(k-1\\) objects to choose from the other \\(n-1\\), or\nexcludes it, leaving all \\(k\\) objects to choose from the other \\(n-1\\)\n\n\n\nThese two cases are disjoint and include every \\(k\\)-element subset, so\n\\[\n\\boxed{\\binom{n}{k}=\\binom{n-1}{k-1}+\\binom{n-1}{k}}.\n\\]\nThis identity generates Pascal’s triangle row by row.\n\n\n\n\nThe two-person subsets of \\(S=\\{A,B,C,D,E\\}\\) are\n\\[\n\\{AB,AC,AD,AE,BC,BD,BE,CD,CE,DE\\},\n\\]\nso \\(\\binom{5}{2}=10\\).\n\n\nChoosing the \\(k\\) included objects is equivalent to choosing the \\(n-k\\) excluded objects, so \\(\\binom{n}{k}=\\binom{n}{n-k}\\)\nA standard deck has \\(\\binom{52}{5}\\) distinct five-card hands\nWhat is the probability of the full house in poker? One pair? Two pair?"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#birthday-problem",
@@ -501,7 +501,7 @@
     "href": "stats-math/04-lecture/04-lecture.html#some-consequences",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Some Consequences",
-    "text": "Some Consequences\n\n\\[\n\\begin{aligned}\n\\P(\\emptyset) &= 0, \\\\\nA\\subseteq B &\\Longrightarrow \\P(A)\\le \\P(B), \\\\\n\\P(A^c) &= 1-\\P(A), \\\\\nA\\cap B=\\emptyset &\\Longrightarrow \\P(A\\cup B)=\\P(A)+\\P(B), \\\\\n\\P(A\\cup B) &= \\P(A)+\\P(B)-\\P(A\\cap B).\n\\end{aligned}\n\\]\n\n\nThe final identity is the inclusion-exclusion principle\nTwo events \\(A\\) and \\(B\\) are independent, denoted \\(A\\indep B\\), if\n\n\n\\[\n\\P(A \\cap B) = \\P(A) \\P(B)\n\\]"
+    "text": "Some Consequences\n\n\\[\n\\begin{aligned}\n\\P(\\emptyset) &= 0, \\\\\nA\\subseteq B &\\Longrightarrow \\P(A)\\le \\P(B), \\\\\n\\P(A^c) &= 1-\\P(A), \\\\\nA\\cap B=\\emptyset &\\Longrightarrow \\P(A\\cup B)=\\P(A)+\\P(B), \\\\\n\\P(A\\cup B) &= \\P(A)+\\P(B)-\\P(A\\cap B).\n\\end{aligned}\n\\]\n\n\nThe final identity is the inclusion-exclusion principle\nTwo events \\(A\\) and \\(B\\) are independent, denoted \\(A\\indep B\\), if \\(\\P(A \\cap B) = \\P(A) \\P(B)\\)"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#some-examples",
@@ -518,18 +518,25 @@
     "text": "Conditional Probability\n\nConditioning is the soul of statistics — Joe Blitzstein\n\n\nThink of conditioning as computing probability on a reduced sample space: when we condition on an event, we restrict attention to the part of \\(S\\) where that event occurred\nNote: In some texts, \\(AB\\) is used as a shortcut for \\(A \\cap B\\). You can’t multiply events, but you can multiply their probabilities.\n\n\n\\[\n\\P(A\\mid B) = \\frac{\\P(A\\cap B)}{\\P(B)}, \\qquad \\P(B)&gt;0\n\\]\n\n\nNote that \\(\\P(A\\mid B)\\) and \\(\\P(B\\mid A)\\) are different quantities and are often confused\nWhen \\(\\P(B)&gt;0\\), events \\(A\\) and \\(B\\) are independent if and only if \\(\\P(A\\mid B)=\\P(A)\\). In other words, learning \\(B\\) does not change the probability of \\(A\\)"
   },
   {
+    "objectID": "stats-math/04-lecture/04-lecture.html#conditional-probability-your-turn",
+    "href": "stats-math/04-lecture/04-lecture.html#conditional-probability-your-turn",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Conditional Probability: Your Turn",
+    "text": "Conditional Probability: Your Turn"
+  },
+  {
     "objectID": "stats-math/04-lecture/04-lecture.html#law-of-total-probability-and-bayes-rule",
     "href": "stats-math/04-lecture/04-lecture.html#law-of-total-probability-and-bayes-rule",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Law of Total Probability and Bayes’ Rule",
-    "text": "Law of Total Probability and Bayes’ Rule\n\nLOTPBayes’ Rule\n\n\nIn the following, \\(A_1,\\ldots,A_n\\) form a partition of the sample space \\(S\\):\n\\[\n\\P(B)=\\sum_{i=1}^{n}\\P(B\\mid A_i)\\P(A_i).\n\\]\n\n\n\n\n\n\n\n\nWe take the definition of conditional probability and expand the numerator and denominator:\n\n\n\\[\n\\P(A_k\\mid B)\n=\\frac{\\P(B\\mid A_k)\\P(A_k)}{\\sum_{i=1}^{n}\\P(B\\mid A_i)\\P(A_i)},\n\\qquad \\P(B)&gt;0\n\\]\n\n\nWe call \\(\\P(A_k)\\) the prior probability of \\(A_k\\) and \\(\\P(A_k\\mid B)\\) its posterior probability after observing \\(B\\)\n\n\n\n\n\nImage source: Introduction to Probability, Blitzstein and Hwang."
+    "text": "Law of Total Probability and Bayes’ Rule\n\nLOTPBayes’ Rule\n\n\nIn the following, \\(A_1,\\ldots,A_n\\) form a partition of the sample space \\(S\\):\n\\[\n\\P(B)=\\sum_{i=1}^{n}\\P(B\\mid A_i)\\P(A_i).\n\\]\n\n\n\n\n\n\n\n\nWe take the definition of conditional probability and expand the numerator and denominator:\n\n\n\\[\n\\P(A\\mid B)\n=\\frac{\\P(B\\mid A)\\P(A)}{\\sum_{i=1}^{n}\\P(B\\mid A_i)\\P(A_i)},\n\\qquad \\P(B)&gt;0\n\\]\n\n\nWe call \\(\\P(A)\\) the prior probability of \\(A\\) and \\(\\P(A\\mid B)\\) its posterior probability after observing \\(B\\)\n\n\n\n\n\nImage source: Introduction to Probability, Blitzstein and Hwang."
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#example-medical-testing",
     "href": "stats-math/04-lecture/04-lecture.html#example-medical-testing",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Medical Testing",
-    "text": "Example: Medical Testing\n\nDerivationDiscussion\n\n\n\nThe authors calculated the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.\n\n\nYour child tests positive. What is the probability that she has COVID? That is, we want \\(\\P(D^+\\mid T^+)\\)\n\\(\\text{Specificity}:=\\P(T^-\\mid D^-)=0.998\\)\nFalse-positive rate \\(\\text{FP}:=1-\\text{specificity}=\\P(T^+\\mid D^-)=0.002\\)\n\\(\\text{Sensitivity}:=\\P(T^+\\mid D^+)=0.454\\)\nFalse-negative rate \\(\\text{FN}:=1-\\text{sensitivity}=\\P(T^-\\mid D^+)=0.546\\)\nPrevalence: \\(\\P(D^+)=0.001\\)\n\n\\[\n\\begin{aligned}\n\\P(D^+\\mid T^+)\n&=\\frac{\\P(T^+\\mid D^+)\\P(D^+)}{\\P(T^+)} \\\\\n&=\\frac{\\P(T^+\\mid D^+)\\P(D^+)}\n{\\P(T^+\\mid D^+)\\P(D^+)+\\P(T^+\\mid D^-)\\P(D^-)} \\\\\n&=\\frac{0.454\\cdot0.001}{0.454\\cdot0.001+0.002\\cdot0.999} \\\\\n&\\approx 0.185.\n\\end{aligned}\n\\]\n\n\n\nThe answer, about 18.5%, is very sensitive to disease prevalence—our prior probability of infection\nAt the time of the test, prevalence was estimated at 4.8%, not 0.1%, which would substantially change the answer: \\(\\P(D^+\\mid T^+)\\approx0.92\\)\nLesson: do not rely on intuition alone; check the prior probability"
+    "text": "Example: Medical Testing\n\nDerivationDiscussion\n\n\n\nThe authors calculated the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.\n\n\nYour child tests positive. What is the probability that she has COVID? That is, we want \\(\\P(D^+\\mid T^+)\\)\n\\(\\text{Specificity}:=\\P(T^-\\mid D^-)=0.998\\)\nFalse-positive rate \\(\\text{FP}:=1-\\text{specificity}=\\P(T^+\\mid D^-)=0.002\\)\n\\(\\text{Sensitivity}:=\\P(T^+\\mid D^+)=0.454\\)\nFalse-negative rate \\(\\text{FN}:=1-\\text{sensitivity}=\\P(T^-\\mid D^+)=0.546\\)\nPrevalence: \\(\\P(D^+)=0.001\\)\n\n\n\\[\n\\begin{aligned}\n\\P(D^+\\mid T^+)\n&=\\frac{\\P(T^+\\mid D^+)\\P(D^+)}{\\P(T^+)} \\\\\n&=\\frac{\\P(T^+\\mid D^+)\\P(D^+)}\n{\\P(T^+\\mid D^+)\\P(D^+)+\\P(T^+\\mid D^-)\\P(D^-)} \\\\\n&=\\frac{0.454\\cdot0.001}{0.454\\cdot0.001+0.002\\cdot0.999} \\\\\n&\\approx 0.185.\n\\end{aligned}\n\\]\n\n\n\n\nThe answer, about 18.5%, is very sensitive to disease prevalence—our prior probability of infection\nAt the time of the test, prevalence was estimated at 4.8%, not 0.1%, which would substantially change the answer: \\(\\P(D^+\\mid T^+)\\approx0.92\\)\nLesson: do not rely on intuition alone; check the prior probability"
   },
   {
     "objectID": "stats-math/04-lecture/04-lecture.html#example-leibnizs-error",
@@ -544,6 +551,181 @@
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Example: Monty Hall",
     "text": "Example: Monty Hall"
+  },
+  {
+    "objectID": "stats-math/04-lecture/04-lecture.html#the-monty-hall-debate",
+    "href": "stats-math/04-lecture/04-lecture.html#the-monty-hall-debate",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "The Monty Hall Debate",
+    "text": "The Monty Hall Debate"
+  },
+  {
+    "objectID": "stats-math/04-lecture/04-lecture.html#homework",
+    "href": "stats-math/04-lecture/04-lecture.html#homework",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Homework",
+    "text": "Homework\n\nConditional probability—course enrollment. Among 200 students, 120 take statistics, 80 take calculus, and 50 take both. For a randomly selected student, compute \\(\\P(\\text{statistics}\\mid\\text{calculus})\\) and \\(\\P(\\text{calculus}\\mid\\text{statistics})\\). Explain why the two probabilities differ.\nConditional probability—dice. Roll two fair six-sided dice. Given that their sum is 8, what is the probability that at least one die shows 5? List the reduced sample space before calculating the probability. Verify with a simulation. Hint: in R, if (a || b), means either a is true or b is true.\nBayes’ rule—fraud screening. An insurer estimates that 2% of submitted claims are fraudulent. A screening system flags 92% of fraudulent claims and 6% of legitimate claims. If a claim is flagged, what is the probability that it is fraudulent? Define the events and show the Bayes’ rule calculation.\nR simulation—Monty Hall. Write an R simulation of at least 10,000 games to check that always switching wins the car with probability \\(2/3\\). In each game, randomly place the car and choose an initial door; have Monty randomly open an unchosen goat door; then switch to the only other closed door. Report the simulated proportion of wins."
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",
+    "href": "stats-math/03-lecture/03-lecture.html#session-3-outline",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Session 3 Outline",
+    "text": "Session 3 Outline\n\nTransforming data for plotting\nDeriving the free-fall equation with antiderivatives\nSome rules of integration\nEvaluating integrals numerically\nThe waiting time distribution\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations",
+    "href": "stats-math/03-lecture/03-lecture.html#data-transformations",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Data transformations",
+    "text": "Data transformations\n\n\n\nWe saw how annual and continuous compounding compare at a fixed interest rate\nHow does the asset value vary with the interest rate?\nWe investigate with a common simulate-pivot-plot pattern"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#map-function",
+    "href": "stats-math/03-lecture/03-lecture.html#map-function",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Map Function",
+    "text": "Map Function\n“The purrr::map* functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.”\n\nGenerate 10 vectors of 100 uniform random values. The first vector has min = 1, the second has min = 2, and so on through min = 10; all have max = 15\nThen compute the mean of each of the 10 vectors\n\n\n\nlibrary(purrr)\n\nset.seed(2006)\nx &lt;- 1:10\nsamples &lt;- x |&gt;\n  map(\\(minimum) runif(n = 100, min = minimum, max = 15))\n\nmeans &lt;- samples |&gt;\n  map_dbl(mean)\n\n\n\nRun the code and inspect samples and means. How do the two objects differ, and what did you expect to see?"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#pivot-functions",
+    "href": "stats-math/03-lecture/03-lecture.html#pivot-functions",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Pivot Functions",
+    "text": "Pivot Functions\npivot_longer() “lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is pivot_wider().\n\n\nlibrary(tidyr)\nhead(iris)\n\n  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n1          5.1         3.5          1.4         0.2  setosa\n2          4.9         3.0          1.4         0.2  setosa\n3          4.7         3.2          1.3         0.2  setosa\n4          4.6         3.1          1.5         0.2  setosa\n5          5.0         3.6          1.4         0.2  setosa\n6          5.4         3.9          1.7         0.4  setosa\n\niris_long &lt;- iris |&gt; pivot_longer(!Species, names_to = \"length_width\", values_to = \"measure\")\nhead(iris_long)\n\n# A tibble: 6 × 3\n  Species length_width measure\n  &lt;fct&gt;   &lt;chr&gt;          &lt;dbl&gt;\n1 setosa  Sepal.Length     5.1\n2 setosa  Sepal.Width      3.5\n3 setosa  Petal.Length     1.4\n4 setosa  Petal.Width      0.2\n5 setosa  Sepal.Length     4.9\n6 setosa  Sepal.Width      3"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
+    "href": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Data Transformations",
+    "text": "Data Transformations\n\nSimulateLoops and MapsPivotPlot\n\n\n\n\n\nlibrary(purrr)\nlibrary(tidyr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100\ntime &lt;- seq(1, 50, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\nd &lt;- time |&gt;\n  map(\\(x) Pe(A = P, r = rates, t = x))\nclass(d)\n\n[1] \"list\"\n\nd[[1]][1:4]\n\n[1] 105.1271 106.8939 108.6904 110.5171\n\nnames(d) &lt;- as.character(time)\nd &lt;- as_tibble(d)\n\n\n\n\n\n\n\n\n1\n2\n3\n\n\n\n\n105.1271\n110.5171\n116.1834\n\n\n106.8939\n114.2631\n122.1403\n\n\n108.6904\n118.1360\n128.4025\n\n\n110.5171\n122.1403\n134.9859\n\n\n112.3745\n126.2802\n141.9068\n\n\n114.2631\n130.5605\n149.1825\n\n\n116.1834\n134.9859\n156.8312\n\n\n118.1360\n139.5612\n164.8721\n\n\n120.1215\n144.2917\n173.3253\n\n\n122.1403\n149.1825\n182.2119\n\n\n\n\n\n\n\n\n\n\nModern R usage offers many shortcuts, but those may be confusing to beginners.\nIn particular, R loops have mostly been replaced with map() functions.\nWe recommend purrr::map() functions instead of R’s *apply().\n\n\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100\ntime &lt;- seq(1, 50, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\ntime |&gt; map(\\(x) Pe(A = P, r = rates, t = x))\n\n# above is a shortcut for\nmap(time, function(x) Pe(A = P, r = rates, t = x))\n\n# and the above is a shortcut for the following loop\nl &lt;- list()\nfor (i in seq_along(time)) {\n  l[[i]] &lt;- Pe(A = P, r = rates, t = time[i])\n}\n\n\n\n\n\n\n\nlibrary(tidyr)\n# add rates as a column\nd &lt;- d %&gt;% mutate(rate =\n            round(rates, 2) |&gt;\n              as.character())\n\n# convert from wide format to long\nd &lt;- d %&gt;%\n  pivot_longer(!rate,\n               names_to = \"year\",\n               values_to = \"value\")\n\nd$year &lt;- as.numeric(d$year)\n\n\nHere is a cheat sheet explaining tidyr functions.\nAnd here is a much shorter version of the exercise.\n\n\n\n\n\n\n\n\nrate\nyear\nvalue\n\n\n\n\n0.05\n1\n105.1271\n\n\n0.05\n2\n110.5171\n\n\n0.05\n3\n116.1834\n\n\n0.05\n4\n122.1403\n\n\n0.05\n5\n128.4025\n\n\n0.05\n6\n134.9859\n\n\n0.05\n7\n141.9068\n\n\n0.05\n8\n149.1825\n\n\n0.05\n9\n156.8312\n\n\n0.05\n10\n164.8721\n\n\n\n\n\n\n\n\n\n\n\n\np &lt;- ggplot(d, aes(year, value))\np + geom_line(aes(color = rate), linewidth = 0.2) +\n  scale_y_continuous(labels =\n          scales::dollar_format()) +\n  xlab(\"Time (years)\") +\n  ylab(\"Asset value\") +\n  ggtitle(\"Growth of $100 at different interest rates\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd |&gt;\n  filter(year == max(year)) |&gt;\n  select(rate, y50 = value) |&gt;\n  knitr::kable()\n\n\n\n\nrate\ny50\n\n\n\n\n0.05\n1218.249\n\n\n0.07\n2803.162\n\n\n0.08\n6450.009\n\n\n0.1\n14841.316\n\n\n0.12\n34149.510\n\n\n0.13\n78577.199\n\n\n0.15\n180804.241\n\n\n0.17\n416026.201\n\n\n0.18\n957266.257\n\n\n0.2\n2202646.579\n\n\n\n\n\n\n\n\n\n\n\nRStudio cheat sheets"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn",
+    "href": "stats-math/03-lecture/03-lecture.html#your-turn",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn",
+    "text": "Your Turn\n\nDataInstructionsOutput\n\n\n\n\n\n\n\n\n\n\nRun install.packages(\"HistData\")\nThen run library(HistData)\nTake a look at the Arbuthnot dataset: ?Arbuthnot\n\n\n\n\n\n\nYear\nMales\nFemales\nPlague\nMortality\nRatio\nTotal\n\n\n\n\n1629\n5218\n4683\n0\n8771\n1.114243\n9.901\n\n\n1630\n4858\n4457\n1317\n10554\n1.089971\n9.315\n\n\n1631\n4422\n4102\n274\n8562\n1.078011\n8.524\n\n\n1632\n4994\n4590\n8\n9535\n1.088017\n9.584\n\n\n1633\n5158\n4839\n0\n8393\n1.065923\n9.997\n\n\n1634\n5035\n4820\n1\n10400\n1.044606\n9.855\n\n\n\n\n\n\n\n\nUse these tools to produce a plot that looks something like this\nBonus: compute and plot the proportion of christenings that were female, \\(\\text{Females}/(\\text{Males}+\\text{Females})\\)"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#integral-calculus",
+    "href": "stats-math/03-lecture/03-lecture.html#integral-calculus",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Integral Calculus",
+    "text": "Integral Calculus\n\n\n\nIntegration describes accumulated change and plays a central role in statistics\nFor continuous distributions, integrals compute probabilities and expectations\nAcross Bayesian and frequentist statistics, integration is used to normalize densities and marginalize over unknown quantities\nDerivatives are often used for optimization, including maximum-likelihood and maximum-a-posteriori estimation\n\n\n\n\n\n\n\n\nUnknown quantities are often called parameters, such as the local gravitational acceleration \\(g\\) in our Moon-drop model"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
+    "href": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Intuition Behind Integration",
+    "text": "Intuition Behind Integration\n\n\n\nA definite integral is a continuous analog of summation: it measures accumulated signed change over an interval\nGeometrically, it is the signed area between a one-dimensional function \\(f\\) and the horizontal axis\nAn indefinite integral represents a family of antiderivatives: \\(\\int f(x)\\,dx = F(x)+C\\) when \\(F'(x)=f(x)\\)\nThe Fundamental Theorem of Calculus connects the two: \\(\\int_a^b f(x)\\,dx = F(b)-F(a)\\)\nMany definite integrals are evaluated numerically, but it helps to understand what the computer is approximating\n\n\n\n\n\n\n\n\n\nImage source: Calculus Volume 1"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
+    "href": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Some Common Integrals",
+    "text": "Some Common Integrals\n\n\nOpenStax: Here is a more complete list"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#techniques-of-integration",
+    "href": "stats-math/03-lecture/03-lecture.html#techniques-of-integration",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Techniques of Integration",
+    "text": "Techniques of Integration\n\nDefinite integration, like differentiation, is linear:\n\n\n\\[\n\\begin{aligned}\n\\int_a^b [f(x)+g(x)]\\,dx\n  &= \\int_a^b f(x)\\,dx + \\int_a^b g(x)\\,dx, \\\\\n\\int_a^b c f(x)\\,dx\n  &= c\\int_a^b f(x)\\,dx.\n\\end{aligned}\n\\]\n\n\nUnlike differentiation, integration has no universal procedure that produces a closed-form antiderivative for every function\nMany common integrals have closed-form analytical solutions, but many important integrals in statistics do not\nFor well-behaved integrands in one or two dimensions, numerical quadrature is often practical\nHigher-dimensional problems may use Monte Carlo, importance sampling, quasi-Monte Carlo, or Markov chain Monte Carlo (MCMC)\nFor simple integrals, we can sometimes find a closed-form solution using substitution or integration by parts"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
+    "href": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Playing with Integrals",
+    "text": "Playing with Integrals\n\nGiven our intuition for integrals as signed areas, let’s see how to compute them analytically and numerically\nThe numerical techniques shown here work best in low dimensions; high-dimensional integration requires other methods\nSuppose we want to evaluate the integral \\(\\int_{1}^{3} x \\sin(x^2)\\,dx\\)"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
+    "href": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Constructing a Riemann Sum",
+    "text": "Constructing a Riemann Sum\n\n\n\n\n\n\n\nriemann &lt;- function(f, lower, upper, n = 100) {\n  edges &lt;- seq(lower, upper, length.out = n + 1)\n  total &lt;- 0\n\n  for (i in seq_len(n)) {\n    width &lt;- edges[i + 1] - edges[i]\n    height &lt;- f(edges[i + 1]) # right endpoint\n    total &lt;- total + width * height\n  }\n  return(total)\n}\n\n\n\nNotice that the function takes another function as an argument. Functions that do this are called higher-order functions.\n\n\nSource: OpenStax Calculus Volume 1"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
+    "href": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Evaluating the Integral",
+    "text": "Evaluating the Integral\n\nf &lt;- function(x) x * sin(x^2)\nx &lt;- seq(0, pi, length.out = 100)\n\nriemann(f, 1, 3, n = 200)\n\n[1] 0.7275414\n\n# compute using R's integrate function\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
+    "href": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Integrating Analytically",
+    "text": "Integrating Analytically\n\nMany integrals cannot be evaluated analytically, but we can find an antiderivative of \\(x\\sin(x^2)\\)\nLet \\(u=x^2\\). Then \\(du=2x\\,dx\\), so \\(x\\,dx=\\tfrac{1}{2}du\\)\n\n\n\\[\n\\begin{aligned}\n\\int x\\sin(x^2)\\,dx\n  &= \\tfrac{1}{2}\\int \\sin(u)\\,du \\\\\n  &= -\\tfrac{1}{2}\\cos(u)+C \\\\\n  &= -\\tfrac{1}{2}\\cos(x^2)+C.\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
+    "href": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Comparing the Results",
+    "text": "Comparing the Results\n\n\nUsing R’s integrate function:\n\n\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09\n\n\n\n\n\nUsing the analytical solution\n\n\nf1 &lt;- function(x) -1/2 * cos(x^2)\n\nf1(3) - f1(1)\n\n[1] 0.7257163\n\n\n\n\n\nThe universe is in balance!"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
+    "href": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Analytical Integration on the Computer",
+    "text": "Analytical Integration on the Computer\n\nWhen in doubt, you can always try WolframAlpha\nThe Python library SymPy can evaluate symbolic integrals directly\nA computer algebra system returns one antiderivative and usually omits the arbitrary constant \\(+C\\)\n\n\nimport sympy as sp\n\nx = sp.symbols(\"x\", real=True)\nf = x**2 / sp.sqrt(x**2 + 4)\nantiderivative = sp.integrate(f, x)\n\nequation = sp.Eq(\n    sp.Integral(f, x),\n    antiderivative,\n    evaluate=False,\n)\n\nprint(\"$$\\n\" + sp.latex(equation) + \"\\n$$\")\n\\[\n\\int \\frac{x^{2}}{\\sqrt{x^{2} + 4}}\\, dx = \\frac{x \\sqrt{x^{2} + 4}}{2} - 2 \\operatorname{asinh}{\\left(\\frac{x}{2} \\right)}\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
+    "href": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Your Turn: Waiting Time",
+    "text": "Your Turn: Waiting Time\n\nThe exponential distribution is commonly used to model waiting times between events that occur at a constant average rate \\(\\lambda&gt;0\\)\nIts probability density function (PDF) is\n\n\\[\nf(x)=\n\\begin{cases}\n\\lambda e^{-\\lambda x}, & x\\ge 0, \\\\\n0, & x&lt;0.\n\\end{cases}\n\\]\n\nEvery PDF must integrate to 1. Verify that\n\n\\[\n\\int_0^\\infty \\lambda e^{-\\lambda x}\\,dx = 1.\n\\]\n\nThe exponential distribution is memoryless: conditional on having already waited \\(s\\), the probability of waiting at least another \\(t\\) does not depend on \\(s\\)\n\n\\[\n\\P(X&gt;s+t\\mid X&gt;s)=\\P(X&gt;t)=e^{-\\lambda t}.\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#integration-by-parts",
+    "href": "stats-math/03-lecture/03-lecture.html#integration-by-parts",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Integration by Parts",
+    "text": "Integration by Parts\n\nThe product rule gives a useful integration identity:\n\\[\n\\begin{aligned}\n(fg)' &= f'g + fg', \\\\\n\\int f(x)g'(x)\\,dx\n  &= f(x)g(x)-\\int f'(x)g(x)\\,dx, \\\\\n\\int u\\,dv &= uv-\\int v\\,du.\n\\end{aligned}\n\\]\n\n\nFor example, integration by parts gives the mean waiting time:\n\\[\n\\begin{aligned}\n\\E[X]\n  &= \\int_0^\\infty x\\lambda e^{-\\lambda x}\\,dx \\\\\n  &= \\left[-xe^{-\\lambda x}\\right]_0^\\infty\n     + \\int_0^\\infty e^{-\\lambda x}\\,dx \\\\\n  &= \\frac{1}{\\lambda}.\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
+    "href": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Exponential Growth (again)",
+    "text": "Exponential Growth (again)\nThe exponential-growth function used earlier solves the following differential equation. Assume \\(y(t)&gt;0\\):\n\n\\[\n\\frac{\\text{d}[y(t)]}{\\text{d}t} = k \\cdot y(t)\n\\]\n\n\nWe can now solve it:\n\\[\n\\begin{align*}\n\\frac{1}{y} \\, \\text{d}y &= k \\, \\text{d}t \\\\\n\\int \\frac{1}{y} \\, \\text{d}y &= \\int k \\, \\text{d}t \\\\\n\\log(y) &= k \\cdot t + C \\\\\ny(t) &= A \\cdot e^{kt}, \\, A = e^C\n\\end{align*}\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation",
+    "href": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Deriving the Free-Fall Equation",
+    "text": "Deriving the Free-Fall Equation\n\nLet \\(x(t)\\) be the downward distance fallen from the release point, so downward is positive\nTreat the gravitational acceleration \\(g\\) as constant near the surface\nThe ball has constant mass \\(m\\), and the only force acting on it is gravity, \\(F=mg\\)\n\n\nNewton’s second law relates force to the rate of change of momentum:\n\\[\n\\begin{aligned}\nF\n  &= ma \\\\\n  &= \\frac{d}{dt}\\left(m\\frac{d[x(t)]}{dt}\\right) = \\frac{d}{dt}\\left(mv(t)\\right)\\\\\n  &= mg.\n\\end{aligned}\n\\]\nBecause \\(m\\) is constant, take it outside the derivative and cancel it from both sides:\n\\[\nm\\frac{d^2[x(t)]}{dt^2}=mg\n\\quad\\Longrightarrow\\quad\n\\frac{d^2[x(t)]}{dt^2}=g.\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation-1",
+    "href": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation-1",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Deriving the Free-Fall Equation",
+    "text": "Deriving the Free-Fall Equation\n\nIntegrate twice with respect to \\(t\\):\n\\[\n\\begin{aligned}\n\\int \\frac{d^2[x(t)]}{dt^2}\\,dt\n  &= \\int g\\,dt, \\\\\n\\frac{d[x(t)]}{dt}\n  &= gt+C_1, \\\\[0.6em]\n\\int \\frac{d[x(t)]}{dt}\\,dt\n  &= \\int (gt+C_1)\\,dt, \\\\\nx(t)\n  &= \\tfrac{1}{2}gt^2+C_1t+C_2.\n\\end{aligned}\n\\]\n\n\nThe ball is released from rest, and distance is measured from the release point, so\n\\[\n\\left.\\frac{d[x(t)]}{dt}\\right|_{t=0}=0\n\\Longrightarrow C_1=0,\n\\qquad\nx(0)=0\n\\Longrightarrow C_2=0.\n\\]\nTherefore,\n\\[\n\\boxed{x(t)=\\tfrac{1}{2}gt^2}.\n\\]"
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#free-fall-on-earths-moon",
+    "href": "stats-math/03-lecture/03-lecture.html#free-fall-on-earths-moon",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Free Fall on Earth’s Moon",
+    "text": "Free Fall on Earth’s Moon\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUsing the accepted value \\(g_{\\text{Moon}}=1.625\\ \\text{m/s}^2\\), the ball reaches the bottom when \\(x(t)=100\\) m:\n\\[\n\\begin{aligned}\n100 &= \\tfrac{1}{2}g_{\\text{Moon}}t^2, \\\\\nt_{\\text{impact}}\n  &= \\sqrt{\\frac{2(100)}{g_{\\text{Moon}}}} \\\\\n  &\\approx 11.1\\ \\text{s}.\n\\end{aligned}\n\\]\n\n\nThe free-fall model describes the motion only until impact."
+  },
+  {
+    "objectID": "stats-math/03-lecture/03-lecture.html#homework",
+    "href": "stats-math/03-lecture/03-lecture.html#homework",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Homework",
+    "text": "Homework\n\nTake a look at the iris dataset (?iris)\nCompute the overall means of Sepal.Length, Sepal.Width, Petal.Length, and Petal.Width\nCompute these means by Species (hint: use group_by() and summarise() from dplyr)\nProduce a plot that looks like this:\n\n\n\n\n\n\n\nProduce a plot that looks like this (see geom_density() and facet_wrap()):\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral on paper from \\(0\\) to \\(2\\pi\\), and use R’s integrate() function to validate your answer."
   },
   {
     "objectID": "stats-math/02-lecture/02-lecture.html#session-2-outline",
@@ -1372,284 +1554,144 @@
     "text": "References\n\n\n\n\nBlitzstein, Joseph K., and Jessica Hwang. 2019. Introduction to Probability. Second edition. Crc Press/Taylor & Francis Group.\n\n\nBoyd, Stephen P., and Lieven Vandenberghe. 2018. Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares. Cambridge University Press.\n\n\nFowlkes, Edward B., and Bruce Hoadley. 1989. “Risk Analysis of the Space Shuttle: Pre-Challenger Prediction of Failure AU - Dalal, Siddhartha r.” Journal of the American Statistical Association 84 (408): 945–57. https://doi.org/10.1080/01621459.1989.10478858.\n\n\nGrolemund, Garrett. 2014. Hands-on Programming with r. First edition. O’Reilly. https://rstudio-education.github.io/hopr/.\n\n\nHerman, Edwin, Gilbert Strang, and OpenStax. 2016. Calculus Volume 1. https://d3bxy9euw4e147.cloudfront.net/oscms-prodcms/media/documents/CalculusVolume1-OP.pdf.\n\n\nMartz, H. F., and W. J. Zimmer. 1992. “The Risk of Catastrophic Failure of the Solid Rocket Boosters on the Space Shuttle.” The American Statistician 46 (1): 42–47. https://doi.org/10.1080/00031305.1992.10475846.\n\n\nThompson, Silvanus P. 1980. Calculus Made Easy: Being a Very-Simplest Introduction to Those Beautiful Methods of Reckoning Which Are Generally Called by the Terrifying Names of the Differential Calculus and the Integral Calculus. 3d ed. St. Martin’s Press.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd edition. O’Reilly Media."
   },
   {
-    "objectID": "stats-math/03-lecture/03-lecture.html#session-3-outline",
-    "href": "stats-math/03-lecture/03-lecture.html#session-3-outline",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Session 3 Outline",
-    "text": "Session 3 Outline\n\nTransforming data for plotting\nDeriving the free-fall equation with antiderivatives\nSome rules of integration\nEvaluating integrals numerically\nThe waiting time distribution\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations",
-    "href": "stats-math/03-lecture/03-lecture.html#data-transformations",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Data transformations",
-    "text": "Data transformations\n\n\n\nWe saw how annual and continuous compounding compare at a fixed interest rate\nHow does the asset value vary with the interest rate?\nWe investigate with a common simulate-pivot-plot pattern"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#map-function",
-    "href": "stats-math/03-lecture/03-lecture.html#map-function",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Map Function",
-    "text": "Map Function\n“The purrr::map* functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.”\n\nGenerate 10 vectors of 100 uniform random values. The first vector has min = 1, the second has min = 2, and so on through min = 10; all have max = 15\nThen compute the mean of each of the 10 vectors\n\n\n\nlibrary(purrr)\n\nset.seed(2006)\nx &lt;- 1:10\nsamples &lt;- x |&gt;\n  map(\\(minimum) runif(n = 100, min = minimum, max = 15))\n\nmeans &lt;- samples |&gt;\n  map_dbl(mean)\n\n\n\nRun the code and inspect samples and means. How do the two objects differ, and what did you expect to see?"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#pivot-functions",
-    "href": "stats-math/03-lecture/03-lecture.html#pivot-functions",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Pivot Functions",
-    "text": "Pivot Functions\npivot_longer() “lengthens” data, increasing the number of rows and decreasing the number of columns. The inverse transformation is pivot_wider().\n\n\nlibrary(tidyr)\nhead(iris)\n\n  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n1          5.1         3.5          1.4         0.2  setosa\n2          4.9         3.0          1.4         0.2  setosa\n3          4.7         3.2          1.3         0.2  setosa\n4          4.6         3.1          1.5         0.2  setosa\n5          5.0         3.6          1.4         0.2  setosa\n6          5.4         3.9          1.7         0.4  setosa\n\niris_long &lt;- iris |&gt; pivot_longer(!Species, names_to = \"length_width\", values_to = \"measure\")\nhead(iris_long)\n\n# A tibble: 6 × 3\n  Species length_width measure\n  &lt;fct&gt;   &lt;chr&gt;          &lt;dbl&gt;\n1 setosa  Sepal.Length     5.1\n2 setosa  Sepal.Width      3.5\n3 setosa  Petal.Length     1.4\n4 setosa  Petal.Width      0.2\n5 setosa  Sepal.Length     4.9\n6 setosa  Sepal.Width      3"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
-    "href": "stats-math/03-lecture/03-lecture.html#data-transformations-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Data Transformations",
-    "text": "Data Transformations\n\nSimulateLoops and MapsPivotPlot\n\n\n\n\n\nlibrary(purrr)\nlibrary(tidyr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100\ntime &lt;- seq(1, 50, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\nd &lt;- time |&gt;\n  map(\\(x) Pe(A = P, r = rates, t = x))\nclass(d)\n\n[1] \"list\"\n\nd[[1]][1:4]\n\n[1] 105.1271 106.8939 108.6904 110.5171\n\nnames(d) &lt;- as.character(time)\nd &lt;- as_tibble(d)\n\n\n\n\n\n\n\n\n1\n2\n3\n\n\n\n\n105.1271\n110.5171\n116.1834\n\n\n106.8939\n114.2631\n122.1403\n\n\n108.6904\n118.1360\n128.4025\n\n\n110.5171\n122.1403\n134.9859\n\n\n112.3745\n126.2802\n141.9068\n\n\n114.2631\n130.5605\n149.1825\n\n\n116.1834\n134.9859\n156.8312\n\n\n118.1360\n139.5612\n164.8721\n\n\n120.1215\n144.2917\n173.3253\n\n\n122.1403\n149.1825\n182.2119\n\n\n\n\n\n\n\n\n\n\nModern R usage offers many shortcuts, but those may be confusing to beginners.\nIn particular, R loops have mostly been replaced with map() functions.\nWe recommend purrr::map() functions instead of R’s *apply().\n\n\n\nrates &lt;- seq(0.05, 0.20, length = 10)\nP &lt;- 100\ntime &lt;- seq(1, 50, length = 50)\n\nPe &lt;- function(A, r, t) A * exp(r * t)\ntime |&gt; map(\\(x) Pe(A = P, r = rates, t = x))\n\n# above is a shortcut for\nmap(time, function(x) Pe(A = P, r = rates, t = x))\n\n# and the above is a shortcut for the following loop\nl &lt;- list()\nfor (i in seq_along(time)) {\n  l[[i]] &lt;- Pe(A = P, r = rates, t = time[i])\n}\n\n\n\n\n\n\n\nlibrary(tidyr)\n# add rates as a column\nd &lt;- d %&gt;% mutate(rate =\n            round(rates, 2) |&gt;\n              as.character())\n\n# convert from wide format to long\nd &lt;- d %&gt;%\n  pivot_longer(!rate,\n               names_to = \"year\",\n               values_to = \"value\")\n\nd$year &lt;- as.numeric(d$year)\n\n\nHere is a cheat sheet explaining tidyr functions.\nAnd here is a much shorter version of the exercise.\n\n\n\n\n\n\n\n\nrate\nyear\nvalue\n\n\n\n\n0.05\n1\n105.1271\n\n\n0.05\n2\n110.5171\n\n\n0.05\n3\n116.1834\n\n\n0.05\n4\n122.1403\n\n\n0.05\n5\n128.4025\n\n\n0.05\n6\n134.9859\n\n\n0.05\n7\n141.9068\n\n\n0.05\n8\n149.1825\n\n\n0.05\n9\n156.8312\n\n\n0.05\n10\n164.8721\n\n\n\n\n\n\n\n\n\n\n\n\np &lt;- ggplot(d, aes(year, value))\np + geom_line(aes(color = rate), linewidth = 0.2) +\n  scale_y_continuous(labels =\n          scales::dollar_format()) +\n  xlab(\"Time (years)\") +\n  ylab(\"Asset value\") +\n  ggtitle(\"Growth of $100 at different interest rates\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd |&gt;\n  filter(year == max(year)) |&gt;\n  select(rate, y50 = value) |&gt;\n  knitr::kable()\n\n\n\n\nrate\ny50\n\n\n\n\n0.05\n1218.249\n\n\n0.07\n2803.162\n\n\n0.08\n6450.009\n\n\n0.1\n14841.316\n\n\n0.12\n34149.510\n\n\n0.13\n78577.199\n\n\n0.15\n180804.241\n\n\n0.17\n416026.201\n\n\n0.18\n957266.257\n\n\n0.2\n2202646.579\n\n\n\n\n\n\n\n\n\n\n\nRStudio cheat sheets"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn",
-    "href": "stats-math/03-lecture/03-lecture.html#your-turn",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn",
-    "text": "Your Turn\n\nDataInstructionsOutput\n\n\n\n\n\n\n\n\n\n\nRun install.packages(\"HistData\")\nThen run library(HistData)\nTake a look at the Arbuthnot dataset: ?Arbuthnot\n\n\n\n\n\n\nYear\nMales\nFemales\nPlague\nMortality\nRatio\nTotal\n\n\n\n\n1629\n5218\n4683\n0\n8771\n1.114243\n9.901\n\n\n1630\n4858\n4457\n1317\n10554\n1.089971\n9.315\n\n\n1631\n4422\n4102\n274\n8562\n1.078011\n8.524\n\n\n1632\n4994\n4590\n8\n9535\n1.088017\n9.584\n\n\n1633\n5158\n4839\n0\n8393\n1.065923\n9.997\n\n\n1634\n5035\n4820\n1\n10400\n1.044606\n9.855\n\n\n\n\n\n\n\n\nUse these tools to produce a plot that looks something like this\nBonus: compute and plot the proportion of christenings that were female, \\(\\text{Females}/(\\text{Males}+\\text{Females})\\)"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#integral-calculus",
-    "href": "stats-math/03-lecture/03-lecture.html#integral-calculus",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Integral Calculus",
-    "text": "Integral Calculus\n\n\n\nIntegration describes accumulated change and plays a central role in statistics\nFor continuous distributions, integrals compute probabilities and expectations\nAcross Bayesian and frequentist statistics, integration is used to normalize densities and marginalize over unknown quantities\nDerivatives are often used for optimization, including maximum-likelihood and maximum-a-posteriori estimation\n\n\n\n\n\n\n\n\nUnknown quantities are often called parameters, such as the local gravitational acceleration \\(g\\) in our Moon-drop model"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
-    "href": "stats-math/03-lecture/03-lecture.html#intuition-behind-integration",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Intuition Behind Integration",
-    "text": "Intuition Behind Integration\n\n\n\nA definite integral is a continuous analog of summation: it measures accumulated signed change over an interval\nGeometrically, it is the signed area between a one-dimensional function \\(f\\) and the horizontal axis\nAn indefinite integral represents a family of antiderivatives: \\(\\int f(x)\\,dx = F(x)+C\\) when \\(F'(x)=f(x)\\)\nThe Fundamental Theorem of Calculus connects the two: \\(\\int_a^b f(x)\\,dx = F(b)-F(a)\\)\nMany definite integrals are evaluated numerically, but it helps to understand what the computer is approximating\n\n\n\n\n\n\n\n\n\nImage source: Calculus Volume 1"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
-    "href": "stats-math/03-lecture/03-lecture.html#some-common-integrals",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Some Common Integrals",
-    "text": "Some Common Integrals\n\n\nOpenStax: Here is a more complete list"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#techniques-of-integration",
-    "href": "stats-math/03-lecture/03-lecture.html#techniques-of-integration",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Techniques of Integration",
-    "text": "Techniques of Integration\n\nDefinite integration, like differentiation, is linear:\n\n\n\\[\n\\begin{aligned}\n\\int_a^b [f(x)+g(x)]\\,dx\n  &= \\int_a^b f(x)\\,dx + \\int_a^b g(x)\\,dx, \\\\\n\\int_a^b c f(x)\\,dx\n  &= c\\int_a^b f(x)\\,dx.\n\\end{aligned}\n\\]\n\n\nUnlike differentiation, integration has no universal procedure that produces a closed-form antiderivative for every function\nMany common integrals have closed-form analytical solutions, but many important integrals in statistics do not\nFor well-behaved integrands in one or two dimensions, numerical quadrature is often practical\nHigher-dimensional problems may use Monte Carlo, importance sampling, quasi-Monte Carlo, or Markov chain Monte Carlo (MCMC)\nFor simple integrals, we can sometimes find a closed-form solution using substitution or integration by parts"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
-    "href": "stats-math/03-lecture/03-lecture.html#playing-with-integrals",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Playing with Integrals",
-    "text": "Playing with Integrals\n\nGiven our intuition for integrals as signed areas, let’s see how to compute them analytically and numerically\nThe numerical techniques shown here work best in low dimensions; high-dimensional integration requires other methods\nSuppose we want to evaluate the integral \\(\\int_{1}^{3} x \\sin(x^2)\\,dx\\)"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
-    "href": "stats-math/03-lecture/03-lecture.html#constructing-a-riemann-sum",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Constructing a Riemann Sum",
-    "text": "Constructing a Riemann Sum\n\n\n\n\n\n\n\nriemann &lt;- function(f, lower, upper, n = 100) {\n  edges &lt;- seq(lower, upper, length.out = n + 1)\n  total &lt;- 0\n\n  for (i in seq_len(n)) {\n    width &lt;- edges[i + 1] - edges[i]\n    height &lt;- f(edges[i + 1]) # right endpoint\n    total &lt;- total + width * height\n  }\n  return(total)\n}\n\n\n\nNotice that the function takes another function as an argument. Functions that do this are called higher-order functions.\n\n\nSource: OpenStax Calculus Volume 1"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
-    "href": "stats-math/03-lecture/03-lecture.html#evaluating-the-integral",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Evaluating the Integral",
-    "text": "Evaluating the Integral\n\nf &lt;- function(x) x * sin(x^2)\nx &lt;- seq(0, pi, length.out = 100)\n\nriemann(f, 1, 3, n = 200)\n\n[1] 0.7275414\n\n# compute using R's integrate function\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
-    "href": "stats-math/03-lecture/03-lecture.html#integrating-analytically",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Integrating Analytically",
-    "text": "Integrating Analytically\n\nMany integrals cannot be evaluated analytically, but we can find an antiderivative of \\(x\\sin(x^2)\\)\nLet \\(u=x^2\\). Then \\(du=2x\\,dx\\), so \\(x\\,dx=\\tfrac{1}{2}du\\)\n\n\n\\[\n\\begin{aligned}\n\\int x\\sin(x^2)\\,dx\n  &= \\tfrac{1}{2}\\int \\sin(u)\\,du \\\\\n  &= -\\tfrac{1}{2}\\cos(u)+C \\\\\n  &= -\\tfrac{1}{2}\\cos(x^2)+C.\n\\end{aligned}\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
-    "href": "stats-math/03-lecture/03-lecture.html#comparing-the-results",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Comparing the Results",
-    "text": "Comparing the Results\n\n\nUsing R’s integrate function:\n\n\nintegrate(f, 1, 3)\n\n0.7257163 with absolute error &lt; 1.3e-09\n\n\n\n\n\nUsing the analytical solution\n\n\nf1 &lt;- function(x) -1/2 * cos(x^2)\n\nf1(3) - f1(1)\n\n[1] 0.7257163\n\n\n\n\n\nThe universe is in balance!"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
-    "href": "stats-math/03-lecture/03-lecture.html#analytical-integration-on-the-computer",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Analytical Integration on the Computer",
-    "text": "Analytical Integration on the Computer\n\nWhen in doubt, you can always try WolframAlpha\nThe Python library SymPy can evaluate symbolic integrals directly\nA computer algebra system returns one antiderivative and usually omits the arbitrary constant \\(+C\\)\n\n\nimport sympy as sp\n\nx = sp.symbols(\"x\", real=True)\nf = x**2 / sp.sqrt(x**2 + 4)\nantiderivative = sp.integrate(f, x)\n\nequation = sp.Eq(\n    sp.Integral(f, x),\n    antiderivative,\n    evaluate=False,\n)\n\nprint(\"$$\\n\" + sp.latex(equation) + \"\\n$$\")\n\\[\n\\int \\frac{x^{2}}{\\sqrt{x^{2} + 4}}\\, dx = \\frac{x \\sqrt{x^{2} + 4}}{2} - 2 \\operatorname{asinh}{\\left(\\frac{x}{2} \\right)}\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
-    "href": "stats-math/03-lecture/03-lecture.html#your-turn-waiting-time",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Your Turn: Waiting Time",
-    "text": "Your Turn: Waiting Time\n\nThe exponential distribution is commonly used to model waiting times between events that occur at a constant average rate \\(\\lambda&gt;0\\)\nIts probability density function (PDF) is\n\n\\[\nf(x)=\n\\begin{cases}\n\\lambda e^{-\\lambda x}, & x\\ge 0, \\\\\n0, & x&lt;0.\n\\end{cases}\n\\]\n\nEvery PDF must integrate to 1. Verify that\n\n\\[\n\\int_0^\\infty \\lambda e^{-\\lambda x}\\,dx = 1.\n\\]\n\nThe exponential distribution is memoryless: conditional on having already waited \\(s\\), the probability of waiting at least another \\(t\\) does not depend on \\(s\\)\n\n\\[\n\\P(X&gt;s+t\\mid X&gt;s)=\\P(X&gt;t)=e^{-\\lambda t}.\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#integration-by-parts",
-    "href": "stats-math/03-lecture/03-lecture.html#integration-by-parts",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Integration by Parts",
-    "text": "Integration by Parts\n\nThe product rule gives a useful integration identity:\n\\[\n\\begin{aligned}\n(fg)' &= f'g + fg', \\\\\n\\int f(x)g'(x)\\,dx\n  &= f(x)g(x)-\\int f'(x)g(x)\\,dx, \\\\\n\\int u\\,dv &= uv-\\int v\\,du.\n\\end{aligned}\n\\]\n\n\nFor example, integration by parts gives the mean waiting time:\n\\[\n\\begin{aligned}\n\\E[X]\n  &= \\int_0^\\infty x\\lambda e^{-\\lambda x}\\,dx \\\\\n  &= \\left[-xe^{-\\lambda x}\\right]_0^\\infty\n     + \\int_0^\\infty e^{-\\lambda x}\\,dx \\\\\n  &= \\frac{1}{\\lambda}.\n\\end{aligned}\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
-    "href": "stats-math/03-lecture/03-lecture.html#exponential-growth-again",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Exponential Growth (again)",
-    "text": "Exponential Growth (again)\nThe exponential-growth function used earlier solves the following differential equation. Assume \\(y(t)&gt;0\\):\n\n\\[\n\\frac{\\text{d}[y(t)]}{\\text{d}t} = k \\cdot y(t)\n\\]\n\n\nWe can now solve it:\n\\[\n\\begin{align*}\n\\frac{1}{y} \\, \\text{d}y &= k \\, \\text{d}t \\\\\n\\int \\frac{1}{y} \\, \\text{d}y &= \\int k \\, \\text{d}t \\\\\n\\log(y) &= k \\cdot t + C \\\\\ny(t) &= A \\cdot e^{kt}, \\, A = e^C\n\\end{align*}\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation",
-    "href": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Deriving the Free-Fall Equation",
-    "text": "Deriving the Free-Fall Equation\n\nLet \\(x(t)\\) be the downward distance fallen from the release point, so downward is positive\nTreat the gravitational acceleration \\(g\\) as constant near the surface\nThe ball has constant mass \\(m\\), and the only force acting on it is gravity, \\(F=mg\\)\n\n\nNewton’s second law relates force to the rate of change of momentum:\n\\[\n\\begin{aligned}\nF\n  &= ma \\\\\n  &= \\frac{d}{dt}\\left(m\\frac{d[x(t)]}{dt}\\right) = \\frac{d}{dt}\\left(mv(t)\\right)\\\\\n  &= mg.\n\\end{aligned}\n\\]\nBecause \\(m\\) is constant, take it outside the derivative and cancel it from both sides:\n\\[\nm\\frac{d^2[x(t)]}{dt^2}=mg\n\\quad\\Longrightarrow\\quad\n\\frac{d^2[x(t)]}{dt^2}=g.\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation-1",
-    "href": "stats-math/03-lecture/03-lecture.html#deriving-the-free-fall-equation-1",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Deriving the Free-Fall Equation",
-    "text": "Deriving the Free-Fall Equation\n\nIntegrate twice with respect to \\(t\\):\n\\[\n\\begin{aligned}\n\\int \\frac{d^2[x(t)]}{dt^2}\\,dt\n  &= \\int g\\,dt, \\\\\n\\frac{d[x(t)]}{dt}\n  &= gt+C_1, \\\\[0.6em]\n\\int \\frac{d[x(t)]}{dt}\\,dt\n  &= \\int (gt+C_1)\\,dt, \\\\\nx(t)\n  &= \\tfrac{1}{2}gt^2+C_1t+C_2.\n\\end{aligned}\n\\]\n\n\nThe ball is released from rest, and distance is measured from the release point, so\n\\[\n\\left.\\frac{d[x(t)]}{dt}\\right|_{t=0}=0\n\\Longrightarrow C_1=0,\n\\qquad\nx(0)=0\n\\Longrightarrow C_2=0.\n\\]\nTherefore,\n\\[\n\\boxed{x(t)=\\tfrac{1}{2}gt^2}.\n\\]"
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#free-fall-on-earths-moon",
-    "href": "stats-math/03-lecture/03-lecture.html#free-fall-on-earths-moon",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Free Fall on Earth’s Moon",
-    "text": "Free Fall on Earth’s Moon\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUsing the accepted value \\(g_{\\text{Moon}}=1.625\\ \\text{m/s}^2\\), the ball reaches the bottom when \\(x(t)=100\\) m:\n\\[\n\\begin{aligned}\n100 &= \\tfrac{1}{2}g_{\\text{Moon}}t^2, \\\\\nt_{\\text{impact}}\n  &= \\sqrt{\\frac{2(100)}{g_{\\text{Moon}}}} \\\\\n  &\\approx 11.1\\ \\text{s}.\n\\end{aligned}\n\\]\n\n\nThe free-fall model describes the motion only until impact."
-  },
-  {
-    "objectID": "stats-math/03-lecture/03-lecture.html#homework",
-    "href": "stats-math/03-lecture/03-lecture.html#homework",
-    "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Homework",
-    "text": "Homework\n\nTake a look at the iris dataset (?iris)\nCompute the overall means of Sepal.Length, Sepal.Width, Petal.Length, and Petal.Width\nCompute these means by Species (hint: use group_by() and summarise() from dplyr)\nProduce a plot that looks like this:\n\n\n\n\n\n\n\nProduce a plot that looks like this (see geom_density() and facet_wrap()):\n\n\n\n\n\n\n\nCompute the following integral and show the steps:\n\n\\[\n\\int 2x \\cos(x^2)\\, dx\n\\]\n\nEvaluate this integral on paper from \\(0\\) to \\(2\\pi\\), and use R’s integrate() function to validate your answer."
-  },
-  {
     "objectID": "stats-math/05-lecture/05-lecture.html#session-5-outline",
     "href": "stats-math/05-lecture/05-lecture.html#session-5-outline",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Session 5 Outline",
-    "text": "Session 5 Outline\n\nRandom variables\nBernoulli, Binomial, Geometric\nPDF and CDF\nLOTUS\nPoisson\nExpectations, Variance\nSt. Petersburg Paradox\nNormal\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
+    "text": "Session 5 Outline\n\nRandom variables\nBernoulli, binomial, and geometric distributions\nPMFs, PDFs, and CDFs\nLOTUS\nPoisson distribution\nExpectation and variance\nSt. Petersburg paradox\nNormal distribution\n\n\\[\n\\DeclareMathOperator{\\E}{\\mathbb{E}}\n\\DeclareMathOperator{\\P}{\\mathbb{P}}\n\\DeclareMathOperator{\\V}{\\mathbb{V}}\n\\DeclareMathOperator{\\L}{\\mathscr{L}}\n\\DeclareMathOperator{\\I}{\\text{I}}\n\\]"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#random-variables-are-not-random",
     "href": "stats-math/05-lecture/05-lecture.html#random-variables-are-not-random",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Random Variables are Not Random",
-    "text": "Random Variables are Not Random\n\nStoryPicture\n\n\n\nIt would be inconvenient to enumerate all possible events to describe a stochastic system\nA more general approach is to introduce a function that maps sample space \\(S\\) onto the Real line\nFor each possible outcome \\(s\\), random variable \\(X(s)\\) performs this mapping\nThis mapping is deterministic. The randomness comes from the experiment, not from the random variable (RV)\nWhile it makes sense to talk about \\(\\P(A)\\), where \\(A\\) is an event, it does not make sense to talk about \\(\\P(X)\\), but you can say \\(\\P(X(s) = x)\\), which we usually write as \\(\\P(X = x)\\)\nLet \\(X\\) be the number of Heads in two coin flips. You flip the coin twice, and you get \\(HH\\). In this case, \\(s = {HH}\\), \\(X(s) = 2\\), while \\(S = \\{TT, TH, HT, HH\\}\\)\n\n\n\n\nRandom variable \\(X\\) for the number of Heads in two flips"
+    "section": "Random Variables Are Not Random",
+    "text": "Random Variables Are Not Random\n\nStoryPicture\n\n\n\nIt would be inconvenient to enumerate all possible events to describe a stochastic system\nA random variable is a measurable function \\(X:S\\to\\mathbb{R}\\) that maps the sample space \\(S\\) into the real line\nFor each possible outcome \\(s\\in S\\), the random variable assigns the value \\(X(s)\\)\nThis mapping is deterministic. The randomness comes from the experiment, not from the random variable (RV)\nWhile \\(\\P(A)\\) is defined for an event \\(A\\), \\(\\P(X)\\) is not meaningful. The event \\(\\{s\\in S:X(s)=x\\}\\) is abbreviated as \\(\\{X=x\\}\\), so we write \\(\\P(X=x)\\)\nLet \\(X\\) be the number of heads in two coin flips. If the outcome is \\(s=HH\\), then \\(X(s)=2\\), while \\(S=\\{TT,TH,HT,HH\\}\\)\n\n\n\n\nRandom variable \\(X\\) for the number of heads in two flips"
   },
   {
-    "objectID": "stats-math/05-lecture/05-lecture.html#characterising-random-variables",
-    "href": "stats-math/05-lecture/05-lecture.html#characterising-random-variables",
+    "objectID": "stats-math/05-lecture/05-lecture.html#characterizing-random-variables",
+    "href": "stats-math/05-lecture/05-lecture.html#characterizing-random-variables",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Characterising Random Variables",
-    "text": "Characterising Random Variables\n\nIntroductionR Conventions\n\n\n\nTwo ways of describing an RV are CDF (Cumulative Distribution Function) and PMF (Probability Mass Function) for discrete RVs and PDF (Probability Density Function) for continuous RVs. There are other ways, but we will stick with CDF and P[D/M]F.\nCDF \\(F_X(x)\\) is a function of \\(x\\) and is bounded between 0 and 1:\n\n\n\\[\nF_X(x) = \\P(X \\leq x)\n\\]\n\n\n\nPMF (for discrete RVs only) \\(f_X(x)\\) is a function of \\(x\\)\n\n\\[\nf_X(x) = \\P(X = x)\n\\]\n\n\n\nYou can get from \\(f_X\\) to \\(F_X\\) by summing. Let’s say \\(x = 4\\). In that case:\n\n\\[\nF_X(4) = \\P(X \\leq 4) = \\sum_{i = 4,3,2,...}\\P(X = i)\n\\]\n\n\n\n\nIn R, PMFs and PDFs start with the letter d. For example dbinom() and dnormal() refer to binomial PMF and normal PDF\nCDFs start with p, so pbinom() and pnorm()\nInverse CDFs or quantile functions, start with q so qbinom() and so on\nRandom number generators start with r, so rbinom()\nA binomial RV, which we will define later, represents the number of successes in N trials. In R, the PMF is dbinom() and CDF is pbinom()\nHere is the full function signature: dbinom(x, size, prob, log = FALSE)\n\nx is the number of successes, size is the number of trials N, prob is the probability of success in each trial \\(\\theta\\), and log is a flag asking if we want the results on the log scale."
+    "section": "Characterizing Random Variables",
+    "text": "Characterizing Random Variables\n\nCDFPMFR Conventions\n\n\n\nEvery random variable has a cumulative distribution function (CDF). Discrete RVs have probability mass functions (PMFs), while the continuous RVs considered here have probability density functions (PDFs)\nThe CDF \\(F_X(x)\\) is a function of \\(x\\) bounded between 0 and 1:\n\n\n\\[\nF_X(x)=\\P(X\\le x)\n\\]\n\n\n\n\n\nThe PMF \\(p_X(x)\\) of a discrete RV gives its point probabilities\n\n\\[\np_X(x)=\\P(X=x)\n\\]\n\n\n\nWe obtain \\(F_X\\) from \\(p_X\\) by summing over all support points at or below \\(x\\). For example,\n\n\\[\nF_X(4)=\\P(X\\le4)\n=\\sum_{\\substack{t\\in\\operatorname{supp}(X)\\\\t\\le4}}p_X(t).\n\\]\n\n\n\n\nIn R, PMFs and PDFs start with d. For example, dbinom() evaluates the binomial PMF and dnorm() evaluates the normal PDF\nCDFs start with p, so pbinom() and pnorm()\nQuantile functions are generalized inverses of CDFs. In R they start with q; for example, qbinom()\nRandom number generators start with r, so rbinom()\nA binomial RV, defined below, represents the number of successes in \\(N\\) trials. In R, its PMF is dbinom() and its CDF is pbinom()\nHere is the full function signature: dbinom(x, size, prob, log = FALSE)\n\nx is the number of successes, size is the number of trials \\(N\\), prob is the success probability \\(\\theta\\), and log requests probabilities on the log scale"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#binomial-rv",
     "href": "stats-math/05-lecture/05-lecture.html#binomial-rv",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Binomial RV",
-    "text": "Binomial RV\n\nBinomial PMFPMF and CDF PlotsCode to Generate the Plots\n\n\n\nBernoulli RV is one coin flip with a set probability of success (say Heads)\nIf \\(X \\sim \\text{Bernoulli}(\\theta)\\), the PMF can be written directly as \\(\\P(X = x) = \\theta^x (1 - \\theta)^{1-x}, \\, x \\in \\{0, 1\\}\\)\nBinomial can be thought of as the sum of \\(N\\) independent Bernoulli trials. We can also write:\n\n\n\\[\n\\text{Bernoulli}(x~|~\\theta) = \\left\\{ \\begin{array}{ll} \\theta &\n\\text{if } x = 1, \\text{ and} \\\\ 1 - \\theta & \\text{if } x = 0\n\\end{array} \\right.\n\\]\n\n\n\nWe can write the Binomial PMF, \\(X \\sim \\text{Binomial}(N, \\theta)\\) this way:\n\n\\[\n\\text{Binomial}(x~|~N,\\theta) = \\binom{N}{x}\n\\theta^x (1 - \\theta)^{N - x}\n\\]\n\n\n\n\\(\\text{Binomial}(x~|~N=4,\\theta = 1/2)\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nlibrary(patchwork)\nlibrary(MASS)\n\nN &lt;- 4 # Number of successes out of x trials\n\n# compute and plot the PMF\npmf &lt;- dbinom(x = 0:N, size = N, prob = 1/2)\nd &lt;- data.frame(x =  0:N, y = pmf)\np1 &lt;- ggplot(d, aes(x, pmf))\np1 &lt;- p1 + geom_col(width = .2) + \n  geom_text(aes(label = fractions(pmf)), nudge_y = 0.02) +\n  ylab(\"P(X = x)\") + xlab(\"x = Number of Heads\") +\n  ggtitle(\"X ~ Binomial(4, 1/2)\",\n          subtitle = expression(PDF: p[X](x) == P(X == x)))\n\n# compute and plot the CDF\nx &lt;- seq(-0.5, 4.5, length = 500)\ncdf &lt;- pbinom(q = x, size = N, prob = 1/2)\nd &lt;- data.frame(q = x, y = cdf)\ndd &lt;- data.frame(x = seq(-0.5, 4.5, by = 1), cdf = unique(cdf), x_empty = 0:5)\np2 &lt;- ggplot(d, aes(x, cdf)) \np2 &lt;- p2 + geom_point(size = 0.2) + \n  geom_text(aes(x, cdf, label = fractions(cdf)), data = dd, nudge_y = 0.05) +\n  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = 'white') +\n  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, shape = 1) +\n  ggtitle(\"X ~ Binomial(4, 1/2)\",\n          subtitle = expression(CDF: F[X](x) == P(X &lt;= x))) +\n  ylab(expression(P(X &lt;= x))) + xlab(\"x = Number of Heads\")\n\np1 + p2"
+    "text": "Binomial RV\n\nBinomial PMFPMF and CDF PlotsCode to Generate the Plots\n\n\n\nA Bernoulli RV represents one trial with a fixed probability of success, such as obtaining heads\nIf \\(X\\sim\\operatorname{Bernoulli}(\\theta)\\) with \\(0\\le\\theta\\le1\\), its support is \\(\\{0,1\\}\\)\nIf \\(X_1,\\ldots,X_N\\) are independent Bernoulli RVs with the same success probability \\(\\theta\\), then \\(X=\\sum_{i=1}^{N}X_i\\sim\\operatorname{Binomial}(N,\\theta)\\)\n\n\n\\[\np_X(x)=\\left\\{\n\\begin{array}{ll}\n\\theta & \\text{if }x=1,\\\\\n1-\\theta & \\text{if }x=0.\n\\end{array}\n\\right.\n\\]\n\n\n\nThe binomial PMF for \\(X\\sim\\operatorname{Binomial}(N,\\theta)\\) is\n\n\\[\np_X(x)=\\binom{N}{x}\\theta^x(1-\\theta)^{N-x},\n\\qquad x\\in\\{0,1,\\ldots,N\\}.\n\\]\n\n\n\n\\(X\\sim\\operatorname{Binomial}(N=4,\\theta=1/2)\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nlibrary(patchwork)\nlibrary(MASS)\n\nN &lt;- 4 # Number of trials; x is the number of successes\n\n# compute and plot the PMF\npmf &lt;- dbinom(x = 0:N, size = N, prob = 1/2)\nd &lt;- data.frame(x = 0:N, pmf)\np1 &lt;- ggplot(d, aes(x, pmf))\np1 &lt;- p1 + geom_col(width = 0.2) +\n  geom_text(aes(label = fractions(pmf)), nudge_y = 0.02) +\n  ylab(\"P(X = x)\") + xlab(\"x = Number of heads\") +\n  ggtitle(\"X ~ Binomial(4, 1/2)\",\n          subtitle = expression(PMF: p[X](x) == P(X == x)))\n\n# compute and plot the CDF\nx &lt;- seq(-0.5, 4.5, length.out = 500)\ncdf &lt;- pbinom(q = x, size = N, prob = 1/2)\nd &lt;- data.frame(x, cdf)\ndd &lt;- data.frame(x = seq(-0.5, 4.5, by = 1), cdf = unique(cdf), x_empty = 0:5)\nclosed &lt;- data.frame(x = 0:N, cdf = pbinom(0:N, size = N, prob = 1/2))\np2 &lt;- ggplot(d, aes(x, cdf))\np2 &lt;- p2 + geom_point(size = 0.2) +\n  geom_text(aes(x, cdf, label = fractions(cdf)), data = dd, nudge_y = 0.05) +\n  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, color = \"white\") +\n  geom_point(aes(x_empty, cdf), data = dd[-6, ], size = 2, shape = 1) +\n  geom_point(aes(x, cdf), data = closed, size = 2) +\n  ggtitle(\"X ~ Binomial(4, 1/2)\",\n          subtitle = expression(CDF: F[X](x) == P(X &lt;= x))) +\n  ylab(expression(P(X &lt;= x))) + xlab(\"x = Number of heads\")\n\np1 + p2"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#binomial-in-r",
     "href": "stats-math/05-lecture/05-lecture.html#binomial-in-r",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Binomial in R",
-    "text": "Binomial in R\n\n# What is the probability of getting 2 Heads out of 5 fair trials?\nN &lt;- 5; x &lt;- 2\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 5/16\n\n# What is the binomial PMF: P(X = x), for N = 5, p = 0.5?\nN &lt;- 5; x &lt;- -2:7 # notice we range x over any integers\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]    0    0 1/32 5/32 5/16 5/16 5/32 1/32    0    0\n\n# Verify that the PMF sums to 1\nsum(dbinom(x = x, size = N, prob = 0.5))\n\n[1] 1\n\n# What is the probability of 3 heads or fewer\npbinom(3, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 13/16\n\n# compute the CDF: P(X &lt;= x), for N = 5, p = 0.5\npbinom(x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n# get from the PMF to CDF; cumsum() is the cumulative sum function\ndbinom(x = x, size = N, prob = 0.5) |&gt; cumsum() |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n\n\nYour Turn: Suppose the probability of success is 1/3, N = 10. What is the probability of 6 or more successes? Compute it with a PMF first and verify with the CDF."
+    "text": "Binomial in R\n\nPMFCDFYour Turn\n\n\n\n# What is the probability of getting 2 heads in 5 flips of a fair coin?\nN &lt;- 5\nx &lt;- 2\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 5/16\n\n# Evaluate the PMF over values inside and outside its support\nx &lt;- -2:7\ndbinom(x = x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]    0    0 1/32 5/32 5/16 5/16 5/32 1/32    0    0\n\n# Verify that the PMF sums to 1\nsum(dbinom(x = x, size = N, prob = 0.5))\n\n[1] 1\n\n\n\n\n\nN &lt;- 5\nx &lt;- -2:7\n\n# What is the probability of 3 heads or fewer?\npbinom(q = 3, size = N, prob = 0.5) |&gt; fractions()\n\n[1] 13/16\n\n# Evaluate the CDF over x\npbinom(q = x, size = N, prob = 0.5) |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n# Recover the CDF by cumulatively summing the PMF\ndbinom(x = x, size = N, prob = 0.5) |&gt; cumsum() |&gt; fractions()\n\n [1]     0     0  1/32  3/16   1/2 13/16 31/32     1     1     1\n\n\n\n\nSuppose the probability of success is \\(1/3\\) and \\(N=10\\). What is the probability of 6 or more successes? Compute it from the PMF first, then verify it with the CDF."
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#geometric-rv",
     "href": "stats-math/05-lecture/05-lecture.html#geometric-rv",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Geometric RV",
-    "text": "Geometric RV\n\nPMFCheck ConvergenceExamplesPMFSumming the Geometric\n\n\n\nGeometric is a discrete waiting time distribution, and Exponential is its continuous analog\nIf \\(X\\) is the number of failures before first success \\(X \\sim \\text{Geometric}(\\theta)\\), where \\(\\theta\\) is probability of success\nExample: We keep flipping a coin until we get success, say Heads\n\nSay we flip five times, which means we get the following sequence: T T T T H\nThe probability of this sequence is: \\((\\frac{1}{2})^4 (\\frac{1}{2})^1\\)\nNotice this is the only way to get this sequence\n\nIf \\(x\\) is the number of failures, the PMF is \\(P(X = x) = (1 - \\theta)^x \\theta\\), where \\(x = 0, 1, 2, ...\\)\n\n\n\n\nTo check if this is a valid PMF, we need to sum over all \\(x\\):\n\n\n\\[\n\\begin{align}\n\\sum_{x = 0}^{\\infty} \\theta (1 - \\theta)^x  =\n\\theta \\sum_{x = 0}^{\\infty} (1 - \\theta)^x \\\\\n\\text{Let } u = 1 - \\theta \\\\\n\\theta \\sum_{x = 0}^{\\infty} u^x = \\theta \\frac{1}{1-u} = \\theta \\frac{1}{1-1 + \\theta} = \\frac{\\theta}{\\theta} = 1\n\\end{align}\n\\]\n\n\n\nThe last bit comes from geometric series for \\(|u| &lt; 1\\)\n\n\n\n\n\nThe probability of T T T H (x = 3 failures) when \\(\\theta = 1/2\\), has to be \\((1/2)^4\\) or \\(1/16\\)\n\n\n\nx &lt;- 3; theta &lt;- 1/2\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 1/16\n\n\n\n\n\nIf \\(\\theta = 1/3\\), the probability of the same sequence has to be \\((2/3)^3 \\cdot 1/3 = 8/81\\)\n\n\nx &lt;- 3; theta &lt;- 1/3\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 8/81\n\n\n\n\n\nThe PMF is unbounded, but it converges to 1 as demonstrated before\n\n\n\n\n\n\nx &lt;-  0:15\ntheta &lt;- 1/5\ny &lt;- dgeom(x = x, prob = theta)\nd &lt;- data.frame(x, y)\np &lt;- ggplot(d, aes(x, y))\np + geom_col(width = 0.2) +\nxlab(\"x = Number of failures before first success\") +\n ylab(expression(P(X == x))) +\nggtitle(\"X ~ Geom(1/5)\", \n subtitle = expression(PDF: p[X](x) == P(X == x)))\n\n\n\n\n\n\n\n\n\n\n\nLet’s consider the infinite geometric series:\n\\[\nS = \\sum_{x=0}^{\\infty} u^x = u^0 + u^1 + u^2 + u^3 + \\dots\n\\] This can be written explicitly as: \\[\nS = 1 + u + u^2 + u^3 + \\dots\n\\]\nNext, multiply the entire series by \\(u\\):\n\\[\nuS = u \\cdot (1 + u + u^2 + u^3 + \\dots)\n\\]\nThis results in: \\[\nuS = u + u^2 + u^3 + u^4 + \\dots\n\\]\nNow, subtract the equation for \\(uS\\) from the equation for \\(S\\):\n\\[\nS - uS = (1 + u + u^2 + u^3 + \\dots) - (u + u^2 + u^3 + u^4 + \\dots)\n\\]\nNotice that all terms on the right-hand side except the first term (which is 1) cancel out:\n\\[\nS - uS = 1\n\\]\nFactor the left-hand side:\n\\[\nS(1 - u) = 1\n\\]\nFinally, solve for \\(S\\):\n\\[\nS = \\frac{1}{1 - u}\n\\]"
+    "text": "Geometric RV\n\nDefinitionCheckExamplesPMF PlotSumming the Geometric\n\n\n\nThe geometric distribution is a discrete waiting-time distribution; the exponential distribution is its continuous analog\nLet \\(X\\) be the number of failures before the first success. Then \\(X\\sim\\operatorname{Geometric}(\\theta)\\), where \\(0&lt;\\theta\\le1\\) is the probability of success on each independent trial\nExample: We flip a fair coin until the first head appears\n\nIf the sequence is T T T T H, then \\(X=4\\)\nThe probability of this sequence is \\((1/2)^4(1/2)=1/32\\)\n\nThe PMF is \\(\\P(X=x)=(1-\\theta)^x\\theta\\) for \\(x=0,1,2,\\ldots\\)\n\n\n\n\nTo check if this is a valid PMF, we need to sum over all \\(x\\):\n\n\n\\[\n\\begin{align}\n\\sum_{x = 0}^{\\infty} \\theta (1 - \\theta)^x  =\n\\theta \\sum_{x = 0}^{\\infty} (1 - \\theta)^x \\\\\n\\text{Let } u = 1 - \\theta \\\\\n\\theta \\sum_{x = 0}^{\\infty} u^x = \\theta \\frac{1}{1-u} = \\theta \\frac{1}{1-1 + \\theta} = \\frac{\\theta}{\\theta} = 1\n\\end{align}\n\\]\n\n\n\nThe final step uses the geometric-series formula for \\(|u|&lt;1\\)\n\n\n\n\n\nFor the sequence T T T H, \\(x=3\\) failures. When \\(\\theta=1/2\\), its probability is \\((1/2)^4=1/16\\)\n\n\n\nx &lt;- 3\ntheta &lt;- 1/2\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 1/16\n\n\n\n\n\nIf \\(\\theta=1/3\\), the probability of the same sequence is \\((2/3)^3(1/3)=8/81\\)\n\n\nx &lt;- 3\ntheta &lt;- 1/3\ndgeom(x = x, prob = theta) |&gt; fractions()\n\n[1] 8/81\n\n\n\n\n\nThe support is unbounded, the PMF tends to 0 as \\(x\\to\\infty\\), and the probabilities sum to 1\n\n\n\n\n\n\nx &lt;-  0:15\ntheta &lt;- 1/5\ny &lt;- dgeom(x = x, prob = theta)\nd &lt;- data.frame(x, y)\np &lt;- ggplot(d, aes(x, y))\np + geom_col(width = 0.2) +\n  xlab(\"x = Number of failures before first success\") +\n  ylab(expression(P(X == x))) +\n  ggtitle(\"X ~ Geometric(1/5)\",\n          subtitle = expression(PMF: p[X](x) == P(X == x)))\n\n\n\n\n\n\n\n\n\n\n\nFor \\(|u|&lt;1\\), let \\(S\\) denote the infinite geometric series. Multiplying by \\(u\\) shifts every term one position:\n\\[\n\\begin{aligned}\nS  &= 1+u+u^2+u^3+\\cdots,\\\\\nuS &= \\phantom{1+{}}u+u^2+u^3+\\cdots.\n\\end{aligned}\n\\]\nSubtracting the second line from the first cancels the infinite tail:\n\\[\nS-uS=1\n\\quad\\Longrightarrow\\quad\n\\boxed{S=\\frac{1}{1-u}}.\n\\]"
   },
   {
-    "objectID": "stats-math/05-lecture/05-lecture.html#expectations",
-    "href": "stats-math/05-lecture/05-lecture.html#expectations",
+    "objectID": "stats-math/05-lecture/05-lecture.html#expectation",
+    "href": "stats-math/05-lecture/05-lecture.html#expectation",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Expectations",
-    "text": "Expectations\n\nIntroductionExamplesR CodeE(X) of Bernoulli and Binomial\n\n\n\nAn expectation is a kind of average, typically a weighted average\nExpectation is a single number summary of the distribution\nWhen computing a weighted average, the weights must add up to one\nThat’s fortunate for us since the PMF satisfies this property\nSo, the expectation of a discrete RV is the sum of its values weighted by their respective probabilities\nFor a discrete RV, we have: \\(\\E(X) = \\sum_{x}^{} x f_X(x)\\)\nFor continuous RVs we have: \\(\\E(X) = \\int x f_X(x)\\, dx\\)\n\n\n\n\nLet’s compute the expectation of the Geometric RV, \\(X \\sim \\text{Geom}(\\theta)\\)\nWe can solve the expectation by differentiation, but we will skip the mechanics\nHere, we will just write the answer:\n\n\n\\[\n\\E(X) = \\sum_{x=0}^{\\infty} x \\theta (1 - \\theta)^x = \\frac{1-\\theta}{\\theta}\n\\]\n\n\nIn particular, for \\(X \\sim \\text{Geom}(1/5)\\), what is the expected number of failures before the first success?\nThe answer is \\(4 = \\frac{(1 - \\frac{1}{5})}{\\frac{1}{5}}\\)\n\n\n\n\nLet’s check computationally:\n\n\n\ntheta &lt;- 1/5\nx &lt;- 0:100\nsum(x * dgeom(x = x, prob = theta))\n\n[1] 4\n\ntheta &lt;- 1/4\nsum(x * dgeom(x = x, prob = theta))\n\n[1] 3\n\n\n\n\nQuestion: Geometric is unbounded, yet summed a finite number (100) and got the right answer. What’s going on?\nGeometric decays quickly, and higher terms are negligible for these choices of \\(\\theta\\)\nWithout doing any calculations at all, what is \\(\\E(X)\\), where \\(X \\sim \\text{Geom}(1/8)\\)\n\n\n\n\nIf \\(X \\sim \\text{Bernoulli}(\\theta)\\), \\(\\E(X) = \\sum_{x=0}^{1} x \\theta^x (1 - \\theta)^{1-x} = 0 + 1 \\cdot \\theta \\cdot 1 = \\theta\\)\nFor the Binomial, is it easier to think about it as a sum of iid Bernoulli RVs. Each Bernoulli RV has an expectation of \\(\\theta\\), and there are \\(n\\) of them, so the expectation is \\(n \\theta\\).\nThis argument relies on the linearity of expectations: \\(\\E(X_1 + X_2 ... + X_n) = \\E(X_1) + \\E(X_2) + ... + \\E(X_n) = \\theta + ... + \\theta = n\\theta\\)"
+    "section": "Expectation",
+    "text": "Expectation\n\nIntroductionExamplesR CodeBernoulli and Binomial Expectations\n\n\n\nAn expectation is a kind of average, typically a weighted average\nExpectation is a single-number summary of a distribution\nIn a weighted average, the weights must add to 1; a PMF has exactly this property\nThe expectation of a discrete RV is the sum of its possible values weighted by their probabilities\nFor a discrete RV, \\(\\E(X)=\\sum_x x\\,p_X(x)\\) when \\(\\sum_x|x|p_X(x)&lt;\\infty\\)\nFor a continuous RV, \\(\\E(X)=\\int_{-\\infty}^{\\infty}x f_X(x)\\,dx\\) when \\(\\int_{-\\infty}^{\\infty}|x|f_X(x)\\,dx&lt;\\infty\\)\n\n\n\n\nConsider the expectation of \\(X\\sim\\operatorname{Geometric}(\\theta)\\)\nIt can be derived by differentiating a geometric series; here we state the result:\n\n\n\\[\n\\E(X) = \\sum_{x=0}^{\\infty} x \\theta (1 - \\theta)^x = \\frac{1-\\theta}{\\theta}\n\\]\n\n\nIn particular, for \\(X\\sim\\operatorname{Geometric}(1/5)\\), what is the expected number of failures before the first success?\nThe answer is \\(4 = \\frac{(1 - \\frac{1}{5})}{\\frac{1}{5}}\\)\n\n\n\n\nLet’s check computationally:\n\n\n\ntheta &lt;- 1/5\nx &lt;- 0:100\nsum(x * dgeom(x = x, prob = theta))\n\n[1] 4\n\ntheta &lt;- 1/4\nsum(x * dgeom(x = x, prob = theta))\n\n[1] 3\n\n\n\n\nQuestion: The geometric support is unbounded, yet summing only through 100 gives the analytic answer at the displayed precision. Why?\nThe geometric PMF decays quickly, so the omitted tail is negligible for these choices of \\(\\theta\\)\nWithout doing any calculations, what is \\(\\E(X)\\) when \\(X\\sim\\operatorname{Geometric}(1/8)\\)?\n\n\n\n\nIf \\(X\\sim\\operatorname{Bernoulli}(\\theta)\\), then \\(\\E(X)=\\sum_{x=0}^{1}x\\theta^x(1-\\theta)^{1-x}=\\theta\\)\nFor \\(X\\sim\\operatorname{Binomial}(N,\\theta)\\), write \\(X\\) as a sum of \\(N\\) iid Bernoulli RVs. Each has expectation \\(\\theta\\), so \\(\\E(X)=N\\theta\\)\nThis uses linearity of expectation: \\[\n\\E(X_1+\\cdots+X_N)\n=\\E(X_1)+\\cdots+\\E(X_N)\n=N\\theta.\n\\]"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#st.-petersburg-paradox",
     "href": "stats-math/05-lecture/05-lecture.html#st.-petersburg-paradox",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "St. Petersburg paradox",
-    "text": "St. Petersburg paradox\n\nFirst Success DistributionThe ParadoxExpected Utility\n\n\n\nThis is a slight modification to Geometric as we are counting the number of failures, including the first success vs. Geometric, where we counted the failures\n\\(X \\sim \\text{FS}(\\theta)\\), if \\(\\P(X = x) = (1 - \\theta)^{x - 1} \\theta\\), for \\(x = 1, 2, 3, ...\\)\n\\(X - 1 \\sim \\text{Geom}(\\theta)\\)\nSay, \\(Y \\sim \\text{Geom}(\\theta)\\), then \\(\\E(X) = \\E(Y + 1) = \\E(Y) + 1 = \\frac{1 - \\theta}{\\theta} + \\frac{\\theta}{\\theta} = \\frac{1}{\\theta}\\)\n\n\n\n\nSuppose you are offered the following game: you flip a coin until heads appear. You get $2 if the game ends after round 1, $4 after two rounds, $8 after three, and so on.\n\n\n\\[\n\\E(X) = \\sum_{n=1}^{\\infty} \\frac{1}{2^n} \\cdot 2^n =  \\sum_{n=1}^{\\infty} 1 = \\infty\n\\]\n\n\nVote how much are you willing to pay to play this game? (you can’t lose)\nHow many rounds do we expect to play? If \\(N\\) is the number of rounds, then \\(N \\sim \\text{FS}(1/2)\\), and \\(\\E(N) = \\frac{1}{1/2} = 2\\)\nIn addition, the utility of money has been shown to be non-linear\n\n\n\n\nDaniel Bernoulli (1700 - 1782) proposed that \\(\\frac{dU}{dw} \\propto \\frac{1}{w}\\), where \\(U\\) is the utility function and \\(w\\) is the wealth\nThis gives rise to the following differential equation \\(\\frac{dU}{dw} = k \\frac{1}{w}\\), where \\(k\\) is the constant of proportionality\nIntegrating both sides: \\(\\int dU = k \\int \\frac{1}{w} dw\\) we get:\n\n\\(U(w) = k \\log(w) + C\\), where \\(C\\) is some initial wealth\n\nFor simplicity let’s take \\(k=1\\), and consider \\(\\log = \\log_2\\)\n\n\n\\[\n\\E(U) = \\sum_{n=1}^{\\infty} \\frac{1}{2^n} \\log_2(2^n) =  \\sum_{n=1}^{\\infty} \\frac{n}{2^n} = 2 \\neq \\infty\n\\]\n\n\nThe last equality comes from summing the geometric series \\(\\sum_{n=1}^{\\infty} \\frac{n}{2^n}\\) using the same methods we used for Geometric distribution"
+    "section": "St. Petersburg Paradox",
+    "text": "St. Petersburg Paradox\n\nFirst Success DistributionThe ParadoxExpected UtilityTicket Price\n\n\n\nThe first-success distribution counts trials up to and including the first success; R’s geometric distribution counts failures before that success\nIf \\(N\\sim\\operatorname{FS}(\\theta)\\), then \\(\\P(N=n)=(1-\\theta)^{n-1}\\theta\\) for \\(n=1,2,3,\\ldots\\)\nTherefore, \\(N-1\\sim\\operatorname{Geometric}(\\theta)\\)\nIf \\(Y=N-1\\), then \\[\n\\E(N)=\\E(Y+1)=\\frac{1-\\theta}{\\theta}+1=\\frac{1}{\\theta}.\n\\]\n\n\n\n\nSuppose you flip a fair coin until the first head appears. If the game ends on round \\(N\\), the payout is \\(W=2^N\\): $2 after round 1, $4 after round 2, $8 after round 3, and so on.\n\n\n\\[\n\\E(W)=\\sum_{n=1}^{\\infty}\\P(N=n)2^n\n=\\sum_{n=1}^{\\infty}\\frac{1}{2^n}2^n\n=\\sum_{n=1}^{\\infty}1\n=\\infty\n\\]\n\n\nVote: How much would you be willing to pay to play this game?\nHow many rounds do we expect? Since \\(N\\sim\\operatorname{FS}(1/2)\\), \\(\\E(N)=1/(1/2)=2\\)\nOne proposed resolution is that the utility of money is nonlinear\n\n\n\n\nDaniel Bernoulli (1700–1782) proposed that \\(dU/dw\\propto1/w\\), where \\(U\\) is utility and \\(w\\) is wealth\nThus, \\(dU/dw=k/w\\) for some \\(k&gt;0\\)\nIntegrating gives \\(U(w)=k\\ln(w)+C\\), where \\(C\\) is an arbitrary utility baseline\nPositive changes of scale do not alter preferences, so for illustration we use \\(U(w)=\\log_2(w)\\) and treat the payout as wealth\n\n\n\\[\n\\E[U(W)]\n=\\sum_{n=1}^{\\infty}\\frac{1}{2^n}\\log_2(2^n)\n=\\sum_{n=1}^{\\infty}\\frac{n}{2^n}\n=2&lt;\\infty\n\\]\n\n\nThe identity \\(\\sum_{n=1}^{\\infty}nr^n=r/(1-r)^2\\) follows by differentiating a geometric series; setting \\(r=1/2\\) gives 2\n\n\n\n\nFinite expected utility does not by itself determine a fair ticket price\nFrom initial wealth \\(w_0\\), compare \\(\\sum_{n\\ge1}2^{-n}U(w_0-c+2^n)\\) with \\(U(w_0)\\), subject to \\(w_0-c+2&gt;0\\)"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#indicator-random-variable",
     "href": "stats-math/05-lecture/05-lecture.html#indicator-random-variable",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Indicator Random Variable",
-    "text": "Indicator Random Variable\n\nRecall our \\(\\pi\\) SimulationFundamental Bridge\n\n\n\n\\[\n\\I_A(s) = \\I(s \\in A) = \\left\\{\\begin{matrix}\n1 & \\text{if } s \\in A \\\\\n0 & \\text{if } s \\notin A\n\\end{matrix}\\right.\n\\]\n\n\nRecall from Lecture 1:\n\\[\n\\begin{align}\nX& \\sim \\text{Uniform}(-1, 1) \\\\\nY& \\sim \\text{Uniform}(-1, 1) \\\\\n\\pi& \\approx \\frac{4 \\sum_{i=1}^{N} \\text{I}(x_i^2 + y_i^2 &lt; 1)}{N}\n\\end{align}\n\\]\n\n\n\n\nThere is a link between probability and (expectations of) indicator RVs\nJoe Blitzstein calls it the fundamental bridge: \\(\\P(A) = \\E(\\I_A)\\)\n\n\n\n# Pr of two heads in five trials\n(P2 &lt;- dbinom(2, 5, prob = 1/2))\n\n[1] 0.3125\n\n# Let's create a realization Binom(5, 1/2)\nx &lt;- rbinom(1e6, size = 5, prob = 1/2)\nx[1:30]\n\n [1] 0 2 0 0 2 1 3 4 3 2 2 1 2 0 2 2 1 0 3 0 2 3 0 3 2 0 2 2 2 4\n\n# indicator RV: if x == 2 Ix = TRUE (1), else Ix = (0)\nI2 &lt;- (x == 2)\nI2[1:30] |&gt; as.integer()\n\n [1] 0 1 0 0 1 0 0 0 0 1 1 0 1 0 1 1 0 0 0 0 1 0 0 0 1 0 1 1 1 0\n\n# compute E(Ix) == P2\nmean(I2)\n\n[1] 0.312888"
+    "text": "Indicator Random Variable\n\nRecall Our \\(\\pi\\) SimulationFundamental Bridge\n\n\n\n\\[\n\\I_A(s) = \\I(s \\in A) = \\left\\{\\begin{matrix}\n1 & \\text{if } s \\in A \\\\\n0 & \\text{if } s \\notin A\n\\end{matrix}\\right.\n\\]\n\n\nRecall from Lecture 1. Sample iid points uniformly from the square, so each \\(X_i\\) and \\(Y_i\\) is uniform on \\((-1,1)\\) and the two coordinates are independent:\n\\[\n\\pi\\approx\\frac{4}{N}\\sum_{i=1}^{N}\\I(X_i^2+Y_i^2&lt;1).\n\\]\n\n\n\n\nThere is a link between probabilities and expectations of indicator RVs\nJoe Blitzstein calls it the fundamental bridge: \\(\\P(A) = \\E(\\I_A)\\)\n\n\n\n# Probability of exactly two heads in five trials\n(P2 &lt;- dbinom(2, 5, prob = 1/2))\n\n[1] 0.3125\n\n# Generate 1,000,000 independent Binomial(5, 1/2) realizations\nset.seed(2006)\nx &lt;- rbinom(1e6, size = 5, prob = 1/2)\nx[1:30]\n\n [1] 4 4 2 3 2 3 3 3 2 0 3 0 3 3 2 4 1 2 2 0 4 4 2 3 4 2 2 3 0 2\n\n# Indicator RV: I2 is TRUE (1) when x == 2 and FALSE (0) otherwise\nI2 &lt;- (x == 2)\nI2[1:30] |&gt; as.integer()\n\n [1] 0 0 1 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 1 0 0 0 1 0 0 1 1 0 0 1\n\n# Estimate E(I2), which equals P(X = 2) = P2\nmean(I2)\n\n[1] 0.312703"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#lotus",
     "href": "stats-math/05-lecture/05-lecture.html#lotus",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "LOTUS",
-    "text": "LOTUS\n\nLOTUS stands for the Law Of The Unconscious Statistician\nIt allows us to work with PDFs of the original RV \\(X\\), even though we want to compute an expectation of the function of that RV, say \\(g(X)\\)\n\n\n\\[\n\\begin{eqnarray}\nE(g(X)) &=& \\int_{-\\infty}^{\\infty} g(x) f_X(x) \\, dx \\\\\nE(g(X)) &=& \\sum_{x} g(x) p_X(x)\n\\end{eqnarray}\n\\]\n\n\nNotice, that we don’t need to compute \\(f_{g(X)}(x)\\) or \\(p_{g(X)}(x)\\)\nThe idea is that even though the \\(x\\)s change from, say \\(x\\) to \\(x^2\\), reflecting the fact the \\(g(X) = X^2\\), that did not change their probability assignments, we can still work with \\(\\P(X = x)\\) (in case of X discrete)"
+    "text": "LOTUS\n\nLOTUS stands for the Law of the Unconscious Statistician\nIt lets us compute the expectation of \\(g(X)\\) using the PMF or PDF of \\(X\\), provided \\(\\E[|g(X)|]&lt;\\infty\\)\n\n\n\\[\n\\begin{aligned}\n\\E[g(X)]&=\\int_{-\\infty}^{\\infty}g(x)f_X(x)\\,dx\n&&\\text{(continuous)},\\\\\n\\E[g(X)]&=\\sum_x g(x)p_X(x)\n&&\\text{(discrete)}.\n\\end{aligned}\n\\]\n\n\nNotice that we do not need to derive \\(f_{g(X)}\\) or \\(p_{g(X)}\\)\nAlthough \\(g\\) transforms the values of \\(X\\), LOTUS averages \\(g(x)\\) using the probabilities or density assigned to the original values \\(x\\)"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#variance",
     "href": "stats-math/05-lecture/05-lecture.html#variance",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Variance",
-    "text": "Variance\n\nDefinitionsComputation\n\n\n\nVariance is a measure of the spread of the distribution \\(\\V(X) = \\E(X - E(X))^2 = \\E(X^2) - \\E(X)^2\\)\nIf we let \\(\\mu = \\E(X)\\), this becomes: \\(\\E(X - \\mu)^2 = \\E(X^2) - \\mu^2\\)\nUnlike Expectation, Variance is not a linear operator. In particular, \\(\\V(cX) = c^2 \\V(X)\\)\n\\(\\V(c + X) = \\V(X)\\): constants don’t vary\nIf \\(X\\) and \\(Y\\) are independent \\(\\V(X + Y) = \\V(X) + \\V(Y)\\), but unlike for Expectations, this is not true in general\nSquare root of Variance is called a standard deviation \\(\\text{sd} := \\sqrt{\\V}\\), which is easier to interpret as it is expressed in the same units as data \\(x\\)\n\n\n\n\nIn R, estimated Variance can be computed with var() and standard deviation with sd()\nFor reference, the variance of the Geometric distribution is: \\((1 - \\theta)/\\theta^2\\)\n\n\nn &lt;- 1e5; theta1 &lt;- 1/6; theta2 &lt;- 1/3\nx &lt;- rgeom(n, prob = theta1)\nvar(x) |&gt; round(2)\n\n[1] 29.83\n\ny &lt;- rgeom(n, prob = theta2)\nvar(y) |&gt; round(2)\n\n[1] 6.01\n\n(var(x) + var(y)) |&gt; round(2)\n\n[1] 35.83\n\nvar(x + y) |&gt; round(2)\n\n[1] 35.8\n\ncov(x, y) |&gt; round(2)\n\n[1] -0.01\n\n(var(x) + var(y) + 2*cov(x, y)) |&gt; round(2)\n\n[1] 35.8\n\n# compare to the analytic result\n(1 - theta1) / (theta1)^2 + (1 - theta2) / (theta2)^2 \n\n[1] 36"
+    "text": "Variance\n\nDefinitionsFormulasSimulation\n\n\n\nAssuming \\(\\E(X^2)&lt;\\infty\\), variance measures the spread of a distribution: \\[\n\\V(X)=\\E\\!\\left[(X-\\E(X))^2\\right]\n=\\E(X^2)-[\\E(X)]^2.\n\\]\nIf \\(\\mu=\\E(X)\\), then \\(\\V(X)=\\E[(X-\\mu)^2]=\\E(X^2)-\\mu^2\\)\nUnlike expectation, variance is not linear. In particular, \\(\\V(cX)=c^2\\V(X)\\)\n\\(\\V(c+X)=\\V(X)\\) because constants do not vary\nIf \\(X\\) and \\(Y\\) are independent, \\(\\V(X+Y)=\\V(X)+\\V(Y)\\); this does not hold in general\nThe standard deviation is \\(\\operatorname{sd}(X)=\\sqrt{\\V(X)}\\), which has the same units as \\(X\\)\n\n\n\n\nIn R, sample variance is computed with var() and sample standard deviation with sd()\nThe variance of \\(X\\sim\\operatorname{Geometric}(\\theta)\\) is \\((1-\\theta)/\\theta^2\\)\n\n\n\n\n\nset.seed(2006)\nn &lt;- 1e5\ntheta1 &lt;- 1/6\ntheta2 &lt;- 1/3\nx &lt;- rgeom(n, prob = theta1)\nvar(x) |&gt; round(2)\n\n\n[1] 29.85\n\ny &lt;- rgeom(n, prob = theta2)\nvar(y) |&gt; round(2)\n\n[1] 5.91\n\n(var(x) + var(y)) |&gt; round(2)\n\n[1] 35.76\n\nvar(x + y) |&gt; round(2)\n\n[1] 35.77\n\ncov(x, y) |&gt; round(2)\n\n[1] 0.01\n\n(var(x) + var(y) + 2 * cov(x, y)) |&gt; round(2)\n\n[1] 35.77\n\n# compare to the analytic result\n(1 - theta1) / (theta1)^2 + (1 - theta2) / (theta2)^2\n\n[1] 36"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#poisson-random-variable",
     "href": "stats-math/05-lecture/05-lecture.html#poisson-random-variable",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Poisson Random Variable",
-    "text": "Poisson Random Variable\n\nPoisson distributions arise when we are modeling counts\nBut not every type of counting can be modeled with Poisson, just like not every kind of waiting can be modeled by Geometric\nWe write \\(X \\sim \\text{Poisson}(\\lambda)\\)\nThe PDF of Poisson is \\(\\P(X=x) = \\frac{{\\lambda^x e^{-\\lambda}}}{{x!}}\\), where \\(x = 0, 1, 2, ...\\) and \\(\\lambda &gt; 0\\)\n\n\n\\[\n\\begin{eqnarray}\n\\sum_{x=0}^{\\infty} \\frac{{\\lambda^x e^{-\\lambda}}}{{x!}} = e^{-\\lambda} \\sum_{x=0}^{\\infty} \\frac{\\lambda^x}{x!} = 1\n\\end{eqnarray}\n\\]\n\n\nThe last equality follows, because: \\(e^{\\lambda} = \\sum_{k=0}^{\\infty} \\frac{\\lambda^k}{k!}\\), which is its Taylor Series expansion\nFor Poisson, \\(\\E(X) = \\lambda\\) and \\(\\V(X) = \\lambda\\), which is why most real count data do not follow this distribution"
+    "text": "Poisson Random Variable\n\nThe Poisson distribution is a model for counts\nNot every count process is Poisson, just as not every waiting-time process is geometric\nWe write \\(X\\sim\\operatorname{Poisson}(\\lambda)\\)\nIts PMF is \\(\\P(X=x)=\\lambda^x e^{-\\lambda}/x!\\) for \\(x=0,1,2,\\ldots\\) and \\(\\lambda&gt;0\\)\n\n\n\\[\n\\sum_{x=0}^{\\infty}\\frac{\\lambda^x e^{-\\lambda}}{x!}\n=e^{-\\lambda}\\sum_{x=0}^{\\infty}\\frac{\\lambda^x}{x!}\n=1\n\\]\n\n\nThe final equality follows from the Taylor series \\(e^{\\lambda}=\\sum_{k=0}^{\\infty}\\lambda^k/k!\\)\nFor a Poisson RV, \\(\\E(X)=\\V(X)=\\lambda\\). This equidispersion restriction is often violated by real count data, which may be overdispersed or underdispersed"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#poisson-pmf",
     "href": "stats-math/05-lecture/05-lecture.html#poisson-pmf",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Poisson PMF",
-    "text": "Poisson PMF\n\nNotice the location of \\(\\E(X) = \\lambda\\) in each plot\n\n\np1 &lt;- dot_plot(0:10, dpois(0:10, lambda = 3)) + xlab(\"x\") + \n  ylab(expression(P(X == x))) + ggtitle(\"X ~ Poisson(3)\")\np2 &lt;- dot_plot(0:22, dpois(0:22, lambda = 10)) + xlab(\"x\") + \n  ylab(expression(P(X == x))) + ggtitle(\"X ~ Poisson(10)\")\np1 + p2"
+    "text": "Poisson PMF\n\nNotice the location of \\(\\E(X) = \\lambda\\) in each plot\n\n\np1 &lt;- dot_plot(0:10, dpois(0:10, lambda = 3)) + xlab(\"x\") +\n  ylab(expression(P(X == x))) + ggtitle(\"X ~ Poisson(3)\")\np2 &lt;- dot_plot(0:22, dpois(0:22, lambda = 10)) + xlab(\"x\") +\n  ylab(expression(P(X == x))) + ggtitle(\"X ~ Poisson(10)\")\np1 + p2"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#continuous-rvs-and-the-uniform",
     "href": "stats-math/05-lecture/05-lecture.html#continuous-rvs-and-the-uniform",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Continuous RVs and the Uniform",
-    "text": "Continuous RVs and the Uniform\n\nDefinitionsUniform\n\n\n\nWe leave the discrete world and enter continuous RVs\nWe can no longer say, \\(\\P(X = x)\\), since for a continuous RV \\(\\P(X = x) = 0\\) for all \\(x\\)\nInstead of PMFs, we will be working with PDFs, and we get probability out of them by integrating over the region that we care about\nFor a continuous RV: \\(\\int_{-\\infty}^{\\infty} f_X(x)\\, dx = 1\\)\n\n\n\\[\n\\begin{eqnarray}\nP(a &lt; X &lt; b) & = & \\int_{a}^{b} f_X(x)\\, dx \\\\\nF_X(x) & = & \\int_{-\\infty}^{x} f_X(u)\\, du\n\\end{eqnarray}\n\\]\n\n\n\n\nUniform \\(X \\sim \\text{Uniform}(\\alpha, \\beta)\\) has the following PDF:\n\\[\n\\text{Uniform}(x|\\alpha,\\beta) =\n\\frac{1}{\\beta - \\alpha}, \\,  \\text{where } \\alpha \\in \\mathbb{R} \\text{ and } \\beta \\in (\\alpha,\\infty)\n\\]\n\n\nYour Turn: Guess the \\(\\E(X)\\)\nNow derive \\(\\E(X)\\) using the definition of the Expected Value: \\(\\E(X) = \\int x f_X(x)\\, dx\\)\n\n\n\nx &lt;- seq(-0.5, 1.5, length = 100)\npdf_x &lt;- dunif(x, min = 0, max = 1)\np &lt;- ggplot(data.frame(x, pdf_x), aes(x, pdf_x))\np + geom_line() + ylab(expression(p[X](x))) +\n  ggtitle(\"X ~ Unif(0, 1)\", subtitle = expression(PDF: p[X](x) == 1))"
+    "text": "Continuous RVs and the Uniform\n\nDefinitionsUniformUniform Plot\n\n\n\nWe leave the discrete world and enter continuous RVs\nFor a continuous RV, every point probability satisfies \\(\\P(X=x)=0\\), so point probabilities do not characterize the distribution\nWe use PDFs and obtain probabilities over intervals by integrating the density\nA PDF satisfies \\(f_X(x)\\ge0\\) and \\(\\int_{-\\infty}^{\\infty}f_X(x)\\,dx=1\\)\n\n\n\\[\n\\begin{aligned}\n\\P(a&lt;X&lt;b)&=\\int_a^b f_X(x)\\,dx,\\\\\nF_X(x)&=\\int_{-\\infty}^{x}f_X(u)\\,du.\n\\end{aligned}\n\\]\n\n\n\n\nIf \\(X\\sim\\operatorname{Uniform}(\\alpha,\\beta)\\) with \\(\\alpha&lt;\\beta\\), its PDF is\n\\[\nf_X(x)=\n\\begin{cases}\n\\dfrac{1}{\\beta-\\alpha}, & \\alpha\\le x\\le\\beta,\\\\[4pt]\n0, & \\text{otherwise}.\n\\end{cases}\n\\]\n\n\nYour Turn: Guess \\(\\E(X)\\)\nNow derive it from \\(\\E(X)=\\int_{\\alpha}^{\\beta}x f_X(x)\\,dx\\)\n\n\n\n\n\nx &lt;- seq(-0.5, 1.5, length.out = 100)\npdf_x &lt;- dunif(x, min = 0, max = 1)\np &lt;- ggplot(data.frame(x, pdf_x), aes(x, pdf_x))\np + geom_line() + ylab(expression(f[X](x))) +\n  ggtitle(\"X ~ Uniform(0, 1)\", subtitle = \"PDF: f_X(x) = 1 on [0, 1] and 0 otherwise\")"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#example-stick-breaking",
     "href": "stats-math/05-lecture/05-lecture.html#example-stick-breaking",
     "title": "SMaC: Statistics, Math, and Computing",
-    "section": "Example: Stick breaking",
-    "text": "Example: Stick breaking\n\nAnalysisSimulation\n\n\n\nYou break a unit-length stick at a random point\nLet \\(X\\) be the breaking point so \\(X \\sim \\text{Uniform}(0, 1)\\)\nLet \\(Y\\) be the larger piece. What is \\(\\E(Y)\\)?\nLOTUS, says that we do not need \\(f_Y\\), we can work with \\(f_X\\)\n\n\n\\[\n\\E(Y)= \\int y(x) f_X(x) dx\n\\]\n\n\nThis works only if \\(Y\\) is a function of \\(X\\). Here, \\(Y = \\max\\{X, 1 - X\\}\\).\nWe consider two cases: when \\(x\\) is larger than \\(1/2\\), \\(y(x)\\) is between \\(1/2\\) and \\(1\\) and when \\(1 - x\\) is larger, it is between \\(0\\) and \\(1/2\\):\n\n\n\\[\ny(x) = \\left\\{\n\\begin{array}{ll} x &\n\\text{if } 1/2 &lt; x &lt; 1, \\text{ and} \\\\ 1 - x & 0 &lt; x &lt; 1/2\n\\end{array}  \\right.\n\\]\n\n\n\nIn other words, \\(\\E(Y)\\) can be computed as the sum of two integrals:\n\n\\[\n\\E(Y) = \\int_{0}^{1} y(x) f_X(x)\\, dx =    \\\\\n\\int_{1/2}^{1} x \\cdot 1 \\, dx + \\int_{0}^{1/2} (1-x) \\cdot 1 \\, dx = \\\\\n\\frac{x^2}{2} \\Biggr|_{1/2}^{1} + \\frac{1}{2} - \\frac{x^2}{2} \\Biggr|_{0}^{1/2} = \\frac{3}{4}\n\\]\n\n\n\n\n\nLet’s do a quick simulation in R\n\n\nx &lt;- runif(1e4, min = 0, max = 1) # pick a random breaking point on (0, 1)\ny &lt;- ifelse(x &gt; 0.5, x, 1 - x)    # generate y = max(x, 1-x)\nmean(y) |&gt; round(3)               # estimate the expectation E(Y)\n\n[1] 0.75"
+    "section": "Example: Stick Breaking",
+    "text": "Example: Stick Breaking\n\nSetupPiecewise FunctionExpectationSimulation\n\n\n\nYou break a unit-length stick at a random point\nLet \\(X\\) be the breaking point, so \\(X\\sim\\operatorname{Uniform}(0,1)\\)\nLet \\(Y\\) be the larger piece. What is \\(\\E(Y)\\)?\nLOTUS says that we do not need \\(f_Y\\); we can work with \\(f_X\\)\n\n\n\\[\n\\E(Y)=\\int_0^1 y(x)f_X(x)\\,dx\n\\]\n\n\n\n\nThis works only if \\(Y\\) is a function of \\(X\\). Here, \\(Y=\\max\\{X,1-X\\}\\)\nIn both cases, the larger piece lies between \\(1/2\\) and \\(1\\):\n\n\n\\[\ny(x)=\n\\begin{cases}\n1-x, & 0\\le x\\le1/2,\\\\\nx, & 1/2&lt;x\\le1.\n\\end{cases}\n\\]\n\n\n\n\n\nTherefore, \\(\\E(Y)\\) is the sum of two integrals:\n\n\\[\n\\begin{aligned}\n\\E(Y)\n&=\\int_0^{1/2}(1-x)\\,dx+\\int_{1/2}^{1}x\\,dx\\\\\n&=\\left[x-\\frac{x^2}{2}\\right]_0^{1/2}\n+\\left[\\frac{x^2}{2}\\right]_{1/2}^{1}\\\\\n&=\\frac34.\n\\end{aligned}\n\\]\n\n\n\n\n\nLet’s do a quick simulation in R\n\n\nset.seed(2006)\nx &lt;- runif(1e4, min = 0, max = 1) # pick a random breaking point on (0, 1)\ny &lt;- ifelse(x &gt; 0.5, x, 1 - x)    # generate y = max(x, 1-x)\nmean(y) |&gt; round(3)               # estimate the expectation E(Y)\n\n[1] 0.753"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#normal-rv",
     "href": "stats-math/05-lecture/05-lecture.html#normal-rv",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "Normal RV",
-    "text": "Normal RV\n\nNormalProperties of Standard NormalExample: Heights of US adults\n\n\n\n\\(X \\sim \\text{Normal}(\\mu, \\sigma)\\) has the following PDF:\n\n\n\\[\n\\text{Normal}(x \\mid \\mu,\\sigma) = \\frac{1}{\\sqrt{2 \\pi} \\\n\\sigma} \\exp\\left( - \\, \\frac{1}{2} \\left(  \\frac{x - \\mu}{\\sigma} \\right)^2    \\right) \\!\n\\]\n\n\nThe bell shape comes from the \\(\\exp(-x^2)\\) part\nThe expected value is \\(\\E(X) = \\mu\\), the mode (highest peak) and median are also \\(\\mu\\).\nVariance is \\(\\V(X) = \\sigma^2\\) and standard deviation \\(\\text{sd} = \\sigma\\)\nA Normal RV can be converted to standard normal by subtracting \\(\\mu\\) and dividing by \\(\\sigma\\)\n\n\n\\[\n\\text{Normal}(x \\mid 0, 1) \\ = \\\n\\frac{1}{\\sqrt{2 \\pi}} \\, \\exp \\left( \\frac{-x^2}{2} \\right)\\\n\\]\n\n\n\n\n\n\n\n\n\n\n\nSums of small contributions tend to have a normal distribution\nHeights of people stratified by gender is a good example\nThe following data come from “Teaching Statistics, A Bag of Tricks” by Gelman and Nolan\n\n\n\nmu_m &lt;- 69.1   # mean heights of US males in inches\nsigma_m &lt;- 2.9 # standard deviation for same\nmu_w &lt;- 63.7   # mean heights of US women in inches\nsigma_w &lt;- 2.7 # standard deviation of the same\n\nx &lt;- seq(50, 80, len = 1e3)\npdf_m &lt;- dnorm(x, mean = mu_m, sd = sigma_m)\npdf_w &lt;- dnorm(x, mean = mu_w, sd = sigma_w)\np &lt;- ggplot(data.frame(x, pdf_m, pdf_w), aes(x, pdf_m))\np &lt;- p + geom_line(size = 0.2, color = 'red') + \n  geom_line(aes(y = pdf_w), size = 0.2, color = 'blue') +\n  xlab(\"Height (in)\") + ylab(\"\") +\n  ggtitle(\"Distribution of heights of US adults\") +\n  annotate(\"text\", x = 73.5, y = 0.10, label = \"Men\", color = 'red') +\n  annotate(\"text\", x = 58, y = 0.10, label = \"Women\", color = 'blue') +\n  theme(axis.text.y = element_blank(),\n        axis.ticks.y = element_blank())\n\nprint(p)\n\n\n\n\n\n\n\n\n\n\n\nThe combined distribution is not Normal:\n\n\n\n\n\n\n\n\n\n\n\n\n\nYou randomly sample a man from the population. What is \\(\\P(\\text{Height}_m &lt; 65)\\)\n\n\nintegrate(dnorm, lower = -Inf, upper = 65, \n          mean = mu_m, sd = sigma_m)$value |&gt;\n  round(2)\n\n[1] 0.08\n\n\n\n\n\nYou randomly sample a woman from the population. What is \\(\\P(60 &lt; \\text{Height}_w &lt; 70)\\)\n\n\nintegrate(dnorm, lower = 60, upper = 70, \n          mean = mu_w, sd = sigma_w)$value |&gt;\n  round(2)\n\n[1] 0.9\n\n(integrate(dnorm, lower = -Inf, upper = 70, \n          mean = mu_w, sd = sigma_w)$value - \nintegrate(dnorm, lower = -Inf, upper = 60, \n          mean = mu_w, sd = sigma_w)$value) |&gt;\n  round(2)\n\n[1] 0.9\n\n\n\n\nWhat is the probability that a randomly chosen man is taller than a randomly chosen woman?\nWe have two distributions \\(M \\sim \\text{Normal}(\\mu_m, \\sigma_m)\\) and \\(W \\sim \\text{Normal}(\\mu_w, \\sigma_w)\\). We want \\(\\P(M &gt; W) = P(Z &gt; 0),\\, \\text{where }Z = M - W\\)\nSum of two normals is normal where both means and variances sum:\n\n\n\\[\n\\begin{eqnarray}\nZ & \\sim & \\text{Normal}(\\mu_m + \\mu_w,\\, \\sigma_m^2 + \\sigma_m^2) \\\\\nE(Z) & = & E(M - W) = E(M) - E(W) = 69.1 - 63.7 = 5.4 \\\\\n\\text{Var}(Z) & = & \\text{Var}(M - W) = \\text{Var}(M) + \\text{Var}(W) =  2.9^2 + 2.7^2 = 15.7 \\\\\n\\text{sd} & = & \\sqrt{Var} = \\sqrt{15.7} =3.96 \\\\\nZ & \\sim & \\text{Normal}(5.4, 3.96)\n\\end{eqnarray}\n\\]\n\n\n\nTo figure out when \\(Z &gt; 0\\), we can integrate the PDF from 0 to Infinity:\n\n\nintegrate(dnorm, lower = 0, upper = Inf, \n          mean = 5.4, sd = sqrt(15.7))$value |&gt;\n  round(2)\n\n[1] 0.91\n\n\n\n\n\nWe don’t have to integrate. We can evaluate the CDF instead:\n\n\n1 - pnorm(0, mean = 5.4, sd = sqrt(15.7)) |&gt;\n  round(2)\n\n[1] 0.91\n\n\n\n\nBy symmetry, the probability that a randomly chosen woman is taller than a randomly chosen man is 0.09\nHow can we check the analytic solution? We can do a simulation!\n\n\n\nn &lt;- 1e5\ntaller_m &lt;- numeric(n)\nfor (i in 1:n) {\n  height_m &lt;- rnorm(1, mu_m, sigma_m)\n  height_w &lt;- rnorm(1, mu_w, sigma_w)\n  taller_m[i] &lt;- height_m &gt; height_w\n}\nmean(taller_m) |&gt; round(2)\n\n[1] 0.91\n\n\n\n\n\nSuppose you wanted to compute the variance this way. How would you do it?"
+    "text": "Normal RV\n\nDefinitionProperties of the Standard Normal\n\n\n\nIf \\(X\\sim\\operatorname{Normal}(\\mu,\\sigma)\\), with \\(\\mu\\in\\mathbb{R}\\) and \\(\\sigma&gt;0\\), then for \\(x\\in\\mathbb{R}\\) its PDF is\n\n\n\\[\nf_X(x)=\\frac{1}{\\sqrt{2\\pi}\\,\\sigma}\n\\exp\\!\\left[-\\frac12\\left(\\frac{x-\\mu}{\\sigma}\\right)^2\\right].\n\\]\n\n\nThe negative quadratic in the exponent produces the bell shape\nThe mean, median, and mode are all \\(\\mu\\)\nThe variance is \\(\\V(X)=\\sigma^2\\), and the standard deviation is \\(\\sigma\\)\nStandardizing subtracts the mean and divides by the standard deviation\n\n\n\\[\nZ=\\frac{X-\\mu}{\\sigma}\\sim\\operatorname{Normal}(0,1),\n\\qquad\nf_Z(z)=\\frac{1}{\\sqrt{2\\pi}}e^{-z^2/2}.\n\\]"
+  },
+  {
+    "objectID": "stats-math/05-lecture/05-lecture.html#example-heights-of-us-adults",
+    "href": "stats-math/05-lecture/05-lecture.html#example-heights-of-us-adults",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Example: Heights of US Adults",
+    "text": "Example: Heights of US Adults\n\nContextPlot and Code\n\n\n\nUnder standard central-limit conditions, a standardized sum tends toward \\(\\operatorname{Normal}(0,1)\\); equivalently, a large sum is approximately normal with its own mean and standard deviation\nHuman height reflects many small contributions and is often approximately normal within groups\nThe following values come from Teaching Statistics: A Bag of Tricks by Gelman and Nolan\n\n\n\n\n\n\nmu_m &lt;- 69.1   # mean height of US men in inches\nsigma_m &lt;- 2.9 # corresponding standard deviation\nmu_w &lt;- 63.7   # mean height of US women in inches\nsigma_w &lt;- 2.7 # corresponding standard deviation\n\nx &lt;- seq(50, 80, length.out = 1e3)\npdf_m &lt;- dnorm(x, mean = mu_m, sd = sigma_m)\npdf_w &lt;- dnorm(x, mean = mu_w, sd = sigma_w)\np &lt;- ggplot(data.frame(x, pdf_m, pdf_w), aes(x, pdf_m))\np &lt;- p + geom_line(linewidth = 0.2, color = \"red\") +\n  geom_line(aes(y = pdf_w), linewidth = 0.2, color = \"blue\") +\n  xlab(\"Height (in)\") + ylab(\"\") +\n  ggtitle(\"Distribution of heights of US adults\") +\n  annotate(\"text\", x = 73.5, y = 0.10, label = \"Men\", color = \"red\") +\n  annotate(\"text\", x = 58, y = 0.10, label = \"Women\", color = \"blue\") +\n  theme(axis.text.y = element_blank(),\n        axis.ticks.y = element_blank())\n\nprint(p)"
+  },
+  {
+    "objectID": "stats-math/05-lecture/05-lecture.html#a-mixture-of-normal-distributions",
+    "href": "stats-math/05-lecture/05-lecture.html#a-mixture-of-normal-distributions",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "A Mixture of Normal Distributions",
+    "text": "A Mixture of Normal Distributions\n\nA mixture of normal distributions is not generally normal, even when each component is normal\n\n\n\nset.seed(2006)\nn_m &lt;- as.integer(1e5 * 0.48)\nn_w &lt;- as.integer(1e5 * 0.52)\n\nh_m &lt;- rnorm(n_m, mu_m, sigma_m)\nh_w &lt;- rnorm(n_w, mu_w, sigma_w)\nh &lt;- c(h_m, h_w)\n\np &lt;- ggplot(data.frame(h), aes(x = h))\np + geom_density(linewidth = 0.2, bw = 0.5) +\n  xlab(\"Height (in)\") + ylab(\"\") + ylim(0, 0.15) +\n  ggtitle(\"Mixture of men's and women's height distributions\") +\n  theme(\n    axis.text.y = element_blank(),\n    axis.ticks.y = element_blank()\n  )"
+  },
+  {
+    "objectID": "stats-math/05-lecture/05-lecture.html#normal-probability-examples",
+    "href": "stats-math/05-lecture/05-lecture.html#normal-probability-examples",
+    "title": "SMaC: Statistics, Math, and Computing",
+    "section": "Normal Probability Examples",
+    "text": "Normal Probability Examples\n\n\nYou randomly sample a man from the population. What is \\(\\P(\\text{Height}_m&lt;65)\\)?\n\n\npnorm(65, mean = mu_m, sd = sigma_m) |&gt;\n  round(2)\n\n[1] 0.08\n\n\n\n\n\nYou randomly sample a woman from the population. What is \\(\\P(60&lt;\\text{Height}_w&lt;70)\\)?\n\n\n(pnorm(70, mean = mu_w, sd = sigma_w) -\n pnorm(60, mean = mu_w, sd = sigma_w)) |&gt;\n  round(2)\n\n[1] 0.9\n\n\n\n\nWhat is the probability that a randomly chosen man is taller than an independently sampled woman?\nLet \\(M\\sim\\operatorname{Normal}(\\mu_m,\\sigma_m)\\) and \\(W\\sim\\operatorname{Normal}(\\mu_w,\\sigma_w)\\) be independent. Define \\(Z=M-W\\), so \\(\\P(M&gt;W)=\\P(Z&gt;0)\\)\nA linear combination of independent normal RVs is normal. Means combine linearly, while variances add after squaring the coefficients\n\n\n\\[\n\\begin{aligned}\nZ&\\sim\\operatorname{Normal}\\!\\left(\n\\mu_m-\\mu_w,\\sqrt{\\sigma_m^2+\\sigma_w^2}\n\\right),\\\\\n\\E(Z)&=\\mu_m-\\mu_w=69.1-63.7=5.4,\\\\\n\\V(Z)&=\\sigma_m^2+\\sigma_w^2=2.9^2+2.7^2=15.7,\\\\\n\\operatorname{sd}(Z)&=\\sqrt{15.7}\\approx3.96,\\\\\nZ&\\sim\\operatorname{Normal}(5.4,\\sqrt{15.7}),\n\\qquad \\sqrt{15.7}\\approx3.96.\n\\end{aligned}\n\\]\n\n\n\nCompute \\(\\P(Z&gt;0)\\) by integrating the PDF from 0 to infinity:\n\n\nintegrate(dnorm, lower = 0, upper = Inf,\n          mean = 5.4, sd = sqrt(15.7))$value |&gt;\n  round(2)\n\n[1] 0.91\n\n\n\n\n\nEquivalently, evaluate the complementary CDF:\n\n\np_m_taller &lt;- 1 - pnorm(0, mean = 5.4, sd = sqrt(15.7))\np_m_taller |&gt; round(2)\n\n[1] 0.91\n\n\nBecause \\(M\\) and \\(W\\) are continuous, \\(\\P(M=W)=0\\). Therefore,\n\\[\n\\P(W&gt;M)=1-\\P(M&gt;W)\\approx0.09.\n\\]\n\n\n\nCheck the analytic result with simulation:\n\n\nset.seed(2006)\nn &lt;- 1e5\nheight_m &lt;- rnorm(n, mu_m, sigma_m)\nheight_w &lt;- rnorm(n, mu_w, sigma_w)\nz &lt;- height_m - height_w\nmean(z &gt; 0) |&gt; round(2)\n\n[1] 0.91\n\n\n\nEstimate \\(\\V(Z)\\) with var(z). How close is it to the analytic value 15.7?"
   },
   {
     "objectID": "stats-math/05-lecture/05-lecture.html#what-we-did-not-cover",
     "href": "stats-math/05-lecture/05-lecture.html#what-we-did-not-cover",
     "title": "SMaC: Statistics, Math, and Computing",
     "section": "What We Did Not Cover",
-    "text": "What We Did Not Cover\n\nJoint, Marginal, and Conditional P[M/D]Fs\nCovariance and correlation\nConditional Expectations"
+    "text": "What We Did Not Cover\n\nJoint, marginal, and conditional distributions\nCovariance and correlation\nConditional expectations"
   },
   {
     "objectID": "stats-math/06-lecture/06-lecture.html#session-6-outline",

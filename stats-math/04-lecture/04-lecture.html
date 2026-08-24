@@ -319,42 +319,140 @@ Eric.Novik@nyu.edu | Summer 2026 | Session 4
 <li class="fragment"><p>From Blitzstein and Chen (2015): Suppose that 10 people are running a race. Assume that ties are not possible and that all 10 will complete the race, so there will be well-defined first place, second place, and third place winners. How many possibilities are there for the first, second, and third place winners?</p></li>
 </ul>
 </section>
-<section id="basic-counting" class="slide level2">
+<section id="basic-counting" class="slide level2 smaller">
 <h2>Basic Counting</h2>
 <ul>
-<li class="fragment">How many permutations of <span class="math inline">\(n\)</span> objects are there?</li>
-<li class="fragment">Sampling with replacement (order matters): you select one object from <span class="math inline">\(n\)</span> total objects, <span class="math inline">\(k\)</span> times (and put it back each time).</li>
-<li class="fragment">Sampling without replacement (order matters): same as above, but you don’t put them back</li>
+<li class="fragment"><p><strong>Permutations of <span class="math inline">\(n\)</span> objects:</strong> arrange all <span class="math inline">\(n\)</span> distinct objects in order; there are <span class="math inline">\(n!\)</span> arrangements. For <span class="math inline">\(S=\{A,B,C\}\)</span>, the resulting set is <span class="math display">\[
+\{ABC, ACB, BAC, BCA, CAB, CBA\}.
+\]</span></p></li>
+<li class="fragment"><p><strong>Sampling with replacement, where order matters:</strong> choose from <span class="math inline">\(n\)</span> objects <span class="math inline">\(k\)</span> times, replacing the selected object each time; there are <span class="math inline">\(n^k\)</span> sequences. For <span class="math inline">\(S=\{A,B,C\}\)</span> and <span class="math inline">\(k=2\)</span>, the resulting set contains <span class="math inline">\(3^2=9\)</span> sequences: <span class="math display">\[
+\{AA, AB, AC, BA, BB, BC, CA, CB, CC\}.
+\]</span></p></li>
+<li class="fragment"><p><strong>Sampling without replacement, where order matters:</strong> choose from <span class="math inline">\(n\)</span> objects <span class="math inline">\(k\)</span> times without returning selected objects; there are <span class="math inline">\(n!/(n-k)!\)</span> sequences. For <span class="math inline">\(S=\{A,B,C\}\)</span> and <span class="math inline">\(k=2\)</span>, the resulting set is <span class="math display">\[
+\{AB, AC, BA, BC, CA, CB\}.
+\]</span></p></li>
 </ul>
 </section>
 <section id="binomial-coefficient" class="slide level2 smaller">
-<h2>Binomial coefficient</h2>
+<h2>Binomial Coefficient</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Derivation</a></li><li><a href="#tabset-1-2">Why <span class="math inline">\(k!\)</span>?</a></li><li><a href="#tabset-1-3">Pascal’s Triangle</a></li><li><a href="#tabset-1-4">Pascal’s Rule</a></li><li><a href="#tabset-1-5">Examples</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="fragment">
-<ul>
-<li>How many ways are there to choose a <span class="math inline">\(k\)</span>-element subset from an <span class="math inline">\(n\)</span>-element set? For example, how many two-person teams can be formed from five people? (John and Jane form the same team as Jane and John.)</li>
-</ul>
+<p>To choose an <strong>unordered</strong> <span class="math inline">\(k\)</span>-element subset, first count ordered selections. Filling <span class="math inline">\(k\)</span> positions gives <span class="math inline">\(n\)</span> choices, then <span class="math inline">\(n-1\)</span>, and so on—the first <span class="math inline">\(k\)</span> factors of <span class="math inline">\(n!\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+n!
+&amp;=\underbrace{n(n-1)\cdots(n-k+1)}_{\text{first }k\text{ factors}}
+  \underbrace{(n-k)(n-k-1)\cdots2\cdot1}_{\text{tail }=(n-k)!}, \\
+\frac{n!}{(n-k)!}
+&amp;=n(n-1)\cdots(n-k+1).
+\end{aligned}
+\]</span></p>
+<p>Dividing by <span class="math inline">\((n-k)!\)</span> removes the unused tail.</p>
 </div>
 <div class="fragment">
+<p>The ordered count includes every unordered subset <span class="math inline">\(k!\)</span> times, so divide once more:</p>
 <p><span class="math display">\[
-{n \choose k} = \frac{n!}{(n - k)! k!} = {n \choose n-k}
+\boxed{\binom{n}{k}=\frac{n!}{k!(n-k)!}}.
+\]</span></p>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="fragment">
+<p>A fixed set of <span class="math inline">\(k\)</span> objects can be ordered in <span class="math inline">\(k!\)</span> ways: there are <span class="math inline">\(k\)</span> choices for the first position, <span class="math inline">\(k-1\)</span> for the second, and so on, giving</p>
+<p><span class="math display">\[
+k(k-1)\cdots2\cdot1=k!.
 \]</span></p>
 </div>
 <div class="fragment">
+<p>For <span class="math inline">\(k=3\)</span>, the one subset <span class="math inline">\(\{A,B,C\}\)</span> is counted as</p>
+<p><span class="math display">\[
+\begin{array}{ccc}
+ABC &amp; ACB &amp; BAC \\
+BCA &amp; CAB &amp; CBA
+\end{array}
+\]</span></p>
+<p>All six strings contain exactly the same objects, so they represent one unordered subset counted <span class="math inline">\(3!=6\)</span> times.</p>
+</div>
+<div class="fragment">
+<p>In general, dividing the ordered count by <span class="math inline">\(k!\)</span> leaves each unordered subset counted exactly once.</p>
+</div>
+</div>
+<div id="tabset-1-3">
+<p>Each entry in row <span class="math inline">\(n\)</span> and column <span class="math inline">\(k\)</span> is <span class="math inline">\(\binom{n}{k}\)</span>:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Indexed table</strong></p>
+<p><span class="math display">\[
+\begin{array}{c|ccccc}
+n\backslash k &amp; 0 &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\ \hline
+0 &amp; 1 &amp;   &amp;   &amp;   &amp;   \\
+1 &amp; 1 &amp; 1 &amp;   &amp;   &amp;   \\
+2 &amp; 1 &amp; 2 &amp; 1 &amp;   &amp;   \\
+3 &amp; 1 &amp; 3 &amp; 3 &amp; 1 &amp;   \\
+4 &amp; 1 &amp; 4 &amp; 6 &amp; 4 &amp; 1
+\end{array}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><strong>Complete triangle</strong></p>
+<p><span class="math display">\[
+\begin{array}{ccccccccc}
+  &amp;   &amp;   &amp;   &amp; 1 &amp;   &amp;   &amp;   &amp;   \\
+  &amp;   &amp;   &amp; 1 &amp;   &amp; 1 &amp;   &amp;   &amp;   \\
+  &amp;   &amp; 1 &amp;   &amp; 2 &amp;   &amp; 1 &amp;   &amp;   \\
+  &amp; 1 &amp;   &amp; 3 &amp;   &amp; 3 &amp;   &amp; 1 &amp;   \\
+1 &amp;   &amp; 4 &amp;   &amp; 6 &amp;   &amp; 4 &amp;   &amp; 1
+\end{array}
+\]</span></p>
+</div></div>
+<div class="fragment">
+<p>Every interior number is the sum of the two numbers above it; for example, <span class="math inline">\(\binom{4}{2}=\binom{3}{1}+\binom{3}{2}=3+3=6\)</span>.</p>
+</div>
+</div>
+<div id="tabset-1-4">
+<div class="fragment">
+<p>Choose one distinguished object. A <span class="math inline">\(k\)</span>-element subset either:</p>
 <ul>
-<li>What is the probability of a full house in poker? (Three cards of one rank and two cards of another rank.)</li>
-<li>How many distinct orderings does a standard 52-card deck have?</li>
+<li>contains it, leaving <span class="math inline">\(k-1\)</span> objects to choose from the other <span class="math inline">\(n-1\)</span>, or</li>
+<li>excludes it, leaving all <span class="math inline">\(k\)</span> objects to choose from the other <span class="math inline">\(n-1\)</span></li>
 </ul>
+</div>
+<div class="fragment">
+<p>These two cases are disjoint and include every <span class="math inline">\(k\)</span>-element subset, so</p>
+<p><span class="math display">\[
+\boxed{\binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}}.
+\]</span></p>
+<p>This identity generates Pascal’s triangle row by row.</p>
+</div>
+</div>
+<div id="tabset-1-5">
+<div class="fragment">
+<p>The two-person subsets of <span class="math inline">\(S=\{A,B,C,D,E\}\)</span> are</p>
+<p><span class="math display">\[
+\{AB,AC,AD,AE,BC,BD,BE,CD,CE,DE\},
+\]</span></p>
+<p>so <span class="math inline">\(\binom{5}{2}=10\)</span>.</p>
+</div>
+<ul>
+<li class="fragment">Choosing the <span class="math inline">\(k\)</span> included objects is equivalent to choosing the <span class="math inline">\(n-k\)</span> excluded objects, so <span class="math inline">\(\binom{n}{k}=\binom{n}{n-k}\)</span></li>
+<li class="fragment">A standard deck has <span class="math inline">\(\binom{52}{5}\)</span> distinct five-card hands</li>
+<li class="fragment">What is the probability of the full house in poker? One pair? Two pair?</li>
+</ul>
+</div>
+</div>
 </div>
 </section>
 <section id="birthday-problem" class="slide level2 smaller">
 <h2>Birthday Problem</h2>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Problem Description</a></li><li><a href="#tabset-1-2">Simulation</a></li><li><a href="#tabset-1-3">Plot</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Problem Description</a></li><li><a href="#tabset-2-2">Simulation</a></li><li><a href="#tabset-2-3">Plot</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1">
+<div id="tabset-2-1">
 <p>There are <span class="math inline">\(j\)</span> people in a room. Assume each person’s birthday is equally likely to be any of the 365 days of the year (excluding February 29) and that people’s birthdays are independent. What is the probability that at least one pair of group members has the same birthday?</p>
 </div>
-<div id="tabset-1-2">
+<div id="tabset-2-2">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">set.seed</span>(<span class="dv">2006</span>)</span>
 <span id="cb1-2"><a></a>n <span class="ot">&lt;-</span> <span class="fl">1e4</span></span>
@@ -374,7 +472,7 @@ Eric.Novik@nyu.edu | Summer 2026 | Session 4
 <span id="cb1-16"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<div id="tabset-1-3">
+<div id="tabset-2-3">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -415,7 +513,7 @@ Eric.Novik@nyu.edu | Summer 2026 | Session 4
 </div>
 </div>
 </section>
-<section id="probability" class="slide level2">
+<section id="probability" class="slide level2 smaller">
 <h2>Probability</h2>
 <ul>
 <li>Probability <span class="math inline">\(\P\)</span> assigns a real number to each event <span class="math inline">\(A\)</span> and satisfies the following axioms:</li>
@@ -451,20 +549,15 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 </div>
 <ul>
 <li class="fragment">The final identity is the inclusion-exclusion principle</li>
-<li class="fragment">Two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent, denoted <span class="math inline">\(A\indep B\)</span>, if</li>
+<li class="fragment">Two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent, denoted <span class="math inline">\(A\indep B\)</span>, if <span class="math inline">\(\P(A \cap B) = \P(A) \P(B)\)</span></li>
 </ul>
-<div class="fragment">
-<p><span class="math display">\[
-\P(A \cap B) = \P(A) \P(B)
-\]</span></p>
-</div>
 </section>
 <section id="some-examples" class="slide level2">
 <h2>Some Examples</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Simulation</a></li><li><a href="#tabset-2-2">Analysis</a></li><li><a href="#tabset-2-3">Your Turn</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Simulation</a></li><li><a href="#tabset-3-2">Analysis</a></li><li><a href="#tabset-3-3">Your Turn</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1">
+<div id="tabset-3-1">
 <p>You flip a fair coin four times. What is the probability that you get one or more heads?</p>
 <div class="fragment">
 <div class="cell">
@@ -485,7 +578,7 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 </div>
 </div>
 </div>
-<div id="tabset-2-2">
+<div id="tabset-3-2">
 <p>Let <span class="math inline">\(A\)</span> be the event of obtaining at least one head. Then <span class="math inline">\(A^c\)</span> is the event of obtaining all tails. Let <span class="math inline">\(B_i\)</span> be the event of obtaining tails on the <span class="math inline">\(i\)</span>th trial.</p>
 <div class="fragment">
 <p><span class="math display">\[
@@ -498,7 +591,7 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 \]</span></p>
 </div>
 </div>
-<div id="tabset-2-3">
+<div id="tabset-3-3">
 <ul>
 <li><p>Modify the function so that, instead of computing one or more heads in four trials, it computes one or more heads in <span class="math inline">\(n\)</span> trials</p></li>
 <li><p>Modify it to compute <span class="math inline">\(x\)</span> or more heads in <span class="math inline">\(n\)</span> trials, and simulate the probability of at least two heads in five trials</p></li>
@@ -527,12 +620,16 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 <li class="fragment"><p>When <span class="math inline">\(\P(B)&gt;0\)</span>, events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent if and only if <span class="math inline">\(\P(A\mid B)=\P(A)\)</span>. In other words, learning <span class="math inline">\(B\)</span> does not change the probability of <span class="math inline">\(A\)</span></p></li>
 </ul>
 </section>
-<section id="law-of-total-probability-and-bayes-rule" class="slide level2">
+<section id="conditional-probability-your-turn" class="slide level2">
+<h2>Conditional Probability: Your Turn</h2>
+
+<img data-src="images/conditional-probability-exercise.svg" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%" alt="Exercise diagram with nine equally likely points in sample space S, event A containing six points, event B containing four points, blank probability expressions, and a question asking whether A and B are independent"></section>
+<section id="law-of-total-probability-and-bayes-rule" class="slide level2 smaller">
 <h2>Law of Total Probability and Bayes’ Rule</h2>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">LOTP</a></li><li><a href="#tabset-3-2">Bayes’ Rule</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">LOTP</a></li><li><a href="#tabset-4-2">Bayes’ Rule</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1">
+<div id="tabset-4-1">
 <p>In the following, <span class="math inline">\(A_1,\ldots,A_n\)</span> form a partition of the sample space <span class="math inline">\(S\)</span>:</p>
 <p><span class="math display">\[
 \P(B)=\sum_{i=1}^{n}\P(B\mid A_i)\P(A_i).
@@ -543,19 +640,19 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 </figure>
 </div>
 </div>
-<div id="tabset-3-2">
+<div id="tabset-4-2">
 <ul>
 <li class="fragment">We take the definition of conditional probability and expand the numerator and denominator:</li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
-\P(A_k\mid B)
-=\frac{\P(B\mid A_k)\P(A_k)}{\sum_{i=1}^{n}\P(B\mid A_i)\P(A_i)},
+\P(A\mid B)
+=\frac{\P(B\mid A)\P(A)}{\sum_{i=1}^{n}\P(B\mid A_i)\P(A_i)},
 \qquad \P(B)&gt;0
 \]</span></p>
 </div>
 <ul>
-<li class="fragment">We call <span class="math inline">\(\P(A_k)\)</span> the prior probability of <span class="math inline">\(A_k\)</span> and <span class="math inline">\(\P(A_k\mid B)\)</span> its posterior probability after observing <span class="math inline">\(B\)</span></li>
+<li class="fragment">We call <span class="math inline">\(\P(A)\)</span> the prior probability of <span class="math inline">\(A\)</span> and <span class="math inline">\(\P(A\mid B)\)</span> its posterior probability after observing <span class="math inline">\(B\)</span></li>
 </ul>
 </div>
 </div>
@@ -567,20 +664,21 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 <section id="example-medical-testing" class="slide level2 smaller">
 <h2>Example: Medical Testing</h2>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Derivation</a></li><li><a href="#tabset-4-2">Discussion</a></li></ul>
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Derivation</a></li><li><a href="#tabset-5-2">Discussion</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1">
+<div id="tabset-5-1">
 <blockquote>
 <p><a href="https://www.idsociety.org/covid-19-real-time-learning-network/diagnostics/rapid-testing/#:~:text=The%20authors%20calculated%20the%20sensitivity,negative%20predictive%20value%20was%2097.3%25.">The authors calculated</a> the sensitivity and specificity of the Abbott PanBio SARS-CoV-2 rapid antigen test to be 45.4% and 99.8%, respectively. Suppose the prevalence is 0.1%.</p>
 </blockquote>
 <ul>
-<li>Your child tests positive. What is the probability that she has COVID? That is, we want <span class="math inline">\(\P(D^+\mid T^+)\)</span></li>
-<li><span class="math inline">\(\text{Specificity}:=\P(T^-\mid D^-)=0.998\)</span></li>
-<li>False-positive rate <span class="math inline">\(\text{FP}:=1-\text{specificity}=\P(T^+\mid D^-)=0.002\)</span></li>
-<li><span class="math inline">\(\text{Sensitivity}:=\P(T^+\mid D^+)=0.454\)</span></li>
-<li>False-negative rate <span class="math inline">\(\text{FN}:=1-\text{sensitivity}=\P(T^-\mid D^+)=0.546\)</span></li>
-<li>Prevalence: <span class="math inline">\(\P(D^+)=0.001\)</span></li>
+<li class="fragment">Your child tests positive. What is the probability that she has COVID? That is, we want <span class="math inline">\(\P(D^+\mid T^+)\)</span></li>
+<li class="fragment"><span class="math inline">\(\text{Specificity}:=\P(T^-\mid D^-)=0.998\)</span></li>
+<li class="fragment">False-positive rate <span class="math inline">\(\text{FP}:=1-\text{specificity}=\P(T^+\mid D^-)=0.002\)</span></li>
+<li class="fragment"><span class="math inline">\(\text{Sensitivity}:=\P(T^+\mid D^+)=0.454\)</span></li>
+<li class="fragment">False-negative rate <span class="math inline">\(\text{FN}:=1-\text{sensitivity}=\P(T^-\mid D^+)=0.546\)</span></li>
+<li class="fragment">Prevalence: <span class="math inline">\(\P(D^+)=0.001\)</span></li>
 </ul>
+<div class="fragment">
 <p><span class="math display">\[
 \begin{aligned}
 \P(D^+\mid T^+)
@@ -592,7 +690,8 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 \end{aligned}
 \]</span></p>
 </div>
-<div id="tabset-4-2">
+</div>
+<div id="tabset-5-2">
 <ul>
 <li>The answer, about 18.5%, is very sensitive to disease prevalence—our prior probability of infection</li>
 <li>At the time of the test, prevalence was estimated at 4.8%, not 0.1%, which would substantially change the answer: <span class="math inline">\(\P(D^+\mid T^+)\approx0.92\)</span></li>
@@ -611,9 +710,35 @@ A\cap B=\emptyset &amp;\Longrightarrow \P(A\cup B)=\P(A)+\P(B), \\
 <section id="example-monty-hall" class="slide level2">
 <h2>Example: Monty Hall</h2>
 
+<img data-src="images/monty-hall-tree.svg" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%" alt="Monty Hall decision tree showing the result of switching for each possible car location"></section>
+<section id="the-monty-hall-debate" class="slide level2">
+<h2>The Monty Hall Debate</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/savant-nyt.png" class="quarto-figure quarto-figure-center" alt="New York Times article titled Behind Monty Hall's Doors: Puzzle, Debate and Answer?" height="520"></p>
+</figure>
+</div>
+</div><div class="column" style="width:45%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/savant.png" class="quarto-figure quarto-figure-center" alt="Cover of Parade's Ask Marilyn by Marilyn vos Savant" height="520"></p>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="homework" class="slide level2 smaller scrollable">
+<h2>Homework</h2>
+<ol type="1">
+<li class="fragment"><p><strong>Conditional probability—course enrollment.</strong> Among 200 students, 120 take statistics, 80 take calculus, and 50 take both. For a randomly selected student, compute <span class="math inline">\(\P(\text{statistics}\mid\text{calculus})\)</span> and <span class="math inline">\(\P(\text{calculus}\mid\text{statistics})\)</span>. Explain why the two probabilities differ.</p></li>
+<li class="fragment"><p><strong>Conditional probability—dice.</strong> Roll two fair six-sided dice. Given that their sum is 8, what is the probability that at least one die shows 5? List the reduced sample space before calculating the probability. Verify with a simulation. Hint: in R, <code>if (a || b)</code>, means either <code>a</code> is true or <code>b</code> is true.</p></li>
+<li class="fragment"><p><strong>Bayes’ rule—fraud screening.</strong> An insurer estimates that 2% of submitted claims are fraudulent. A screening system flags 92% of fraudulent claims and 6% of legitimate claims. If a claim is flagged, what is the probability that it is fraudulent? Define the events and show the Bayes’ rule calculation.</p></li>
+<li class="fragment"><p><strong>R simulation—Monty Hall.</strong> Write an R simulation of at least 10,000 games to check that always switching wins the car with probability <span class="math inline">\(2/3\)</span>. In each game, randomly place the car and choose an initial door; have Monty randomly open an unchosen goat door; then switch to the only other closed door. Report the simulated proportion of wins.</p></li>
+</ol>
 
 
-<img data-src="images/monte.png" class="quarto-figure quarto-figure-center r-stretch" width="672"></section>
+</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
