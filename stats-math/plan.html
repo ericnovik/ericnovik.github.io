@@ -222,7 +222,7 @@
 x(t) = ½ · g · t²</code></pre>
 <ul>
 <li>The <strong>constant acceleration</strong> derived in L2 (currently the arbitrary “6 m/s²”) <em>becomes g</em> — the very number the mission needs.</li>
-<li>Inferring <code>g</code> from the <code>(tₖ, xₖ)</code> marks is exactly the <strong>least-squares fit</strong> of L6 (regress <code>x</code> on <code>t²</code>; slope = g/2, so ĝ = 2 · slope).</li>
+<li>Inferring <code>g</code> from the <code>(tₖ, xₖ)</code> marks is a <strong>least-squares fit</strong> in L6: regress observed time on <code>√x</code> with an intercept for the constant timing delay; if the slope is β, then ĝ = 2/β².</li>
 </ul>
 <h3 id="two-true-memorable-hooks-fall-out-for-free">Two true, memorable hooks fall out for free</h3>
 <ol type="1">
@@ -237,7 +237,7 @@ x(t) = ½ · g · t²</code></pre>
 <li>5 m (not 1 m) so the clicks are humanly spaced: 20 clicks over ~11 s, ~one every 0.5 s</li>
 </ul></li>
 <li>Time at mark k: <code>tₖ = √(2·xₖ / g)</code> — first mark <code>t ≈ 2.48 s</code>, last <code>t ≈ 11.09 s</code></li>
-<li>Stopwatch / reaction noise ≈ 0.1 s on each reading</li>
+<li>Constant stopwatch delay <code>α = 0.30 s</code>, plus reaction noise ≈ 0.1 s on each reading</li>
 </ul>
 </section>
 <section id="requested-change-a-lecture-1-programming-and-statistics-in-the-age-of-ai" class="slide level2">
@@ -286,14 +286,15 @@ x(t) = ½ · g · t²</code></pre>
 <span id="cb3-28"><a></a><span class="ss">-   </span>So the **acceleration** is the second derivative of position — a</span>
 <span id="cb3-29"><a></a>    constant g — which is exactly the unknown the mission needs</span>
 <span id="cb3-30"><a></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>…followed by a simulated-data plot (noisy stopwatch readings vs.&nbsp;the <code>x = ½ g t²</code> parabola) so the inference target is visual.</p>
+<p>…followed by a simulated-data plot (delayed, noisy stopwatch readings vs.&nbsp;the <code>x = ½ g (t - α)²</code> curve) so the inference target is visual.</p>
 <p><strong>Draft simulation chunk:</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
 <span id="cb4-2"><a></a>g <span class="ot">&lt;-</span> <span class="fl">1.625</span>               <span class="co"># true (unknown) lunar gravity, m/s^2</span></span>
 <span id="cb4-3"><a></a>H <span class="ot">&lt;-</span> <span class="dv">100</span>                 <span class="co"># tower height, m</span></span>
 <span id="cb4-4"><a></a>marks  <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">5</span>, H, <span class="at">by =</span> <span class="dv">5</span>)  <span class="co"># 20 red marks, every 5 m</span></span>
-<span id="cb4-5"><a></a>t_true <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> marks <span class="sc">/</span> g)</span>
-<span id="cb4-6"><a></a>t_obs  <span class="ot">&lt;-</span> t_true <span class="sc">+</span> <span class="fu">rnorm</span>(H, <span class="dv">0</span>, <span class="fl">0.1</span>)   <span class="co"># stopwatch / reaction noise</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-5"><a></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.30</span>             <span class="co"># constant stopwatch delay, seconds</span></span>
+<span id="cb4-6"><a></a>t_true <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> marks <span class="sc">/</span> g)</span>
+<span id="cb4-7"><a></a>t_obs  <span class="ot">&lt;-</span> alpha <span class="sc">+</span> t_true <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(marks), <span class="dv">0</span>, <span class="fl">0.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The existing derivative algebra (<code>v = 6t</code>, <code>a = 6</code>) then carries over verbatim with <code>6 → g</code> — minimal rewrite, maximal payoff.</p>
 </section>
 <section id="propagating-the-moon-thread-the-through-line" class="slide level2">
@@ -301,8 +302,8 @@ x(t) = ½ · g · t²</code></pre>
 <p>To turn the story into a genuine course-long mission, carry it into:</p>
 <ul>
 <li><strong>L3 (integration)</strong> — currently “From Velocity to Position Functions”. Make the worked example <em>integrate ẍ = g twice</em> to recover <code>x(t) = ½ g t²</code>. This is the “solution we promised to derive later” in L2.</li>
-<li><strong>L6 (linear algebra)</strong> — the overdetermined <code>X β̂ = y</code> slides (<a href="../stats-math/06-lecture/06-lecture.html"><code>06-lecture/06-lecture.qmd:881</code></a>) become “fit the Moon-drop data to recover g”. Design matrix column is <code>t²</code>; slope = g/2.</li>
-<li><strong>L7 (statistical inference)</strong> — the measurement-error model becomes “how uncertain is our estimate of g given noisy stopwatch readings?” This is also where the <strong>oxygen / sample-size question</strong> (§6.3) is answered: how many marks must we record before the confidence interval for ĝ is tight enough to read g to one decimal place, then two?</li>
+<li><strong>L6 (linear algebra)</strong> — the overdetermined <code>X β̂ = y</code> slides (<a href="../stats-math/06-lecture/06-lecture.html"><code>06-lecture/06-lecture.qmd:881</code></a>) become “fit the Moon-drop data to recover g.” Distances are fixed and times are noisy, so the response is observed time, and the design columns are <code>1</code> and <code>sqrt(distance)</code>. The intercept <span class="math inline">\(\alpha\)</span> is the constant timing delay, <span class="math inline">\(\beta=\sqrt{2/g}\)</span> is the slope, and <span class="math inline">\(g=2/\beta^2\)</span>.</li>
+<li><strong>L7 (statistical inference)</strong> — the timing-error model becomes “how uncertain is our estimate of g given noisy stopwatch readings?” This is also where the <strong>oxygen / sample-size question</strong> (§6.3) is answered: how many marks must we record before the confidence interval for ĝ is tight enough to read g to one decimal place, then two?</li>
 </ul>
 <p>This is the resolved scope: <strong>full propagation</strong> across L2 → L3 → L6 → L7.</p>
 </section>
@@ -327,10 +328,10 @@ x(t) = ½ · g · t²</code></pre>
 <li><strong>Oxygen / sample-size question (NEW, open as a teaching thread)</strong> — How many observations (marks recorded) do we need to estimate g to the <strong>first</strong> decimal place? To the <strong>second</strong>? This matters because oxygen is limited, so each extra reading has a cost — we want the <em>fewest</em> drops that buy the required precision. This becomes a recurring question:
 <ul>
 <li>Posed informally in <strong>L2</strong> when the mission is introduced.</li>
-<li>Made concrete in <strong>L7</strong> via standard errors / confidence intervals on ĝ. With marks every 5 m (20 per drop, spanning the whole tower), the unit of cost is the <strong>drop</strong>: a single drop already nails the first decimal (CI half-width ≈ 0.012), and ~6 drops reach the second decimal (half-width &lt; 0.005). The second decimal costs ~6× the oxygen of the first.</li>
+<li>Made concrete in <strong>L7</strong> via standard errors / confidence intervals on ĝ. With marks every 5 m (20 per drop, spanning the whole tower) and 0.10 s timing noise, the unit of cost is the <strong>drop</strong>. When the delay is also estimated, about 2 drops reach the first decimal (CI half-width &lt; 0.05), while about 140 drops reach the second (half-width &lt; 0.005).</li>
 <li>Can be explored by simulation (vary the number of drops, watch the CI shrink).</li>
 </ul></li>
-<li><strong>Observation mechanism (NEW, resolved as narrative detail)</strong> — How does a person standing on top of the tower see the ball pass a mark? RESOLVED: each mark has a sensor that <strong>flashes a light</strong> as the ball passes; the observer reads the stopwatch at each flash. (Measurement noise then comes from reaction time / flash-reading, ≈ 0.1 s.)</li>
+<li><strong>Observation mechanism (NEW, resolved as narrative detail)</strong> — How does a person standing on top of the tower see the ball pass a mark? RESOLVED: each mark has a sensor that <strong>flashes a light</strong> as the ball passes; the observer reads the stopwatch at each flash. (Measurement noise then comes from a constant 0.30 s delay plus random flash-reading noise of ≈ 0.1 s.)</li>
 </ol>
 </section>
 <section id="implementation-checklist" class="slide level2">
@@ -345,7 +346,7 @@ x(t) = ½ · g · t²</code></pre>
 <li><label><input type="checkbox" checked="">L3: reframe “From Velocity to Position” as integrating <code>ẍ = g</code> twice</label></li>
 <li><label><input type="checkbox" checked="">L6: reframe overdetermined <code>X β̂ = y</code> as recovering <code>g</code> from drop data</label></li>
 <li><label><input type="checkbox" checked="">L7: reframe measurement-error model as uncertainty in <code>g</code></label></li>
-<li><label><input type="checkbox" checked="">L7: answer the oxygen / sample-size question — drops needed for ±0.05 (1 drop) and ±0.005 (~6 drops) CI on ĝ; marks every 5 m</label></li>
+<li><label><input type="checkbox" checked="">L7: answer the oxygen / sample-size question with delay estimated — about 2 drops for ±0.05 and about 140 for ±0.005; marks every 5 m</label></li>
 <li><label><input type="checkbox" checked="">Remove all remaining generic straight-line narrative</label></li>
 <li><label><input type="checkbox" checked="">Fix typos (§5)</label></li>
 <li><label><input type="checkbox" checked="">Render each modified lecture to confirm it compiles</label></li>

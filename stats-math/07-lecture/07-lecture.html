@@ -254,20 +254,22 @@ Eric.Novik@nyu.edu | Summer 2025 | Session 7
 </div>
 </div></div>
 </section>
-<section id="measurement-error-models" class="slide level2">
+<section id="measurement-error-models" class="slide level2 smaller">
 <h2>Measurement Error Models</h2>
 <ul>
 <li class="fragment">We are trying to estimate the parameters of some data-generating process</li>
-<li class="fragment">For the Moon drop, we assumed the distance-fallen data come from the following model, with <span class="math inline">\(b = g/2\)</span>:</li>
+<li class="fragment">For the Moon drop, the distance marks <span class="math inline">\(x_i\)</span> are fixed and the stopwatch times are noisy:</li>
 </ul>
 <div class="fragment">
 <p><span class="math display">\[
-x_i(t) = \tfrac{1}{2} g\, t_i^2 + \epsilon_i = b\, t_i^2 + \epsilon_i
+t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
+   =\alpha+\beta\sqrt{x_i}+\epsilon_i,
+\qquad \beta=\sqrt{\frac{2}{g}}.
 \]</span></p>
 </div>
 <ul>
-<li class="fragment">We also assumed that time <span class="math inline">\(t\)</span> was observed precisely, but the stopwatch reading at each light flash can have an error in <span class="math inline">\(t\)</span> too</li>
-<li class="fragment">Errors may be multiplicative, not just additive</li>
+<li class="fragment">Here <span class="math inline">\(\alpha\)</span> is a constant timing delay and <span class="math inline">\(\epsilon_i\)</span> is random timing error</li>
+<li class="fragment">Other measurement mechanisms may require different additive or multiplicative error models</li>
 </ul>
 </section>
 <section id="sampling-distribution" class="slide level2 smaller">
@@ -278,8 +280,8 @@ x_i(t) = \tfrac{1}{2} g\, t_i^2 + \epsilon_i = b\, t_i^2 + \epsilon_i
 <li class="fragment"><strong>Examples</strong>
 <ul>
 <li class="fragment">Simple random sample of size <span class="math inline">\(n\)</span> from the population of size <span class="math inline">\(N\)</span>. Here, each person has the same probability of being selected</li>
-<li class="fragment">Our constant acceleration model <span class="math inline">\(x_i(t) = b\,t_i^2 + \epsilon_i\)</span>, where we fix <span class="math inline">\(b = g/2\)</span> and <span class="math inline">\(t\)</span>, and draw <span class="math inline">\(\epsilon\)</span> from an error distribition, such as <span class="math inline">\(\text{Normal}(0, 1)\)</span></li>
-<li class="fragment">We can write some code to generate observations according to this process (which is what we did for the Moon drop)</li>
+<li class="fragment">For the Moon drop, fix <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>, and the marks <span class="math inline">\(x_i\)</span>, then draw timing errors <span class="math inline">\(\epsilon_i\)</span> and form <span class="math inline">\(t_i=\alpha+\beta\sqrt{x_i}+\epsilon_i\)</span></li>
+<li class="fragment">We can write code to generate observations from this process, as we did for the Moon drop</li>
 </ul></li>
 </ul>
 </section>
@@ -349,45 +351,57 @@ x_i(t) = \tfrac{1}{2} g\, t_i^2 + \epsilon_i = b\, t_i^2 + \epsilon_i
 </section>
 <section id="moon-drop-how-many-drops" class="slide level2 smaller">
 <h2>Moon Drop: How Many Drops?</h2>
-<p>Each drop gives 20 timed marks (every 5 m), and each drop costs oxygen. How many drops do we need to pin down <span class="math inline">\(g\)</span>? We simulate: for each number of drops, fit <span class="math inline">\(\hat{g} = 2\hat{\beta}_1\)</span> many times and measure the spread.</p>
+<p>Each drop gives 20 noisy time readings at fixed distance marks, and each drop costs oxygen. How many drops do we need to pin down <span class="math inline">\(g\)</span> while also estimating the delay? We repeatedly fit <span class="math inline">\(t=\alpha+\beta\sqrt{x}+\varepsilon\)</span> and transform <span class="math inline">\(\hat g=2/\hat\beta^2\)</span>.</p>
 <div class="fragment">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
 <span id="cb11-2"><a></a>g_true <span class="ot">&lt;-</span> <span class="fl">1.625</span></span>
-<span id="cb11-3"><a></a>sigma  <span class="ot">&lt;-</span> <span class="dv">1</span>              <span class="co"># distance-reading noise, meters</span></span>
-<span id="cb11-4"><a></a>reps   <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb11-5"><a></a>marks  <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>)             <span class="co"># 20 marks, every 5 m</span></span>
-<span id="cb11-6"><a></a>tsq    <span class="ot">&lt;-</span> (<span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> marks <span class="sc">/</span> g_true))<span class="sc">^</span><span class="dv">2</span>    <span class="co"># squared pass times</span></span>
-<span id="cb11-7"><a></a></span>
-<span id="cb11-8"><a></a>se_ghat <span class="ot">&lt;-</span> <span class="cf">function</span>(n_drops) {</span>
-<span id="cb11-9"><a></a>  z <span class="ot">&lt;-</span> <span class="fu">rep</span>(tsq, n_drops)                  <span class="co"># pool n_drops worth of marks</span></span>
-<span id="cb11-10"><a></a>  ghat <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
-<span id="cb11-11"><a></a>    y <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> g_true <span class="sc">*</span> z <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(z), <span class="dv">0</span>, sigma)</span>
-<span id="cb11-12"><a></a>    <span class="dv">2</span> <span class="sc">*</span> <span class="fu">coef</span>(<span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> z))[<span class="dv">1</span>]            <span class="co"># g = 2 * slope</span></span>
-<span id="cb11-13"><a></a>  })</span>
-<span id="cb11-14"><a></a>  <span class="fu">sd</span>(ghat)                               <span class="co"># empirical SE of g_hat</span></span>
-<span id="cb11-15"><a></a>}</span>
-<span id="cb11-16"><a></a></span>
-<span id="cb11-17"><a></a>drops <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">20</span>)</span>
-<span id="cb11-18"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sapply</span>(drops, se_ghat)</span>
-<span id="cb11-19"><a></a><span class="fu">data.frame</span>(<span class="at">drops =</span> drops, <span class="at">marks =</span> drops <span class="sc">*</span> <span class="dv">20</span>, <span class="at">se =</span> <span class="fu">round</span>(se, <span class="dv">4</span>),</span>
-<span id="cb11-20"><a></a>           <span class="at">ci_half_width =</span> <span class="fu">round</span>(<span class="fl">1.96</span> <span class="sc">*</span> se, <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-3"><a></a>delay_true <span class="ot">&lt;-</span> <span class="fl">0.30</span>                        <span class="co"># constant delay, seconds</span></span>
+<span id="cb11-4"><a></a>timing_sd <span class="ot">&lt;-</span> <span class="fl">0.10</span>                         <span class="co"># random timing noise, seconds</span></span>
+<span id="cb11-5"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb11-6"><a></a>marks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>)              <span class="co"># fixed marks every 5 m</span></span>
+<span id="cb11-7"><a></a>sqrt_marks <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(marks)</span>
+<span id="cb11-8"><a></a>beta_true <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">/</span> g_true)</span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a>se_ghat <span class="ot">&lt;-</span> <span class="cf">function</span>(n_drops) {</span>
+<span id="cb11-11"><a></a>  z <span class="ot">&lt;-</span> <span class="fu">rep</span>(sqrt_marks, n_drops)            <span class="co"># fixed design values</span></span>
+<span id="cb11-12"><a></a>  g_hat <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
+<span id="cb11-13"><a></a>    t_obs <span class="ot">&lt;-</span> delay_true <span class="sc">+</span> beta_true <span class="sc">*</span> z <span class="sc">+</span></span>
+<span id="cb11-14"><a></a>      <span class="fu">rnorm</span>(<span class="fu">length</span>(z), <span class="dv">0</span>, timing_sd)</span>
+<span id="cb11-15"><a></a>    beta_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lm</span>(t_obs <span class="sc">~</span> z))[<span class="dv">2</span>]</span>
+<span id="cb11-16"><a></a>    <span class="dv">2</span> <span class="sc">/</span> beta_hat<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb11-17"><a></a>  })</span>
+<span id="cb11-18"><a></a>  <span class="fu">sd</span>(g_hat)                                <span class="co"># empirical SE of g_hat</span></span>
+<span id="cb11-19"><a></a>}</span>
+<span id="cb11-20"><a></a></span>
+<span id="cb11-21"><a></a>drops <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">40</span>, <span class="dv">80</span>, <span class="dv">120</span>, <span class="dv">140</span>)</span>
+<span id="cb11-22"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sapply</span>(drops, se_ghat)</span>
+<span id="cb11-23"><a></a><span class="fu">data.frame</span>(</span>
+<span id="cb11-24"><a></a>  <span class="at">drops =</span> drops,</span>
+<span id="cb11-25"><a></a>  <span class="at">marks =</span> drops <span class="sc">*</span> <span class="dv">20</span>,</span>
+<span id="cb11-26"><a></a>  <span class="at">se =</span> <span class="fu">round</span>(se, <span class="dv">4</span>),</span>
+<span id="cb11-27"><a></a>  <span class="at">ci_half_width =</span> <span class="fu">round</span>(<span class="fl">1.96</span> <span class="sc">*</span> se, <span class="dv">4</span>)</span>
+<span id="cb11-28"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  drops marks     se ci_half_width
-1     1    20 0.0060        0.0118
-2     2    40 0.0041        0.0081
-3     3    60 0.0036        0.0071
-4     6   120 0.0025        0.0049
-5    10   200 0.0019        0.0038
-6    20   400 0.0014        0.0027</code></pre>
+<pre><code>   drops marks     se ci_half_width
+1      1    20 0.0301        0.0590
+2      2    40 0.0215        0.0421
+3      3    60 0.0178        0.0348
+4      6   120 0.0120        0.0236
+5     10   200 0.0088        0.0173
+6     20   400 0.0068        0.0133
+7     40   800 0.0046        0.0090
+8     80  1600 0.0032        0.0063
+9    120  2400 0.0026        0.0051
+10   140  2800 0.0024        0.0048</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
 <ul>
-<li><strong>One decimal</strong> (<span class="math inline">\(\pm 0.05\)</span>): a single drop (20 marks) is already more than enough</li>
-<li><strong>Two decimals</strong> (<span class="math inline">\(\pm 0.005\)</span>): you need ~6 drops — the second decimal costs ~6× the oxygen of the first</li>
-<li>Spreading marks over the whole tower gives each drop a lot of leverage</li>
+<li><strong>One decimal</strong> (<span class="math inline">\(\pm 0.05\)</span>): about 2 drops with 20 marks each</li>
+<li><strong>Two decimals</strong> (<span class="math inline">\(\pm 0.005\)</span>): with 0.10 s timing noise, about 140 drops</li>
+<li>This is the precision cost of estimating the delay instead of forcing the line through the origin</li>
 </ul>
 </div>
 </section>
