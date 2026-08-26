@@ -770,7 +770,7 @@ Rv =
           }
 
           .swatch.original {
-            border-color: #b5b9b3;
+            border-color: #a4aaa2;
           }
 
           .swatch.transformed {
@@ -983,9 +983,9 @@ Rv =
 
         for (let value = -sourceLimit; value <= sourceLimit + 1e-9; value += 0.5) {
           const major = Math.abs(value - Math.round(value)) < 1e-9;
-          const originalColor = major ? "#c4c7c1" : "#dfe1dc";
-          drawLine([value, -sourceLimit], [value, sourceLimit], project, originalColor, major ? 1 : 0.7);
-          drawLine([-sourceLimit, value], [sourceLimit, value], project, originalColor, major ? 1 : 0.7);
+          const originalColor = major ? "#b5bab3" : "#d3d7d0";
+          drawLine([value, -sourceLimit], [value, sourceLimit], project, originalColor, major ? 1.15 : 0.8);
+          drawLine([-sourceLimit, value], [sourceLimit, value], project, originalColor, major ? 1.15 : 0.8);
         }
 
         for (let value = -sourceLimit; value <= sourceLimit + 1e-9; value += 0.5) {
@@ -1005,11 +1005,11 @@ Rv =
           drawLine(horizontalStart, horizontalEnd, project, color, lineWidth);
         }
 
-        drawLine([-extent, 0], [extent, 0], project, "rgba(90, 94, 90, 0.42)", 1, [5, 5]);
-        drawLine([0, -extent], [0, extent], project, "rgba(90, 94, 90, 0.42)", 1, [5, 5]);
+        drawLine([-extent, 0], [extent, 0], project, "rgba(90, 94, 90, 0.52)", 1.1, [5, 5]);
+        drawLine([0, -extent], [0, extent], project, "rgba(90, 94, 90, 0.52)", 1.1, [5, 5]);
 
-        drawArrow([1, 0], project, "rgba(72, 78, 74, 0.28)", "e₁");
-        drawArrow([0, 1], project, "rgba(72, 78, 74, 0.28)", "e₂");
+        drawArrow([1, 0], project, "rgba(72, 78, 74, 0.42)", "e₁");
+        drawArrow([0, 1], project, "rgba(72, 78, 74, 0.42)", "e₂");
         drawArrow(applyMatrix(matrix, 1, 0), project, "#d14a42", "Ae₁");
         drawArrow(applyMatrix(matrix, 0, 1), project, "#16866f", "Ae₂");
 
@@ -1455,7 +1455,7 @@ x &amp; = &amp; A^{-1}b
 </div>
 </div>
 <div class="footer">
-<p>Image from <a href="https://web.stanford.edu/~boyd/vmls/">Introduction to Linear Algebra</a>, Boyd and Vandenberghe</p>
+<p>Image from <a href="https://ericnovik.github.io/apps/least-squares/">Geometry of Least Squares</a></p>
 </div>
 </section>
 <section id="solving-an-overdetermined-xhatbeta-y-1" class="slide level2 smaller">
@@ -1464,6 +1464,8 @@ x &amp; = &amp; A^{-1}b
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Solution</a></li><li><a href="#tabset-4-2">Example of an <span class="math inline">\(X^TX\)</span></a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
+<div class="columns">
+<div class="column" style="width:45%;">
 <ul>
 <li class="fragment">This residual <span class="math inline">\(r\)</span> is also called the error term</li>
 <li class="fragment">This error, <span class="math inline">\(y - X\hat{\beta}\)</span>, is the smallest when it’s perpendicular to the plane</li>
@@ -1474,6 +1476,7 @@ x &amp; = &amp; A^{-1}b
 X^T(y - X\hat{\beta}) = 0
 \]</span></p>
 </div>
+</div><div class="column" style="width:55%;">
 <div class="fragment">
 <ul>
 <li>We can now solve this normal equation:</li>
@@ -1487,6 +1490,7 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 \end{eqnarray}
 \]</span></p>
 </div>
+</div></div>
 </div>
 <div id="tabset-4-2">
 <div class="fragment">
@@ -1538,7 +1542,7 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <h2>Recovering g from the Moon Drop</h2>
 <ul>
 <li class="fragment">Recall the Moon mission from Session 2: fixed marks give known distances <span class="math inline">\(x_i\)</span>, while stopwatch readings <span class="math inline">\(t_i\)</span> have a constant delay and random noise</li>
-<li class="fragment">We promised that we would later recover the Moon’s gravity <span class="math inline">\(g\)</span> from those measurements</li>
+<li class="fragment"><code>gravity-flash-162-01.csv</code> contains 17 recorded readings from one actual trial</li>
 <li class="fragment">We are now in a position to solve the problem</li>
 </ul>
 <div class="fragment">
@@ -1556,9 +1560,11 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 <section id="recovering-g-from-the-moon-drop-1" class="slide level2 smaller">
 <h2>Recovering g from the Moon Drop</h2>
 <div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Setup</a></li><li><a href="#tabset-5-2">Solution</a></li><li><a href="#tabset-5-3">Plot the Linearized Fit</a></li></ul>
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Setup</a></li><li><a href="#tabset-5-2">Solution</a></li><li><a href="#tabset-5-3">Plot the Linearized Fit</a></li><li><a href="#tabset-5-4">Natural Scale</a></li><li><a href="#tabset-5-5">Zoom</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
+<div class="columns">
+<div class="column" style="width:48%;">
 <div style="font-size: 84%;">
 <ul>
 <li class="fragment"><p>The marks <span class="math inline">\(x_i\)</span> are fixed; let <span class="math inline">\(\alpha\)</span> be a constant stopwatch delay</p></li>
@@ -1566,6 +1572,11 @@ X^TX\hat{\beta} &amp; = &amp; X^Ty \\
 t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\varepsilon_i,
 \qquad \E(\varepsilon_i)=0.
 \]</span></p></li>
+</ul>
+</div>
+</div><div class="column" style="width:52%;">
+<div style="font-size: 84%;">
+<ul>
 <li class="fragment"><p>Set <span class="math inline">\(z_i=\sqrt{x_i}\)</span> and <span class="math inline">\(\beta=\sqrt{2/g}\)</span> to obtain <span class="math display">\[
 t_i=\alpha+\beta z_i+\varepsilon_i.
 \]</span></p></li>
@@ -1575,12 +1586,13 @@ t_i=\alpha+\beta z_i+\varepsilon_i.
 X=\begin{pmatrix}
 1 &amp; \sqrt{x_1}\\
 \vdots &amp; \vdots\\
-1 &amp; \sqrt{x_{20}}
+1 &amp; \sqrt{x_n}
 \end{pmatrix}.
 \]</span></p></li>
 <li class="fragment"><p>Recover gravity from the slope: <span class="math inline">\(\hat g=2/\hat\beta^2\)</span></p></li>
 </ul>
 </div>
+</div></div>
 </div>
 <div id="tabset-5-2">
 <div class="columns">
@@ -1590,11 +1602,11 @@ X=\begin{pmatrix}
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="co"># observed times are the noisy outcome vector</span></span>
 <span id="cb73-2"><a></a><span class="fu">length</span>(t_obs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 20</code></pre>
+<pre><code>[1] 17</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="fu">head</span>(t_obs, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.632638 3.965949 4.501015 5.169389</code></pre>
+<pre><code>[1] 2.8435 3.6596 4.6100 5.3433</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="co"># intercept plus z = sqrt(x)</span></span>
 <span id="cb77-2"><a></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">intercept =</span> <span class="dv">1</span>, <span class="at">sqrt_x =</span> <span class="fu">sqrt</span>(x))</span>
@@ -1610,11 +1622,11 @@ X=\begin{pmatrix}
 <span id="cb79-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(t_obs, <span class="at">ncol =</span> <span class="dv">1</span>)</span>
 <span id="cb79-3"><a></a><span class="fu">head</span>(y, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>         [,1]
-[1,] 2.632638
-[2,] 3.965949
-[3,] 4.501015
-[4,] 5.169389</code></pre>
+<pre><code>       [,1]
+[1,] 2.8435
+[2,] 3.6596
+[3,] 4.6100
+[4,] 5.3433</code></pre>
 </div>
 </div>
 </div>
@@ -1630,8 +1642,8 @@ X=\begin{pmatrix}
 <span id="cb81-2"><a></a><span class="fu">round</span>(theta_hat, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            [,1]
-intercept 0.1896
-sqrt_x    1.1206</code></pre>
+intercept 0.3771
+sqrt_x    1.0875</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>delay_hat <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(theta_hat[<span class="st">"intercept"</span>, ])</span>
 <span id="cb83-2"><a></a>beta_hat <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(theta_hat[<span class="st">"sqrt_x"</span>, ])</span>
@@ -1639,40 +1651,77 @@ sqrt_x    1.1206</code></pre>
 <span id="cb83-4"><a></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="at">delay =</span> delay_hat, <span class="at">g =</span> g_hat), <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>delay     g 
-0.190 1.593 </code></pre>
+0.377 1.691 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a><span class="co"># R gives the same estimates</span></span>
 <span id="cb85-2"><a></a><span class="fu">coef</span>(<span class="fu">lm</span>(t_obs <span class="sc">~</span> <span class="fu">sqrt</span>(x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)     sqrt(x) 
-   0.189601    1.120609 </code></pre>
+  0.3771303   1.0874652 </code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
 <ul>
-<li><span class="math inline">\(\hat\alpha=0.190\text{ s};\quad \hat g=1.593\text{ m/s}^2\)</span>.</li>
+<li><span class="math inline">\(\hat\alpha=0.377\text{ s};\quad \hat g=1.691\text{ m/s}^2\)</span>.</li>
 </ul>
 </div>
 </div></div>
 </div>
 <div id="tabset-5-3">
-<div class="cell" data-layout-align="center">
+<div class="columns">
+<div class="column" style="width:45%;">
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>fit_data <span class="ot">&lt;-</span> <span class="fu">transform</span>(</span>
 <span id="cb87-2"><a></a>  moon_drop,</span>
 <span id="cb87-3"><a></a>  <span class="at">t_hat =</span> delay_hat <span class="sc">+</span> beta_hat <span class="sc">*</span> sqrt_x</span>
 <span id="cb87-4"><a></a>)</span>
 <span id="cb87-5"><a></a></span>
-<span id="cb87-6"><a></a><span class="fu">ggplot</span>(fit_data, <span class="fu">aes</span>(sqrt_x, t_obs)) <span class="sc">+</span></span>
-<span id="cb87-7"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb87-8"><a></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> t_hat), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
-<span id="cb87-9"><a></a>  <span class="fu">xlab</span>(<span class="fu">expression</span>(<span class="fu">sqrt</span>(x) <span class="sc">~</span> <span class="st">"for fixed distance marks"</span>)) <span class="sc">+</span></span>
-<span id="cb87-10"><a></a>  <span class="fu">ylab</span>(<span class="st">"observed time t (s)"</span>) <span class="sc">+</span></span>
-<span id="cb87-11"><a></a>  <span class="fu">ggtitle</span>(<span class="st">"Linearized Moon-drop model with delay"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb87-6"><a></a>p_linearized <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb87-7"><a></a>  fit_data,</span>
+<span id="cb87-8"><a></a>  <span class="fu">aes</span>(sqrt_x, observed_time_s)</span>
+<span id="cb87-9"><a></a>) <span class="sc">+</span></span>
+<span id="cb87-10"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb87-11"><a></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb87-12"><a></a>    <span class="fu">aes</span>(<span class="at">y =</span> t_hat),</span>
+<span id="cb87-13"><a></a>    <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb87-14"><a></a>    <span class="at">linewidth =</span> <span class="fl">0.35</span></span>
+<span id="cb87-15"><a></a>  ) <span class="sc">+</span></span>
+<span id="cb87-16"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb87-17"><a></a>    <span class="at">x =</span> <span class="fu">expression</span>(<span class="fu">sqrt</span>(x)),</span>
+<span id="cb87-18"><a></a>    <span class="at">y =</span> <span class="st">"observed time t (s)"</span>,</span>
+<span id="cb87-19"><a></a>    <span class="at">title =</span> <span class="st">"Linearized fit"</span></span>
+<span id="cb87-20"><a></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" width="576"></p>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center" width="432"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+<div id="tabset-5-4">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-36-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-5-5">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06-lecture_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" width="816"></p>
 </figure>
 </div>
 </div>
@@ -1684,12 +1733,22 @@ sqrt_x    1.1206</code></pre>
 <section id="your-turn-2" class="slide level2 smaller">
 <h2>Your Turn</h2>
 <ul>
-<li>Look at the dataset <code>mtcars</code></li>
-<li>Plot <code>mpg</code> against <code>wt</code>, treating <code>mpg</code> as the output variable <span class="math inline">\(y\)</span>. (We generally don’t like to use the words dependent vs.&nbsp;independent in this context)</li>
+<li>Load your own experimental dataset into R</li>
+<li>Plot <code>time</code> against <code>distance</code>, treating <code>time</code> as the output variable <span class="math inline">\(y\)</span>. (We generally don’t like to use the words dependent vs.&nbsp;independent in this context)</li>
 <li>Using the normal equations, find the intercept and slope of the best-fit line</li>
 <li>Validate that it matches the output from <code>lm</code></li>
-<li>Now plot the line over the data and see if it “fits”</li>
+<li>Plot it in its linear form and on the natural scale; also plot the data</li>
+<li>Now add the curve representing the true gravity of the planet from which you escaped</li>
 </ul>
+</section>
+<section id="homework" class="slide level2 smaller scrollable">
+<h2>Homework</h2>
+<ol type="1">
+<li class="fragment"><p><strong>Basis vectors and linearity.</strong> Let <span class="math inline">\(A=\begin{pmatrix}1&amp;2\\-1&amp;1\end{pmatrix}\)</span>, <span class="math inline">\(\mathbf{u}=(2,-1)^\mathsf{T}\)</span>, and <span class="math inline">\(\mathbf{v}=(-1,3)^\mathsf{T}\)</span>. Compute <span class="math inline">\(A\mathbf{e}_1\)</span>, <span class="math inline">\(A\mathbf{e}_2\)</span>, <span class="math inline">\(A\mathbf{u}\)</span>, and <span class="math inline">\(A\mathbf{v}\)</span>; then verify <span class="math inline">\(A(2\mathbf{u}-\mathbf{v})=2A\mathbf{u}-A\mathbf{v}\)</span>.</p></li>
+<li class="fragment"><p><strong>Inverse and linear system.</strong> Let <span class="math inline">\(B=\begin{pmatrix}3&amp;1\\2&amp;1\end{pmatrix}\)</span> and <span class="math inline">\(\mathbf{b}=(7,5)^\mathsf{T}\)</span>. Compute <span class="math inline">\(\det(B)\)</span> and <span class="math inline">\(B^{-1}\)</span>, solve <span class="math inline">\(B\mathbf{x}=\mathbf{b}\)</span> using <span class="math inline">\(B^{-1}\)</span>, and verify the result with <code>solve()</code> in R.</p></li>
+<li class="fragment"><p><strong>Simulation—transforming space.</strong> With <code>set.seed(6)</code>, use <code>runif()</code> to generate 2,000 points in <span class="math inline">\([-1,1]^2\)</span>. Apply the matrix <span class="math inline">\(A\)</span> from Problem 1, plot the original and transformed point clouds with equal axis scales, and explain how the transformed basis vectors and <span class="math inline">\(\det(A)\)</span> predict the picture.</p></li>
+<li class="fragment"><p><strong>Simulation—recovering Moon gravity.</strong> Use fixed marks <span class="math inline">\(x=5,10,\ldots,100\)</span>, <span class="math inline">\(g=1.625\)</span>, <span class="math inline">\(\alpha=0.25\)</span>, and timing errors from <span class="math inline">\(\operatorname{Uniform}(-0.1,0.1)\)</span>. Simulate 1,000 experiments; in each, estimate <span class="math inline">\((\alpha,\beta)^\mathsf{T}\)</span> with <span class="math inline">\((X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbf{t}\)</span> and compute <span class="math inline">\(\hat g=2/\hat\beta^2\)</span>. Plot and summarize the estimates, then repeat with the intercept forced to zero and compare.</p></li>
+</ol>
 
 
 </section>
