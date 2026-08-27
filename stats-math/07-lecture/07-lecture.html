@@ -276,7 +276,7 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 <h2>Sampling Distribution</h2>
 <ul>
 <li class="fragment">A <strong>generative model</strong> describes how repeated datasets could arise under fixed assumptions</li>
-<li class="fragment">The <strong>sampling distribution</strong> is the distribution of a statistic or estimate across those repeated datasets</li>
+<li class="fragment">“The <strong>sampling distribution</strong> is the set of possible datasets that could have been observed if the data collection process had been re-done, along with the probabilities of these possible values.” Ch-4 ROS, Gelman, Hill, Vehtari</li>
 <li class="fragment">It depends on the sampling design, treatment-assignment mechanism, and measurement process</li>
 <li class="fragment"><strong>Examples</strong>
 <ul>
@@ -354,111 +354,51 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 </div>
 </div>
 </section>
-<section id="moon-drop-how-many-drops" class="slide level2 smaller">
-<h2>Moon Drop: How Many Drops?</h2>
-<p>Each drop gives 20 noisy time readings at fixed distance marks, and each drop costs oxygen. How many drops do we need to pin down <span class="math inline">\(g\)</span> while also estimating the delay? We repeatedly fit <span class="math inline">\(t=\alpha+\beta\sqrt{x}+\varepsilon\)</span> and transform <span class="math inline">\(\hat g=2/\hat\beta^2\)</span>.</p>
-<div class="fragment">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb11-2"><a></a>g_true <span class="ot">&lt;-</span> <span class="fl">1.625</span></span>
-<span id="cb11-3"><a></a>delay_true <span class="ot">&lt;-</span> <span class="fl">0.30</span>                        <span class="co"># constant delay, seconds</span></span>
-<span id="cb11-4"><a></a>timing_sd <span class="ot">&lt;-</span> <span class="fl">0.10</span>                         <span class="co"># random timing noise, seconds</span></span>
-<span id="cb11-5"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb11-6"><a></a>marks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>)              <span class="co"># fixed marks every 5 m</span></span>
-<span id="cb11-7"><a></a>sqrt_marks <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(marks)</span>
-<span id="cb11-8"><a></a>beta_true <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">/</span> g_true)</span>
-<span id="cb11-9"><a></a></span>
-<span id="cb11-10"><a></a>se_ghat <span class="ot">&lt;-</span> <span class="cf">function</span>(n_drops) {</span>
-<span id="cb11-11"><a></a>  z <span class="ot">&lt;-</span> <span class="fu">rep</span>(sqrt_marks, n_drops)            <span class="co"># fixed design values</span></span>
-<span id="cb11-12"><a></a>  g_hat <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
-<span id="cb11-13"><a></a>    t_obs <span class="ot">&lt;-</span> delay_true <span class="sc">+</span> beta_true <span class="sc">*</span> z <span class="sc">+</span></span>
-<span id="cb11-14"><a></a>      <span class="fu">rnorm</span>(<span class="fu">length</span>(z), <span class="dv">0</span>, timing_sd)</span>
-<span id="cb11-15"><a></a>    beta_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lm</span>(t_obs <span class="sc">~</span> z))[<span class="dv">2</span>]</span>
-<span id="cb11-16"><a></a>    <span class="dv">2</span> <span class="sc">/</span> beta_hat<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb11-17"><a></a>  })</span>
-<span id="cb11-18"><a></a>  <span class="fu">sd</span>(g_hat)                                <span class="co"># empirical SE of g_hat</span></span>
-<span id="cb11-19"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</section>
-<section id="moon-drop-simulation-results" class="slide level2 smaller">
-<h2>Moon Drop: Simulation Results</h2>
-<div class="fragment">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>drops <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">40</span>, <span class="dv">80</span>, <span class="dv">120</span>, <span class="dv">140</span>)</span>
-<span id="cb12-2"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sapply</span>(drops, se_ghat)</span>
-<span id="cb12-3"><a></a>moon_drop_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-4"><a></a>  <span class="at">drops =</span> drops,</span>
-<span id="cb12-5"><a></a>  <span class="at">marks =</span> drops <span class="sc">*</span> <span class="dv">20</span>,</span>
-<span id="cb12-6"><a></a>  <span class="at">se =</span> <span class="fu">round</span>(se, <span class="dv">4</span>),</span>
-<span id="cb12-7"><a></a>  <span class="at">ci_half_width =</span> <span class="fu">round</span>(<span class="fl">1.96</span> <span class="sc">*</span> se, <span class="dv">4</span>)</span>
-<span id="cb12-8"><a></a>)</span>
-<span id="cb12-9"><a></a>moon_drop_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   drops marks     se ci_half_width
-1      1    20 0.0301        0.0590
-2      2    40 0.0215        0.0421
-3      3    60 0.0178        0.0348
-4      6   120 0.0120        0.0236
-5     10   200 0.0088        0.0173
-6     20   400 0.0068        0.0133
-7     40   800 0.0046        0.0090
-8     80  1600 0.0032        0.0063
-9    120  2400 0.0026        0.0051
-10   140  2800 0.0024        0.0048</code></pre>
-</div>
-</div>
-</div>
-<div class="fragment">
-<ul>
-<li><strong>One decimal</strong> (<span class="math inline">\(\pm 0.05\)</span>): about 2 drops with 20 marks each</li>
-<li><strong>Two decimals</strong> (<span class="math inline">\(\pm 0.005\)</span>): with 0.10 s timing noise, about 140 drops</li>
-<li>This is the precision cost of estimating the delay instead of forcing the line through the origin</li>
-</ul>
-</div>
-</section>
-<section id="confidence-intervals-for-proportions" class="slide level2 smaller scrollable">
+<section id="confidence-intervals-for-proportions" class="slide level2 smaller">
 <h2>Confidence Intervals for Proportions</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
 <li class="fragment">In surveys, we are often interested in estimating the standard error of the proportion</li>
 <li class="fragment">Suppose we want to estimate the proportion of the US population that supports same-sex marriage</li>
-<li class="fragment">Say you randomly survey <span class="math inline">\(n = 500\)</span> from the population, and <span class="math inline">\(y = 355\)</span> people respond yes<sup>1</sup></li>
+<li class="fragment">Say you randomly survey <span class="math inline">\(n = 500\)</span> from the population, and <span class="math inline">\(y = 355\)</span> people respond yes (*)</li>
 <li class="fragment">The estimate of the proportion is <span class="math inline">\(\hat{\theta} = y/n\)</span> with the <span class="math inline">\(\text{se} = \sqrt{\hat{\theta}(1 -\hat{\theta})/n }\)</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb14-2"><a></a>y <span class="ot">&lt;-</span> <span class="dv">355</span></span>
-<span id="cb14-3"><a></a>theta_hat <span class="ot">&lt;-</span> y<span class="sc">/</span>n</span>
-<span id="cb14-4"><a></a>theta_hat <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb11-2"><a></a>y <span class="ot">&lt;-</span> <span class="dv">355</span></span>
+<span id="cb11-3"><a></a>theta_hat <span class="ot">&lt;-</span> y<span class="sc">/</span>n</span>
+<span id="cb11-4"><a></a>theta_hat <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.71</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(theta_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta_hat) <span class="sc">/</span> n)</span>
-<span id="cb16-2"><a></a>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(theta_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta_hat) <span class="sc">/</span> n)</span>
+<span id="cb13-2"><a></a>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.02</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.75</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>se <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.67</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>ci_95 <span class="ot">&lt;-</span> theta_hat <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">*</span> se</span>
-<span id="cb22-2"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>ci_95 <span class="ot">&lt;-</span> theta_hat <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">*</span> se</span>
+<span id="cb19-2"><a></a>ci_95 <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.67 0.75</code></pre>
 </div>
 </div>
 </div>
 </div></div>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>A May 2023 Gallup poll found that 71% of Americans thought same-sex marriage should be legally recognized</p></li></ol></aside></section>
+<div class="fragment">
+<p>(*) A May 2023 Gallup poll found that 71% of Americans thought same-sex marriage should be legally recognized</p>
+</div>
+</section>
 <section id="your-turn" class="slide level2">
 <h2>Your Turn</h2>
 <p>Assume the conservative value <span class="math inline">\(p=0.5\)</span>. In a national survey, how large must <span class="math inline">\(n\)</span> be so that <span class="math inline">\(\text{se}(\hat p)\)</span> is at most:</p>
@@ -481,6 +421,73 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 <li class="fragment"><strong>Your turn:</strong> Assume two independent, equally sized groups, <span class="math inline">\(p_1=p_2=0.5\)</span>, and <span class="math inline">\(n\)</span> is the total sample size. How large must <span class="math inline">\(n\)</span> be so that <span class="math inline">\(\text{se}(\hat p_1-\hat p_2)\leq 0.03\)</span>?</li>
 </ul>
 </section>
+<section id="moon-drop-how-many-drops" class="slide level2 smaller">
+<h2>Moon Drop: How Many Drops?</h2>
+<p>Each drop gives 20 noisy time readings at fixed distance marks, and each drop costs oxygen. Here we omit the delay term and impose the physical constraint <span class="math inline">\(t(0)=0\)</span>. We repeatedly fit <span class="math inline">\(t=\beta\sqrt{x}+\varepsilon\)</span> through the origin and transform <span class="math inline">\(\hat g=2/\hat\beta^2\)</span>.</p>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb21-2"><a></a>g_true <span class="ot">&lt;-</span> <span class="fl">1.625</span></span>
+<span id="cb21-3"><a></a>timing_sd <span class="ot">&lt;-</span> <span class="fl">0.10</span>                         <span class="co"># random timing noise, seconds</span></span>
+<span id="cb21-4"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb21-5"><a></a>marks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>)              <span class="co"># fixed marks every 5 m</span></span>
+<span id="cb21-6"><a></a>sqrt_marks <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(marks)</span>
+<span id="cb21-7"><a></a>beta_true <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">/</span> g_true)</span>
+<span id="cb21-8"><a></a></span>
+<span id="cb21-9"><a></a>se_ghat <span class="ot">&lt;-</span> <span class="cf">function</span>(n_drops) {</span>
+<span id="cb21-10"><a></a>  z <span class="ot">&lt;-</span> <span class="fu">rep</span>(sqrt_marks, n_drops)            <span class="co"># fixed design values</span></span>
+<span id="cb21-11"><a></a>  g_hat <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
+<span id="cb21-12"><a></a>    t_obs <span class="ot">&lt;-</span> beta_true <span class="sc">*</span> z <span class="sc">+</span></span>
+<span id="cb21-13"><a></a>      <span class="fu">rnorm</span>(<span class="fu">length</span>(z), <span class="dv">0</span>, timing_sd)</span>
+<span id="cb21-14"><a></a>    beta_hat <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lm</span>(t_obs <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> z))[[<span class="st">"z"</span>]]</span>
+<span id="cb21-15"><a></a>    <span class="dv">2</span> <span class="sc">/</span> beta_hat<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb21-16"><a></a>  })</span>
+<span id="cb21-17"><a></a>  <span class="fu">sd</span>(g_hat)                                <span class="co"># empirical SE of g_hat</span></span>
+<span id="cb21-18"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="moon-drop-simulation-results" class="slide level2 smaller">
+<h2>Moon Drop: Simulation Results</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="fragment" style="font-size: 78%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>drops <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">40</span>)</span>
+<span id="cb22-2"><a></a>se_g <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(drops, se_ghat)</span>
+<span id="cb22-3"><a></a>moon_drop_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb22-4"><a></a>  <span class="at">drops =</span> drops,</span>
+<span id="cb22-5"><a></a>  <span class="at">readings =</span> drops <span class="sc">*</span> <span class="dv">20</span>,</span>
+<span id="cb22-6"><a></a>  <span class="at">se_g =</span> <span class="fu">round</span>(se_g, <span class="dv">4</span>),</span>
+<span id="cb22-7"><a></a>  <span class="at">half_width =</span> <span class="fu">round</span>(<span class="fl">1.96</span> <span class="sc">*</span> se_g, <span class="dv">4</span>)</span>
+<span id="cb22-8"><a></a>)</span>
+<span id="cb22-9"><a></a>moon_drop_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  drops readings   se_g half_width
+1     1       20 0.0089     0.0175
+2     2       40 0.0061     0.0119
+3     3       60 0.0054     0.0107
+4     5      100 0.0040     0.0079
+5    10      200 0.0029     0.0057
+6    12      240 0.0026     0.0052
+7    15      300 0.0025     0.0048
+8    20      400 0.0020     0.0039
+9    40      800 0.0014     0.0027</code></pre>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<div class="fragment" style="font-size: 80%;">
+<ul>
+<li><strong>Rows:</strong> each row summarizes 500 simulated repetitions; <code>readings</code> is 20 times <code>drops</code></li>
+<li><strong><code>se_g</code>:</strong> empirical standard deviation of the 500 <span class="math inline">\(\hat g\)</span> values</li>
+<li><strong><code>half_width</code>:</strong> <span class="math inline">\(1.96\,\text{se}_g\)</span>, an approximate 95% margin; smaller is more precise</li>
+<li><strong>Precision targets:</strong> one decimal requires <code>half_width</code> <span class="math inline">\(\leq0.05\)</span> (half of 0.1); two decimals requires <code>half_width</code> <span class="math inline">\(\leq0.005\)</span> (half of 0.01)</li>
+<li><strong>Reading the table:</strong> one drop has <span class="math inline">\(0.0175&lt;0.05\)</span>; 12 drops have <span class="math inline">\(0.0052&gt;0.005\)</span>, while 15 drops have <span class="math inline">\(0.0048&lt;0.005\)</span></li>
+</ul>
+</div>
+</div></div>
+</section>
 <section id="computer-demo-computing-cis" class="slide level2 smaller">
 <h2>Computer Demo: Computing CIs</h2>
 <ul>
@@ -497,7 +504,7 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 <span id="cb24-8"><a></a>p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
 <span id="cb24-9"><a></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
 <span id="cb24-10"><a></a>ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
-<span id="cb24-11"><a></a><span class="fu">print</span>(ci) </span>
+<span id="cb24-11"><a></a><span class="fu">print</span>(ci)</span>
 <span id="cb24-12"><a></a></span>
 <span id="cb24-13"><a></a><span class="co"># Put it in a loop</span></span>
 <span id="cb24-14"><a></a>reps <span class="ot">&lt;-</span> <span class="dv">100</span></span>
@@ -506,7 +513,7 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 <span id="cb24-17"><a></a>  p_hat <span class="ot">&lt;-</span> data <span class="sc">/</span> n</span>
 <span id="cb24-18"><a></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_hat <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_hat) <span class="sc">/</span> n)</span>
 <span id="cb24-19"><a></a>  ci <span class="ot">&lt;-</span> p_hat <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>) <span class="sc">*</span> se</span>
-<span id="cb24-20"><a></a>  <span class="fu">print</span>(ci) </span>
+<span id="cb24-20"><a></a>  <span class="fu">print</span>(ci)</span>
 <span id="cb24-21"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
@@ -590,7 +597,7 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 <span id="cb26-10"><a></a><span class="co"># Degrees of freedom</span></span>
 <span id="cb26-11"><a></a>df <span class="ot">&lt;-</span> <span class="fu">length</span>(data) <span class="sc">-</span> <span class="dv">1</span></span>
 <span id="cb26-12"><a></a></span>
-<span id="cb26-13"><a></a><span class="co"># Calculate the 95% and 50% confidence interval </span></span>
+<span id="cb26-13"><a></a><span class="co"># Calculate the 95% and 50% confidence interval</span></span>
 <span id="cb26-14"><a></a>ci_95 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), df) <span class="sc">*</span> se_mean</span>
 <span id="cb26-15"><a></a>ci_50 <span class="ot">&lt;-</span> mean_data <span class="sc">+</span> <span class="fu">qt</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), df) <span class="sc">*</span> se_mean</span>
 <span id="cb26-16"><a></a></span>
@@ -650,7 +657,6 @@ t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
 
 
 </section>
-
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
