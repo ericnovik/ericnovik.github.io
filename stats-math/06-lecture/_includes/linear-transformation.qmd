@@ -1,0 +1,500 @@
+<linear-transformation-widget></linear-transformation-widget>
+
+<script>
+(() => {
+  const tagName = "linear-transformation-widget";
+  if (customElements.get(tagName)) return;
+
+  class LinearTransformationWidget extends HTMLElement {
+    connectedCallback() {
+      if (this.shadowRoot) return;
+
+      const root = this.attachShadow({ mode: "open" });
+      root.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            color: #303534;
+            font-family: "IBM Plex Sans", system-ui, sans-serif;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          .widget {
+            display: grid;
+            grid-template-columns: 235px minmax(0, 1fr);
+            gap: 18px;
+            align-items: stretch;
+            width: min(940px, 100%);
+            margin: 8px auto 0;
+          }
+
+          .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 15px;
+            border: 1px solid #c7cac5;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.45);
+            font-size: 16px;
+            line-height: 1.25;
+          }
+
+          .instructions {
+            margin: 0;
+            font-size: 16px;
+          }
+
+          .matrix-editor {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          }
+
+          .matrix-name {
+            font-family: Georgia, serif;
+            font-size: 25px;
+            font-style: italic;
+          }
+
+          .matrix {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, 58px);
+            gap: 7px;
+            padding: 6px 11px;
+          }
+
+          .matrix::before,
+          .matrix::after {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 7px;
+            content: "";
+          }
+
+          .matrix::before {
+            left: 0;
+            border-top: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            border-left: 2px solid currentColor;
+          }
+
+          .matrix::after {
+            right: 0;
+            border-top: 2px solid currentColor;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+          }
+
+          input {
+            width: 58px;
+            height: 37px;
+            padding: 4px;
+            border: 1px solid #9da29c;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #202423;
+            font: 600 17px/1 "IBM Plex Mono", ui-monospace, monospace;
+            text-align: center;
+          }
+
+          input:focus-visible,
+          button:focus-visible {
+            outline: 3px solid rgba(79, 91, 255, 0.32);
+            outline-offset: 1px;
+          }
+
+          .presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+          }
+
+          button {
+            min-height: 34px;
+            padding: 5px 7px;
+            border: 1px solid #aeb2ad;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #303534;
+            font: 600 13px/1.1 "IBM Plex Sans", system-ui, sans-serif;
+            cursor: pointer;
+          }
+
+          button:hover {
+            background: #f0f1eb;
+          }
+
+          .readout {
+            padding: 10px;
+            border-radius: 6px;
+            background: rgba(79, 91, 255, 0.08);
+          }
+
+          .determinant {
+            margin-bottom: 4px;
+            font: 600 17px/1.2 "IBM Plex Mono", ui-monospace, monospace;
+          }
+
+          .effect {
+            min-height: 2.5em;
+            font-size: 14px;
+          }
+
+          .legend {
+            display: grid;
+            gap: 5px;
+            margin-top: auto;
+            font-size: 13px;
+          }
+
+          .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+          }
+
+          .swatch {
+            width: 22px;
+            height: 0;
+            border-top: 3px solid;
+          }
+
+          .swatch.original {
+            border-color: #a4aaa2;
+          }
+
+          .swatch.transformed {
+            border-color: #5965e8;
+          }
+
+          .swatch.e1 {
+            border-color: #d14a42;
+          }
+
+          .swatch.e2 {
+            border-color: #16866f;
+          }
+
+          .canvas-wrap {
+            min-width: 0;
+            min-height: 430px;
+          }
+
+          canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #c7cac5;
+            border-radius: 8px;
+            background: #fbfcf8;
+          }
+
+          @media (max-width: 760px) {
+            .widget {
+              grid-template-columns: 1fr;
+            }
+
+            .controls {
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .canvas-wrap {
+              min-height: 360px;
+              height: 360px;
+            }
+          }
+        </style>
+
+        <div class="widget">
+          <section class="controls" aria-label="Transformation controls">
+            <p class="instructions">Enter a matrix. Every point on the gray grid is a vector <b>x</b>; the blue grid is its image under <b>x ↦ Ax</b>.</p>
+
+            <div class="matrix-editor" aria-label="Two by two matrix A">
+              <span class="matrix-name">A =</span>
+              <div class="matrix">
+                <input type="number" value="1" step="0.1" aria-label="Matrix entry row 1 column 1">
+                <input type="number" value="0" step="0.1" aria-label="Matrix entry row 1 column 2">
+                <input type="number" value="0" step="0.1" aria-label="Matrix entry row 2 column 1">
+                <input type="number" value="1" step="0.1" aria-label="Matrix entry row 2 column 2">
+              </div>
+            </div>
+
+            <div class="presets" aria-label="Example matrices">
+              <button type="button" data-preset="identity">Identity</button>
+              <button type="button" data-preset="rotation">Rotate 90°</button>
+            </div>
+
+            <div class="readout" aria-live="polite">
+              <div class="determinant"></div>
+              <div class="effect"></div>
+            </div>
+
+            <div class="legend" aria-label="Plot legend">
+              <div class="legend-item"><span class="swatch original"></span>original grid and basis</div>
+              <div class="legend-item"><span class="swatch transformed"></span>transformed space</div>
+              <div class="legend-item"><span class="swatch e1"></span>Ae₁</div>
+              <div class="legend-item"><span class="swatch e2"></span>Ae₂</div>
+            </div>
+          </section>
+
+          <div class="canvas-wrap">
+            <canvas role="img" aria-label="Original coordinate grid and its image under the selected linear transformation"></canvas>
+          </div>
+        </div>
+      `;
+
+      const inputs = Array.from(root.querySelectorAll("input"));
+      const canvas = root.querySelector("canvas");
+      const canvasWrap = root.querySelector(".canvas-wrap");
+      const determinant = root.querySelector(".determinant");
+      const effect = root.querySelector(".effect");
+      const context = canvas.getContext("2d");
+      const sourceLimit = 2.5;
+      let width = 0;
+      let height = 0;
+      let shownMatrix = [1, 0, 0, 1];
+      let targetMatrix = shownMatrix.slice();
+      let animationFrame = null;
+
+      const readMatrix = () => inputs.map((input, index) => {
+        const value = input.valueAsNumber;
+        return Number.isFinite(value) ? value : targetMatrix[index];
+      });
+
+      const applyMatrix = (matrix, x, y) => [
+        matrix[0] * x + matrix[1] * y,
+        matrix[2] * x + matrix[3] * y,
+      ];
+
+      const formatNumber = (value) => {
+        const cleaned = Math.abs(value) < 1e-10 ? 0 : value;
+        return Number(cleaned.toFixed(3)).toString();
+      };
+
+      const updateReadout = (matrix) => {
+        const det = matrix[0] * matrix[3] - matrix[1] * matrix[2];
+        determinant.textContent = `det(A) = ${formatNumber(det)}`;
+
+        if (Math.abs(det) < 1e-8) {
+          effect.textContent = "The plane collapses to a line or a point.";
+        } else {
+          const orientation = det > 0 ? "preserved" : "reversed";
+          effect.textContent = `Areas scale by ${formatNumber(Math.abs(det))}; orientation is ${orientation}.`;
+        }
+      };
+
+      const drawLine = (from, to, project, color, lineWidth = 1, dash = []) => {
+        const start = project(from);
+        const end = project(to);
+        context.beginPath();
+        context.moveTo(start[0], start[1]);
+        context.lineTo(end[0], end[1]);
+        context.strokeStyle = color;
+        context.lineWidth = lineWidth;
+        context.setLineDash(dash);
+        context.stroke();
+        context.setLineDash([]);
+      };
+
+      const drawArrow = (vector, project, color, label) => {
+        const start = project([0, 0]);
+        const end = project(vector);
+        const dx = end[0] - start[0];
+        const dy = end[1] - start[1];
+        const length = Math.hypot(dx, dy);
+
+        if (length < 2) return;
+
+        context.beginPath();
+        context.moveTo(start[0], start[1]);
+        context.lineTo(end[0], end[1]);
+        context.strokeStyle = color;
+        context.lineWidth = 3;
+        context.stroke();
+
+        const angle = Math.atan2(dy, dx);
+        const head = Math.min(10, Math.max(6, length * 0.2));
+        context.beginPath();
+        context.moveTo(end[0], end[1]);
+        context.lineTo(
+          end[0] - head * Math.cos(angle - Math.PI / 6),
+          end[1] - head * Math.sin(angle - Math.PI / 6),
+        );
+        context.lineTo(
+          end[0] - head * Math.cos(angle + Math.PI / 6),
+          end[1] - head * Math.sin(angle + Math.PI / 6),
+        );
+        context.closePath();
+        context.fillStyle = color;
+        context.fill();
+
+        context.font = '600 15px "IBM Plex Sans", system-ui, sans-serif';
+        context.fillStyle = color;
+        context.fillText(label, end[0] + 7, end[1] - 7);
+      };
+
+      const draw = (matrix) => {
+        if (width < 10 || height < 10) return;
+
+        const rowScale = Math.max(
+          Math.abs(targetMatrix[0]) + Math.abs(targetMatrix[1]),
+          Math.abs(targetMatrix[2]) + Math.abs(targetMatrix[3]),
+          1,
+        );
+        const extent = Math.max(3.1, sourceLimit * rowScale * 1.12);
+        const padding = 24;
+        const scale = Math.min(
+          (width - 2 * padding) / (2 * extent),
+          (height - 2 * padding) / (2 * extent),
+        );
+        const project = ([x, y]) => [
+          width / 2 + x * scale,
+          height / 2 - y * scale,
+        ];
+
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "#fbfcf8";
+        context.fillRect(0, 0, width, height);
+
+        const transformedCorners = [
+          [-sourceLimit, -sourceLimit],
+          [sourceLimit, -sourceLimit],
+          [sourceLimit, sourceLimit],
+          [-sourceLimit, sourceLimit],
+        ].map(([x, y]) => project(applyMatrix(matrix, x, y)));
+
+        context.beginPath();
+        context.moveTo(transformedCorners[0][0], transformedCorners[0][1]);
+        transformedCorners.slice(1).forEach(([x, y]) => context.lineTo(x, y));
+        context.closePath();
+        context.fillStyle = "rgba(89, 101, 232, 0.06)";
+        context.fill();
+
+        for (let value = -sourceLimit; value <= sourceLimit + 1e-9; value += 0.5) {
+          const major = Math.abs(value - Math.round(value)) < 1e-9;
+          const originalColor = major ? "#b5bab3" : "#d3d7d0";
+          drawLine([value, -sourceLimit], [value, sourceLimit], project, originalColor, major ? 1.15 : 0.8);
+          drawLine([-sourceLimit, value], [sourceLimit, value], project, originalColor, major ? 1.15 : 0.8);
+        }
+
+        for (let value = -sourceLimit; value <= sourceLimit + 1e-9; value += 0.5) {
+          const verticalStart = applyMatrix(matrix, value, -sourceLimit);
+          const verticalEnd = applyMatrix(matrix, value, sourceLimit);
+          const horizontalStart = applyMatrix(matrix, -sourceLimit, value);
+          const horizontalEnd = applyMatrix(matrix, sourceLimit, value);
+          const isAxis = Math.abs(value) < 1e-9;
+          const isMajor = Math.abs(value - Math.round(value)) < 1e-9;
+          const color = isAxis
+            ? "rgba(70, 82, 210, 0.92)"
+            : isMajor
+              ? "rgba(89, 101, 232, 0.62)"
+              : "rgba(89, 101, 232, 0.34)";
+          const lineWidth = isAxis ? 2 : isMajor ? 1.25 : 0.8;
+          drawLine(verticalStart, verticalEnd, project, color, lineWidth);
+          drawLine(horizontalStart, horizontalEnd, project, color, lineWidth);
+        }
+
+        drawLine([-extent, 0], [extent, 0], project, "rgba(90, 94, 90, 0.52)", 1.1, [5, 5]);
+        drawLine([0, -extent], [0, extent], project, "rgba(90, 94, 90, 0.52)", 1.1, [5, 5]);
+
+        drawArrow([1, 0], project, "rgba(72, 78, 74, 0.42)", "e₁");
+        drawArrow([0, 1], project, "rgba(72, 78, 74, 0.42)", "e₂");
+        drawArrow(applyMatrix(matrix, 1, 0), project, "#d14a42", "Ae₁");
+        drawArrow(applyMatrix(matrix, 0, 1), project, "#16866f", "Ae₂");
+
+        const origin = project([0, 0]);
+        context.beginPath();
+        context.arc(origin[0], origin[1], 3.5, 0, 2 * Math.PI);
+        context.fillStyle = "#303534";
+        context.fill();
+
+        canvas.setAttribute(
+          "aria-label",
+          `The matrix has entries ${matrix.map(formatNumber).join(", ")}. ` +
+          `The transformed first basis vector is ${applyMatrix(matrix, 1, 0).map(formatNumber).join(", ")}; ` +
+          `the transformed second basis vector is ${applyMatrix(matrix, 0, 1).map(formatNumber).join(", ")}.`,
+        );
+      };
+
+      const animateTo = (nextMatrix) => {
+        if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+
+        const startMatrix = shownMatrix.slice();
+        targetMatrix = nextMatrix.slice();
+        updateReadout(targetMatrix);
+        const startTime = performance.now();
+        const duration = 420;
+
+        const animate = (now) => {
+          const progress = Math.min(1, (now - startTime) / duration);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          shownMatrix = startMatrix.map(
+            (value, index) => value + (targetMatrix[index] - value) * eased,
+          );
+          draw(shownMatrix);
+
+          if (progress < 1) {
+            animationFrame = requestAnimationFrame(animate);
+          } else {
+            animationFrame = null;
+          }
+        };
+
+        animationFrame = requestAnimationFrame(animate);
+      };
+
+      const setMatrix = (matrix) => {
+        inputs.forEach((input, index) => {
+          input.value = matrix[index];
+        });
+        animateTo(matrix);
+      };
+
+      inputs.forEach((input) => {
+        input.addEventListener("input", () => animateTo(readMatrix()));
+        input.addEventListener("keydown", (event) => event.stopPropagation());
+        input.addEventListener("keyup", (event) => event.stopPropagation());
+      });
+
+      root.querySelector('[data-preset="identity"]').addEventListener("click", () => {
+        setMatrix([1, 0, 0, 1]);
+      });
+      root.querySelector('[data-preset="rotation"]').addEventListener("click", () => {
+        setMatrix([0, -1, 1, 0]);
+      });
+      root.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("keydown", (event) => event.stopPropagation());
+        button.addEventListener("keyup", (event) => event.stopPropagation());
+      });
+
+      const resize = () => {
+        const bounds = canvasWrap.getBoundingClientRect();
+        if (bounds.width < 10 || bounds.height < 10) return;
+
+        const pixelRatio = window.devicePixelRatio || 1;
+        width = Math.round(bounds.width);
+        height = Math.round(bounds.height);
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        draw(shownMatrix);
+      };
+
+      const resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(canvasWrap);
+      updateReadout(targetMatrix);
+      requestAnimationFrame(resize);
+    }
+  }
+
+  customElements.define(tagName, LinearTransformationWidget);
+})();
+</script>

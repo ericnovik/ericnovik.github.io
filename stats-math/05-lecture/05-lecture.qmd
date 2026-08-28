@@ -134,11 +134,11 @@ $$
 
 -   In R, PMFs and PDFs start with `d`. For example, `dbinom()` evaluates the binomial PMF and `dnorm()` evaluates the normal PDF
 
--   CDFs start with `p`, so `pbinom()` and `pnorm()`
+-   CDFs start with `p`; examples include `pbinom()` and `pnorm()`
 
 -   Quantile functions are generalized inverses of CDFs. In R they start with `q`; for example, `qbinom()`
 
--   Random number generators start with `r`, so `rbinom()`
+-   Random number generators start with `r`; an example is `rbinom()`
 
 -   A binomial RV, defined below, represents the number of successes in $N$ trials. In R, its PMF is `dbinom()` and its CDF is `pbinom()`
 
@@ -1065,3 +1065,15 @@ mean(z > 0) |> round(2)
 - Joint, marginal, and conditional distributions
 - Covariance and correlation
 - Conditional expectations
+
+## Homework {.smaller}
+
+::: incremental
+1. **Binomial PMF and CDF.** Let $X\sim\operatorname{Binomial}(20,0.35)$. Compute $\P(X=7)$, $\P(X\leq7)$, and $\P(5\leq X\leq10)$; verify each result with `dbinom()` or `pbinom()`, then plot the PMF and CDF for $x=0,\ldots,20$.
+
+2. **Simulation—first success.** Let $T$ be the trial on which the first success occurs when $\theta=0.2$. Simulate 50,000 values with `rgeom() + 1`; for $t=1,\ldots,10$, compare the empirical probabilities with $\P(T=t)=\theta(1-\theta)^{t-1}$. Compare the simulated mean and variance with $1/\theta$ and $(1-\theta)/\theta^2$.
+
+3. **Simulation—rare events.** Simulate 100,000 values from $\operatorname{Binomial}(1000,0.003)$ and compare the empirical PMF for $0,\ldots,10$ with a Poisson PMF having $\lambda=3$. Compare the two means, variances, and probabilities of at least 6 events.
+
+4. **Simulation—checking Poisson equidispersion.** Repeat 1,000 times: simulate 200 counts from $\operatorname{Poisson}(4)$ and record their sample mean and variance. Plot variance against mean. Then repeat after drawing each count's rate independently from $\{1,7\}$ with equal probability. Compare the plots and explain why the heterogeneous counts are overdispersed relative to a single Poisson model.
+:::

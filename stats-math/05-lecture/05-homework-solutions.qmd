@@ -1,0 +1,549 @@
+---
+title: "Session 5 Homework Solutions"
+subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
+author: "Eric Novik"
+date: "2026-08-26"
+format:
+  pdf:
+    documentclass: scrartcl
+    pdf-engine: lualatex
+    papersize: letter
+    geometry:
+      - margin=0.8in
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    include-in-header:
+      text: |
+        \providecommand{\E}{}
+        \renewcommand{\E}{\mathbb{E}}
+        \providecommand{\P}{}
+        \renewcommand{\P}{\mathbb{P}}
+        \providecommand{\V}{}
+        \renewcommand{\V}{\mathbb{V}}
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: source
+---
+
+This document provides worked solutions to the [Lecture 5 homework](https://ericnovik.github.io/stats-math/05-lecture/05-lecture.html#/homework).
+
+```{r}
+#| include: false
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(patchwork)
+
+solution_theme <-
+  theme_minimal(base_size = 11) +
+  theme(
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.background = element_rect(fill = "white", color = NA),
+    legend.key = element_rect(fill = "white", color = NA),
+    panel.grid.minor = element_blank()
+  )
+
+theme_set(solution_theme)
+```
+
+# Binomial PMF and CDF
+
+> **Task:** Let $X\sim\operatorname{Binomial}(20,0.35)$. Compute $\P(X=7)$, $\P(X\leq7)$, and $\P(5\leq X\leq10)$; verify each result with `dbinom()` or `pbinom()`, then plot the PMF and CDF for $x=0,\ldots,20$.
+
+For a binomial random variable with $N=20$ and $\theta=0.35$, the PMF is
+
+$$
+\P(X=x)=\binom{20}{x}(0.35)^x(0.65)^{20-x},
+\qquad x=0,1,\ldots,20.
+$$
+
+Therefore,
+
+$$
+\P(X=7)=\binom{20}{7}(0.35)^7(0.65)^{13}.
+$$
+
+The two interval probabilities can be written as
+
+$$
+\begin{aligned}
+\P(X\leq7)
+  &=\sum_{x=0}^{7}\binom{20}{x}(0.35)^x(0.65)^{20-x},\\
+\P(5\leq X\leq10)
+  &=\P(X\leq10)-\P(X\leq4).
+\end{aligned}
+$$
+
+```{r}
+N <- 20
+theta <- 0.35
+
+p_equal_7 <- dbinom(7, size = N, prob = theta)
+p_at_most_7 <- pbinom(7, size = N, prob = theta)
+p_5_through_10 <-
+  pbinom(10, size = N, prob = theta) -
+  pbinom(4, size = N, prob = theta)
+
+binomial_answers <- data.frame(
+  quantity = c("P(X = 7)", "P(X <= 7)", "P(5 <= X <= 10)"),
+  probability = c(p_equal_7, p_at_most_7, p_5_through_10)
+)
+
+knitr::kable(
+  binomial_answers,
+  digits = 5,
+  booktabs = TRUE,
+  caption = "Binomial probability calculations"
+)
+```
+
+Thus,
+
+$$
+\boxed{
+\P(X=7)=`r sprintf("%.5f", p_equal_7)`,\quad
+\P(X\leq7)=`r sprintf("%.5f", p_at_most_7)`,\quad
+\P(5\leq X\leq10)=`r sprintf("%.5f", p_5_through_10)`
+}.
+$$
+
+The PMF gives each point probability, while the CDF accumulates those probabilities from left to right.
+
+```{r}
+#| fig-width: 7.5
+#| fig-height: 3.8
+#| fig-align: center
+#| fig-cap: "PMF and CDF of a Binomial(20, 0.35) random variable."
+
+binomial_grid <- data.frame(
+  x = 0:N,
+  pmf = dbinom(0:N, size = N, prob = theta),
+  cdf = pbinom(0:N, size = N, prob = theta)
+)
+
+pmf_plot <- ggplot(binomial_grid, aes(x, pmf)) +
+  geom_col(width = 0.7, fill = "#3564d4") +
+  scale_x_continuous(breaks = seq(0, N, by = 2)) +
+  labs(
+    x = "x",
+    y = "P(X = x)",
+    title = "Probability mass function"
+  )
+
+cdf_plot <- ggplot(binomial_grid, aes(x, cdf)) +
+  geom_step(direction = "hv", linewidth = 0.6, color = "#d95f02") +
+  geom_point(size = 1.3, color = "#d95f02") +
+  scale_x_continuous(breaks = seq(0, N, by = 2)) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    x = "x",
+    y = "P(X <= x)",
+    title = "Cumulative distribution function"
+  )
+
+pmf_plot + cdf_plot
+```
+
+# First-success simulation
+
+> **Task:** Let $T$ be the trial on which the first success occurs when $\theta=0.2$. Simulate 50,000 values with `rgeom() + 1`; for $t=1,\ldots,10$, compare the empirical probabilities with $\P(T=t)=\theta(1-\theta)^{t-1}$. Compare the simulated mean and variance with $1/\theta$ and $(1-\theta)/\theta^2$.
+
+R's `rgeom()` counts the number of failures before the first success. Adding 1 changes that output into the trial number of the first success.
+
+For $T=1,2,\ldots$,
+
+$$
+\P(T=t)=\theta(1-\theta)^{t-1},
+\qquad
+\E(T)=\frac{1}{\theta},
+\qquad
+\V(T)=\frac{1-\theta}{\theta^2}.
+$$
+
+With $\theta=0.2$, the theoretical mean and variance are
+
+$$
+\E(T)=5,
+\qquad
+\V(T)=20.
+$$
+
+```{r}
+set.seed(502)
+
+geometric_theta <- 0.2
+geometric_reps <- 50000
+first_success <- rgeom(geometric_reps, prob = geometric_theta) + 1
+
+estimate_empirical_probability <- function(value, simulated_values) {
+  number_of_matches <- sum(simulated_values == value)
+  number_of_simulations <- length(simulated_values)
+
+  number_of_matches / number_of_simulations
+}
+
+geometric_comparison <- data.frame(t = 1:10) |>
+  mutate(
+    empirical = purrr::map_dbl(
+      t,
+      estimate_empirical_probability,
+      simulated_values = first_success
+    ),
+    theoretical = geometric_theta * (1 - geometric_theta)^(t - 1),
+    difference = empirical - theoretical
+  )
+
+knitr::kable(
+  geometric_comparison,
+  digits = 5,
+  booktabs = TRUE,
+  caption = "Empirical and theoretical first-success probabilities"
+)
+```
+
+The pointwise simulation error is small and changes sign across support points, as expected from Monte Carlo variation.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4.2
+#| fig-align: center
+#| fig-cap: "Simulated and theoretical probabilities for the first-success trial."
+
+geometric_comparison |>
+  select(t, empirical, theoretical) |>
+  pivot_longer(
+    cols = c(empirical, theoretical),
+    names_to = "source",
+    values_to = "probability"
+  ) |>
+  ggplot(aes(t, probability, color = source, shape = source)) +
+  geom_line(linewidth = 0.5) +
+  geom_point(size = 2) +
+  scale_x_continuous(breaks = 1:10) +
+  scale_color_manual(
+    values = c(empirical = "#3564d4", theoretical = "#d95f02"),
+    labels = c(empirical = "simulation", theoretical = "theory")
+  ) +
+  scale_shape_manual(
+    values = c(empirical = 16, theoretical = 1),
+    labels = c(empirical = "simulation", theoretical = "theory")
+  ) +
+  labs(
+    x = "trial of first success, t",
+    y = "probability",
+    color = NULL,
+    shape = NULL
+  )
+```
+
+```{r}
+geometric_moments <- data.frame(
+  source = c("simulation", "theory"),
+  mean = c(mean(first_success), 1 / geometric_theta),
+  variance = c(
+    var(first_success),
+    (1 - geometric_theta) / geometric_theta^2
+  )
+)
+
+knitr::kable(
+  geometric_moments,
+  digits = 4,
+  booktabs = TRUE,
+  caption = "First-success mean and variance"
+)
+```
+
+The simulated mean is `r sprintf("%.3f", mean(first_success))` and the simulated variance is `r sprintf("%.3f", var(first_success))`, both close to 5 and 20.
+
+# Rare events: binomial and Poisson
+
+> **Task:** Simulate 100,000 values from $\operatorname{Binomial}(1000,0.003)$ and compare the empirical PMF for $0,\ldots,10$ with a Poisson PMF having $\lambda=3$. Compare the two means, variances, and probabilities of at least 6 events.
+
+Here
+
+$$
+N=1000,
+\qquad
+\theta=0.003,
+\qquad
+N\theta=3.
+$$
+
+The binomial mean and variance are
+
+$$
+\E(X)=N\theta=3,
+\qquad
+\V(X)=N\theta(1-\theta)=2.991.
+$$
+
+A $\operatorname{Poisson}(3)$ random variable has mean and variance equal to 3, so the two distributions should be close.
+
+```{r}
+set.seed(503)
+
+rare_reps <- 100000
+rare_size <- 1000
+rare_prob <- 0.003
+poisson_lambda <- rare_size * rare_prob
+
+rare_counts <- rbinom(
+  rare_reps,
+  size = rare_size,
+  prob = rare_prob
+)
+
+# Reuse the empirical-probability function from Problem 2
+rare_pmf <- data.frame(k = 0:10) |>
+  mutate(
+    empirical_binomial = purrr::map_dbl(
+      k,
+      estimate_empirical_probability,
+      simulated_values = rare_counts
+    ),
+    exact_binomial = dbinom(k, size = rare_size, prob = rare_prob),
+    poisson = dpois(k, lambda = poisson_lambda)
+  )
+
+knitr::kable(
+  rare_pmf,
+  digits = 5,
+  booktabs = TRUE,
+  caption = "Rare-event PMF comparison"
+)
+```
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4.3
+#| fig-align: center
+#| fig-cap: "The empirical binomial PMF and its Poisson comparison."
+
+rare_pmf |>
+  pivot_longer(
+    cols = -k,
+    names_to = "source",
+    values_to = "probability"
+  ) |>
+  ggplot(aes(k, probability, color = source, shape = source)) +
+  geom_line(linewidth = 0.5) +
+  geom_point(size = 1.8) +
+  scale_x_continuous(breaks = 0:10) +
+  scale_color_manual(
+    values = c(
+      empirical_binomial = "#222222",
+      exact_binomial = "#3564d4",
+      poisson = "#d95f02"
+    ),
+    labels = c(
+      empirical_binomial = "simulated binomial",
+      exact_binomial = "exact binomial",
+      poisson = "Poisson comparison"
+    )
+  ) +
+  scale_shape_manual(
+    values = c(
+      empirical_binomial = 16,
+      exact_binomial = 1,
+      poisson = 2
+    ),
+    labels = c(
+      empirical_binomial = "simulated binomial",
+      exact_binomial = "exact binomial",
+      poisson = "Poisson comparison"
+    )
+  ) +
+  labs(
+    x = "event count",
+    y = "probability",
+    color = NULL,
+    shape = NULL
+  )
+```
+
+For the upper-tail probability,
+
+$$
+\P(X\geq6)=1-\P(X\leq5).
+$$
+
+```{r}
+rare_summary <- data.frame(
+  source = c(
+    "simulated binomial",
+    "exact binomial",
+    "Poisson comparison"
+  ),
+  mean = c(
+    mean(rare_counts),
+    rare_size * rare_prob,
+    poisson_lambda
+  ),
+  variance = c(
+    var(rare_counts),
+    rare_size * rare_prob * (1 - rare_prob),
+    poisson_lambda
+  ),
+  probability_at_least_6 = c(
+    mean(rare_counts >= 6),
+    pbinom(5, size = rare_size, prob = rare_prob, lower.tail = FALSE),
+    ppois(5, lambda = poisson_lambda, lower.tail = FALSE)
+  )
+)
+
+knitr::kable(
+  rare_summary,
+  digits = 5,
+  booktabs = TRUE,
+  caption = "Rare-event summary comparison"
+)
+```
+
+The exact binomial and Poisson upper-tail probabilities differ by only `r sprintf("%.5f", abs(rare_summary$probability_at_least_6[2] - rare_summary$probability_at_least_6[3]))`. The approximation works well because there are many trials and a small success probability.
+
+# Checking Poisson equidispersion
+
+> **Task:** Repeat 1,000 times: simulate 200 counts from $\operatorname{Poisson}(4)$ and record their sample mean and variance. Plot variance against mean. Then repeat after drawing each count's rate independently from $\{1,7\}$ with equal probability. Compare the plots and explain why the heterogeneous counts are overdispersed relative to a single Poisson model.
+
+For the homogeneous model, every count has the same rate:
+
+$$
+X_i\sim\operatorname{Poisson}(4).
+$$
+
+Its population mean and variance are both 4. We therefore expect each dataset's sample mean and variance to fluctuate around the diagonal point $(4,4)$.
+
+For the heterogeneous model, each observation first receives rate 1 or rate 7 with equal probability. The average rate remains
+
+$$
+\frac{1+7}{2}=4.
+$$
+
+However, the rates themselves vary. Their variance is
+
+$$
+\frac{(1-4)^2+(7-4)^2}{2}=9.
+$$
+
+That between-rate variation adds to the average within-rate Poisson variance of 4, giving an overall count variance of
+
+$$
+4+9=13.
+$$
+
+Thus, both models have mean 4, but only the homogeneous model has variance 4.
+
+```{r}
+set.seed(504)
+
+count_reps <- 1000
+counts_per_dataset <- 200
+
+simulate_count_summaries <- function(repetitions, draw_counts) {
+  results <- replicate(repetitions, {
+    counts <- draw_counts()
+    c(
+      sample_mean = mean(counts),
+      sample_variance = var(counts)
+    )
+  })
+
+  as.data.frame(t(results))
+}
+
+homogeneous <- simulate_count_summaries(
+  count_reps,
+  function() rpois(counts_per_dataset, lambda = 4)
+) |>
+  mutate(model = "single rate: lambda = 4")
+
+heterogeneous <- simulate_count_summaries(
+  count_reps,
+  function() {
+    rates <- sample(
+      c(1, 7),
+      size = counts_per_dataset,
+      replace = TRUE
+    )
+    rpois(counts_per_dataset, lambda = rates)
+  }
+) |>
+  mutate(model = "mixed rates: 1 or 7")
+
+poisson_checks <- bind_rows(homogeneous, heterogeneous)
+```
+
+```{r}
+poisson_summary <- poisson_checks |>
+  group_by(model) |>
+  summarise(
+    average_sample_mean = mean(sample_mean),
+    average_sample_variance = mean(sample_variance),
+    sd_of_sample_means = sd(sample_mean),
+    .groups = "drop"
+  )
+
+poisson_summary_display <- poisson_summary |>
+  transmute(
+    Model = model,
+    `Average mean` = average_sample_mean,
+    `Average variance` = average_sample_variance,
+    `SD of means` = sd_of_sample_means
+  )
+
+knitr::kable(
+  poisson_summary_display,
+  digits = 3,
+  booktabs = TRUE,
+  caption = "Repeated-simulation summaries"
+)
+```
+
+```{r}
+#| fig-width: 7.4
+#| fig-height: 4.4
+#| fig-align: center
+#| fig-cap: "Sample variance versus sample mean for homogeneous and heterogeneous Poisson counts."
+
+poisson_checks |>
+  ggplot(aes(sample_mean, sample_variance)) +
+  geom_abline(
+    slope = 1,
+    intercept = 0,
+    color = "#d95f02",
+    linewidth = 0.6,
+    linetype = "dashed"
+  ) +
+  geom_point(color = "#3564d4", alpha = 0.25, size = 0.9) +
+  facet_wrap(~ model) +
+  scale_x_continuous(
+    limits = c(0, 18),
+    breaks = seq(0, 18, by = 3),
+    expand = expansion(mult = 0.02)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 18),
+    breaks = seq(0, 18, by = 3),
+    expand = expansion(mult = 0.02)
+  ) +
+  coord_fixed(ratio = 1) +
+  labs(
+    x = "sample mean",
+    y = "sample variance"
+  )
+```
+
+Both axes now run from 0 to 18 with a 1:1 aspect ratio, so equal numerical changes occupy equal visual distances. The nearly vertical clouds show that the sample means vary within a narrow range. The homogeneous simulations cluster near mean 4 and variance 4, close to the dashed equidispersion line. The heterogeneous simulations retain mean 4 but cluster near variance 13. A single Poisson model with rate 4 cannot reproduce that extra variation, so the heterogeneous counts are overdispersed relative to it.
+
+# Main conclusions
+
+1. `dbinom()` evaluates a binomial point probability, while `pbinom()` accumulates probabilities through a cutoff.
+2. A geometric simulation using `rgeom() + 1` agrees with the first-success PMF, mean, and variance.
+3. A Poisson PMF closely approximates a binomial PMF when the number of trials is large, the success probability is small, and $N\theta$ is held fixed.
+4. Poisson equidispersion can fail when observations have different rates, even when their average rate is unchanged.

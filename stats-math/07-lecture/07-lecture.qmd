@@ -1,12 +1,12 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
-author: "Eric.Novik@nyu.edu | Summer 2025 | Session 7"
+author: "Eric.Novik@nyu.edu | Summer 2026 | Session 7"
 format:
-  revealjs: 
+  revealjs:
     theme: ../../custom.scss
     slide-number: true
-    chalkboard: 
+    chalkboard:
       buttons: false
       chalk-width: 5
     preview-links: auto
@@ -63,7 +63,7 @@ $$
 - **Statistical Inference:** A process of learning from noisy measurements
 - **Key Challenges:**
   - Generalizing from a sample to the population of interest
-  - Learning what would have happened under different treatment
+  - Learning what would have happened under a different treatment
   - Understanding the relationship between the measurement and the estimand
 :::
 
@@ -74,31 +74,34 @@ $$
 :::
 :::
 
-## Measurement Error Models
+## Measurement Error Models {.smaller}
 ::: incremental
 - We are trying to estimate the parameters of some data-generating process
-- For the Moon drop, we assumed the distance-fallen data come from the following model, with $b = g/2$:
+- For the Moon drop, the distance marks $x_i$ are fixed and the stopwatch times are noisy:
 
 ::: {.fragment}
 $$
-x_i(t) = \tfrac{1}{2} g\, t_i^2 + \epsilon_i = b\, t_i^2 + \epsilon_i
+t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\epsilon_i
+   =\alpha+\beta\sqrt{x_i}+\epsilon_i,
+\qquad \beta=\sqrt{\frac{2}{g}}.
 $$
 :::
 
-- We also assumed that time $t$ was observed precisely, but the stopwatch reading at each light flash can have an error in $t$ too
-- Errors may be multiplicative, not just additive
+- Here $\alpha$ is a constant timing delay and $\epsilon_i$ is random timing error
+- Other measurement mechanisms may require different additive or multiplicative error models
 :::
 
 
 ## Sampling Distribution {.smaller}
 
 ::: incremental
-- **Generative model** for our data: given the generative model, we can create replicas of the dataset
-- Sampling distribution is typically unknown and depends on the data collection, how subjects are assigned to treatment conditions, sampling process
+- A **generative model** describes how repeated datasets could arise under fixed assumptions
+- "The **sampling distribution** is the set of possible datasets that could have been observed if the data collection process had been re-done, along with the probabilities of these possible values." Ch-4 ROS, Gelman, Hill, Vehtari
+- It depends on the sampling design, treatment-assignment mechanism, and measurement process
 - **Examples**
-  - Simple random sample of size $n$ from the population of size $N$. Here, each person has the same probability of being selected
-  - Our constant acceleration model $x_i(t) = b\,t_i^2 + \epsilon_i$, where we fix $b = g/2$ and $t$, and draw $\epsilon$ from an error distribition, such as $\text{Normal}(0, 1)$
-  - We can write some code to generate observations according to this process (which is what we did for the Moon drop)
+  - In a simple random sample of size $n$ from a population of size $N$, every subset of $n$ people has the same probability of being selected
+  - For the Moon drop, fix $\alpha$, $\beta$, and the marks $x_i$, then draw timing errors $\epsilon_i$ and form $t_i=\alpha+\beta\sqrt{x_i}+\epsilon_i$
+  - We can write code to generate observations from this process, as we did for the Moon drop
 :::
 
 ## Standard Errors {.smaller}
@@ -106,8 +109,8 @@ $$
 ::: incremental
 - **Standard error** is the estimated standard deviation of the estimate
 - It provides a **measure of uncertainty** around the estimate
-- Standard error decreases as the sample size increases
-- To estimate the SE of the mean from a large population with sd = $\sigma$: $\frac{\sigma}{\sqrt{n}}$ 
+- Holding the data-generating process fixed, standard errors typically decrease as sample size increases
+- For the mean of $n$ independent observations with population sd $\sigma$: $\text{se}(\bar{x})=\frac{\sigma}{\sqrt{n}}$
 
 ::: {.fragment}
 ```{r}
@@ -121,7 +124,13 @@ print(se)
 ```
 :::
 
-- If $\sigma$ is unknown, we can estimate it from the sample: $s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}$ 
+:::
+
+## Estimating the Standard Error {.smaller}
+
+::: incremental
+- If $\sigma$ is unknown, estimate it from the sample: $s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}$
+- Then $\widehat{\text{se}}(\bar{x})=s/\sqrt{n}$
 :::
 
 ::: {.fragment}
@@ -138,8 +147,8 @@ print(se_s |> round(2))
 ## Confidence Intervals {.smaller}
 
 ::: incremental
-- For a given sampling distribution, confidence interval provides a range of parameter values consistent with the data
-- For example, for a normal sampling distribution, an estimate $\hat{\theta}$ will fall in $\hat{\theta} \pm 2\cdot\text{se}$ about 95% of the time
+- For a given sampling distribution, a confidence interval provides a range of parameter values consistent with the data
+- If $\hat{\theta}$ is approximately Normal and its standard error is estimated well, repeated intervals $\hat{\theta} \pm 1.96\cdot\text{se}$ cover the true $\theta$ about 95% of the time
 :::
 
 ::: {.fragment}
@@ -154,7 +163,7 @@ sample_size <- 100
 true_mean <- mu
 true_sd <- sigma
 
-# Function to compute confidence intervals
+# Function to compute normal-approximation confidence intervals
 compute_ci <- function(sample, level = 0.95) {
   mean_sample <- mean(sample)
   se <- sd(sample) / sqrt(length(sample))
@@ -165,20 +174,20 @@ compute_ci <- function(sample, level = 0.95) {
 }
 
 # Generate samples and compute confidence intervals
-results <- data.frame(sample_id = integer(), 
-                      ci_lower_50 = numeric(), 
+results <- data.frame(sample_id = integer(),
+                      ci_lower_50 = numeric(),
                       ci_upper_50 = numeric(),
-                      ci_lower_95 = numeric(), 
+                      ci_lower_95 = numeric(),
                       ci_upper_95 = numeric())
 
 for (i in 1:n_samples) {
   sample <- rnorm(sample_size, mean = true_mean, sd = true_sd)
   ci_50 <- compute_ci(sample, level = 0.50)
   ci_95 <- compute_ci(sample, level = 0.95)
-  results <- rbind(results, data.frame(sample_id = i, 
-                                       ci_lower_50 = ci_50[1], 
+  results <- rbind(results, data.frame(sample_id = i,
+                                       ci_lower_50 = ci_50[1],
                                        ci_upper_50 = ci_50[2],
-                                       ci_lower_95 = ci_95[1], 
+                                       ci_lower_95 = ci_95[1],
                                        ci_upper_95 = ci_95[2]))
 }
 
@@ -187,49 +196,13 @@ ggplot(results, aes(x = sample_id)) +
   geom_linerange(aes(ymin = ci_lower_50, ymax = ci_upper_50), linewidth = 0.8) +
   geom_linerange(aes(ymin = ci_lower_95, ymax = ci_upper_95), linewidth = 0.2) +
   geom_hline(yintercept = true_mean, linewidth = 0.1, color = 'red') +
-  labs(title = "Confidence Intervals for 100 Samples from Normal(5, 1.5)",
+  labs(title = "Approximate Confidence Intervals for 100 Samples from Normal(5, 1.5)",
        x = "",
        caption = "50% CI in bold, 95% CI is thin black")
 
 ```
 :::
 
-## Moon Drop: How Many Drops? {.smaller}
-
-Each drop gives 20 timed marks (every 5 m), and each drop costs oxygen. How many drops do we need to pin down $g$? We simulate: for each number of drops, fit $\hat{g} = 2\hat{\beta}_1$ many times and measure the spread.
-
-::: {.fragment}
-```{r}
-#| echo: true
-#| cache: true
-set.seed(1)
-g_true <- 1.625
-sigma  <- 1              # distance-reading noise, meters
-reps   <- 500
-marks  <- seq(5, 100, by = 5)             # 20 marks, every 5 m
-tsq    <- (sqrt(2 * marks / g_true))^2    # squared pass times
-
-se_ghat <- function(n_drops) {
-  z <- rep(tsq, n_drops)                  # pool n_drops worth of marks
-  ghat <- replicate(reps, {
-    y <- 0.5 * g_true * z + rnorm(length(z), 0, sigma)
-    2 * coef(lm(y ~ 0 + z))[1]            # g = 2 * slope
-  })
-  sd(ghat)                               # empirical SE of g_hat
-}
-
-drops <- c(1, 2, 3, 6, 10, 20)
-se <- sapply(drops, se_ghat)
-data.frame(drops = drops, marks = drops * 20, se = round(se, 4),
-           ci_half_width = round(1.96 * se, 4))
-```
-:::
-
-::: {.fragment}
-- **One decimal** ($\pm 0.05$): a single drop (20 marks) is already more than enough
-- **Two decimals** ($\pm 0.005$): you need ~6 drops --- the second decimal costs ~6× the oxygen of the first
-- Spreading marks over the whole tower gives each drop a lot of leverage
-:::
 
 ## Confidence Intervals for Proportions {.smaller}
 
@@ -239,7 +212,7 @@ data.frame(drops = drops, marks = drops * 20, se = round(se, 4),
 ::: incremental
 - In surveys, we are often interested in estimating the standard error of the proportion
 - Suppose we want to estimate the proportion of the US population that supports same-sex marriage
-- Say you randomly survey $n = 500$ from the population, and $y = 355$ people respond yes[^1]
+- Say you randomly survey $n = 500$ from the population, and $y = 355$ people respond yes (*)
 - The estimate of the proportion is $\hat{\theta} = y/n$ with the $\text{se} = \sqrt{\hat{\theta}(1 -\hat{\theta})/n }$
 :::
 
@@ -267,16 +240,21 @@ ci_95 |> round(2)
 :::
 :::
 
-[^1]: The most recent Gallup poll from May 2023 found that 71% of Americans think same-sex marriage should be legally recognized
+::: {.fragment}
+(*) A May 2023 Gallup poll found that 71% of Americans thought same-sex marriage should be legally recognized
+:::
 
 ## Your Turn
-In a national survey of $n$ people, how large does $n$ have to be so that you can estimate
-presidential approval to within a standard error of ±3 percentage points, ±1 percentage points?
+
+Assume the conservative value $p=0.5$. In a national survey, how large must $n$ be so that $\text{se}(\hat p)$ is at most:
+
+- 3 percentage points?
+- 1 percentage point?
 
 
 ## Standard Error for Differences
 ::: incremental
-- We already saw an example of how to add variances from two independent RVs
+- For two independent estimates, variances add:
 
 
 ::: {.fragment}
@@ -285,10 +263,75 @@ $$
 $$
 :::
 
-- Your turn: How large does $n$ have to be so that you can estimate the gender gap in approval to within a standard error of ±3 percentage points? 
+- **Your turn:** Assume two independent, equally sized groups, $p_1=p_2=0.5$, and $n$ is the total sample size. How large must $n$ be so that $\text{se}(\hat p_1-\hat p_2)\leq 0.03$?
 
 :::
 
+## Moon Drop: How Many Drops? {.smaller}
+
+Each drop gives 20 noisy time readings at fixed distance marks, and each drop costs oxygen. Here we omit the delay term and impose the physical constraint $t(0)=0$. We repeatedly fit $t=\beta\sqrt{x}+\varepsilon$ through the origin and transform $\hat g=2/\hat\beta^2$.
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| cache: true
+set.seed(1)
+g_true <- 1.625
+timing_sd <- 0.10                         # random timing noise, seconds
+reps <- 500
+marks <- seq(5, 100, by = 5)              # fixed marks every 5 m
+sqrt_marks <- sqrt(marks)
+beta_true <- sqrt(2 / g_true)
+
+se_ghat <- function(n_drops) {
+  z <- rep(sqrt_marks, n_drops)            # fixed design values
+  g_hat <- replicate(reps, {
+    t_obs <- beta_true * z +
+      rnorm(length(z), 0, timing_sd)
+    beta_hat <- coef(lm(t_obs ~ 0 + z))[["z"]]
+    2 / beta_hat^2
+  })
+  sd(g_hat)                                # empirical SE of g_hat
+}
+```
+:::
+
+## Moon Drop: Simulation Results {.smaller}
+
+::: columns
+::: {.column width="55%"}
+
+::: {.fragment style="font-size: 78%;"}
+```{r}
+#| echo: true
+#| cache: true
+
+drops <- c(1, 2, 3, 5, 10, 12, 15, 20, 40)
+se_g <- purrr::map_dbl(drops, se_ghat)
+moon_drop_results <- data.frame(
+  drops = drops,
+  readings = drops * 20,
+  se_g = round(se_g, 4),
+  half_width = round(1.96 * se_g, 4)
+)
+moon_drop_results
+```
+:::
+
+:::
+
+::: {.column width="45%"}
+
+::: {.fragment style="font-size: 80%;"}
+- **Rows:** each row summarizes 500 simulated repetitions; `readings` is 20 times `drops`
+- **`se_g`:** empirical standard deviation of the 500 $\hat g$ values
+- **`half_width`:** $1.96\,\text{se}_g$, an approximate 95% margin; smaller is more precise
+- **Precision targets:** one decimal requires `half_width` $\leq0.05$ (half of 0.1); two decimals requires `half_width` $\leq0.005$ (half of 0.01)
+- **Reading the table:** one drop has $0.0175<0.05$; 12 drops have $0.0052>0.005$, while 15 drops have $0.0048<0.005$
+:::
+
+:::
+:::
 
 ## Computer Demo: Computing CIs {.smaller}
 
@@ -309,7 +352,7 @@ print(data)
 p_hat <- data / n
 se <- sqrt(p_hat * (1 - p_hat) / n)
 ci <- p_hat + c(-2, 2) * se
-print(ci) 
+print(ci)
 
 # Put it in a loop
 reps <- 100
@@ -318,7 +361,7 @@ for (i in 1:reps) {
   p_hat <- data / n
   se <- sqrt(p_hat * (1 - p_hat) / n)
   ci <- p_hat + c(-2, 2) * se
-  print(ci) 
+  print(ci)
 }
 
 ```
@@ -372,14 +415,13 @@ round(diff_hat + c(-2, 2) * se_diff_hat, 4) # ci
 ## Degrees of Freedom
 
 ::: incremental
-- Some distributions rely on the concept of degrees of freedom
-- Degrees of freedom balance the need for accurate estimation against the amount of data available; it's a way to correct for overfitting
-- The more parameters you estimate, the fewer degrees of freedom you have left for other calculations
-- The data will give us $n$ (sample size) degrees of freedom, and $p$ number of parameters will be used up during the estimation
+- Degrees of freedom count independent pieces of information remaining after accounting for constraints or fitted parameters
+- In a full-rank linear model with $n$ observations and $p$ fitted coefficients, the residual degrees of freedom are $n-p$
+- For a sample variance, the deviations from $\bar{x}$ must sum to zero, leaving $n-1$ degrees of freedom
 :::
 
-## Normal and t Distribution
-- t distribution has a degrees freedom parameter, and with a low number of degrees of freedom, it has heavier tails than the Normal
+## Normal and t Distributions
+- Student's t distribution has a degrees-of-freedom parameter; with few degrees of freedom, it has heavier tails than the Normal distribution
 
 ```{r}
 #| cache: true
@@ -401,13 +443,13 @@ data <- data.frame(
 
 # Melt the data for ggplot
 library(reshape2)
-data_melted <- melt(data, id.vars = "x", 
-                    variable.name = "Distribution", 
+data_melted <- melt(data, id.vars = "x",
+                    variable.name = "Distribution",
                     value.name = "Density")
 
 # Plot using ggplot2
 ggplot(data_melted, aes(x = x, y = Density, color = Distribution)) +
-  geom_line(size = 0.2) +
+  geom_line(linewidth = 0.2) +
   scale_color_manual(values = c("black", "red", "blue", "green"),
                      labels = c("Normal", "t (df = 2)", "t (df = 10)", "t (df = 100)")) +
   labs(title = "Standard Normal and t-Distributions",
@@ -423,9 +465,9 @@ ggplot(data_melted, aes(x = x, y = Density, color = Distribution)) +
 ::: {.column width="40%"}
 
 ::: incremental
-- t distribution has location and scale parameters and is symmetric like the Normal
-- Standard error would have $n-1$ degrees of freedom as one will be estimated to compute the mean
-- Suppose you threw 5 darts and the distance from bull's eye was as follows (standard dart board radius is about 23 cm)
+- For i.i.d. Normal data with unknown variance, $(\bar X-\mu)/(s/\sqrt n)$ follows $t_{n-1}$
+- It is the t reference distribution—not the standard error itself—that has $n-1$ degrees of freedom
+- Example: five dart distances from the bull's eye, in cm (dartboard radius $\approx 23$ cm)
 :::
 
 :::
@@ -449,7 +491,7 @@ se_mean <- sd(data) / sqrt(length(data))
 # Degrees of freedom
 df <- length(data) - 1
 
-# Calculate the 95% and 50% confidence interval 
+# Calculate the 95% and 50% confidence interval
 ci_95 <- mean_data + qt(c(0.025, 0.975), df) * se_mean
 ci_50 <- mean_data + qt(c(0.25, 0.75), df) * se_mean
 
@@ -466,35 +508,35 @@ ci_50 |> round(2)
 
 
 ## Bias and Uncertainty
-- There is a lot more to it than what is in following standard picture
+- There is a lot more to it than what is in the following standard picture
 - Discuss among yourselves what are the potential sources of bias
 
 ![](images/bias-var.png){fig-align="center" width="672"}
 
-## Statistical Significance
+## Statistical Significance {.smaller}
 
 ::: incremental
 - Comes up in NHST: Null Hypothesis Significance Testing
 - Bad decision filter: if p-value is less than 0.05 (relative to some Null), the results can be trusted, otherwise they are likely noise
+- For a test statistic $T$ where larger values are more extreme under $H_0$:
 :::
 
 ::: {.fragment}
 $$
-\text{p-valu}e(y) = \P(T(y_\text{rep}) >= T(y) \mid H)
+\text{p-value}(y) = \P\!\left(T(Y_\text{rep}) \geq T(y) \mid H_0\right)
 $$
 :::
 
 ::: incremental
-- Often, estimates (coefficients) are labeled as not significant if they are within 2 SEs: selecting models this way is also problematic
+- Often, estimates are labeled not significant when they are within roughly 2 SEs of the null value (commonly zero for a coefficient); selecting models this way is also problematic
 :::
 
 ## Some Problems with Statistical Significance
 
 ::: incremental
-- Statistical significance does not mean practical (or in the case of Biostats clinical) significance
-- No significance does not mean there is no effect
-- The difference between “significant” and “not significant” is not itself statistically significant
-- Researcher degrees of freedom, p-hacking
+- Statistical significance does not mean practical (or, in biostatistics, clinical) significance
+- Nonsignificance does not mean there is no effect
+- There is nothing special about p=0.05 despite what you will read in the medical journals
+- [The difference between “significant” and “not significant” is not itself statistically significant](https://www.tandfonline.com/doi/abs/10.1198/000313006X152649), Gelman and Stern
+- [Researcher degrees of freedom](https://en.wikipedia.org/wiki/Researcher_degrees_of_freedom) and [the garden of forking paths](https://en.wikipedia.org/wiki/Forking_paths_problem). [Here](https://sites.stat.columbia.edu/gelman/research/unpublished/p_hacking.pdf) is the full paper.
 :::
-
-

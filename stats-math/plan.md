@@ -41,8 +41,9 @@ x(t) = ½ · g · t²
 
 - The **constant acceleration** derived in L2 (currently the arbitrary "6 m/s²")
   *becomes g* — the very number the mission needs.
-- Inferring `g` from the `(tₖ, xₖ)` marks is exactly the **least-squares fit**
-  of L6 (regress `x` on `t²`; slope = g/2, so ĝ = 2 · slope).
+- Inferring `g` from the `(tₖ, xₖ)` marks is a **least-squares fit** in L6:
+  regress observed time on `√x` with an intercept for the constant timing delay;
+  if the slope is β, then ĝ = 2/β².
 
 ### Two true, memorable hooks fall out for free
 
@@ -59,7 +60,7 @@ x(t) = ½ · g · t²
 - Tower height `H = 100 m`, red marks **every 5 m** → `x = 5, 10, …, 100` (20 marks)
   - 5 m (not 1 m) so the clicks are humanly spaced: 20 clicks over ~11 s, ~one every 0.5 s
 - Time at mark k: `tₖ = √(2·xₖ / g)` — first mark `t ≈ 2.48 s`, last `t ≈ 11.09 s`
-- Stopwatch / reaction noise ≈ 0.1 s on each reading
+- Constant stopwatch delay `α = 0.30 s`, plus reaction noise ≈ 0.1 s on each reading
 
 ---
 
@@ -134,8 +135,8 @@ $$ v(t) = g\,t, \qquad x(t) = \tfrac{1}{2}\, g\, t^2 $$
 :::
 ```
 
-…followed by a simulated-data plot (noisy stopwatch readings vs. the
-`x = ½ g t²` parabola) so the inference target is visual.
+…followed by a simulated-data plot (delayed, noisy stopwatch readings vs. the
+`x = ½ g (t - α)²` curve) so the inference target is visual.
 
 **Draft simulation chunk:**
 
@@ -144,8 +145,9 @@ set.seed(12)
 g <- 1.625               # true (unknown) lunar gravity, m/s^2
 H <- 100                 # tower height, m
 marks  <- seq(5, H, by = 5)  # 20 red marks, every 5 m
+alpha <- 0.30             # constant stopwatch delay, seconds
 t_true <- sqrt(2 * marks / g)
-t_obs  <- t_true + rnorm(H, 0, 0.1)   # stopwatch / reaction noise
+t_obs  <- alpha + t_true + rnorm(length(marks), 0, 0.1)
 ```
 
 The existing derivative algebra (`v = 6t`, `a = 6`) then carries over verbatim
@@ -162,8 +164,11 @@ To turn the story into a genuine course-long mission, carry it into:
   the "solution we promised to derive later" in L2.
 - **L6 (linear algebra)** — the overdetermined `X β̂ = y` slides
   ([`06-lecture/06-lecture.qmd:881`](06-lecture/06-lecture.qmd)) become "fit the
-  Moon-drop data to recover g". Design matrix column is `t²`; slope = g/2.
-- **L7 (statistical inference)** — the measurement-error model becomes "how
+  Moon-drop data to recover g." Distances are fixed and times are noisy, so the
+  response is observed time, and the design columns are `1` and
+  `sqrt(distance)`. The intercept $\alpha$ is the constant timing delay,
+  $\beta=\sqrt{2/g}$ is the slope, and $g=2/\beta^2$.
+- **L7 (statistical inference)** — the timing-error model becomes "how
   uncertain is our estimate of g given noisy stopwatch readings?" This is also
   where the **oxygen / sample-size question** (§6.3) is answered: how many marks
   must we record before the confidence interval for ĝ is tight enough to read g
@@ -201,16 +206,16 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
    required precision. This becomes a recurring question:
    - Posed informally in **L2** when the mission is introduced.
    - Made concrete in **L7** via standard errors / confidence intervals on ĝ.
-     With marks every 5 m (20 per drop, spanning the whole tower), the unit of
-     cost is the **drop**: a single drop already nails the first decimal
-     (CI half-width ≈ 0.012), and ~6 drops reach the second decimal
-     (half-width < 0.005). The second decimal costs ~6× the oxygen of the first.
+     With marks every 5 m (20 per drop, spanning the whole tower) and 0.10 s
+     timing noise, the unit of cost is the **drop**. When the delay is also
+     estimated, about 2 drops reach the first decimal (CI half-width < 0.05),
+     while about 140 drops reach the second (half-width < 0.005).
    - Can be explored by simulation (vary the number of drops, watch the CI shrink).
 4. **Observation mechanism (NEW, resolved as narrative detail)** — How does a
    person standing on top of the tower see the ball pass a mark? RESOLVED: each
    mark has a sensor that **flashes a light** as the ball passes; the observer
    reads the stopwatch at each flash. (Measurement noise then comes from
-   reaction time / flash-reading, ≈ 0.1 s.)
+   a constant 0.30 s delay plus random flash-reading noise of ≈ 0.1 s.)
 
 ---
 
@@ -225,7 +230,7 @@ This is the resolved scope: **full propagation** across L2 → L3 → L6 → L7.
 - [x] L3: reframe "From Velocity to Position" as integrating `ẍ = g` twice
 - [x] L6: reframe overdetermined `X β̂ = y` as recovering `g` from drop data
 - [x] L7: reframe measurement-error model as uncertainty in `g`
-- [x] L7: answer the oxygen / sample-size question — drops needed for ±0.05 (1 drop) and ±0.005 (~6 drops) CI on ĝ; marks every 5 m
+- [x] L7: answer the oxygen / sample-size question with delay estimated — about 2 drops for ±0.05 and about 140 for ±0.005; marks every 5 m
 - [x] Remove all remaining generic straight-line narrative
 - [x] Fix typos (§5)
 - [x] Render each modified lecture to confirm it compiles

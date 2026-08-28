@@ -1,13 +1,13 @@
 ---
 title: "SMaC: Statistics, Math, and Computing"
 subtitle: "APSTA-GE 2006: Applied Statistics for Social Science Research"
-author: "Eric.Novik@nyu.edu | Summer 2025 | Session 6"
+author: "Eric.Novik@nyu.edu | Summer 2026 | Session 6"
 format:
-  revealjs: 
+  revealjs:
     theme: ../../custom.scss
     scrollable: true
     slide-number: true
-    chalkboard: 
+    chalkboard:
       buttons: false
       chalk-width: 5
     preview-links: auto
@@ -54,7 +54,7 @@ draw_vector <- function(x, ...) {
   a <- arrow(length = unit(0.03, "npc"))
   dims <- ceiling(abs(max(x)))
   p <- ggplot() + xlim(-dims, dims) + ylim(-dims, dims)
-  p <- p + geom_segment(aes(x = 0, y = 0, xend = x1, yend = x2), 
+  p <- p + geom_segment(aes(x = 0, y = 0, xend = x1, yend = x2),
                         arrow = a, data = df, ...) +
     geom_hline(yintercept = 0, size = 0.1) +
     geom_vline(xintercept = 0, size = 0.1)
@@ -68,7 +68,7 @@ add_vector <- function(p, x, ...) {
   dimy_p <- ceiling(abs(layer_scales(p)$y$range$range))
   dims <- max(c(dims_x, dimx_p, dimy_p))
   a <- arrow(length = unit(0.03, "npc"))
-  p <- p + geom_segment(aes(x = 0, y = 0, xend = x1, yend = x2), 
+  p <- p + geom_segment(aes(x = 0, y = 0, xend = x1, yend = x2),
                         arrow = a, data = df, ...) +
     xlim(-dims, dims) + ylim(-dims, dims)
   return(p)
@@ -77,7 +77,7 @@ sm <- function(x) {
   suppressMessages(x)
 }
 rotate <- function(v, theta) {
-  R <- matrix(c(cos(theta), sin(theta), 
+  R <- matrix(c(cos(theta), sin(theta),
                -sin(theta), cos(theta)), ncol = 2)
   return(R %*% v)
 }
@@ -183,9 +183,9 @@ v + w
 ```{r}
 #| results: asis
 
-str_c("v \\cdot w = ") %>% str_c(tex(t(vs))) %>% str_c(tex(ws)) %>% 
+str_c("v \\cdot w = ") %>% str_c(tex(t(vs))) %>% str_c(tex(ws)) %>%
   str_c("=") %>% str_c(tex(t(vs) %*% ws)) %>% add_align() %>% cat()
-  
+
 ```
 :::
 
@@ -250,8 +250,8 @@ $$
 ```{r}
 #| echo: true
 
-v <- c(1, 1)  
-sqrt(v %*% v) # this is sqrt of 2 
+v <- c(1, 1)
+sqrt(v %*% v) # this is sqrt of 2
 ```
 
 ## Introduction to Matrices {.smaller}
@@ -307,7 +307,7 @@ p1 <- draw_vector(v, col = 'red') %>%
   add_vector(w, col = 'blue') %>% sm()
 
 p1 + annotate("text", x = 0.8, y = 2, label = "v") +
-  annotate("text", x = 2.5, y = 1, label = "w") 
+  annotate("text", x = 2.5, y = 1, label = "w")
 
 ```
 :::
@@ -322,7 +322,7 @@ p1 + annotate("text", x = 0.8, y = 2, label = "v") +
 - The following matrix encodes a 90-degree, counterclockwise rotation. Why?
 
 $$
-R = 
+R =
 \begin{bmatrix}
 0 & -1 \\
 1 & 0
@@ -334,47 +334,47 @@ $$
 - Let's see how this matrix will act on vectors $v$ and $w$. That's where multiplication comes in.
 
 $$
-Rv = 
+Rv =
 \begin{bmatrix}
 0 & -1 \\
 1 & 0
 \end{bmatrix}
 \begin{bmatrix}
 1 \\
-2 
+2
 \end{bmatrix}
 =
-1 
+1
 \begin{bmatrix}
 0 \\
-1 
+1
 \end{bmatrix}
 +
-2 
+2
 \begin{bmatrix}
 -1 \\
-0 
+0
 \end{bmatrix}
 =
 \begin{bmatrix}
 0 \\
-1 
+1
 \end{bmatrix}
 +
 \begin{bmatrix}
 -2 \\
-0 
+0
 \end{bmatrix}
 =
 \begin{bmatrix}
 -2 \\
-1 
+1
 \end{bmatrix}
 $$
 :::
 
 ::: {.fragment}
-- We scale the first vector, then scale the second, and then add. 
+- We scale the first vector, then scale the second, and then add.
 :::
 
 ### R Example
@@ -409,7 +409,7 @@ p2 <- draw_vector(v, col = 'red') %>%
   add_vector(v_prime, col = 'red', linetype = "dashed") %>% sm()
 
 p2 + annotate("text", x = 1, y = 1.8, label = "v") +
-  annotate("text", x = -2, y = 0.8, label = "v'") 
+  annotate("text", x = -2, y = 0.8, label = "v'")
 ```
 :::
 
@@ -457,12 +457,16 @@ p2 + annotate("text", x = 1, y = 1.8, label = "v") +
 #| fig-align: center
 
 p3 <- draw_vector(v, col = 'red') %>%
-  add_vector(w, col = 'blue') %>% 
+  add_vector(w, col = 'blue') %>%
   add_vector(K_prime[, 1], col = 'red', linetype = 'dashed') %>%
   add_vector(K_prime[, 2], col = 'blue', linetype = 'dashed') %>% sm()
 print(p3)
 ```
 :::
+
+### Transform the Space
+
+{{< include _includes/linear-transformation.qmd >}}
 
 ### Your Turn
 
@@ -524,7 +528,7 @@ det(X)
 #| fig-align: center
 
 draw_vector(X[, 1], col = 'red') %>%
-  add_vector(X[, 2], col = 'blue', alpha = 1/2) %>% sm() 
+  add_vector(X[, 2], col = 'blue', alpha = 1/2) %>% sm()
 
 ```
 :::
@@ -591,7 +595,7 @@ str_c("\\det(B) = ") %>% str_c(tex(det(B))) %>% add_align() %>% cat()
 ::: {.fragment}
 $$
 2x + y = 1 \\
-4x + 2y = 1 
+4x + 2y = 1
 $$
 :::
 
@@ -777,7 +781,7 @@ $$
 (ABC \dots)^{-1} = \dots C^{-1}B^{-1}A^{-1} \\
 (A^T)^{-1} = (A^{-1})^T \\
 (A + B)^T = A^T + B^T \\
-(ABC \dots)^T = \dots C^T B^T A^T 
+(ABC \dots)^T = \dots C^T B^T A^T
 $$
 
 ::: footer
@@ -811,7 +815,7 @@ For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
 
 :::
 
-## Approximating a Solution to Overdetermined $X\hat{\beta} = y$ {.smaller}
+## $X\hat{\beta} = y$ {.smaller}
 
 ::: incremental
 - If we can not reach $y$, we need to find a vector in the column space of $X$ that is closest (in a certain sense) to $y$
@@ -824,13 +828,16 @@ For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
 :::
 
 ::: footer
-Image from [Introduction to Linear Algebra](https://web.stanford.edu/~boyd/vmls/), Boyd and Vandenberghe
+Image from [Geometry of Least Squares](https://ericnovik.github.io/apps/least-squares/)
 :::
 
 ## Solving an Overdetermined $X\hat{\beta} = y$ {.smaller}
 
 ::: panel-tabset
 ### Solution
+
+::: columns
+::: {.column width="45%"}
 
 ::: incremental
 - This residual $r$ is also called the error term
@@ -844,6 +851,10 @@ X^T(y - X\hat{\beta}) = 0
 $$
 :::
 
+:::
+
+::: {.column width="55%"}
+
 ::: {.fragment}
 - We can now solve this normal equation:
 
@@ -852,9 +863,12 @@ $$
 X^T(y - X\hat{\beta}) & = & 0 \\
 X^TX\hat{\beta} & = & X^Ty \\
 (X^TX)^{-1}(X^TX)\hat{\beta} & = & (X^TX)^{-1}X^Ty \\
-\hat{\beta} & = & (X^TX)^{-1}X^Ty 
+\hat{\beta} & = & (X^TX)^{-1}X^Ty
 \end{eqnarray}
 $$
+:::
+
+:::
 :::
 
 ### Example of an $X^TX$
@@ -881,8 +895,8 @@ solve(XtX) %>% round(2)
 ## Recovering g from the Moon Drop {.smaller}
 
 ::: incremental
-- Recall, from Session 2, the Moon mission: we drop a ball from a tower and record the distance fallen at noisy time points to infer the Moon's gravity $g$
-- At the time, we promised we would later learn how to find $g$ from the data
+- Recall the Moon mission from Session 2: fixed marks give known distances $x_i$, while stopwatch readings $t_i$ have a constant delay and random noise
+- `gravity-flash-162-01.csv` contains 17 recorded readings from one actual trial
 - We are now in a position to solve the problem
 :::
 
@@ -892,14 +906,31 @@ solve(XtX) %>% round(2)
 #| fig-height: 4
 #| fig-align: center
 
-set.seed(12)
-g <- 1.625                       # true (unknown) lunar gravity, m/s^2
-marks <- seq(5, 100, by = 5)     # 20 red marks, every 5 m down the tower
-t <- sqrt(2 * marks / g)         # exact pass time at each mark
-y <- marks + rnorm(length(marks), 0, 0.8)   # noisy distance reading at each flash
-p <- ggplot(data.frame(t, y), aes(t, y))
-p <- p + geom_point(size = 0.5) + xlab("time t (s)") + ylab("distance fallen x (m)") +
-  ggtitle("Noisy measurements of the ball's fall")
+moon_drop <- read.csv("data/gravity-flash-162-01.csv")
+moon_drop$sqrt_x <- sqrt(moon_drop$distance_m)
+
+x <- moon_drop$distance_m
+t_obs <- moon_drop$observed_time_s
+
+g_moon <- 1.625
+curve_x <- seq(0, max(x), length.out = 200)
+moon_curve <- data.frame(
+  distance_m = curve_x,
+  time_s = sqrt(2 * curve_x / g_moon)
+)
+
+p <- ggplot(moon_drop, aes(distance_m, observed_time_s)) +
+  geom_line(
+    data = moon_curve,
+    aes(x = distance_m, y = time_s),
+    inherit.aes = FALSE,
+    color = "red",
+    linewidth = 0.35
+  ) +
+  geom_point(size = 0.8) +
+  xlab("fixed distance mark x (m)") +
+  ylab("observed time t (s)") +
+  ggtitle("Actual readings and the accepted Moon-gravity curve")
 print(p)
 ```
 :::
@@ -909,22 +940,44 @@ print(p)
 ::: panel-tabset
 ### Setup
 
-::: incremental
-- This is a quadratic function. How can we solve it using linear regression (the least squares method)?
+::: columns
+::: {.column width="48%"}
 
-- The equation of motion is $x(t) = \tfrac{1}{2} g t^2$, which we will write as $y(t) = \beta_0 + \beta_1 t^2$
+::: {.incremental style="font-size: 84%;"}
+- The marks $x_i$ are fixed; let $\alpha$ be a constant stopwatch delay
 
-- We keep an intercept $\beta_0$ as a check: since the ball is dropped from rest at $x = 0$, we expect $\hat{\beta}_0 \approx 0$, while $\hat{\beta}_1 \approx g/2$, so $\hat{g} = 2\hat{\beta}_1$
+- Model the observed time as
+  $$
+  t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\varepsilon_i,
+  \qquad \E(\varepsilon_i)=0.
+  $$
+:::
 
-- Let's express it in the matrix notation
+:::
 
-- What is our design matrix $X$? We have 20 observations (one per mark), so $X$ will have two columns and 20 rows: a column of 1s for the intercept and a column of times squared $t^2$
+::: {.column width="52%"}
 
-- Our unknown vector $\hat{\beta}$ has two elements $(\hat{\beta_0},\, \hat{\beta_1)}$
+::: {.incremental style="font-size: 84%;"}
+- Set $z_i=\sqrt{x_i}$ and $\beta=\sqrt{2/g}$ to obtain
+  $$
+  t_i=\alpha+\beta z_i+\varepsilon_i.
+  $$
 
-- $y$ is our outcome vector of length 20, capturing the distance fallen at each time point $t$
+- With $\boldsymbol\theta=(\alpha,\beta)^\mathsf{T}$, the matrix model is
+  $$
+  \mathbf{t}=X\boldsymbol\theta+\boldsymbol\varepsilon,
+  \qquad
+  X=\begin{pmatrix}
+  1 & \sqrt{x_1}\\
+  \vdots & \vdots\\
+  1 & \sqrt{x_n}
+  \end{pmatrix}.
+  $$
 
-- $y = X\hat{\beta}$ captures our system in matrix form
+- Recover gravity from the slope: $\hat g=2/\hat\beta^2$
+:::
+
+:::
 :::
 
 ### Solution
@@ -936,19 +989,17 @@ print(p)
 ```{r}
 #| echo: true
 
-# length of t (our time vector)
-length(t)
+# observed times are the noisy outcome vector
+length(t_obs)
+head(t_obs, 4)
 
-# first few elements of t
-head(t)
+# intercept plus z = sqrt(x)
+X <- cbind(intercept = 1, sqrt_x = sqrt(x))
+head(X, 4)
 
-# construct the design matrix
-X <- matrix(c(rep(1, length(t)), t^2), ncol = 2)
-head(X)
-
-# inspect the vector y
-length(y)
-head(y)
+# write observed times as a column vector
+y <- matrix(t_obs, ncol = 1)
+head(y, 4)
 ```
 :::
 
@@ -957,53 +1008,313 @@ head(y)
 ::: {.column width="50%"}
 
 ::: {.fragment}
-- Recall, that the least squares estimate of $\beta$ is given by $\hat{\beta} =  (X^TX)^{-1}X^Ty$
+- The least-squares estimate is $\hat{\boldsymbol\theta}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbf{t}$
 :::
 
 ::: {.fragment}
 ```{r}
 #| echo: true
 
-beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
-beta_hat %>% round(2)
+theta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
+round(theta_hat, 4)
 
-# intercept is ~0 (dropped from rest); g = 2 * beta_1
-g_hat <- 2 * beta_hat[2]
-round(g_hat, 3)
+delay_hat <- as.numeric(theta_hat["intercept", ])
+beta_hat <- as.numeric(theta_hat["sqrt_x", ])
+g_hat <- 2 / beta_hat^2
+round(c(delay = delay_hat, g = g_hat), 3)
 
-data <- data.frame(y = y, t_squared = t^2)
-# compare to R's lm()
-fit <- lm(y ~ t_squared, data = data)
-arm::display(fit)
+# R gives the same estimates
+coef(lm(t_obs ~ sqrt(x)))
 
 ```
 :::
 
 ::: {.fragment}
-- We recover $\hat{g} = 2\hat{\beta}_1 \approx 1.62$ --- the mission is a go. (Warning: do not use $(X^TX)^{-1}X^Ty$ directly as above; it's computationally inefficient.)
+- $\hat\alpha=0.377\text{ s};\quad \hat g=1.691\text{ m/s}^2$.
 :::
 
 :::
 :::
 
-### Plot the Fit
+### Plot the Linearized Fit
+
+::: columns
+::: {.column width="45%"}
 
 ```{r}
-#| fig-width: 6
-#| fig-height: 4
-#| fig-align: center
 #| echo: true
-d <- data.frame(t = t, yhat = beta_hat[1] + beta_hat[2] * t^2)
-p + geom_line(aes(y = yhat), data = d, size = 0.2, color = 'red')
+
+fit_data <- transform(
+  moon_drop,
+  t_hat = delay_hat + beta_hat * sqrt_x
+)
+
+p_linearized <- ggplot(
+  fit_data,
+  aes(sqrt_x, observed_time_s)
+) +
+  geom_point(size = 0.7) +
+  geom_line(
+    aes(y = t_hat),
+    color = "red",
+    linewidth = 0.35
+  ) +
+  labs(
+    x = expression(sqrt(x)),
+    y = "observed time t (s)",
+    title = "Linearized fit"
+  )
+```
+
+:::
+
+::: {.column width="55%"}
+
+```{r}
+#| echo: false
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: center
+
+print(p_linearized)
+```
+
+:::
+:::
+
+### Natural Scale
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4.6
+#| fig-align: center
+
+estimated_physical_curve <- transform(
+  moon_curve,
+  time_s = beta_hat * sqrt(distance_m)
+)
+
+fitted_observation_curve <- transform(
+  moon_curve,
+  time_s = delay_hat + beta_hat * sqrt(distance_m)
+)
+
+series_order <- c(
+  "observed",
+  "true_physics",
+  "estimated_physics",
+  "observation_fit"
+)
+
+series_labels <- c(
+  "observed data: tᵢᵒᵇˢ",
+  "true physics: τ(x) = √(2x / 1.625)",
+  "estimated physics: τ̂(x) = β̂√x (ĝ = 1.691)",
+  "observation fit: t̂ᵒᵇˢ(x) = α̂ + β̂√x"
+)
+
+ggplot() +
+  geom_point(
+    data = moon_drop,
+    aes(
+      x = distance_m,
+      y = observed_time_s,
+      color = "observed"
+    ),
+    size = 1
+  ) +
+  geom_line(
+    data = moon_curve,
+    aes(
+      x = distance_m,
+      y = time_s,
+      color = "true_physics"
+    ),
+    linewidth = 0.4
+  ) +
+  geom_line(
+    data = estimated_physical_curve,
+    aes(
+      x = distance_m,
+      y = time_s,
+      color = "estimated_physics"
+    ),
+    linewidth = 0.5,
+    linetype = "dashed"
+  ) +
+  geom_line(
+    data = fitted_observation_curve,
+    aes(
+      x = distance_m,
+      y = time_s,
+      color = "observation_fit"
+    ),
+    linewidth = 0.5,
+    linetype = "dotted"
+  ) +
+  scale_color_manual(
+    values = c(
+      "observed" = "black",
+      "true_physics" = "red",
+      "estimated_physics" = "blue",
+      "observation_fit" = "purple"
+    ),
+    breaks = series_order,
+    labels = series_labels
+  ) +
+  labs(
+    x = "fixed distance mark x (m)",
+    y = "time (s)",
+    color = NULL,
+    title = "Physical process and stopwatch observation process",
+    subtitle = paste(
+      "Physical curves satisfy τ(0) = 0;",
+      "the observation fit starts at α̂ = 0.377 s"
+    )
+  ) +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
+  theme(
+    legend.position = "bottom",
+    legend.text = element_text(size = 7.5)
+  )
+```
+
+### Zoom
+
+```{r}
+#| echo: false
+#| fig-width: 8.5
+#| fig-height: 4.8
+#| fig-align: center
+
+zoom_plot <- function(
+  x_min,
+  x_max,
+  y_min,
+  y_max,
+  plot_title
+) {
+  in_range <- function(data) {
+    subset(
+      data,
+      distance_m >= x_min & distance_m <= x_max
+    )
+  }
+
+  y_breaks <- seq(
+    ceiling(2 * y_min) / 2,
+    floor(2 * y_max) / 2,
+    by = 0.5
+  )
+
+  ggplot() +
+    geom_point(
+      data = in_range(moon_drop),
+      aes(
+        x = distance_m,
+        y = observed_time_s,
+        color = "observed"
+      ),
+      size = 1.2
+    ) +
+    geom_line(
+      data = in_range(moon_curve),
+      aes(
+        x = distance_m,
+        y = time_s,
+        color = "true_physics"
+      ),
+      linewidth = 0.5
+    ) +
+    geom_line(
+      data = in_range(estimated_physical_curve),
+      aes(
+        x = distance_m,
+        y = time_s,
+        color = "estimated_physics"
+      ),
+      linewidth = 0.6,
+      linetype = "dashed"
+    ) +
+    geom_line(
+      data = in_range(fitted_observation_curve),
+      aes(
+        x = distance_m,
+        y = time_s,
+        color = "observation_fit"
+      ),
+      linewidth = 0.6,
+      linetype = "dotted"
+    ) +
+    scale_y_continuous(
+      limits = c(y_min, y_max),
+      breaks = y_breaks,
+      expand = expansion(mult = c(0.02, 0.02))
+    ) +
+    scale_color_manual(
+      values = c(
+        "observed" = "black",
+        "true_physics" = "red",
+        "estimated_physics" = "blue",
+        "observation_fit" = "purple"
+      ),
+      breaks = series_order,
+      labels = series_labels
+    ) +
+    labs(
+      x = "distance x (m)",
+      y = "time (s)",
+      color = NULL,
+      title = plot_title
+    ) +
+    guides(color = guide_legend(nrow = 2, byrow = TRUE))
+}
+
+zoom_pair <- (
+  zoom_plot(
+    5, 20, 2.3, 5.5,
+    "Beginning: 5–20 m"
+  ) +
+    zoom_plot(
+      75, 100, 8.3, 11.5,
+      "End: 75–100 m"
+    )
+) +
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    title = "The intercept–slope tradeoff on a common vertical scale",
+    subtitle = paste(
+      "Each panel spans 3.2 s with 0.5 s tick spacing;",
+      "equal vertical distances now represent equal time gaps"
+    )
+  )
+
+zoom_pair &
+  theme(
+    legend.position = "bottom",
+    legend.text = element_text(size = 7)
+  )
 ```
 
 :::
 
 ## Your Turn {.smaller}
-- Look at the dataset `mtcars`
-- Plot `mpg` against `wt`, treating `mpg` as the output variable $y$. (We generally don't like to use the words dependent vs. independent in this context)
+- Load your own experimental dataset into R
+- Plot `time` against `distance`, treating `time` as the output variable $y$. (We generally don't like to use the words dependent vs. independent in this context)
 - Using the normal equations, find the intercept and slope of the best-fit line
 - Validate that it matches the output from `lm`
-- Now plot the line over the data and see if it "fits"
+- Plot it in its linear form and on the natural scale; also plot the data
+- Now add the curve representing the true gravity of the planet from which you escaped
 
+## Homework {.smaller}
 
+::: incremental
+1. **Basis vectors and linearity.** Let $A=\begin{pmatrix}1&2\\-1&1\end{pmatrix}$, $\mathbf{u}=(2,-1)^\mathsf{T}$, and $\mathbf{v}=(-1,3)^\mathsf{T}$. Compute $A\mathbf{e}_1$, $A\mathbf{e}_2$, $A\mathbf{u}$, and $A\mathbf{v}$; then verify $A(2\mathbf{u}-\mathbf{v})=2A\mathbf{u}-A\mathbf{v}$.
+
+2. **Inverse and linear system.** Let $B=\begin{pmatrix}3&1\\2&1\end{pmatrix}$ and $\mathbf{b}=(7,5)^\mathsf{T}$. Compute $\det(B)$ and $B^{-1}$, solve $B\mathbf{x}=\mathbf{b}$ using $B^{-1}$, and verify the result with `solve()` in R.
+
+3. **Simulation—transforming space.** With `set.seed(6)`, use `runif()` to generate 2,000 points in $[-1,1]^2$. Apply the matrix $A$ from Problem 1, plot the original and transformed point clouds with equal axis scales, and explain how the transformed basis vectors and $\det(A)$ predict the picture.
+
+4. **Simulation—recovering Moon gravity.** Use fixed marks $x=5,10,\ldots,100$, $g=1.625$, $\alpha=0.25$, and timing errors from $\operatorname{Uniform}(-0.1,0.1)$. Simulate 1,000 experiments; in each, estimate $(\alpha,\beta)^\mathsf{T}$ with $(X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbf{t}$ and compute $\hat g=2/\hat\beta^2$. Plot and summarize the estimates, then repeat with the intercept forced to zero and compare.
+:::

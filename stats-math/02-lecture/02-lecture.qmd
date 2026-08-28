@@ -638,7 +638,7 @@ $$
 
 ## The Drop {.smaller}
 
-For this worked example, we are **not estimating $g$ yet**. We use the accepted gravity on Earth's Moon, $g_{\text{Moon}} = 1.625\ \text{m/s}^2$. At that value, a 100 m drop takes about 11 s, slow enough to time the flashes with a stopwatch; on Earth it would take only 4.5 s.
+For this worked example, we are **not estimating $g$ yet**. We use the accepted gravity on Earth's Moon, $g_{\text{Moon}} = 1.625\ \text{m/s}^2$, together with a 0.30 s constant stopwatch delay and 0.10 s random timing noise. At that value of $g$, a 100 m drop takes about 11 s; on Earth it would take only 4.5 s.
 
 ::: columns
 ::: {.column width="58%"}
@@ -648,28 +648,34 @@ For this worked example, we are **not estimating $g$ yet**. We use the accepted 
 #| fig-height: 4
 #| fig-align: center
 
-g_ref <- 1.625                      # accepted gravity on Earth's Moon, m/s^2
-timing_delay <- 0.30                # seconds
-timing_sd <- 0.16                   # seconds
+g_ref <- 1.625                    # accepted gravity on Earth's Moon, m/s^2
+timing_delay <- 0.30              # constant stopwatch delay, seconds
+timing_sd <- 0.10                 # random stopwatch noise, seconds
 
-x_marks <- seq(5, 95, by = 5)
+x_marks <- seq(5, 100, by = 5)    # fixed, known distance marks
 t_true <- sqrt(2 * x_marks / g_ref)
 
-set.seed(2003)
+set.seed(12)
+t_obs <- timing_delay + t_true +
+  rnorm(length(x_marks), mean = 0, sd = timing_sd)
 d <- data.frame(
-  t = t_true + timing_delay + rnorm(length(x_marks), sd = timing_sd),
+  t = t_obs,
   x = x_marks
 )
 
-tt <- seq(0, max(d$t), length.out = 200)
-sol <- data.frame(t = tt, x = 0.5 * g_ref * tt^2)
+tt <- seq(0, max(t_true), length.out = 200)
+sol <- data.frame(
+  t = timing_delay + tt,
+  x = 0.5 * g_ref * tt^2
+)
 
 p <- ggplot(d, aes(t, x)) +
   geom_line(data = sol, color = 'red', linewidth = 0.35) +
   geom_point(size = 0.5) +
-  annotate("text", 3, 80, label = "x(t) == frac(1, 2) * g * t^2",
+  annotate("text", 3, 80,
+           label = "x(t) == frac(1, 2) * g * (t - alpha)^2",
            parse = TRUE, color = 'red') +
-  xlab("time t (s)") + ylab("distance fallen x (m)") +
+  xlab("observed time t (s)") + ylab("distance fallen x (m)") +
   ggtitle("Delayed, noisy stopwatch readings")
 p
 ```
@@ -678,10 +684,10 @@ p
 
 ::: {.column width="42%"}
 ::: {.fragment}
-- The red curve uses the accepted value of $g$; it is **not** estimated from these observations. Later, we will reverse the problem and recover an unknown $g$ from data like these.
+- The red curve uses the accepted $g$ and the simulated delay $\alpha=0.30$ s; neither is estimated here. Later, we will recover both from data like these.
 :::
 ::: {.fragment style="font-size: 70%;"}
-- **Oxygen is limited**, so each drop costs you. One drop gives up to 20 timed marks (this run caught 19) --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
+- **Oxygen is limited**, so each drop costs you. One drop gives 20 timed marks --- how many marks, and how many drops, do we need to pin down $g$ to one decimal place? To two? We return to this in Session 7.
 :::
 
 :::

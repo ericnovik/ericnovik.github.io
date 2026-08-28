@@ -194,23 +194,49 @@ iris |>
     .groups = "drop"
   )
 
-set.seed(2006)
-mu_m <- 69.1   # mean height of US men in inches
-sigma_m <- 2.9 # corresponding standard deviation
-mu_w <- 63.7   # mean height of US women in inches
-sigma_w <- 2.7 
-n_m <- as.integer(1e5 * 0.48)
-n_w <- as.integer(1e5 * 0.52)
+set.seed(502)
+geometric_theta <- 0.2
+geometric_reps <- 50000
+first_success <- rgeom(geometric_reps, prob = geometric_theta) + 1
+estimate_empirical_probability <- function(value, simulated_values) {
+  number_of_matches <- sum(simulated_values == value)
+  number_of_simulations <- length(simulated_values)
+  number_of_matches / number_of_simulations
+}
 
-h_m <- rnorm(n_m, mu_m, sigma_m)
-h_w <- rnorm(n_w, mu_w, sigma_w)
-h <- c(h_m, h_w)
 
-p <- ggplot(data.frame(h), aes(x = h))
-p + geom_density(linewidth = 0.2, bw = 0.5) +
-  xlab("Height (in)") + ylab("") + ylim(0, 0.15) +
-  ggtitle("Mixture of men's and women's height distributions") +
-  theme(
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
+geometric_comparison <- data.frame(t = 1:10) |>
+  mutate(
+    t,
+    empirical = purrr::map_dbl(
+      estimate_empirical_probability,
+      simulated_values = first_success
+    ),
+    theoretical = geometric_theta * (1 - geometric_theta)^(t - 1),
+    difference = empirical - theoretical
   )
+
+set.seed(503)
+rare_reps <- 100000
+rare_size <- 1000
+rare_prob <- 0.003
+poisson_lambda <- rare_size * rare_prob
+rare_counts <- rbinom(
+  rare_reps,
+  size = rare_size,
+  prob = rare_prob
+)
+# Reuse the empirical-probability function from Problem 2
+rare_pmf <- data.frame(k = 0:10) |>
+  dplyr::mutate(
+    empirical_binomial = purrr::map_dbl(
+      k,
+      estimate_empirical_probability,
+      simulated_values = rare_counts
+    ),
+    exact_binomial = dbinom(k, size = rare_size, prob = rare_prob),
+    poisson = dpois(k, lambda = poisson_lambda)
+  )
+
+
+
