@@ -238,5 +238,18 @@ rare_pmf <- data.frame(k = 0:10) |>
     poisson = dpois(k, lambda = poisson_lambda)
   )
 
+library(dplyr)
+ (9 * 8)
+n <- 1e5
+tokens <- c(rep("b", 4), rep("g", 3), rep("r", 2))
+draws <- t(replicate(n, sample(tokens, 2, replace = F))) |> data.frame()
 
+g_first <- draws |>
+  filter(X1 == "g" & X2 == "g") |>
+  nrow()
+g_first / n
 
+g_second <- draws |>
+  filter(X2 == "g") |>
+  nrow()
+g_second / n

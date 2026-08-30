@@ -105,9 +105,9 @@ $$
 ```{r}
 #| results: asis
 
-A <- matrix(c("a", "b", "c"), 3, 1)
-A <- as_sym(A)
-tex(A) %>% str_c("V = ", .) %>% add_align() %>% cat()
+V <- matrix(c("a", "b", "c"), 3, 1)
+V <- as_sym(V)
+tex(V) %>% str_c("V = ", .) %>% add_align() %>% cat()
 ```
 :::
 
@@ -117,7 +117,7 @@ tex(A) %>% str_c("V = ", .) %>% add_align() %>% cat()
 ```{r}
 #| results: asis
 
-tex(t(A)) %>% str_c("V^T = ", .) %>% add_align() %>% cat()
+tex(t(V)) %>% str_c("V^T = ", .) %>% add_align() %>% cat()
 ```
 :::
 
@@ -261,9 +261,9 @@ sqrt(v %*% v) # this is sqrt of 2
 - You can think of a matrix as a rectangular (or square) set of numbers
 - $m{\times}n$ matrix has m rows and n columns
 - In statistics, it is convenient to think of a matrix as n columns where each column is a variable like the price of the house, and the rows are the observations for each house
-- In Linear Algebra books, you will often see linear equations written as $Ax = b$, where we are trying to find $x$
-- In statistics, we usually write the same thing as $X\beta = y$, and we are trying to find $\beta$
-- Another source of confusion: matrix $A$ is sometimes called a coefficient matrix in Linear Algebra books. In statistics, the entries in $A$ (the $X$ matrix) have observations, and the $\beta$ vector contains coefficients estimated from A and b (X and y).
+- Throughout these slides, we write a linear system as $X\beta = y$
+- $X$ is the design matrix, $\beta$ is the vector of unknown coefficients, and $y$ is the outcome vector
+- The entry $x_{ij}$ is in row $i$ and column $j$ of $X$
 :::
 
 ## Introduction to Matrices {.smaller}
@@ -439,7 +439,7 @@ p2 + annotate("text", x = 1, y = 1.8, label = "v") +
 :::
 
 ::: incremental
-- The resulting matrix $K$, has the correctly rotated $v$ in the first column and rotated $w$ in the second column.
+- The resulting matrix $K'$ has the correctly rotated $v$ in the first column and rotated $w$ in the second column.
 
 - Another way to think about this operation is to encode two transformations in $K'$ --- the $K$ transformation followed by the $R$ transformation. We can now use the resulting $K'$ matrix and apply these two transformations in one swoop to any vector in $R^2$.
 
@@ -493,16 +493,16 @@ print(p3)
 ```{r}
 #| echo: true
 
-# this matrix scales the area by 12
-(X <- matrix(c(4, 0, 0, 3), ncol = 2))
+# this transformation matrix scales the area by 12
+(A <- matrix(c(4, 0, 0, 3), ncol = 2))
 
 # compute the determinant
-det(X)
+det(A)
 ```
 :::
 
 ::: incremental
-- What happens if the columns of $X$ are linear combinations of each other?
+- What happens if the columns of $A$ are linear combinations of each other?
 - Geometrically, that means that in $R^2$, they both sit on the same line
 :::
 
@@ -514,10 +514,10 @@ det(X)
 ```{r}
 #| echo: true
 # the second column is the first column * 1.5
-(X <- matrix(c(2, 1, 1.5 * 2, 1.5 * 1), ncol = 2))
+(A <- matrix(c(2, 1, 1.5 * 2, 1.5 * 1), ncol = 2))
 
 # compute the determinant
-det(X)
+det(A)
 ```
 :::
 
@@ -527,8 +527,8 @@ det(X)
 #| fig-height: 4
 #| fig-align: center
 
-draw_vector(X[, 1], col = 'red') %>%
-  add_vector(X[, 2], col = 'blue', alpha = 1/2) %>% sm()
+draw_vector(A[, 1], col = 'red') %>%
+  add_vector(A[, 2], col = 'blue', alpha = 1/2) %>% sm()
 
 ```
 :::
@@ -548,8 +548,8 @@ draw_vector(X[, 1], col = 'red') %>%
 ```{r}
 #| echo: true
 set.seed(123)
-(X <- matrix(sample(25), ncol = 5))
-det(X)
+(A <- matrix(sample(25), ncol = 5))
+det(A)
 ```
 :::
 
@@ -584,56 +584,80 @@ str_c("\\det(B) = ") %>% str_c(tex(det(B))) %>% add_align() %>% cat()
 ::: panel-tabset
 ### Linear Systems
 
+::: columns
+::: {.column width="43%"}
+
 ::: incremental
-- One of the key ideas from Linear Algebra that is relevant to statistics is solving linear systems
-- This is where estimating coefficients in $X\beta = y$ comes from
-- If $X$ is a square matrix, the problem is not statistical but algebraic
-- The reason is that if we have the same number of equations as we have unknowns, we can solve the system exactly unless X is not full rank
-- For example, try to solve this system:
+- We consistently write a system as $X\beta=y$
+- Row $i$ is $\sum_j x_{ij}\beta_j=y_i$
+- A square, full-rank $X$ gives one exact solution
+- What happens in this rank-deficient example?
 :::
 
 ::: {.fragment}
 $$
-2x + y = 1 \\
-4x + 2y = 1
+\begin{aligned}
+2\beta_1 + \beta_2 &= 1 \\
+4\beta_1 + 2\beta_2 &= 1.
+\end{aligned}
 $$
 :::
 
 ::: {.fragment}
-- Question: Geometrically, what does it mean to solve a system of equations?
+- A solution is a common intersection
 :::
+
+:::
+
+::: {.column width="57%"}
 
 ::: {.fragment}
 ```{r}
-#| fig-width: 4.5
-#| fig-height: 4.5
+#| fig-width: 5
+#| fig-height: 4.2
 #| fig-align: center
 #| echo: false
 
 library(ggplot2)
 
-# Define x range
-x_vals <- seq(-1, 2, length.out = 200)
+# Values of beta[1] along the horizontal axis
+beta_1_vals <- seq(-1, 2, length.out = 200)
 
-# Define y for each equation
-df <- data.frame(
-  x = rep(x_vals, 2),
-  y = c(1 - 2 * x_vals, (1 - 4 * x_vals) / 2),
-  eq = rep(c("2x + y = 1", "4x + 2y = 1"), each = length(x_vals))
+# Solve each equation for beta[2]
+system_lines <- data.frame(
+  beta_1 = rep(beta_1_vals, 2),
+  beta_2 = c(
+    1 - 2 * beta_1_vals,
+    (1 - 4 * beta_1_vals) / 2
+  ),
+  equation = rep(
+    c("2β₁ + β₂ = 1", "4β₁ + 2β₂ = 1"),
+    each = length(beta_1_vals)
+  )
 )
 
-# Plot with legend at the bottom
-ggplot(df, aes(x = x, y = y, color = eq)) +
+ggplot(
+  system_lines,
+  aes(x = beta_1, y = beta_2, color = equation)
+) +
   geom_line(linewidth = 1) +
-  scale_color_manual(values = c("2x + y = 1" = "blue", "4x + 2y = 1" = "red")) +
+  scale_color_manual(
+    values = c(
+      "2β₁ + β₂ = 1" = "blue",
+      "4β₁ + 2β₂ = 1" = "red"
+    )
+  ) +
   theme(legend.position = "bottom") +
   labs(
-    title = "Linear System: 2x + y = 1 and 4x + 2y = 1",
+    x = expression(beta[1]),
+    y = expression(beta[2]),
+    title = "No common solution",
     color = "Equation"
   )
-
 ```
+:::
 
+:::
 :::
 
 
@@ -641,32 +665,35 @@ ggplot(df, aes(x = x, y = y, color = eq)) +
 ### No solution
 
 ::: {.fragment}
-- You should now have a deeper understanding of why there is no solution
+- Here $\det(X)=0$, so $X$ is singular and the system cannot have a unique solution
 
 ```{r}
 #| echo: true
-(A <- matrix(c(2, 4, 1, 2), ncol = 2))
-det(A)
+(X <- matrix(c(2, 4, 1, 2), ncol = 2))
+(y <- c(1, 1))
+det(X)
 ```
 :::
 
 ::: {.fragment}
-- Before we talk about overdetermined systems (more equations than unknowns) that we see in statistics, let's see how it works in the square matrix case
+- A singular system can have no solution or infinitely many solutions
+- Here the second row of $X$ is twice the first, but $y_2$ is not twice $y_1$, so this particular system has no solution
+- Before we discuss overdetermined systems, let's see how inversion works in the square, full-rank case
 :::
 
 
 ### Idea of an inverse
 
 ::: {.fragment}
-- To see what a matrix inverse does, let's bring back the 90-degree counterclockwise rotation matrix $A$
+- To see what a matrix inverse does, let's bring back the 90-degree counterclockwise rotation matrix $R$
 
 ```{r}
 #| results: asis
 
-A <- matrix(c(0, 1, -1, 0), 2, 2)
-A <- as_sym(A)
+R_matrix <- matrix(c(0, 1, -1, 0), 2, 2)
+R_matrix <- as_sym(R_matrix)
 
-str_c("A = ") %>% str_c(tex(A)) %>% add_align() %>% cat()
+str_c("R = ") %>% str_c(tex(R_matrix)) %>% add_align() %>% cat()
 ```
 :::
 
@@ -680,10 +707,10 @@ str_c("A = ") %>% str_c(tex(A)) %>% add_align() %>% cat()
 ```{r}
 #| results: asis
 
-A_inv <- matrix(c(0, -1, 1, 0), 2, 2)
-A_inv <- as_sym(A_inv)
+R_inverse <- matrix(c(0, -1, 1, 0), 2, 2)
+R_inverse <- as_sym(R_inverse)
 
-str_c("A^{-1} = ") %>% str_c(tex(A_inv)) %>% add_align() %>% cat()
+str_c("R^{-1} = ") %>% str_c(tex(R_inverse)) %>% add_align() %>% cat()
 ```
 :::
 
@@ -697,62 +724,70 @@ str_c("A^{-1} = ") %>% str_c(tex(A_inv)) %>% add_align() %>% cat()
 ```{r}
 #| echo: true
 
-(A <- matrix(c(0, 1, -1, 0), 2, 2))
-(A_inv <- matrix(c(0, -1, 1, 0), 2, 2))
+(R_matrix <- matrix(c(0, 1, -1, 0), 2, 2))
+(R_inverse <- matrix(c(0, -1, 1, 0), 2, 2))
 
-A_inv %*% A
+R_inverse %*% R_matrix
 
 # find an inverse using R's solve function
-solve(A)
+solve(R_matrix)
 ```
 
 :::
 
-### Ax = b
+### $X\beta = y$
+
+::: columns
+::: {.column width="44%"}
 
 ::: {.fragment}
-- We are now ready to solve the square linear system $Ax = b$, in the case when A is full rank
+- When $X$ is square and full rank:
 
 $$
-\begin{eqnarray}
-Ax & = & b \\
-A^{-1}Ax & = & A^{-1}b \\
-x & = & A^{-1}b
-\end{eqnarray}
+\begin{aligned}
+X\beta &= y \\
+X^{-1}X\beta &= X^{-1}y \\
+\beta &= X^{-1}y.
+\end{aligned}
+$$
+:::
+
+:::
+
+::: {.column width="56%"}
+
+::: {.fragment}
+- In two dimensions, the matrix equation is
+
+$$
+\begin{bmatrix}
+x_{11} & x_{12} \\
+x_{21} & x_{22}
+\end{bmatrix}
+\begin{bmatrix}
+\beta_1 \\
+\beta_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+y_1 \\
+y_2
+\end{bmatrix}.
 $$
 :::
 
 ::: {.fragment}
-- The general solution in two-dimensional case:
-
-```{r}
-#| results: asis
-
-A <- matrix(c("a", "b", "c", "d"), 2, 2)
-A <- as_sym(A)
-b <- c("b_1", "b_2")
-b <- as_sym(b)
-
-str_c(tex(A)) %>% str_c("x = ") %>% str_c(tex(b)) %>% add_align() %>% str_c("\\newline") %>% cat()
-str_c("\\det(A) = ") %>% str_c(tex(det(A))) %>% add_align() %>% str_c("\\newline") %>% cat()
-str_c("A^{-1} = ") %>% str_c(tex(inv(A))) %>% add_align() %>% str_c("\\newline") %>% cat()
-str_c("x = ") %>% str_c(tex(simplify(solve_lin(A, b)))) %>% add_align() %>% cat()
-
-```
-:::
-
-::: {.fragment}
-- In R, `solve(A)` inverts the matrix, and `solve(A, b)` solves $Ax = b$.
+- In R, `solve(X, y)` solves for $\beta$:
 
 ```{r}
 #| echo: true
-(A <- matrix(sample(9), ncol = 3))
-(b <- c(1, 2, 3))
-solve(A, b) %>% round(2)
-
-# same as above
-solve(A) %*% b %>% round(2)
+(X <- matrix(c(3, 2, 1, 1), ncol = 2))
+(y <- c(7, 5))
+(beta_solution <- solve(X, y))
 ```
+:::
+
+:::
 :::
 
 :::
@@ -761,14 +796,14 @@ solve(A) %*% b %>% round(2)
 - Consider the following system of equations:
 
 $$
-\begin{eqnarray}
-3x + 2y + 1.5z & = & 4 \\
-7x + y & = & 2 \\
-3y + 2z & = & 1
-\end{eqnarray}
+\begin{aligned}
+3\beta_1 + 2\beta_2 + 1.5\beta_3 &= 4 \\
+7\beta_1 + \beta_2 &= 2 \\
+3\beta_2 + 2\beta_3 &= 1.
+\end{aligned}
 $$
 
-- Express it in matrix form, solve it in R using the `solve()` function, and validate that the results are correct
+- Express it as $X\beta=y$, solve for $\beta$ in R using `solve(X, y)`, and validate that the result is correct
 
 ## Some Useful Rules
 
@@ -792,35 +827,46 @@ For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
 
 ::: incremental
 
-- Frequentist statistical inference is concerned with "solving" overdetermined systems
-- We have lots of observations with relatively few variables. (Sometimes, we have more variables than observations, but we will not discuss it here)
-- Clearly, there is no exact solution
-- In fact, there are typically infinitely many ways in which you can draw a line through a cloud of points or a plane through n-dimensional space
-- **Optimization** based (or frequentist) inference is concerned with finding the most likely values of the unknowns giving rise to that line (or plane) and approximating their variance
-- **Integration** based (or Bayesian) inference is concerned with finding a joint PDF of the unknowns -- all plausible values weighted by their probability. Therefore, the "estimated variance" is a consequence of this PDF. (Recall our example of estimating variance from the distribution of the difference in heights.) In this sense, Bayesian inference is an uncertainty-preserving system, a very desirable quality.
-- For simple linear models, both of these methods produce similar results.
+- In statistics, we often have many observations and relatively few coefficients, so $n>p$
+- An overdetermined system has an exact solution only when $y$ lies in the column space of $X$
+- With noisy data, $y$ usually lies outside that space, so we find the closest fitted vector instead
+- Many coefficient vectors define candidate lines or planes; when $X$ has full column rank, least squares selects one unique best fit
+- **Optimization-based** (frequentist) inference estimates the coefficients of that fit and their uncertainty
+- **Integration-based** (Bayesian) inference describes plausible coefficient values with a joint probability distribution
+- For simple linear models, the two approaches often give similar point estimates
 
 :::
 
-## Solving an Overdetermined $X\hat{\beta} = y$ {.smaller}
+## An Overdetermined $X\beta = y$ {.smaller}
 
 ::: incremental
-- We are switching to a more familiar (to statisticians) notation of $X \beta = y$ (instead of $Ax = b$)
-- We typically augment the $X$ matrix with the column of 1s on the left to model the intercept term, sometimes called $\beta_0$
-- This should make sense when you think about $X \beta$ as the linear combination of columns of $X$
-- In this form, $X$ is usually called the design matrix or the model matrix
-- The problem is that $X$ is not invertible, even if columns of $X$ are linearly independent
-- Let's say that $X$ is a $3 \times 2$ matrix (3 rows and 2 columns), and columns are linearly independent. Note that $\beta$ is $2 \times 1$ and $y$ is $3 \times 1$.
-- $X$ and its linear combinations $X\beta$ span a plane in three-dimensional space -- there is no way for it to reach the target vector $y$ in $R^3$
-
+- We keep the same notation: $X$ is the design matrix, $\beta$ is the unknown coefficient vector, and $y$ is the outcome vector
+- In this generic example the coefficients are $\beta_1$ and $\beta_2$; an intercept model would usually label its intercept $\beta_0$
+- Suppose $X$ is $3\times2$, $\beta$ is $2\times1$, and $y$ is $3\times1$
+- Written one row at a time, $X\beta=y$ is
 :::
 
-## $X\hat{\beta} = y$ {.smaller}
+::: {.fragment}
+$$
+\begin{aligned}
+x_{11}\beta_1 + x_{12}\beta_2 &= y_1 \\
+x_{21}\beta_1 + x_{22}\beta_2 &= y_2 \\
+x_{31}\beta_1 + x_{32}\beta_2 &= y_3.
+\end{aligned}
+$$
+:::
 
 ::: incremental
-- If we can not reach $y$, we need to find a vector in the column space of $X$ that is closest (in a certain sense) to $y$
+- Even with linearly independent columns, this rectangular $X$ is not invertible
+- The linear combinations $X\beta$ span a plane in $\mathbb{R}^3$, which may not contain the target $y$
+:::
 
-- The projection of $y$ onto this plane gives us the answer
+## Projecting $y$ onto the Column Space of $X$ {.smaller}
+
+::: incremental
+- If no $\beta$ satisfies $X\beta=y$ exactly, find the vector $X\hat\beta$ that is closest to $y$
+- We call this fitted vector $\hat y=X\hat\beta$
+- Geometrically, $\hat y$ is the projection of $y$ onto the column space of $X$
 :::
 
 ::: {.fragment}
@@ -831,7 +877,7 @@ For a complete list, see the [Matrix Cookbook](http://matrixcookbook.com)
 Image from [Geometry of Least Squares](https://ericnovik.github.io/apps/least-squares/)
 :::
 
-## Solving an Overdetermined $X\hat{\beta} = y$ {.smaller}
+## Solving the Least-Squares Problem {.smaller}
 
 ::: panel-tabset
 ### Solution
@@ -840,9 +886,9 @@ Image from [Geometry of Least Squares](https://ericnovik.github.io/apps/least-sq
 ::: {.column width="45%"}
 
 ::: incremental
-- This residual $r$ is also called the error term
-- This error, $y - X\hat{\beta}$, is the smallest when it's perpendicular to the plane
-- Another way of saying that is that:
+- The residual $r=y-X\hat\beta$ is computed after fitting the model
+- It is distinct from the unobserved model error $\varepsilon$
+- Least squares makes $r$ perpendicular to the column space of $X$:
 :::
 
 ::: {.fragment}
@@ -874,20 +920,43 @@ $$
 ### Example of an $X^TX$
 
 ::: {.fragment}
-- Matrix $X^TX$ is square and symmetric. It is also invertible if the columns of $X$ are linearly independent:
+- Matrix $X^TX$ is square and symmetric. It is invertible exactly when the columns of $X$ are linearly independent.
 :::
 
+::: columns
+::: {.column width="50%"}
+
 ::: {.fragment}
+**Independent columns**
+
 ```{r}
 #| echo: true
 
-(X <- matrix(sample(6), ncol = 2))
-(XtX <- t(X) %*% X)
+X <- matrix(c(1, 2, 3, 1, 0, 2), ncol = 2)
+XtX <- t(X) %*% X
+qr(X)$rank
 solve(XtX) %>% round(2)
-
-(X <- matrix(c(1, 2, 3, 2, 4, 6), ncol = 2))
-(XtX <- t(X) %*% X)  # will not invert
 ```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+**Dependent columns**
+
+```{r}
+#| echo: true
+
+X <- matrix(c(1, 2, 3, 2, 4, 6), ncol = 2)
+XtX <- t(X) %*% X
+qr(X)$rank
+det(XtX)
+```
+:::
+
+:::
 :::
 
 :::
@@ -944,11 +1013,11 @@ print(p)
 ::: {.column width="48%"}
 
 ::: {.incremental style="font-size: 84%;"}
-- The marks $x_i$ are fixed; let $\alpha$ be a constant stopwatch delay
+- The marks $x_i$ are fixed; let $\beta_0$ be the constant stopwatch delay
 
 - Model the observed time as
   $$
-  t_i=\alpha+\sqrt{\frac{2x_i}{g}}+\varepsilon_i,
+  \beta_0+\sqrt{\frac{2x_i}{g}}+\varepsilon_i=t_i,
   \qquad \E(\varepsilon_i)=0.
   $$
 :::
@@ -958,14 +1027,14 @@ print(p)
 ::: {.column width="52%"}
 
 ::: {.incremental style="font-size: 84%;"}
-- Set $z_i=\sqrt{x_i}$ and $\beta=\sqrt{2/g}$ to obtain
+- Set $y_i=t_i$, $z_i=\sqrt{x_i}$, and $\beta_1=\sqrt{2/g}$ to obtain
   $$
-  t_i=\alpha+\beta z_i+\varepsilon_i.
+  \beta_0+\beta_1z_i+\varepsilon_i=y_i.
   $$
 
-- With $\boldsymbol\theta=(\alpha,\beta)^\mathsf{T}$, the matrix model is
+- With $\beta=(\beta_0,\beta_1)^\mathsf{T}$, the matrix model is
   $$
-  \mathbf{t}=X\boldsymbol\theta+\boldsymbol\varepsilon,
+  X\beta+\varepsilon=y,
   \qquad
   X=\begin{pmatrix}
   1 & \sqrt{x_1}\\
@@ -974,7 +1043,7 @@ print(p)
   \end{pmatrix}.
   $$
 
-- Recover gravity from the slope: $\hat g=2/\hat\beta^2$
+- Recover gravity from the slope: $\hat g=2/\hat\beta_1^2$
 :::
 
 :::
@@ -1008,19 +1077,19 @@ head(y, 4)
 ::: {.column width="50%"}
 
 ::: {.fragment}
-- The least-squares estimate is $\hat{\boldsymbol\theta}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbf{t}$
+- The least-squares estimate is $\hat\beta=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y$
 :::
 
 ::: {.fragment}
 ```{r}
 #| echo: true
 
-theta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
-round(theta_hat, 4)
+beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
+round(beta_hat, 4)
 
-delay_hat <- as.numeric(theta_hat["intercept", ])
-beta_hat <- as.numeric(theta_hat["sqrt_x", ])
-g_hat <- 2 / beta_hat^2
+delay_hat <- as.numeric(beta_hat["intercept", ])
+slope_hat <- as.numeric(beta_hat["sqrt_x", ])
+g_hat <- 2 / slope_hat^2
 round(c(delay = delay_hat, g = g_hat), 3)
 
 # R gives the same estimates
@@ -1030,7 +1099,7 @@ coef(lm(t_obs ~ sqrt(x)))
 :::
 
 ::: {.fragment}
-- $\hat\alpha=0.377\text{ s};\quad \hat g=1.691\text{ m/s}^2$.
+- $\hat\beta_0=0.377\text{ s};\quad \hat g=1.691\text{ m/s}^2$.
 :::
 
 :::
@@ -1046,7 +1115,7 @@ coef(lm(t_obs ~ sqrt(x)))
 
 fit_data <- transform(
   moon_drop,
-  t_hat = delay_hat + beta_hat * sqrt_x
+  t_hat = delay_hat + slope_hat * sqrt_x
 )
 
 p_linearized <- ggplot(
@@ -1092,12 +1161,12 @@ print(p_linearized)
 
 estimated_physical_curve <- transform(
   moon_curve,
-  time_s = beta_hat * sqrt(distance_m)
+  time_s = slope_hat * sqrt(distance_m)
 )
 
 fitted_observation_curve <- transform(
   moon_curve,
-  time_s = delay_hat + beta_hat * sqrt(distance_m)
+  time_s = delay_hat + slope_hat * sqrt(distance_m)
 )
 
 series_order <- c(
@@ -1110,8 +1179,8 @@ series_order <- c(
 series_labels <- c(
   "observed data: tᵢᵒᵇˢ",
   "true physics: τ(x) = √(2x / 1.625)",
-  "estimated physics: τ̂(x) = β̂√x (ĝ = 1.691)",
-  "observation fit: t̂ᵒᵇˢ(x) = α̂ + β̂√x"
+  "estimated physics: τ̂(x) = β̂₁√x (ĝ = 1.691)",
+  "observation fit: ŷ(x) = β̂₀ + β̂₁√x"
 )
 
 ggplot() +
@@ -1170,7 +1239,7 @@ ggplot() +
     title = "Physical process and stopwatch observation process",
     subtitle = paste(
       "Physical curves satisfy τ(0) = 0;",
-      "the observation fit starts at α̂ = 0.377 s"
+      "the observation fit starts at β̂₀ = 0.377 s"
     )
   ) +
   guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
@@ -1312,9 +1381,9 @@ zoom_pair &
 ::: incremental
 1. **Basis vectors and linearity.** Let $A=\begin{pmatrix}1&2\\-1&1\end{pmatrix}$, $\mathbf{u}=(2,-1)^\mathsf{T}$, and $\mathbf{v}=(-1,3)^\mathsf{T}$. Compute $A\mathbf{e}_1$, $A\mathbf{e}_2$, $A\mathbf{u}$, and $A\mathbf{v}$; then verify $A(2\mathbf{u}-\mathbf{v})=2A\mathbf{u}-A\mathbf{v}$.
 
-2. **Inverse and linear system.** Let $B=\begin{pmatrix}3&1\\2&1\end{pmatrix}$ and $\mathbf{b}=(7,5)^\mathsf{T}$. Compute $\det(B)$ and $B^{-1}$, solve $B\mathbf{x}=\mathbf{b}$ using $B^{-1}$, and verify the result with `solve()` in R.
+2. **Inverse and linear system.** Let $X=\begin{pmatrix}3&1\\2&1\end{pmatrix}$ and $y=(7,5)^\mathsf{T}$. Compute $\det(X)$ and $X^{-1}$, solve $X\beta=y$ using $X^{-1}$, and verify the result with `solve(X, y)` in R.
 
 3. **Simulation—transforming space.** With `set.seed(6)`, use `runif()` to generate 2,000 points in $[-1,1]^2$. Apply the matrix $A$ from Problem 1, plot the original and transformed point clouds with equal axis scales, and explain how the transformed basis vectors and $\det(A)$ predict the picture.
 
-4. **Simulation—recovering Moon gravity.** Use fixed marks $x=5,10,\ldots,100$, $g=1.625$, $\alpha=0.25$, and timing errors from $\operatorname{Uniform}(-0.1,0.1)$. Simulate 1,000 experiments; in each, estimate $(\alpha,\beta)^\mathsf{T}$ with $(X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbf{t}$ and compute $\hat g=2/\hat\beta^2$. Plot and summarize the estimates, then repeat with the intercept forced to zero and compare.
+4. **Simulation—recovering Moon gravity.** Use fixed marks $x=5,10,\ldots,100$, $g=1.625$, delay $\beta_0=0.25$, and timing errors from $\operatorname{Uniform}(-0.1,0.1)$. Simulate 1,000 experiments from $\beta_0+\sqrt{2x_i/g}+\varepsilon_i=y_i$; in each, estimate $\beta=(\beta_0,\beta_1)^\mathsf{T}$ with $(X^\mathsf{T}X)^{-1}X^\mathsf{T}y$ and compute $\hat g=2/\hat\beta_1^2$. Plot and summarize the estimates, then repeat with the intercept forced to zero and compare.
 :::
